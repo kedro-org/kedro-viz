@@ -136,6 +136,9 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
             return_value={"event": "after_dataset_loaded", "dataset": "test_dataset"},
         )
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         # Test before_dataset_loaded
         hooks.before_dataset_loaded("test_dataset", sample_node)
@@ -162,6 +165,9 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
             return_value={"event": "after_dataset_saved", "dataset": "test_dataset"},
         )
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         # Test before_dataset_saved
         hooks.before_dataset_saved("test_dataset", sample_node)
@@ -184,6 +190,9 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
             return_value="test_node_hash",
         )
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         # Test before_node_run
         hooks.before_node_run(sample_node)
@@ -205,13 +214,16 @@ class TestPipelineRunStatusHook:
         assert isinstance(event["duration_sec"], float)
         assert hooks._current_node is None
 
-    def test_after_pipeline_run_default(self, hooks, mocker):
+    def test_after_pipeline_run_default(self, hooks, sample_node, mocker):
         """Test after_pipeline_run hook with default pipeline."""
         mock_write_events = mocker.patch.object(hooks, "_write_events")
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
             return_value="2021-01-01T00:00:00.000Z",
         )
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         hooks.after_pipeline_run({"pipeline_name": None})
 
@@ -238,6 +250,9 @@ class TestPipelineRunStatusHook:
             return_value="2021-01-01T00:00:00.000Z",
         )
         mock_write_events = mocker.patch.object(hooks, "_write_events")
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         error = ValueError("Test error")
         hooks.on_node_error(error, sample_node)
@@ -263,6 +278,9 @@ class TestPipelineRunStatusHook:
             return_value="2021-01-01T00:00:00.000Z",
         )
         mocker.patch.object(hooks, "_write_events")
+        
+        # Set up pipeline nodes so events can be added
+        hooks._all_nodes = [sample_node]
 
         # Set up context
         hooks._current_dataset = "test_dataset"

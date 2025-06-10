@@ -56,14 +56,47 @@ def create_dataset_event(
     return event
 
 
+def extract_file_paths(dataset: Any) -> List[str]:
+    """Extract file paths from a dataset object.
+    
+    Args:
+        dataset: Dataset object to extract paths from
+        
+    Returns:
+        List of file paths found in the dataset
+    """
+    paths = []
+    for attr in ("filepath", "_filepath"):
+        file_path = getattr(dataset, attr, None)
+        if file_path:
+            paths.append(file_path)
+    return paths
+
+
+def get_file_size(file_path: str) -> Optional[int]:
+    """Get size of a file.
+    
+    Args:
+        file_path: Path to the file
+        
+    Returns:
+        File size in bytes, or None if file doesn't exist
+    """
+    try:
+        filesystem, path = fsspec.core.url_to_fs(file_path)
+        return filesystem.size(path) if filesystem.exists(path) else None
+    except Exception:  # pragma: no cover
+        return None
+
+
 def compute_size(
     dataset_name: str, dataset_value: Any, datasets: Dict[str, Any]
 ) -> Optional[int]:
-    """Determine file size for DataFrame or dataset with filepath attribute.
+    """Determine file size for dataset with filepath attribute.
 
     Args:
         dataset_name: Dataset name
-        dataset_value: Dataset data
+        dataset_value: Dataset data (unused, kept for compatibility)
         datasets: Dictionary of available datasets
 
     Returns:
@@ -73,27 +106,13 @@ def compute_size(
     if not dataset:
         return None
 
-    # pandas DataFrame may store filepath metadata
-    try:
-        import pandas as pd
-
-        if isinstance(dataset_value, pd.DataFrame):
-            file_path = getattr(dataset, "filepath", None) or getattr(
-                dataset, "_filepath", None
-            )
-            if file_path:
-                filesystem, path = fsspec.core.url_to_fs(file_path)
-                return filesystem.size(path) if filesystem.exists(path) else None
-    except ImportError:  # pragma: no cover
-        pass  # pandas optional
-
-    # generic filepath lookup
-    for attr in ("filepath", "_filepath"):
-        file_path = getattr(dataset, attr, None)
-        if file_path:
-            filesystem, path = fsspec.core.url_to_fs(file_path)
-            if filesystem.exists(path):
-                return filesystem.size(path)
+    # Look for filepath attributes and return size of first existing file
+    file_paths = extract_file_paths(dataset)
+    for file_path in file_paths:
+        size = get_file_size(file_path)
+        if size is not None:
+            return size
+    
     return None
 
 
@@ -114,11 +133,27 @@ def write_events(
         if not project:
             logger.warning("No Kedro project found; skipping write.")
             return
-        path = project / events_dir / events_file
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(events, indent=2), encoding="utf8")
+        
+        events_json = json.dumps(events, indent=2)
+        write_events_to_file(project, events_dir, events_file, events_json)
     except (OSError, TypeError, ValueError) as exc:  # pragma: no cover
         logger.warning("Failed writing events: %s", exc)
+
+
+def write_events_to_file(
+    project_path: Path, events_dir: str, events_file: str, events_json: str
+) -> None:
+    """Write events JSON to file.
+    
+    Args:
+        project_path: Path to the Kedro project
+        events_dir: Directory to write events to
+        events_file: Filename for events
+        events_json: JSON string to write
+    """
+    path = project_path / events_dir / events_file
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(events_json, encoding="utf8")
 
 
 def generate_timestamp() -> str:
