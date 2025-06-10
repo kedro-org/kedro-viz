@@ -36,15 +36,15 @@ class EventType(str, Enum):
 class PipelineStatus(str, Enum):
     """Constants for pipeline statuses."""
 
-    COMPLETED = "completed"
-    FAILED = "failed"
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
 
 
 class NodeStatus(str, Enum):
     """Enum representing the possible statuses of a node."""
 
-    SUCCESS = "Success"
-    FAIL = "Fail"
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
 
 
 class DatasetStatus(str, Enum):
@@ -58,7 +58,7 @@ class BaseErrorInfo(BaseModel):
     """Base class for error information."""
 
     message: str
-    traceback: Optional[str] = None
+    traceback: str = ""
 
 
 class NodeErrorInfo(BaseErrorInfo):
@@ -83,7 +83,7 @@ class PipelineErrorInfo(BaseErrorInfo):
 class NodeInfo(BaseModel):
     """Information about a node."""
 
-    status: NodeStatus = NodeStatus.SUCCESS
+    status: NodeStatus = NodeStatus.SUCCESSFUL
     duration_sec: float = 0.0
     error: Optional[NodeErrorInfo] = None
 
@@ -103,8 +103,8 @@ class PipelineInfo(BaseModel):
     run_id: str = "default-run-id"
     start_time: Optional[str] = None
     end_time: Optional[str] = None
-    total_duration_sec: float = 0.0
-    status: PipelineStatus = PipelineStatus.COMPLETED
+    duration_sec: float = 0.0
+    status: PipelineStatus = PipelineStatus.SUCCESSFUL
     error: Optional[PipelineErrorInfo] = None
 
 
@@ -177,7 +177,7 @@ def _extract_pipeline_timing_and_status(
         None,
     )
     if start_event:
-        pipeline_info.start_time = start_event.get("timestamp", None)
+        pipeline_info.start_time = start_event.get("timestamp")
 
     # Find most recent pipeline end event
     end_event = next(
@@ -192,18 +192,18 @@ def _extract_pipeline_timing_and_status(
 
     if end_event:
         if "timestamp" in end_event:
-            pipeline_info.end_time = end_event.get("timestamp", None)
+            pipeline_info.end_time = end_event.get("timestamp")
 
         if end_event.get("event") == EventType.ON_PIPELINE_ERROR:
             pipeline_info.status = PipelineStatus.FAILED
             error_message = end_event.get("error", "Unknown pipeline error")
-            traceback_message = end_event.get("traceback")
+            traceback_message = end_event.get("traceback", "")
             pipeline_info.error = PipelineErrorInfo(
                 message=error_message,
                 traceback=traceback_message,
             )
         else:
-            pipeline_info.status = PipelineStatus.COMPLETED
+            pipeline_info.status = PipelineStatus.SUCCESSFUL
 
 
 def _process_node_completion_event(
@@ -216,11 +216,11 @@ def _process_node_completion_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id", "unknown_node")
-    status = event.get("status", "Success")
+    status = event.get("status", "Successful")
     duration = float(event.get("duration_sec", 0.0))
 
     nodes[node_id] = NodeInfo(
-        status=convert_status_to_enum(status, NodeStatus.SUCCESS),
+        status=convert_status_to_enum(status, NodeStatus.SUCCESSFUL),
         duration_sec=duration,
     )
 
@@ -236,7 +236,7 @@ def _process_node_error_event(
     """
     node_id = event.get("node_id", "unknown_node")
     error_message = event.get("error", "Unknown error")
-    traceback_message = event.get("traceback")
+    traceback_message = event.get("traceback", "")
 
     error_info = NodeErrorInfo(
         message=error_message,
@@ -244,11 +244,11 @@ def _process_node_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = NodeStatus.FAIL
+        nodes[node_id].status = NodeStatus.FAILED
         nodes[node_id].error = error_info
     else:
         nodes[node_id] = NodeInfo(
-            status=NodeStatus.FAIL,
+            status=NodeStatus.FAILED,
             error=error_info,
         )
 
@@ -303,7 +303,7 @@ def _process_dataset_error_event(
     node_id = event.get("node_id", "")
     node_name = event.get("node", "")
     error_message = event.get("error", "Dataset error")
-    traceback_message = event.get("traceback")
+    traceback_message = event.get("traceback", "")
 
     # Update dataset status if dataset name is provided
     if dataset_name:
@@ -333,13 +333,13 @@ def _process_dataset_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = NodeStatus.FAIL
+        nodes[node_id].status = NodeStatus.FAILED
         nodes[node_id].error = node_error_info
     elif node_name:
         # Try to find node by name if node_id is not available
         for nid, node in nodes.items():
             if nid.endswith(node_name):
-                node.status = NodeStatus.FAIL
+                node.status = NodeStatus.FAILED
                 node.error = node_error_info
                 break
 
@@ -367,7 +367,7 @@ def _finalize_pipeline_info(
 
     # Calculate total pipeline duration
     node_durations = {node_id: node.duration_sec for node_id, node in nodes.items()}
-    pipeline_info.total_duration_sec = calculate_pipeline_duration(
+    pipeline_info.duration_sec = calculate_pipeline_duration(
         pipeline_info.start_time,
         pipeline_info.end_time,
         node_durations,
