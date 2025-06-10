@@ -5,6 +5,8 @@ import { curveBasis, line } from 'd3-shape';
 import { limitPrecision } from './utils/draw-utils';
 import { DURATION } from './utils/config';
 
+import './styles/index.scss';
+
 const lineShape = line()
   .x((d) => d.x)
   .y((d) => d.y)

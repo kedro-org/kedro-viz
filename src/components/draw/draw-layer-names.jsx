@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { select } from 'd3-selection';
 import classnames from 'classnames';
 
+import './styles/index.scss';
+
 /**
  * Functional React component for drawing layer name labels using D3
  */

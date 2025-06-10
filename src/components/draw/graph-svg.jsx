@@ -1,6 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import './styles/index.scss';
+
 /**
  * GraphSVG wraps the SVG root, zoom wrapper, and marker definitions for the graph.
  */
