@@ -58,10 +58,10 @@ def create_dataset_event(
 
 def extract_file_paths(dataset: Any) -> List[str]:
     """Extract file paths from a dataset object.
-    
+
     Args:
         dataset: Dataset object to extract paths from
-        
+
     Returns:
         List of file paths found in the dataset
     """
@@ -75,10 +75,10 @@ def extract_file_paths(dataset: Any) -> List[str]:
 
 def get_file_size(file_path: str) -> Optional[int]:
     """Get size of a file.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         File size in bytes, or None if file doesn't exist
     """
@@ -112,7 +112,7 @@ def compute_size(
         size = get_file_size(file_path)
         if size is not None:
             return size
-    
+
     return None
 
 
@@ -133,7 +133,7 @@ def write_events(
         if not project:
             logger.warning("No Kedro project found; skipping write.")
             return
-        
+
         events_json = json.dumps(events, indent=2)
         write_events_to_file(project, events_dir, events_file, events_json)
     except (OSError, TypeError, ValueError) as exc:  # pragma: no cover
@@ -144,7 +144,7 @@ def write_events_to_file(
     project_path: Path, events_dir: str, events_file: str, events_json: str
 ) -> None:
     """Write events JSON to file.
-    
+
     Args:
         project_path: Path to the Kedro project
         events_dir: Directory to write events to

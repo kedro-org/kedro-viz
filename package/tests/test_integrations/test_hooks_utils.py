@@ -1,21 +1,21 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import patch
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
     TIME_FORMAT,
-    extract_file_paths,
-    get_file_size,
-    write_events_to_file,
-    hash_node,
-    create_dataset_event,
     compute_size,
+    create_dataset_event,
+    extract_file_paths,
     generate_timestamp,
+    get_file_size,
+    hash_node,
     is_default_run,
+    write_events_to_file,
 )
 
 
@@ -24,16 +24,21 @@ class TestPureFunctions:
 
     def test_hash_node_with_kedro_node(self):
         """Test hash_node function with KedroNode - no mocking needed."""
+
         def dummy_func(x):
             return x
 
         from kedro.pipeline import node
+
         kedro_node = node(
-            func=dummy_func, inputs="input_data", outputs="output_data", name="test_node"
+            func=dummy_func,
+            inputs="input_data",
+            outputs="output_data",
+            name="test_node",
         )
 
         result = hash_node(kedro_node)
-        
+
         # Should return a consistent hash
         assert isinstance(result, str)
         assert len(result) > 0
@@ -44,7 +49,7 @@ class TestPureFunctions:
         """Test hash_node function with string input - no mocking needed."""
         test_input = "test_dataset"
         result = hash_node(test_input)
-        
+
         assert isinstance(result, str)
         assert len(result) > 0
         # Should be deterministic
@@ -52,6 +57,7 @@ class TestPureFunctions:
 
     def test_extract_file_paths(self):
         """Test extract_file_paths function - no mocking needed."""
+
         class MockDataset:
             def __init__(self, filepath=None, _filepath=None):
                 if filepath:
@@ -88,7 +94,7 @@ class TestPureFunctions:
         # Check if it matches the expected format
         parsed_time = datetime.strptime(result, TIME_FORMAT)
         assert parsed_time is not None
-        
+
         # Should be recent (within last minute)
         now = datetime.now(tz=timezone.utc)
         parsed_time_utc = parsed_time.replace(tzinfo=timezone.utc)
@@ -109,7 +115,9 @@ class TestCreateDatasetEvent:
         expected = {
             "event": event_type,
             "dataset": dataset_name,
-            "node_id": hash_node(dataset_name),  # We know this works from previous tests
+            "node_id": hash_node(
+                dataset_name
+            ),  # We know this works from previous tests
             "status": "Available",
         }
 
@@ -117,15 +125,16 @@ class TestCreateDatasetEvent:
 
     def test_create_dataset_event_with_datasets_but_no_size(self):
         """Test when datasets provided but no size computed."""
+
         class MockDataset:
             pass  # No filepath attributes
 
         datasets = {"test_dataset": MockDataset()}
-        
+
         result = create_dataset_event(
             "after_dataset_saved", "test_dataset", "some_data", datasets
         )
-        
+
         # Should not include size_bytes since no filepath available
         assert "size_bytes" not in result
         assert result["event"] == "after_dataset_saved"
@@ -141,6 +150,7 @@ class TestComputeSize:
 
     def test_compute_size_no_filepath(self):
         """Test compute_size when dataset has no filepath - no mocking needed."""
+
         class MockDataset:
             pass  # No filepath attributes
 
@@ -170,19 +180,21 @@ class TestFileOperations:
     def test_write_events_to_file_integration(self):
         """Test write_events_to_file with real filesystem operations."""
         test_events_json = '[\n  {\n    "event": "test_event"\n  }\n]'
-        
+
         with TemporaryDirectory() as temp_dir:
             project_path = Path(temp_dir)
             events_dir = ".viz"
             events_file = "test_events.json"
-            
+
             # This should work without mocking
-            write_events_to_file(project_path, events_dir, events_file, test_events_json)
-            
+            write_events_to_file(
+                project_path, events_dir, events_file, test_events_json
+            )
+
             # Verify file was created
             expected_path = project_path / events_dir / events_file
             assert expected_path.exists()
-            
+
             # Verify contents
             content = expected_path.read_text(encoding="utf8")
             assert content == test_events_json
@@ -218,7 +230,7 @@ class TestIsDefaultRun:
             {"pipeline_name": None, "tags": [], "namespace": ""},  # Mix of falsy values
             {"extra_param": "ignored"},  # Non-filtering params ignored
         ]
-        
+
         for run_params in test_cases:
             result = is_default_run(run_params)
             assert result is True

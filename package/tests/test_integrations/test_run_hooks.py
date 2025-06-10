@@ -136,7 +136,7 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
             return_value={"event": "after_dataset_loaded", "dataset": "test_dataset"},
         )
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 
@@ -165,7 +165,7 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
             return_value={"event": "after_dataset_saved", "dataset": "test_dataset"},
         )
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 
@@ -190,7 +190,7 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
             return_value="test_node_hash",
         )
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 
@@ -221,7 +221,7 @@ class TestPipelineRunStatusHook:
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
             return_value="2021-01-01T00:00:00.000Z",
         )
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 
@@ -250,7 +250,7 @@ class TestPipelineRunStatusHook:
             return_value="2021-01-01T00:00:00.000Z",
         )
         mock_write_events = mocker.patch.object(hooks, "_write_events")
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 
@@ -278,7 +278,7 @@ class TestPipelineRunStatusHook:
             return_value="2021-01-01T00:00:00.000Z",
         )
         mocker.patch.object(hooks, "_write_events")
-        
+
         # Set up pipeline nodes so events can be added
         hooks._all_nodes = [sample_node]
 

@@ -22,10 +22,10 @@ logger = logging.getLogger(__name__)
 class PipelineRunStatusHook:
     """
     Collect and write pipeline and dataset events during Kedro runs.
-    
+
     This hook class tracks pipeline execution events. It integrates with Kedro's hook
     system to monitor pipeline runs and persist execution data for visualization.
-    
+
     Attributes:
         _node_start (dict[str, float]): Mapping of node names to their start times
             for performance tracking.
@@ -47,7 +47,7 @@ class PipelineRunStatusHook:
     def __init__(self):
         """
         Initialize the pipeline run status hook.
-        
+
         Sets up empty tracking structures for monitoring pipeline execution,
         including event collection, timing data, and error context management.
         """
@@ -67,7 +67,7 @@ class PipelineRunStatusHook:
 
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
-        
+
         # We add events only for full/default pipeline as for MVP we only support
         # full/default pipeline.
         if not self._all_nodes:
@@ -109,8 +109,8 @@ class PipelineRunStatusHook:
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:
         """
         Emit start event based on run_params values.
-        
-        Records the beginning of a pipeline execution 
+
+        Records the beginning of a pipeline execution
         only for full/default pipeline.
         """
         if not is_default_run(run_params):
@@ -123,7 +123,7 @@ class PipelineRunStatusHook:
 
     @hook_impl
     def before_dataset_loaded(self, dataset_name: str, node: KedroNode) -> None:
-        """Set context before a dataset is loaded by a node. """
+        """Set context before a dataset is loaded by a node."""
         self._set_context(dataset_name, "loading", node)
 
     @hook_impl
