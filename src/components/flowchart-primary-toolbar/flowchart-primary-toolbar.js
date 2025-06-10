@@ -43,6 +43,7 @@ export const FlowchartPrimaryToolbar = ({
   isFlowchartView,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
+  const isFlowchartView = view === 'flowchart';
 
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
@@ -130,6 +131,7 @@ export const mapStateToProps = (state) => ({
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
+  view: state.view,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

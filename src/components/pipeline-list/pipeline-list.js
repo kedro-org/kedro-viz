@@ -7,6 +7,7 @@ import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './pipeline-list.scss';
+import { VIEW } from '../../config';
 
 /**
  * A Dropdown displaying a list of selectable pipelines
@@ -23,6 +24,7 @@ export const PipelineList = ({
   isWorkflowView,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
+  const isWorkflowView = view === VIEW.WORKFLOW;
 
   if (!pipeline.ids.length && !asyncDataSource) {
     return null;
@@ -65,6 +67,7 @@ export const mapStateToProps = (state) => ({
   asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
   isPrettyName: state.isPrettyName,
+  view: state.view,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
