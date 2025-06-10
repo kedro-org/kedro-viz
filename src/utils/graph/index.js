@@ -18,6 +18,10 @@ export const graphNew = ({ nodes, edges, layers, orientation }) => {
     const textWidth = fullName * 7;
     const textGap = 6;
     const innerWidth = node.iconSize + textWidth + textGap;
+    console.log(
+      `Node ${node.name} - iconSize: ${node.iconSize}, textWidth: ${textWidth}, innerWidth: ${innerWidth}`
+    );
+    // Set default width and height based on icon size and text width
 
     node.width = node.width || innerWidth + padding.x * 2;
     node.height = node.height || node.iconSize + padding.y * 2;
@@ -26,6 +30,7 @@ export const graphNew = ({ nodes, edges, layers, orientation }) => {
   }
 
   const result = graph(nodes, edges, layers, orientation);
+  console.log('Graph layout result:', result);
 
   return {
     ...result,

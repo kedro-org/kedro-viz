@@ -14,7 +14,7 @@
   "proxy": "http://localhost:4142/",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp ./build/index.html ./build/404.html",
+    "build": "vite build && cp ./dist/index.html ./dist/404.html",
     "preview": "vite preview",
     "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p dev start:lib",
@@ -33,7 +33,7 @@
     "lint": "npm-run-all -p lint:js lint:scss",
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
-    "test": "jest --env=jsdom",
+    "test": "jest --watch src --env=jsdom",
     "test:coverage": "jest --coverage --watchAll=false",
     "test:ci": "jest --watchAll=false --maxWorkers=2",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",

@@ -10,7 +10,7 @@
 const isTest = typeof jest !== 'undefined';
 
 const createWorker = () => {
-  return new Worker(new URL('./graph.worker.js', import.meta.url), { type: 'module' });
+  return new Worker(new URL('./graph-worker.js', import.meta.url), { type: 'module' });
 };
 
 /**
