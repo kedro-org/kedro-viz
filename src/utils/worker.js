@@ -10,7 +10,9 @@
 const isTest = typeof jest !== 'undefined';
 
 const createWorker = () => {
-  return new Worker(new URL('./graph-worker.js', import.meta.url), { type: 'module' });
+  return new Worker(new URL('./graph-worker.js', import.meta.url), {
+    type: 'module',
+  });
 };
 
 /**
@@ -22,8 +24,6 @@ const createMockWorker = (workerModule) => {
   }
 
   return () => {
-    let handler = null;
-
     const mockWorker = {
       terminate: () => {},
       postMessage: async (payload) => {
@@ -36,7 +36,7 @@ const createMockWorker = (workerModule) => {
           }
         }, 0);
       },
-      onmessage: null
+      onmessage: null,
     };
 
     return mockWorker;
@@ -56,7 +56,7 @@ export function preventWorkerQueues(worker, getJob) {
   return async (payload) => {
     if (running) {
       instance.terminate(); // Kill the previous worker
-      instance = worker();  // Create a new worker
+      instance = worker(); // Create a new worker
     }
     running = true;
 

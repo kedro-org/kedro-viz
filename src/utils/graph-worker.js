@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { graphNew } from './graph/index.js';
 
 self.addEventListener('message', (event) => {
