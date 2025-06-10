@@ -34,7 +34,7 @@
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "test": "jest --watch src --env=jsdom",
     "test:coverage": "npm test -- --coverage --watchAll=false",
-    "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
+    "test:ci": "jest --watchAll=false --maxWorkers=2",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "cy:dev": "cypress open",
     "cy:test": "./cypress/support/cy.start.sh local",
