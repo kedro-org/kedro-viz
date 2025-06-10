@@ -89,7 +89,7 @@ class PipelineRunStatusHook:
         self._current_operation = None
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[Any, Any]) -> None:
+    def after_catalog_created(self, catalog: Union[Any, Any]):
         """Grab catalog datasets for size lookups and metadata access."""
         try:
             # prefer new KedroDataCatalog
@@ -106,7 +106,7 @@ class PipelineRunStatusHook:
         )
 
     @hook_impl
-    def before_pipeline_run(self, run_params: dict[str, Any], pipeline: Any) -> None:
+    def before_pipeline_run(self, run_params: dict, pipeline) -> None:
         """
         Emit start event based on run_params values.
 
