@@ -12,6 +12,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     create_dataset_event,
     generate_timestamp,
     hash_node,
+    is_default_run,
     write_events,
 )
 
@@ -107,13 +108,12 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:
         """
-        Emit start event unless this is a named pipeline run.
+        Emit start event based on run_params values.
         
-        Records the beginning of a pipeline execution. Only log 
-        for full/default pipeline as for MVP we only support
-        full/default pipeline.
+        Records the beginning of a pipeline execution 
+        only for full/default pipeline.
         """
-        if run_params.get("pipeline_name"):
+        if not is_default_run(run_params):
             return
         self._all_nodes = list(pipeline.nodes)
         self._started_nodes.clear()
@@ -178,7 +178,7 @@ class PipelineRunStatusHook:
     @hook_impl
     def after_pipeline_run(self, run_params) -> None:
         """Record pipeline completion and flush all events to disk."""
-        if run_params.get("pipeline_name"):
+        if not is_default_run(run_params):
             return
         self._add_event(
             {"event": "after_pipeline_run", "timestamp": generate_timestamp()}, True

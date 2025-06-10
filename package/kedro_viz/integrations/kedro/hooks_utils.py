@@ -165,3 +165,42 @@ def generate_timestamp() -> str:
     """
     current_ts = datetime.now(tz=timezone.utc).strftime(TIME_FORMAT)
     return current_ts
+
+
+def is_default_run(run_params: dict) -> bool:
+    """
+    Check if run_params are empty/have no values (full/default pipeline run).
+
+    Only process full/default pipeline runs where all filtering parameters
+    are empty or have no meaningful values.
+
+    Args:
+        run_params: Dictionary containing pipeline run parameters
+
+    Returns:
+        bool: True if it's a full/default pipeline run, False otherwise
+    """
+    # Extract parameters for debugging and checking
+    pipeline_name = run_params.get("pipeline_name")
+    tags = run_params.get("tags")
+    from_nodes = run_params.get("from_nodes")
+    to_nodes = run_params.get("to_nodes")
+    node_names = run_params.get("node_names")
+    from_inputs = run_params.get("from_inputs")
+    to_outputs = run_params.get("to_outputs")
+    namespace = run_params.get("namespace")
+
+    # List of all filtering parameters to check
+    filtering_params = [
+        pipeline_name,
+        tags,
+        from_nodes,
+        to_nodes,
+        node_names,
+        from_inputs,
+        to_outputs,
+        namespace,
+    ]
+
+    # True if none of the filtering params are set (i.e. full/default run)
+    return not any(filtering_params)

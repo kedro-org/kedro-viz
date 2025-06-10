@@ -15,6 +15,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     create_dataset_event,
     compute_size,
     generate_timestamp,
+    is_default_run,
 )
 
 
@@ -204,3 +205,25 @@ class TestOnlyWhenMockingIsNecessary:
 
         assert result == 3072
         mock_get_file_size.assert_called_once_with("/some/file.csv")
+
+
+class TestIsDefaultRun:
+    """Test is_default_run function."""
+
+    def test_is_default_run_returns_true_for_empty_params(self):
+        """Test is_default_run returns True when no filtering parameters are set."""
+        # Test various combinations of empty/falsy values
+        test_cases = [
+            {},  # Empty dict
+            {"pipeline_name": None, "tags": [], "namespace": ""},  # Mix of falsy values
+            {"extra_param": "ignored"},  # Non-filtering params ignored
+        ]
+        
+        for run_params in test_cases:
+            result = is_default_run(run_params)
+            assert result is True
+
+    def test_is_default_run_returns_false_when_filtering_params_set(self):
+        """Test is_default_run returns False when any filtering parameter is set."""
+        result = is_default_run({"pipeline_name": "custom"})
+        assert result is False
