@@ -145,7 +145,7 @@ class TestComputeSize:
 
     def test_compute_size_no_dataset(self):
         """Test compute_size function when dataset not found - no mocking needed."""
-        result = compute_size("nonexistent_dataset", "test_data", {})
+        result = compute_size("nonexistent_dataset", {})
         assert result is None
 
     def test_compute_size_no_filepath(self):
@@ -155,7 +155,7 @@ class TestComputeSize:
             pass  # No filepath attributes
 
         datasets = {"test_dataset": MockDataset()}
-        result = compute_size("test_dataset", "test_data", datasets)
+        result = compute_size("test_dataset", datasets)
         assert result is None
 
     @patch("kedro_viz.integrations.kedro.hooks_utils.get_file_size")
@@ -168,7 +168,7 @@ class TestComputeSize:
                 self.filepath = "/path/to/file.csv"
 
         datasets = {"test_dataset": MockDataset()}
-        result = compute_size("test_dataset", "test_data", datasets)
+        result = compute_size("test_dataset", datasets)
 
         assert result == 1024
         mock_get_file_size.assert_called_once_with("/path/to/file.csv")
@@ -213,7 +213,7 @@ class TestOnlyWhenMockingIsNecessary:
                 self.filepath = "/some/file.csv"
 
         datasets = {"test_dataset": MockDataset()}
-        result = compute_size("test_dataset", "any_data", datasets)
+        result = compute_size("test_dataset", datasets)
 
         assert result == 3072
         mock_get_file_size.assert_called_once_with("/some/file.csv")
