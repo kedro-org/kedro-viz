@@ -66,9 +66,7 @@ def test_after_catalog_created_import_error(hooks, mocker):
     original_import = __import__
 
     # Mock the local import within the function to raise ImportError
-    def mock_import_side_effect(
-        name, globals=None, locals=None, fromlist=(), level=0
-    ):
+    def mock_import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
         if name == "kedro.io" and "KedroDataCatalog" in fromlist:
             raise ImportError("No module named 'kedro.io'")
         # For any other imports, use the original import
@@ -208,7 +206,9 @@ def test_node_execution_workflow(hooks, sample_node, mock_hash_node_run_hooks):
     assert hooks._current_node is None
 
 
-def test_after_pipeline_run_default(hooks, sample_node, mock_generate_timestamp, mock_write_events):
+def test_after_pipeline_run_default(
+    hooks, sample_node, mock_generate_timestamp, mock_write_events
+):
     """Test after_pipeline_run hook with default pipeline."""
     # Set up pipeline nodes so events can be added
     hooks._all_nodes = [sample_node]
@@ -229,7 +229,13 @@ def test_after_pipeline_run_named_pipeline_skips(hooks):
     assert len(hooks._events) == 0
 
 
-def test_on_node_error(hooks, sample_node, mock_hash_node_run_hooks, mock_generate_timestamp, mock_write_events):
+def test_on_node_error(
+    hooks,
+    sample_node,
+    mock_hash_node_run_hooks,
+    mock_generate_timestamp,
+    mock_write_events,
+):
     """Test on_node_error hook."""
     # Set up pipeline nodes so events can be added
     hooks._all_nodes = [sample_node]
@@ -248,7 +254,13 @@ def test_on_node_error(hooks, sample_node, mock_hash_node_run_hooks, mock_genera
     mock_write_events.assert_called_once()
 
 
-def test_on_pipeline_error_with_context(hooks, sample_node, mock_hash_node_run_hooks, mock_generate_timestamp, mock_write_events):
+def test_on_pipeline_error_with_context(
+    hooks,
+    sample_node,
+    mock_hash_node_run_hooks,
+    mock_generate_timestamp,
+    mock_write_events,
+):
     """Test on_pipeline_error hook with dataset and node context."""
     # Set up pipeline nodes so events can be added
     hooks._all_nodes = [sample_node]
@@ -271,7 +283,13 @@ def test_on_pipeline_error_with_context(hooks, sample_node, mock_hash_node_run_h
     assert event["node_id"] == "test_node_hash"
 
 
-def test_on_pipeline_error_with_unstarted_node(hooks, sample_node, mock_hash_node_run_hooks, mock_generate_timestamp, mock_write_events):
+def test_on_pipeline_error_with_unstarted_node(
+    hooks,
+    sample_node,
+    mock_hash_node_run_hooks,
+    mock_generate_timestamp,
+    mock_write_events,
+):
     """Test on_pipeline_error hook identifies unstarted nodes."""
     # Set up all nodes but no started nodes
     hooks._all_nodes = [sample_node]
@@ -298,3 +316,26 @@ def test_write_events_no_project(hooks, mocker, caplog):
 
     assert "No Kedro project found; skipping write." in caplog.text
     mock_find_kedro_project.assert_called_once()
+
+
+def test_add_event_skips_when_no_nodes(hooks):
+    """ensure _add_event returns early when no nodes are present."""
+    assert hooks._all_nodes == []
+    hooks._add_event({"event": "dummy"})
+    assert hooks._events == []
+
+
+def test_after_node_run_without_before(hooks, sample_node, mock_hash_node_run_hooks):
+    """call after_node_run **without** a preceding before_node_run so
+    `start` resolves to None and duration becomes 0.0.
+    """
+    # Populate _all_nodes so _add_event won't bail out.
+    hooks._all_nodes = [sample_node]
+
+    hooks.after_node_run(sample_node)
+
+    assert len(hooks._events) == 1
+    event = hooks._events[0]
+    assert event["event"] == "after_node_run"
+    assert event["duration_sec"] == 0.0
+    assert event["node_id"] == "test_node_hash"

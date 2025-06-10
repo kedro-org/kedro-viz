@@ -70,7 +70,7 @@ class PipelineRunStatusHook:
 
         # We add events only for full/default pipeline as for MVP we only support
         # full/default pipeline.
-        if not self._all_nodes:
+        if len(self._all_nodes) == 0:
             return
 
         self._events.append(event)

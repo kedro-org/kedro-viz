@@ -14,6 +14,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     get_file_size,
     hash_node,
     is_default_run,
+    write_events,
     write_events_to_file,
 )
 
@@ -111,9 +112,7 @@ def test_create_dataset_event_basic():
     expected = {
         "event": event_type,
         "dataset": dataset_name,
-        "node_id": hash_node(
-            dataset_name
-        ),  # We know this works from previous tests
+        "node_id": hash_node(dataset_name),  # We know this works from previous tests
         "status": "Available",
     }
 
@@ -156,6 +155,7 @@ def test_compute_size_no_filepath():
 
 def test_compute_size_with_filepath(mock_get_file_size):
     """Test compute_size function with dataset that has filepath - minimal mocking."""
+
     class MockDataset:
         def __init__(self):
             self.filepath = "/path/to/file.csv"
@@ -177,9 +177,7 @@ def test_write_events_to_file_integration():
         events_file = "test_events.json"
 
         # This should work without mocking
-        write_events_to_file(
-            project_path, events_dir, events_file, test_events_json
-        )
+        write_events_to_file(project_path, events_dir, events_file, test_events_json)
 
         # Verify file was created
         expected_path = project_path / events_dir / events_file
@@ -226,3 +224,62 @@ def test_is_default_run_returns_false_when_filtering_params_set():
     """Test is_default_run returns False when any filtering parameter is set."""
     result = is_default_run({"pipeline_name": "custom"})
     assert result is False
+
+
+def test_create_dataset_event_includes_size(mocker):
+    """size_bytes gets added when compute_size returns a number."""
+
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks_utils.compute_size",
+        return_value=2048,
+    )
+
+    event = create_dataset_event(
+        event_type="after_dataset_saved",
+        dataset_name="my_dataset",
+        dataset_value="dummy",
+        datasets={"my_dataset": object()},
+    )
+
+    assert event["size_bytes"] == 2048
+    assert event["status"] == "Available"
+
+
+def test_get_file_size_existing_path(mocker):
+    """happy-path where the file exists and has a size."""
+    fake_fs = mocker.Mock()
+    fake_fs.exists.return_value = True
+    fake_fs.size.return_value = 1234
+
+    # url_to_fs returns our stub FS plus a path string
+    mocker.patch("fsspec.core.url_to_fs", return_value=(fake_fs, "dummy/path"))
+
+    size = get_file_size("dummy/path")
+
+    assert size == 1234  # line 87 executed
+    fake_fs.exists.assert_called_once_with("dummy/path")
+    fake_fs.size.assert_called_once_with("dummy/path")
+
+
+def test_write_events_invokes_write_events_to_file(mocker):
+    """json.dumps and delegated file-write."""
+    events = [{"event": "foo"}]
+
+    with TemporaryDirectory() as tmp:
+        proj_path = Path(tmp)
+
+        mocker.patch(
+            "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
+            return_value=proj_path,
+        )
+
+        spy = mocker.patch(
+            "kedro_viz.integrations.kedro.hooks_utils.write_events_to_file"
+        )
+
+        write_events(events)
+
+        spy.assert_called_once()
+        args = spy.call_args[0]
+        assert args[0] == proj_path
+        assert json.loads(args[3]) == events
