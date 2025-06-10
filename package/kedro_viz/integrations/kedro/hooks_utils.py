@@ -50,7 +50,7 @@ def create_dataset_event(
     }
 
     if dataset_value is not None and datasets:
-        size = compute_size(dataset_name, dataset_value, datasets)
+        size = compute_size(dataset_name, datasets)
         if size is not None:
             event["size_bytes"] = size  # only attach size when available
     return event
@@ -90,13 +90,12 @@ def get_file_size(file_path: str) -> Optional[int]:
 
 
 def compute_size(
-    dataset_name: str, dataset_value: Any, datasets: Dict[str, Any]
+    dataset_name: str, datasets: Dict[str, Any]
 ) -> Optional[int]:
     """Determine file size for dataset with filepath attribute.
 
     Args:
         dataset_name: Dataset name
-        dataset_value: Dataset data (unused, kept for compatibility)
         datasets: Dictionary of available datasets
 
     Returns:

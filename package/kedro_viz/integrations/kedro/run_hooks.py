@@ -161,7 +161,7 @@ class PipelineRunStatusHook:
     @hook_impl
     def after_node_run(self, node: KedroNode) -> None:
         """Record successful node completion with performance metrics."""
-        start = self._node_start.get(node.name, perf_counter())
+        start = self._node_start.get(node.name)
         duration = perf_counter() - start
         self._add_event(
             {
