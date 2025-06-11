@@ -18,6 +18,7 @@ export const graphNew = ({ nodes, edges, layers, orientation }) => {
     const textWidth = fullName * 7;
     const textGap = 6;
     const innerWidth = node.iconSize + textWidth + textGap;
+    // Set default width and height based on icon size and text width
 
     node.width = node.width || innerWidth + padding.x * 2;
     node.height = node.height || node.iconSize + padding.y * 2;
