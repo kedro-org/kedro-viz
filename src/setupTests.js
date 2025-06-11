@@ -9,19 +9,33 @@ window.URL.createObjectURL = jest.fn();
 
 // Patch d3-selection to mock transition chain for testing
 selection.prototype.transition = function () {
-  const noop = () => this;
-
   return {
-    duration: noop,
-    style: noop,
-    attr: noop,
-    attrTween: noop,
-    on: noop,
-    ease: noop,
-    remove: noop,
-    select: noop,
+    duration() {
+      return this;
+    },
+    style() {
+      return this;
+    },
+    attr() {
+      return this;
+    },
+    attrTween() {
+      return this;
+    },
     call(fn) {
       fn(this);
+      return this;
+    },
+    on() {
+      return this;
+    },
+    ease() {
+      return this;
+    },
+    remove() {
+      return this;
+    },
+    select() {
       return this;
     },
   };
