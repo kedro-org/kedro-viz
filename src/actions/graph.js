@@ -31,14 +31,11 @@ export function updateGraph(graph) {
 const layoutWorker = preventWorkerQueues(worker, async (instance, state) => {
   return new Promise((resolve) => {
     instance.onmessage = (event) => {
-      console.log("🎯 Received result from worker:", event.data);
       resolve(event.data);
     };
-    console.log("📩 Sending state to worker:", state);
-    instance.postMessage({ action: "graphNew", data: state });
+    instance.postMessage({ action: 'graphNew', data: state });
   });
 });
-
 
 /**
  * Async action to calculate graph layout in a web worker
