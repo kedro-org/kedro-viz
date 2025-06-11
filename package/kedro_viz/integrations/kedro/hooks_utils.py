@@ -85,13 +85,17 @@ def get_file_size(file_path: str) -> Optional[int]:
     try:
         filesystem, path = fsspec.core.url_to_fs(file_path)
         return filesystem.size(path) if filesystem.exists(path) else None
-    except Exception:  # pragma: no cover
+    except (
+        OSError,
+        ValueError,
+        FileNotFoundError,
+        AttributeError,
+    ) as exc:  # pragma: no cover
+        logger.debug("Unable to get file size for %s: %s", file_path, exc)
         return None
 
 
-def compute_size(
-    dataset_name: str, datasets: Dict[str, Any]
-) -> Optional[int]:
+def compute_size(dataset_name: str, datasets: Dict[str, Any]) -> Optional[int]:
     """Determine file size for dataset with filepath attribute.
 
     Args:

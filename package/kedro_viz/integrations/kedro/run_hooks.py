@@ -70,7 +70,7 @@ class PipelineRunStatusHook:
 
         # We add events only for full/default pipeline as for MVP we only support
         # full/default pipeline.
-        if not self._all_nodes:
+        if len(self._all_nodes) == 0:
             return
 
         self._events.append(event)
@@ -162,7 +162,10 @@ class PipelineRunStatusHook:
     def after_node_run(self, node: KedroNode) -> None:
         """Record successful node completion with performance metrics."""
         start = self._node_start.get(node.name)
-        duration = perf_counter() - start
+        if start is None:
+            duration = 0.0
+        else:
+            duration = perf_counter() - start
         self._add_event(
             {
                 "event": "after_node_run",
