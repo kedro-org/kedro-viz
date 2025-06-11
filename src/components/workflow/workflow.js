@@ -239,15 +239,19 @@ export class Workflow extends Component {
 
     // Apply animating class to zoom wrapper
     select(this.wrapperRef.current).classed(
-      'pipeline-workflow-wrapper--animating',
+      '.pipeline-workflow__zoom-wrapper--animating',
       true
     );
-
     // Update layer label y positions
     if (this.layerNamesRef?.current) {
       const layerNames = this.layerNamesRef.current.querySelectorAll(
         '.pipeline-layer-name'
       );
+      if (layerNames.length !== this.props.layers.length) {
+        // If ot all layer labels are rendered yet; defer the update
+        setTimeout(() => this.onViewChange(transform), 0);
+        return;
+      }
       this.props.layers.forEach((layer, i) => {
         const el = layerNames[i];
         if (!el) {
