@@ -62,7 +62,7 @@ def test_after_catalog_created_with_kedro_data_catalog(
             self.datasets = datasets
 
     fake_kedro_io = ModuleType("kedro.io")
-    fake_kedro_io.KedroDataCatalog = DummyKedroDataCatalog  # noqa: F821
+    fake_kedro_io.KedroDataCatalog = DummyKedroDataCatalog  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "kedro.io", fake_kedro_io)
 
     kedro_catalog = DummyKedroDataCatalog({"memory": object()})
