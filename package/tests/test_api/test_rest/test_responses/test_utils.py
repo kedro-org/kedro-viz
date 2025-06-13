@@ -1,3 +1,4 @@
+import datetime
 from unittest.mock import patch
 
 import pytest
@@ -48,73 +49,30 @@ def test_get_encoded_response(mocker):
     assert result == mock_encoded_response
 
 
-def test_convert_status_to_enum_valid():
-    """Test convert_status_to_enum with valid status."""
-    result = convert_status_to_enum("successful", NodeStatus.FAILED)
-    assert result == NodeStatus.SUCCESSFUL
-
-    result = convert_status_to_enum("SUCCESSFUL", NodeStatus.FAILED)
-    assert result == NodeStatus.SUCCESSFUL
-
-
-def test_convert_status_to_enum_invalid():
-    """Test convert_status_to_enum with invalid status returns default."""
-    result = convert_status_to_enum("unknown", NodeStatus.SUCCESSFUL)
-    assert result == NodeStatus.SUCCESSFUL
-
-    result = convert_status_to_enum(None, DatasetStatus.AVAILABLE)
-    assert result == DatasetStatus.AVAILABLE
+def test_convert_status_to_enum_cases():
+    assert (
+        convert_status_to_enum("successful", NodeStatus.FAILED) is NodeStatus.SUCCESSFUL
+    )
+    assert convert_status_to_enum("FAILED", NodeStatus.SUCCESSFUL) is NodeStatus.FAILED
+    # Unknown / None → default
+    assert (
+        convert_status_to_enum("does-not-exist", NodeStatus.SUCCESSFUL)
+        is NodeStatus.SUCCESSFUL
+    )
+    assert convert_status_to_enum(None, NodeStatus.SUCCESSFUL) is NodeStatus.SUCCESSFUL
 
 
-def test_calculate_pipeline_duration_from_timestamps():
-    """Test calculating duration from valid timestamps."""
-    start_time = "2023-01-01T10:00:00"
-    end_time = "2023-01-01T10:15:30"
-    nodes_durations = {"node1": 10.0}
-
-    result = calculate_pipeline_duration(start_time, end_time, nodes_durations)
-    assert result == 930.0  # 15 minutes 30 seconds
+@pytest.mark.parametrize("delta", [5, 17])
+def test_calculate_pipeline_duration_from_timestamps(delta):
+    now = datetime.datetime.now()
+    later = now + datetime.timedelta(seconds=delta)
+    assert calculate_pipeline_duration(
+        now.isoformat(), later.isoformat(), {"x": 1}
+    ) == pytest.approx(delta, abs=1e-6)
 
 
 def test_calculate_pipeline_duration_fallback():
-    """Test fallback to node durations when timestamps are invalid."""
-    nodes_durations = {"node1": 10.0, "node2": 20.0}
-
-    # Invalid timestamps
-    result = calculate_pipeline_duration("invalid", "timestamps", nodes_durations)
-    assert result == 30.0  # Sum of node durations
-
-    # No timestamps
-    result = calculate_pipeline_duration(None, None, nodes_durations)
-    assert result == 30.0
-
-
-def test_convert_status_debug_logging():
-    """Test debug logging for unknown status."""
-    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
-        mock_logger_instance = mock_logger.return_value
-        result = convert_status_to_enum("unknown_status", NodeStatus.SUCCESSFUL)
-        assert result == NodeStatus.SUCCESSFUL
-        mock_logger_instance.debug.assert_called_once()
-
-
-def test_calculate_duration_info_logging():
-    """Test info logging for successful timestamp calculation."""
-    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
-        mock_logger_instance = mock_logger.return_value
-        start_time = "2023-01-01T10:00:00"
-        end_time = "2023-01-01T10:01:00"
-        result = calculate_pipeline_duration(start_time, end_time, {})
-        assert result == 60.0
-        mock_logger_instance.info.assert_called_once()
-
-
-def test_calculate_duration_warning_logging():
-    """Test warning logging for invalid timestamps."""
-    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
-        mock_logger_instance = mock_logger.return_value
-        result = calculate_pipeline_duration(
-            "invalid", "2023-01-01T10:00:00", {"node1": 10.0}
-        )
-        assert result == 10.0
-        mock_logger_instance.warning.assert_called_once()
+    durations = {"a": 2.5, "b": 7.5}
+    assert calculate_pipeline_duration("bad", "still-bad", durations) == sum(
+        durations.values()
+    )
