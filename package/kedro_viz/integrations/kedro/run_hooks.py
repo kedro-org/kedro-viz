@@ -89,8 +89,13 @@ class PipelineRunStatusHook:
         self._current_operation = None
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[Any, Any]):
-        """Grab catalog datasets for size lookups and metadata access."""
+    def after_catalog_created(self, catalog: Any):
+        """
+        Triggered after the Kedro DataCatalog is constructed, before pipeline execution.
+        Captures references to all datasets for metadata lookups. At this point, no data
+        has been loaded or saved yet — so only static dataset configuration (not size/content)
+        can be accessed.
+        """
         try:
             # prefer new KedroDataCatalog
             from kedro.io import KedroDataCatalog

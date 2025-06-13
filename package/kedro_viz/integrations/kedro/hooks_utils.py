@@ -134,7 +134,7 @@ def write_events(
     try:
         project = _find_kedro_project(Path.cwd())
         if not project:
-            logger.warning("No Kedro project found; skipping write.")
+            logger.warning("No Kedro project found in %s; skipping write.", Path.cwd())
             return
 
         events_json = json.dumps(events, indent=2)

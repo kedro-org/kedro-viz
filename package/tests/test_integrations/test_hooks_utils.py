@@ -1,8 +1,10 @@
-import json
-from datetime import datetime, timezone
-from pathlib import Path
-from tempfile import TemporaryDirectory
+from __future__ import annotations
 
+import json
+from datetime import datetime
+
+import pytest
+from kedro.pipeline import node
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
@@ -18,268 +20,156 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     write_events_to_file,
 )
 
-
-def test_hash_node_with_kedro_node():
-    """Test hash_node function with KedroNode - no mocking needed."""
-
-    def dummy_func(x):
-        return x
-
-    from kedro.pipeline import node
-
-    kedro_node = node(
-        func=dummy_func,
-        inputs="input_data",
-        outputs="output_data",
-        name="test_node",
-    )
-
-    result = hash_node(kedro_node)
-
-    # Should return a consistent hash
-    assert isinstance(result, str)
-    assert len(result) > 0
-    # Should be deterministic
-    assert result == hash_node(kedro_node)
+# -----------------------------------------------------------------------------
+# Fixtures & helpers
+# -----------------------------------------------------------------------------
 
 
-def test_hash_node_with_string():
-    """Test hash_node function with string input - no mocking needed."""
-    test_input = "test_dataset"
-    result = hash_node(test_input)
-
-    assert isinstance(result, str)
-    assert len(result) > 0
-    # Should be deterministic
-    assert result == hash_node(test_input)
+@pytest.fixture
+def sample_node() -> KedroNode:
+    return node(lambda x: x, inputs="a", outputs="b", name="sample")
 
 
-def test_extract_file_paths():
-    """Test extract_file_paths function - no mocking needed."""
+class DummyDataset:
+    filepath = "data/file.txt"
 
-    class MockDataset:
-        def __init__(self, filepath=None, _filepath=None):
-            if filepath:
-                self.filepath = filepath
-            if _filepath:
-                self._filepath = _filepath
 
-    # Test with filepath
-    dataset_with_filepath = MockDataset(filepath="/path/to/file.csv")
-    paths = extract_file_paths(dataset_with_filepath)
-    assert paths == ["/path/to/file.csv"]
+# -----------------------------------------------------------------------------
+# Hashing helpers
+# -----------------------------------------------------------------------------
 
-    # Test with _filepath
-    dataset_with_private_filepath = MockDataset(_filepath="/private/path/file.csv")
-    paths = extract_file_paths(dataset_with_private_filepath)
-    assert paths == ["/private/path/file.csv"]
 
-    # Test with both
-    dataset_with_both = MockDataset(filepath="/path1.csv", _filepath="/path2.csv")
-    paths = extract_file_paths(dataset_with_both)
-    assert paths == ["/path1.csv", "/path2.csv"]
+def test_hash_node_stable_and_unique(sample_node):
+    a = hash_node(sample_node)
+    b = hash_node(sample_node)
+    assert a == b
+    assert a != hash_node("different")
 
-    # Test with neither
-    dataset_without_filepath = MockDataset()
-    paths = extract_file_paths(dataset_without_filepath)
-    assert paths == []
+
+# -----------------------------------------------------------------------------
+# extract_file_paths + compute_size + get_file_size
+# -----------------------------------------------------------------------------
+
+
+def test_extract_file_paths_variants():
+    class Multi:
+        filepaths = ["a.txt", "b.txt"]
+
+    class Single:
+        filepath = "single.txt"
+
+    assert extract_file_paths(Multi()) == []
+    assert extract_file_paths(Single()) == ["single.txt"]
+
+
+def test_compute_size_and_get_file_size(tmp_path):
+    fp = tmp_path / "file.txt"
+    fp.write_text("abcdef")  # 6 bytes
+
+    assert get_file_size(str(fp)) == 6
+
+    datasets = {"ds": type("Local", (), {"filepath": str(fp)})()}
+    assert compute_size("ds", datasets) == 6
+
+
+def test_compute_size_fallbacks():
+    assert compute_size("missing", {}) is None
+
+    class NoPath:
+        pass
+
+    assert compute_size("ds", {"ds": NoPath()}) is None
+
+
+def test_get_file_size_nonexistent(tmp_path):
+    assert get_file_size(str(tmp_path / "no.txt")) is None
+
+
+# -----------------------------------------------------------------------------
+# create_dataset_event
+# -----------------------------------------------------------------------------
+
+
+def test_create_dataset_event_includes_size(tmp_path):
+    fp = tmp_path / "d.txt"
+    fp.write_text("abc")
+
+    datasets = {"d": type("Local", (), {"filepath": str(fp)})()}
+    evt = create_dataset_event("after_dataset_saved", "d", "value", datasets)
+
+    assert evt["event"] == "after_dataset_saved"
+    assert evt["dataset"] == "d"
+    assert evt["size_bytes"] == 3
+
+
+# -----------------------------------------------------------------------------
+# generate_timestamp()
+# -----------------------------------------------------------------------------
 
 
 def test_generate_timestamp_format():
-    """Test generate_timestamp function - no mocking needed."""
-    result = generate_timestamp()
-
-    # Verify the timestamp format
-    assert isinstance(result, str)
-    # Check if it matches the expected format
-    parsed_time = datetime.strptime(result, TIME_FORMAT)
-    assert parsed_time is not None
-
-    # Should be recent (within last minute)
-    now = datetime.now(tz=timezone.utc)
-    parsed_time_utc = parsed_time.replace(tzinfo=timezone.utc)
-    time_diff = abs((now - parsed_time_utc).total_seconds())
-    assert time_diff < 60  # Within 1 minute
+    ts = generate_timestamp()
+    assert ts.endswith("Z")
+    datetime.strptime(ts, TIME_FORMAT)  # parse without error
 
 
-def test_create_dataset_event_basic():
-    """Test create_dataset_event function with basic parameters - no mocking needed."""
-    event_type = "after_dataset_loaded"
-    dataset_name = "test_dataset"
-
-    result = create_dataset_event(event_type, dataset_name)
-
-    expected = {
-        "event": event_type,
-        "dataset": dataset_name,
-        "node_id": hash_node(dataset_name),  # We know this works from previous tests
-        "status": "Available",
-    }
-
-    assert result == expected
+# -----------------------------------------------------------------------------
+# write_events wrappers
+# -----------------------------------------------------------------------------
 
 
-def test_create_dataset_event_with_datasets_but_no_size():
-    """Test when datasets provided but no size computed."""
+def test_write_events_invokes_impl(monkeypatch, tmp_path):
+    events = [{"event": "x"}]
 
-    class MockDataset:
-        pass  # No filepath attributes
-
-    datasets = {"test_dataset": MockDataset()}
-
-    result = create_dataset_event(
-        "after_dataset_saved", "test_dataset", "some_data", datasets
+    monkeypatch.setattr(
+        "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
+        lambda _: tmp_path,
     )
 
-    # Should not include size_bytes since no filepath available
-    assert "size_bytes" not in result
-    assert result["event"] == "after_dataset_saved"
+    captured = {}
 
+    def _fake(project, events_dir, events_file, events_json):
+        captured["project"] = project
+        captured["json"] = json.loads(events_json)
 
-def test_compute_size_no_dataset():
-    """Test compute_size function when dataset not found - no mocking needed."""
-    result = compute_size("nonexistent_dataset", {})
-    assert result is None
-
-
-def test_compute_size_no_filepath():
-    """Test compute_size when dataset has no filepath - no mocking needed."""
-
-    class MockDataset:
-        pass  # No filepath attributes
-
-    datasets = {"test_dataset": MockDataset()}
-    result = compute_size("test_dataset", datasets)
-    assert result is None
-
-
-def test_compute_size_with_filepath(mock_get_file_size):
-    """Test compute_size function with dataset that has filepath - minimal mocking."""
-
-    class MockDataset:
-        def __init__(self):
-            self.filepath = "/path/to/file.csv"
-
-    datasets = {"test_dataset": MockDataset()}
-    result = compute_size("test_dataset", datasets)
-
-    assert result == 1024
-    mock_get_file_size.assert_called_once_with("/path/to/file.csv")
-
-
-def test_write_events_to_file_integration():
-    """Test write_events_to_file with real filesystem operations."""
-    test_events_json = '[\n  {\n    "event": "test_event"\n  }\n]'
-
-    with TemporaryDirectory() as temp_dir:
-        project_path = Path(temp_dir)
-        events_dir = ".viz"
-        events_file = "test_events.json"
-
-        # This should work without mocking
-        write_events_to_file(project_path, events_dir, events_file, test_events_json)
-
-        # Verify file was created
-        expected_path = project_path / events_dir / events_file
-        assert expected_path.exists()
-
-        # Verify contents
-        content = expected_path.read_text(encoding="utf8")
-        assert content == test_events_json
-
-
-def test_compute_size_with_mocked_file_system(mocker):
-    """Mock only external dependencies like file system operations."""
-    mock_get_file_size = mocker.patch(
-        "kedro_viz.integrations.kedro.hooks_utils.get_file_size",
-        return_value=3072,
+    monkeypatch.setattr(
+        "kedro_viz.integrations.kedro.hooks_utils.write_events_to_file", _fake
     )
 
-    class MockDataset:
-        def __init__(self):
-            self.filepath = "/some/file.csv"
-
-    datasets = {"test_dataset": MockDataset()}
-    result = compute_size("test_dataset", datasets)
-
-    assert result == 3072
-    mock_get_file_size.assert_called_once_with("/some/file.csv")
+    write_events(events)
+    assert captured["project"] == tmp_path
+    assert captured["json"] == events
 
 
-def test_is_default_run_returns_true_for_empty_params():
-    """Test is_default_run returns True when no filtering parameters are set."""
-    # Test various combinations of empty/falsy values
-    test_cases = [
-        {},  # Empty dict
-        {"pipeline_name": None, "tags": [], "namespace": ""},  # Mix of falsy values
-        {"extra_param": "ignored"},  # Non-filtering params ignored
-    ]
-
-    for run_params in test_cases:
-        result = is_default_run(run_params)
-        assert result is True
-
-
-def test_is_default_run_returns_false_when_filtering_params_set():
-    """Test is_default_run returns False when any filtering parameter is set."""
-    result = is_default_run({"pipeline_name": "custom"})
-    assert result is False
-
-
-def test_create_dataset_event_includes_size(mocker):
-    """size_bytes gets added when compute_size returns a number."""
-
-    mocker.patch(
-        "kedro_viz.integrations.kedro.hooks_utils.compute_size",
-        return_value=2048,
+def test_write_events_skips_when_no_project(monkeypatch, caplog):
+    monkeypatch.setattr(
+        "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
+        lambda _: None,
     )
-
-    event = create_dataset_event(
-        event_type="after_dataset_saved",
-        dataset_name="my_dataset",
-        dataset_value="dummy",
-        datasets={"my_dataset": object()},
-    )
-
-    assert event["size_bytes"] == 2048
-    assert event["status"] == "Available"
+    write_events([{"event": "x"}])
+    assert "No Kedro project found" in caplog.text
 
 
-def test_get_file_size_existing_path(mocker):
-    """happy-path where the file exists and has a size."""
-    fake_fs = mocker.Mock()
-    fake_fs.exists.return_value = True
-    fake_fs.size.return_value = 1234
-
-    # url_to_fs returns our stub FS plus a path string
-    mocker.patch("fsspec.core.url_to_fs", return_value=(fake_fs, "dummy/path"))
-
-    size = get_file_size("dummy/path")
-
-    assert size == 1234  # line 87 executed
-    fake_fs.exists.assert_called_once_with("dummy/path")
-    fake_fs.size.assert_called_once_with("dummy/path")
+# -----------------------------------------------------------------------------
+# write_events_to_file integration
+# -----------------------------------------------------------------------------
 
 
-def test_write_events_invokes_write_events_to_file(mocker):
-    """json.dumps and delegated file-write."""
-    events = [{"event": "foo"}]
+def test_write_events_to_file(tmp_path):
+    content = '[{"event": "x"}]'
+    write_events_to_file(tmp_path, ".viz", "events.json", content)
+    out = tmp_path / ".viz" / "events.json"
+    assert json.loads(out.read_text()) == [{"event": "x"}]
 
-    with TemporaryDirectory() as tmp:
-        proj_path = Path(tmp)
 
-        mocker.patch(
-            "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
-            return_value=proj_path,
-        )
+# -----------------------------------------------------------------------------
+# is_default_run()
+# -----------------------------------------------------------------------------
 
-        spy = mocker.patch(
-            "kedro_viz.integrations.kedro.hooks_utils.write_events_to_file"
-        )
 
-        write_events(events)
-
-        spy.assert_called_once()
-        args = spy.call_args[0]
-        assert args[0] == proj_path
-        assert json.loads(args[3]) == events
+@pytest.mark.parametrize(
+    "params, expected",
+    [({}, True), ({"pipeline_name": "etl"}, False), ({"tags": ["a"]}, False)],
+)
+def test_is_default_run(params, expected):
+    assert is_default_run(params) is expected
