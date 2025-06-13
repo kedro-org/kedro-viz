@@ -448,9 +448,9 @@ class TestCliRunViz:
         available_port = _find_available_port("127.0.0.1", 4141)
 
         # Assert that the function returns the first free port, 4143
-        assert available_port == 4143, (
-            "Expected port 4143 to be returned as the available port"
-        )
+        assert (
+            available_port == 4143
+        ), "Expected port 4143 to be returned as the available port"
 
 
 def test_invalid_load_file_directory(mocker):

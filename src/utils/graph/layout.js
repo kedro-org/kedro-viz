@@ -33,7 +33,11 @@ export const layout = ({
   layerSpaceY,
   iterations,
   orientation,
+  view,
 }) => {
+  //60 is height of the run status details rectangle in workflow view
+  const extraVerticalGap = view === 'workflow' ? 60 : 0;
+
   let coordPrimary = 'x';
   let coordSecondary = 'y';
 
@@ -56,6 +60,7 @@ export const layout = ({
     layerSpace: (spaceY + layerSpaceY) * 0.5,
     coordPrimary,
     coordSecondary,
+    extraVerticalGap,
   };
 
   // Constraints to separate nodes into rows and layers
@@ -103,7 +108,10 @@ const createRowConstraints = (edges, layoutConfig) =>
     property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
-    separation: layoutConfig.spaceY,
+    separation:
+      layoutConfig.orientation === 'vertical'
+        ? layoutConfig.spaceY + layoutConfig.extraVerticalGap
+        : layoutConfig.spaceY,
   }));
 
 /**
@@ -234,12 +242,15 @@ const createParallelConstraints = (edges, layoutConfig) =>
   }));
 
 /**
- * Creates horizontal separation constraints for the given rows of nodes.
+ * Creates separation constraints between adjacent nodes within the same layer.
+ * The direction (horizontal or vertical) depends on the primary coordinate,
+ * which is determined by the layout orientation.
  * @param {Array} rows The rows containing nodes
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, layoutConfig) => {
-  const { spaceX, coordPrimary, spreadX, orientation } = layoutConfig;
+  const { spaceX, coordPrimary, spreadX, orientation, extraVerticalGap } =
+    layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
@@ -273,7 +284,7 @@ const createSeparationConstraints = (rows, layoutConfig) => {
       let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
 
       if (orientation === 'horizontal') {
-        separation = nodeA.height + nodeB.height;
+        separation = nodeA.height + nodeB.height + extraVerticalGap;
       }
 
       separationConstraints.push({

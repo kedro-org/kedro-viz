@@ -101,6 +101,7 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
+  view: createReducer('flowchart', SET_VIEW, 'view'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,

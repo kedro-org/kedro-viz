@@ -19,7 +19,7 @@ export function renderNodeDetailsContainer(
   nodesStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = getNodeWidth(node);
+  const nodeWidth = node.width;
   const nodeHeight = node.height - 5;
 
   const { nodeStatus, nodeDuration } = getNodeStatusInfo(nodesStatus, node);
