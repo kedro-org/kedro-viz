@@ -334,13 +334,6 @@ def _process_dataset_error_event(
     if node_id in nodes:
         nodes[node_id].status = NodeStatus.FAILED
         nodes[node_id].error = node_error_info
-    elif node_name:
-        # Try to find node by name if node_id is not available
-        for nid, node in nodes.items():
-            if nid.endswith(node_name):
-                node.status = NodeStatus.FAILED
-                node.error = node_error_info
-                break
 
     # Update pipeline error status if not already set
     if not pipeline_info.error:
@@ -408,10 +401,6 @@ def transform_events_to_structured_format(
             # Handle pipeline errors that may contain dataset information
             if "dataset" in event:
                 _process_dataset_error_event(event, datasets, nodes, pipeline)
-            elif not pipeline.error:
-                # Handle general pipeline errors
-                pipeline.status = PipelineStatus.FAILED
-                pipeline.error = event.get("error", "Unknown pipeline error")                
 
     # Finalize pipeline information
     _finalize_pipeline_info(pipeline, nodes)
