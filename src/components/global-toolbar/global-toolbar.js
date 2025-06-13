@@ -49,7 +49,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: sanitizedPathname() }}>
+          <NavLink exact to="/">
             <IconButton
               ariaLabel={'View your pipeline'}
               dataTest={'global-toolbar-flowchart-btn'}

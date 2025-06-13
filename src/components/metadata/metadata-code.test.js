@@ -1,50 +1,53 @@
 import React from 'react';
+import { render } from '@testing-library/react';
 import { MetaDataCode } from './metadata-code';
-import { setup } from '../../utils/state.mock';
+import '@testing-library/jest-dom';
 
 describe('MetaDataCode', () => {
   const testCode = 'def test(): print "hello"';
 
   it('shows the value as highlighted code', () => {
-    const wrapper = setup.mount(
+    const { container } = render(
       <MetaDataCode visible={true} value={testCode} />
     );
 
-    // Jest can't query DOM rendered by highlight.js
-    const highlighted = wrapper
-      .find('.pipeline-metadata-code__code pre')
-      .html();
-
-    // Test a sample of expected highlighted code
-    expect(highlighted.includes('<span class="hljs-title">test</span>')).toBe(
-      true
+    const codeBlock = container.querySelector(
+      '.pipeline-metadata-code__code pre'
     );
-    expect(
-      highlighted.includes('<span class="hljs-string">"hello"</span>')
-    ).toBe(true);
+
+    expect(codeBlock?.innerHTML).toContain(
+      '<span class="hljs-title">test</span>'
+    );
+    expect(codeBlock?.innerHTML).toContain(
+      '<span class="hljs-string">"hello"</span>'
+    );
   });
 
-  it('adds sidebarVisible class when sidebarVisible prop is true', () => {
-    const wrapper = setup.mount(
+  it('adds sidebarVisible class when sidebarVisible is true', () => {
+    const { container } = render(
       <MetaDataCode sidebarVisible={true} visible={true} value={testCode} />
     );
+
+    const wrapper = container.querySelector('.pipeline-metadata-code');
     expect(
-      wrapper.find('.pipeline-metadata-code--sidebarVisible').exists()
+      wrapper?.classList.contains('pipeline-metadata-code--sidebarVisible')
     ).toBe(true);
     expect(
-      wrapper.find('.pipeline-metadata-code--no-sidebarVisible').exists()
+      wrapper?.classList.contains('pipeline-metadata-code--no-sidebarVisible')
     ).toBe(false);
   });
 
-  it('removes sidebarVisible class when sidebarVisible prop is false', () => {
-    const wrapper = setup.mount(
+  it('adds no-sidebarVisible class when sidebarVisible is false', () => {
+    const { container } = render(
       <MetaDataCode sidebarVisible={false} visible={true} value={testCode} />
     );
+
+    const wrapper = container.querySelector('.pipeline-metadata-code');
     expect(
-      wrapper.find('.pipeline-metadata-code--sidebarVisible').exists()
+      wrapper?.classList.contains('pipeline-metadata-code--sidebarVisible')
     ).toBe(false);
     expect(
-      wrapper.find('.pipeline-metadata-code--no-sidebarVisible').exists()
+      wrapper?.classList.contains('pipeline-metadata-code--no-sidebarVisible')
     ).toBe(true);
   });
 });

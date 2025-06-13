@@ -307,8 +307,7 @@ def _process_dataset_error_event(
 
     # Update dataset status if dataset name is provided
     if dataset_name:
-        # Use consistent dataset ID: node_id if available, otherwise hash name
-        dataset_id = node_id if node_id else _hash_input_output(dataset_name)
+        dataset_id = _hash_input_output(dataset_name)
         dataset_error_info = DatasetErrorInfo(
             message=error_message,
             error_node=node_name,
@@ -409,6 +408,10 @@ def transform_events_to_structured_format(
             # Handle pipeline errors that may contain dataset information
             if "dataset" in event:
                 _process_dataset_error_event(event, datasets, nodes, pipeline)
+            elif not pipeline.error:
+                # Handle general pipeline errors
+                pipeline.status = PipelineStatus.FAILED
+                pipeline.error = event.get("error", "Unknown pipeline error")                
 
     # Finalize pipeline information
     _finalize_pipeline_info(pipeline, nodes)
