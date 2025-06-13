@@ -362,3 +362,16 @@ export const updateStateFromOptions = (updatedOptions) => {
     payload: updatedOptions,
   };
 };
+
+export const SET_VIEW = 'SET_VIEW';
+
+/**
+ * Set the current view between flowchart and workflow
+ * @param {String} view The view to set ('flowchart' or 'workflow')
+ */
+export function setView(view) {
+  return {
+    type: SET_VIEW,
+    view,
+  };
+}
