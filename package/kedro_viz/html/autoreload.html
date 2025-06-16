@@ -1,0 +1,25 @@
+<script type="text/javascript">
+  // The etag value will be rendered on first page load
+  // by the server to store the timestamp of the last data update.
+  const etag = '{{ etag }}';
+
+  /**
+   * Periodically check the server whether we should reload the page
+   * since the content has been changed.
+   */
+  function checkReloadStatus() {
+    fetch('/api/reload', {
+      method: 'GET',
+      headers: { 'If-None-Match': etag },
+    }).then((response) => {
+      // The server will return `304 NOT MODIFIED` if the content of the Kedro project hasn't changed.
+      // Otherwise, it will return a `200` with an empty body.
+      // We should only reload on 200 and ignore all other status code like 500 as well.
+      if (response.status === 200) {
+        location.reload();
+      }
+    });
+  }
+
+  setInterval(checkReloadStatus, 3000);
+</script>
