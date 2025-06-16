@@ -12,10 +12,12 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
+import { VIEW } from '../../config';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,
 } from '../../selectors/metadata';
+import { getNodeError, getDatasetError } from '../../selectors/run-status';
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
@@ -37,6 +39,9 @@ const MetaData = ({
   visible = true,
   visibleCode,
   showDatasetPreviews,
+  getDatasetError,
+  getNodeError,
+  view,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
 
@@ -61,6 +66,7 @@ const MetaData = ({
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
+  const isWorkflowView = view === VIEW.WORKFLOW;
   const showCodeSwitch = hasCode;
 
   let runCommand = metadata?.runCommand;
@@ -113,9 +119,54 @@ const MetaData = ({
     return isList ? value.map(getQualifier) : getQualifier(value);
   };
 
+  const getErrorDetails = (nodeId) => {
+    let errorDetails = null;
+    if (isDataNode) {
+      errorDetails = getDatasetError(nodeId);
+    } else {
+      errorDetails = getNodeError(nodeId);
+    }
+    return errorDetails;
+  };
+
+  const showError = (nodeId) => {
+    const errorDetails = getErrorDetails(nodeId);
+    const errorMessage = errorDetails?.message || '';
+
+    return (
+      <div>
+        <Toggle
+          id="code"
+          dataTest={`metadata-code-toggle-traceback`}
+          title="Show show traceback"
+          onChange={(event) => {
+            onToggleCode(event.target.checked);
+          }}
+        />
+        <div className="pipeline-metadata__error">{errorMessage}</div>
+        <span className="pipeline-metadata__error-common">
+          Please refer to the CLI for the full error log and details.
+        </span>
+      </div>
+    );
+  };
+
+  const getCodeValue = () => {
+    if (isWorkflowView) {
+      const errorDetails = getErrorDetails(metadata?.id);
+      return errorDetails?.traceback || '';
+    }
+
+    if (metadata?.code) {
+      return metadata.code;
+    }
+
+    return '';
+  };
+
   return (
     <>
-      <MetaDataCode visible={showCodePanel} value={metadata?.code} />
+      <MetaDataCode visible={showCodePanel} value={getCodeValue()} />
       <div className={modifiers('pipeline-metadata', { visible }, 'kedro')}>
         {metadata && (
           <>
@@ -136,7 +187,7 @@ const MetaData = ({
                 icon={CloseIcon}
                 onClick={onCloseClick}
               />
-              {showCodeSwitch && (
+              {!isWorkflowView && showCodeSwitch && (
                 <Toggle
                   id="code"
                   dataTest={`metadata-code-toggle-${visibleCode}`}
@@ -166,6 +217,9 @@ const MetaData = ({
                   label="Type:"
                   value={translateMetadataType(metadata.type)}
                 />
+                <MetaDataRow label="Error Log:" visible={isWorkflowView}>
+                  {showError(metadata.id)}
+                </MetaDataRow>
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"
@@ -353,6 +407,9 @@ export const mapStateToProps = (state, ownProps) => ({
   visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
   showDatasetPreviews: state.showDatasetPreviews,
+  getDatasetError: (nodeId) => getDatasetError(state, nodeId),
+  getNodeError: (nodeId) => getNodeError(state, nodeId),
+  view: state.view,
   ...ownProps,
 });
 

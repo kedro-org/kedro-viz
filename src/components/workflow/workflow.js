@@ -24,7 +24,12 @@ import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { getRunCommand } from '../../selectors/run-command';
-import { getNodesStatus, getDatasetsStatus } from '../../selectors/run-status';
+import {
+  getNodesStatus,
+  getDatasetsStatus,
+  hasNodeFailed,
+  hasDatasetMissing,
+} from '../../selectors/run-status';
 import {
   viewing,
   isOrigin,
@@ -453,11 +458,15 @@ export class Workflow extends Component {
       onLoadNodeData,
       onToggleNodeClicked,
       toSelectedNode,
+      hasNodeFailed,
+      hasDatasetMissing,
     } = this.props;
 
-    // Handle metadata panel display or node click toggle
-    displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
-    toSelectedNode(node);
+    if (hasNodeFailed(id) || hasDatasetMissing(id)) {
+      // Handle metadata panel display or node click toggle
+      displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+      toSelectedNode(node);
+    }
   };
 
   /**
@@ -788,6 +797,8 @@ export const mapStateToProps = (state, ownProps) => ({
   runCommand: getRunCommand(state),
   nodesStatus: getNodesStatus(state),
   dataSetsStatus: getDatasetsStatus(state),
+  hasNodeFailed: (nodeId) => hasNodeFailed(state, nodeId),
+  hasDatasetMissing: (nodeId) => hasDatasetMissing(state, nodeId),
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
