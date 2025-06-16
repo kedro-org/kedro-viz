@@ -131,28 +131,6 @@ const MetaData = ({
     return errorDetails;
   };
 
-  const showError = (nodeId) => {
-    const errorDetails = getErrorDetails(nodeId);
-    const errorMessage = errorDetails?.message || '';
-
-    return (
-      <div>
-        <Toggle
-          id="code"
-          dataTest={`metadata-code-toggle-traceback`}
-          title="Show traceback"
-          onChange={(event) => {
-            onToggleCode(event.target.checked);
-          }}
-        />
-        <div className="pipeline-metadata__error">{errorMessage}</div>
-        <span className="pipeline-metadata__error-common">
-          Please refer to the CLI for the full error log and details.
-        </span>
-      </div>
-    );
-  };
-
   const getCodeValue = () => {
     if (isWorkflowView) {
       const errorDetails = getErrorDetails(metadata?.id);
