@@ -4,82 +4,74 @@ import {
   mapStateToProps,
   mapDispatchToProps,
 } from './pipeline-warning';
-import { mockState, setup } from '../../utils/state.mock';
-import { act } from 'react-dom/test-utils';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { mockState } from '../../utils/state.mock';
 
 describe('PipelineWarning', () => {
   describe('LargePipelineWarning', () => {
+    const defaultProps = {
+      onDisable: jest.fn(),
+      onHide: jest.fn(),
+      nodes: ['node1', 'node2'],
+      visible: true,
+    };
+
     it('renders large pipeline warning without crashing', () => {
-      const mockFn = jest.fn();
-      const props = {
-        onDisable: mockFn,
-        onHide: mockFn,
-        nodes: ['node1', 'node2'],
-        visible: true,
-      };
-      const wrapper = setup.mount(<PipelineWarning {...props} />);
-      expect(wrapper.find('.pipeline-warning__title').length).toBe(1);
+      render(<PipelineWarning {...defaultProps} />);
+      expect(screen.getByText(/chonky pipeline/i)).toBeInTheDocument();
     });
 
-    it('will call onHide upon clicking the "render anyway" button', () => {
-      const mockFn = jest.fn();
-      const props = {
-        onDisable: () => {},
-        onHide: mockFn,
-        nodes: [],
-        visible: true,
-      };
-      const wrapper = setup.mount(<PipelineWarning {...props} />);
-      wrapper.find('.button__btn').at(0).simulate('click');
-      expect(mockFn.mock.calls.length).toBe(1);
+    it('calls onHide when clicking "Render anyway"', () => {
+      render(<PipelineWarning {...defaultProps} />);
+      const renderBtn = screen.getByText(/render it anyway/i);
+      fireEvent.click(renderBtn);
+      expect(defaultProps.onHide).toHaveBeenCalled();
     });
 
-    it('will call onDisable upon clicking the "Don\'t show this again" button', () => {
-      const mockFn = jest.fn();
-      const props = {
-        onDisable: mockFn,
-        onHide: () => {},
-        nodes: [],
-        visible: true,
-      };
-      const wrapper = setup.mount(<PipelineWarning {...props} />);
-      wrapper.find('.button__btn').at(1).simulate('click');
-      expect(mockFn.mock.calls.length).toBe(1);
+    it('calls onDisable when clicking "Don’t show this again"', () => {
+      render(<PipelineWarning {...defaultProps} />);
+      const disableBtn = screen.getByText(/don't show this again/i);
+      fireEvent.click(disableBtn);
+      expect(defaultProps.onDisable).toHaveBeenCalled();
     });
   });
 
   describe('EmptyPipelineWarning', () => {
-    let wrapper;
-    const mockFn = jest.fn();
-    const emptyProps = {
-      onDisable: mockFn,
-      onHide: mockFn,
-      nodes: [],
-      visible: false,
-    };
-
-    beforeAll(() => {
+    beforeEach(() => {
       jest.useFakeTimers();
-      wrapper = setup.mount(<PipelineWarning {...emptyProps} />);
     });
 
-    it('renders empty pipeline warning without crashing', () => {
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
-      wrapper.update();
-      expect(wrapper.find('.pipeline-warning__title').length).toBe(1);
+    afterEach(() => {
+      jest.useRealTimers();
     });
 
-    it('does not render empty pipeline warning when pipeline is not empty', () => {
+    it('renders empty pipeline warning after delay', async () => {
       const props = {
-        onDisable: mockFn,
-        onHide: mockFn,
-        nodes: ['node1', 'node2'],
+        onDisable: jest.fn(),
+        onHide: jest.fn(),
+        nodes: [],
         visible: false,
       };
-      const wrapper = setup.mount(<PipelineWarning {...props} />);
-      expect(wrapper.find('.pipeline-warning__title').length).toBe(0);
+      render(<PipelineWarning {...props} />);
+      await act(() => {
+        jest.runAllTimers();
+      });
+      expect(
+        screen.getByText(/oops, there's nothing to see here/i)
+      ).toBeInTheDocument();
+    });
+
+    it('does not render warning when pipeline has nodes', () => {
+      const props = {
+        onDisable: jest.fn(),
+        onHide: jest.fn(),
+        nodes: ['node1'],
+        visible: false,
+      };
+      render(<PipelineWarning {...props} />);
+      expect(
+        screen.queryByText(/oops, there's nothing to see here/i)
+      ).not.toBeInTheDocument();
     });
   });
 

@@ -15,7 +15,7 @@ const Filters = ({
   searchValue,
 }) => {
   return (
-    <>
+    <div className="filters-wrapper">
       <div className="filters__header">
         <h2 className="filters__title">
           <span>Filters</span>
@@ -44,7 +44,7 @@ const Filters = ({
           );
         })}
       </ul>
-    </>
+    </div>
   );
 };
 
