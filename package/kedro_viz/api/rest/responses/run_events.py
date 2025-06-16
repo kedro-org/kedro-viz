@@ -10,6 +10,9 @@ from typing import Any, Optional, Union
 from pydantic import BaseModel, Field
 
 from kedro_viz.api.rest.responses.utils import (
+    DatasetStatus,
+    NodeStatus,
+    PipelineStatus,
     calculate_pipeline_duration,
     convert_status_to_enum,
 )
@@ -31,27 +34,6 @@ class EventType(str, Enum):
     ON_NODE_ERROR = "on_node_error"
     AFTER_DATASET_LOADED = "after_dataset_loaded"
     AFTER_DATASET_SAVED = "after_dataset_saved"
-
-
-class PipelineStatus(str, Enum):
-    """Constants for pipeline statuses."""
-
-    SUCCESSFUL = "Successful"
-    FAILED = "Failed"
-
-
-class NodeStatus(str, Enum):
-    """Enum representing the possible statuses of a node."""
-
-    SUCCESSFUL = "Successful"
-    FAILED = "Failed"
-
-
-class DatasetStatus(str, Enum):
-    """Enum representing the possible statuses of a dataset."""
-
-    AVAILABLE = "Available"
-    MISSING = "Missing"
 
 
 class BaseErrorInfo(BaseModel):
@@ -84,7 +66,7 @@ class NodeInfo(BaseModel):
     """Information about a node."""
 
     status: NodeStatus = NodeStatus.SUCCESSFUL
-    duration_sec: float = 0.0
+    duration: float = 0.0  # duration in seconds
     error: Optional[NodeErrorInfo] = None
 
 
@@ -92,7 +74,7 @@ class DatasetInfo(BaseModel):
     """Information about a dataset."""
 
     name: str
-    size_bytes: int = 0
+    size: int = 0  # size in bytes
     status: DatasetStatus = DatasetStatus.AVAILABLE
     error: Optional[DatasetErrorInfo] = None
 
@@ -103,7 +85,7 @@ class PipelineInfo(BaseModel):
     run_id: str = "default-run-id"
     start_time: Optional[str] = None
     end_time: Optional[str] = None
-    duration_sec: float = 0.0
+    duration: float = 0.0  # duration in seconds
     status: PipelineStatus = PipelineStatus.SUCCESSFUL
     error: Optional[PipelineErrorInfo] = None
 
@@ -116,49 +98,62 @@ class RunStatusAPIResponse(BaseModel):
     pipeline: PipelineInfo = Field(default_factory=PipelineInfo)
 
 
-def _create_or_update_dataset_info(
+def _create_dataset_info(
     datasets: dict[str, DatasetInfo],
     dataset_id: str,
     dataset_name: str,
-    size_bytes: Optional[int],
-    status: PipelineStatus,
-    overwrite_size: bool = False,
+    size: Optional[int],  # size in bytes
+    status: DatasetStatus,
 ) -> None:
-    """Create or update DatasetInfo, with optional size overwrite control.
+    """Create new DatasetInfo entry for a dataset.
 
     Args:
         datasets: Dictionary of existing dataset info objects
         dataset_id: Unique identifier for the dataset
         dataset_name: Name of the dataset
-        size_bytes: Size of the dataset in bytes
+        size: Size of the dataset in bytes
+        status: Status of the dataset
+    """
+    datasets[dataset_id] = DatasetInfo(
+        name=dataset_name,
+        size=size or 0,
+        status=status,
+    )
+
+
+def _update_dataset_info(
+    datasets: dict[str, DatasetInfo],
+    dataset_id: str,
+    dataset_name: str,
+    size: Optional[int],  # size in bytes
+    status: DatasetStatus,
+    overwrite_size: bool = False,
+) -> None:
+    """Update existing DatasetInfo entry for a dataset.
+
+    Args:
+        datasets: Dictionary of existing dataset info objects
+        dataset_id: Unique identifier for the dataset
+        dataset_name: Name of the dataset
+        size: Size of the dataset in bytes
         status: Status of the dataset
         overwrite_size: Whether to overwrite existing size information
     """
-    status_enum = convert_status_to_enum(status, DatasetStatus.AVAILABLE)
-
-    if dataset_id not in datasets:
-        datasets[dataset_id] = DatasetInfo(
-            name=dataset_name,
-            size_bytes=size_bytes or 0,
-            status=status_enum,
-        )
-        return
-
-    # Update existing dataset info
     dataset_info = datasets[dataset_id]
+
     if not dataset_info.name and dataset_name:
         dataset_info.name = dataset_name
 
-    if size_bytes is not None and (overwrite_size or dataset_info.size_bytes == 0):
-        dataset_info.size_bytes = size_bytes
+    if size is not None and (overwrite_size or dataset_info.size == 0):
+        dataset_info.size = size
 
-    dataset_info.status = status_enum
+    dataset_info.status = status
 
 
-def _extract_pipeline_timing_and_status(
+def _update_pipeline_info_from_events(
     events: list[dict[str, Any]], pipeline_info: PipelineInfo
 ) -> None:
-    """Extract pipeline start time, end time, and status from events.
+    """Update pipeline start time, end time, and status from events.
 
     Args:
         events: List of event dictionaries
@@ -217,11 +212,11 @@ def _process_node_completion_event(
     """
     node_id = event.get("node_id", "unknown_node")
     status = event.get("status", "Successful")
-    duration = float(event.get("duration_sec", 0.0))
+    duration = float(event.get("duration", 0.0))
 
     nodes[node_id] = NodeInfo(
         status=convert_status_to_enum(status, NodeStatus.SUCCESSFUL),
-        duration_sec=duration,
+        duration=duration,
     )
 
 
@@ -264,25 +259,37 @@ def _process_dataset_event(
     """
     node_id = event.get("node_id", "unknown_dataset")
     dataset_name = event.get("dataset", "")
-    # Convert size_bytes to int, defaulting to 0 if conversion fails
+    # Convert size to int, defaulting to 0 if conversion fails
     try:
-        size_bytes = int(event.get("size_bytes", 0))
+        size = int(event.get("size", 0))
     except (TypeError, ValueError):
-        size_bytes = 0
+        size = 0
     status = event.get("status", "Available")
     event_type = event.get("event")
 
     # Overwrite size for save operations
     overwrite_size = event_type == EventType.AFTER_DATASET_SAVED
 
-    _create_or_update_dataset_info(
-        datasets=datasets,
-        dataset_id=node_id,
-        dataset_name=dataset_name,
-        size_bytes=size_bytes,
-        status=status,
-        overwrite_size=overwrite_size,
-    )
+    # Convert status to enum
+    status_enum = convert_status_to_enum(status, DatasetStatus.AVAILABLE)
+    # Create or update entry based on existence
+    if node_id not in datasets:
+        _create_dataset_info(
+            datasets,
+            node_id,
+            dataset_name,
+            size,
+            status_enum,
+        )
+    else:
+        _update_dataset_info(
+            datasets,
+            node_id,
+            dataset_name,
+            size,
+            status_enum,
+            overwrite_size,
+        )
 
 
 def _process_dataset_error_event(
@@ -358,8 +365,8 @@ def _finalize_pipeline_info(
         pipeline_info.run_id = str(uuid.uuid4())
 
     # Calculate total pipeline duration
-    node_durations = {node_id: node.duration_sec for node_id, node in nodes.items()}
-    pipeline_info.duration_sec = calculate_pipeline_duration(
+    node_durations = {node_id: node.duration for node_id, node in nodes.items()}
+    pipeline_info.duration = calculate_pipeline_duration(
         pipeline_info.start_time,
         pipeline_info.end_time,
         node_durations,
@@ -381,8 +388,8 @@ def transform_events_to_structured_format(
     datasets: dict[str, DatasetInfo] = {}
     pipeline = PipelineInfo()
 
-    # Extract pipeline metadata first
-    _extract_pipeline_timing_and_status(events, pipeline)
+    # Update pipeline metadata first
+    _update_pipeline_info_from_events(events, pipeline)
 
     # Process events by type
     for event in events:

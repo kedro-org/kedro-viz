@@ -15,6 +15,28 @@ logger = logging.getLogger(__name__)
 EnumType = TypeVar("EnumType", bound=Enum)
 
 
+# Shared status enums for pipeline, nodes, and datasets
+class PipelineStatus(str, Enum):
+    """Constants for pipeline statuses."""
+
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
+
+
+class NodeStatus(str, Enum):
+    """Enum representing the possible statuses of a node."""
+
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
+
+
+class DatasetStatus(str, Enum):
+    """Enum representing the possible statuses of a dataset."""
+
+    AVAILABLE = "Available"
+    MISSING = "Missing"
+
+
 class EnhancedORJSONResponse(ORJSONResponse):
     """
     EnhancedORJSONResponse is a subclass of ORJSONResponse that provides
