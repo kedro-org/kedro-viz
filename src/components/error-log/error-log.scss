@@ -1,0 +1,122 @@
+.error-log--wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: #e5e7eb; /* gray-200 */
+}
+
+.error-log--header {
+  color: #f87171; /* red-400 */
+  font-weight: 500;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem;
+}
+
+.error-log--details {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 0.375rem; /* 6px */
+  overflow: hidden;
+
+  pre {
+    margin: 0;
+    background: transparent;
+    border: none;
+    color: #f87171; /* red-400 */
+    font-size: 0.875rem; /* 14px */
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    padding: 1rem;
+    max-height: 289px;
+
+    /* Custom scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #1f2937; /* gray-800 */
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #4b5563; /* gray-600 */
+      border-radius: 4px;
+      
+      &:hover {
+        background: #6b7280; /* gray-500 */
+      }
+    }
+
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+  }
+}
+
+.error-log--footer {
+  color: #f87171; /* red-400 */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem;
+}
+
+/* Dark theme adjustments */
+.kedro.theme-dark {
+  .error-log--wrapper {
+    color: #d1d5db; /* gray-300 */
+  }
+
+  .error-log--details {
+    background-color: #0f172a; /* slate-900 */
+    border-color: #334155; /* slate-700 */
+  }
+}
+
+/* Light theme (if needed) */
+.kedro.theme-light {
+  .error-log--wrapper {
+    color: #374151; /* gray-700 */
+  }
+
+  .error-log--header,
+  .error-log--footer {
+    color: #dc2626; /* red-600 */
+  }
+
+  .error-log--details {
+    background-color: #f9fafb; /* gray-50 */
+    border-color: #d1d5db; /* gray-300 */
+
+    pre {
+      color: #dc2626; /* red-600 */
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .error-log--details {
+    pre {
+      font-size: 0.75rem; /* 12px */
+      padding: 0.75rem;
+    }
+  }
+}
+
+/* Focus states for accessibility */
+.error-log--details:focus-within {
+  outline: 2px solid #3b82f6; /* blue-500 */
+  outline-offset: 2px;
+}
+
+/* Animation for smooth transitions */
+.error-log--details {
+  transition: border-color 0.2s ease-in-out;
+
+  &:hover {
+    border-color: #4b5563; /* gray-600 */
+  }
+}

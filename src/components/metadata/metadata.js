@@ -12,6 +12,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
+import ErrorLog from '../error-log/error-log'
 import { VIEW } from '../../config';
 import {
   getVisibleMetaSidebar,
@@ -218,7 +219,13 @@ const MetaData = ({
                   value={translateMetadataType(metadata.type)}
                 />
                 <MetaDataRow label="Error Log:" visible={isWorkflowView}>
-                  {showError(metadata.id)}
+                  <ErrorLog 
+                    errorHeader={"Failed while loading data from dataset"}
+                    errorDetails={getErrorDetails(metadata.id)?.message || ""}
+                    className = "pipeline-metadata__error-log"
+                    onToggleCode={(e) => onToggleCode(e.target.checked)}
+                    dataTest = 'metadata-panel--error-log'
+                  />
                 </MetaDataRow>
                 {!isTranscoded && (
                   <MetaDataRow
