@@ -27,7 +27,7 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Update the dependencies
 
-You must update the `src/requirements.txt` file in the Kedro project by adding the following dataset to enable Matplotlib for the project:
+You must update the `requirements.txt` file in the Kedro project by adding the following dataset to enable Matplotlib for the project:
 
 ```bash
 kedro-datasets[matplotlib.MatplotlibWriter]~=1.1
