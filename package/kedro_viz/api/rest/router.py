@@ -81,14 +81,14 @@ async def get_last_run_status():
         "nodes": {
             "node_id": {
                 "status": "success",
-                "duration_sec": 0.123,
+                "duration": 0.123,
                 "error": null
             }
         },
         "datasets": {
             "dataset_id": {
                 "name": "dataset.name",
-                "size_bytes": 1024,
+                "size": 1024,
                 "error": null
             }
         },
@@ -96,7 +96,7 @@ async def get_last_run_status():
             "run_id": "unique-id",
             "start_time": "2023-05-14T10:15:30Z",
             "end_time": "2023-05-14T10:20:45Z",
-            "duration_sec": 315.25,
+            "duration": 315.25,
             "status": "completed"
             "error": null
         }
