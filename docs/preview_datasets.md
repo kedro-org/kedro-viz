@@ -24,7 +24,7 @@ See [Preview Plotly charts in Kedro-Viz](./preview_plotly_datasets.md) for a gui
 
 **Preview Matplotlib Charts**
 
-See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) for a guide on how you can create static visualizations using `MatplotlibWriterDataset` on Kedro-Viz.
+See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) for a guide on how you can create static visualizations using `MatplotlibDatasetDataset` on Kedro-Viz.
 
 **Extend Preview to custom catasets**
 

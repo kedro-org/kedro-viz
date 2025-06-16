@@ -1,10 +1,10 @@
 # Preview Matplotlib charts in Kedro-Viz 
 
-This page describes how to output static visualisations of a Kedro project with Kedro-Viz, which supports integration with [Matplotlib](https://matplotlib.org/). You can view Matplotlib charts in Kedro-Viz when you use the MatplotlibWriter dataset.
+This page describes how to output static visualisations of a Kedro project with Kedro-Viz, which supports integration with [Matplotlib](https://matplotlib.org/). You can view Matplotlib charts in Kedro-Viz when you use the MatplotlibDataset dataset.
 
 
 !!! info
-    The `MatplotlibWriter` dataset converts Matplotlib objects to image files. This means that Matplotlib charts within Kedro-Viz are static and not interactive, unlike the [Plotly charts seen separately](./preview_plotly_datasets.md).
+    The `MatplotlibDataset` dataset converts Matplotlib objects to image files. This means that Matplotlib charts within Kedro-Viz are static and not interactive, unlike the [Plotly charts seen separately](./preview_plotly_datasets.md).
 
 We use the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) and add a reporting pipeline. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
 
@@ -27,10 +27,10 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Update the dependencies
 
-You must update the `src/requirements.txt` file in the Kedro project by adding the following dataset to enable Matplotlib for the project:
+You must update the `requirements.txt` file in the Kedro project by adding the following dataset to enable Matplotlib for the project:
 
 ```bash
-kedro-datasets[matplotlib.MatplotlibWriter]~=1.1
+kedro-datasets[matplotlib.MatplotlibDataset]~=1.1
 seaborn~=0.12.1
 ```
 
@@ -39,7 +39,7 @@ You must also specify the output type in the `catalog.yml` file for the Data Cat
 
 ```yaml
 dummy_confusion_matrix:
-  type: matplotlib.MatplotlibWriter
+  type: matplotlib.MatplotlibDataset
   filepath: data/08_reporting/dummy_confusion_matrix.png
   versioned: true
 ```
