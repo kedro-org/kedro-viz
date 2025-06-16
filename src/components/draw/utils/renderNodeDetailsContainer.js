@@ -6,7 +6,6 @@ import {
   getNodeStatusInfo,
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
-import { getNodeWidth } from './getNodeRectWidth';
 import { NODE_DETAILS_HEIGHT } from './config';
 
 /**
