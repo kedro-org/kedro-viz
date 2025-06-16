@@ -335,16 +335,3 @@ $list-inline-spacing: 0.2em;
   bottom: 0;
   height: 40px;
 }
-
-.pipeline-metadata__error {
-  color: var(--Status-Dark-Mode-Error, #f56565);
-  margin-bottom: 5px;
-  max-height: 292px;
-  overflow: auto;
-  padding: 10px;
-}
-
-.pipeline-metadata__error-common {
-  font-weight: bold;
-  color: var(--Status-Dark-Mode-Error, #f56565);
-}

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import classNames from "classnames";
 import Toggle from '../ui/toggle';
 
@@ -11,6 +11,7 @@ export default function ErrorLog({
   onToggleCode,
   dataTest = 'error-log'
 }) {
+
 
   return (
     <div className={classNames('error-log--wrapper', className)}>
@@ -26,12 +27,7 @@ export default function ErrorLog({
       </div>
 
       <div className="error-log--details">
-        <pre
-          className="text-sm text-red-400 p-4 font-mono whitespace-pre-wrap overflow-auto"
-          style={{ maxHeight: "289px" }}
-        >
-          {errorDetails}
-        </pre>
+        <pre dangerouslySetInnerHTML={{ __html: errorDetails }} />
       </div>
 
       <div className="error-log--footer">Please refer to the CLI for the full error log and details.</div>
