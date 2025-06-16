@@ -138,7 +138,7 @@ const MetaData = ({
         <Toggle
           id="code"
           dataTest={`metadata-code-toggle-traceback`}
-          title="Show show traceback"
+          title="Show traceback"
           onChange={(event) => {
             onToggleCode(event.target.checked);
           }}
