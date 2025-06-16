@@ -105,7 +105,7 @@ class PipelineRunStatusHook:
                 return
         except ImportError:
             pass
-        # fallback older versions
+        # fallback older versions. Remove fallback once Kedro 1.0.0 released
         self._datasets = getattr(
             catalog, "_datasets", getattr(catalog, "_data_sets", {})
         )

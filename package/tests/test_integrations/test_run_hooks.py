@@ -40,11 +40,13 @@ def sample_catalog() -> DataCatalog:
 # -----------------------------------------------------------------------------
 # after_catalog_created
 # -----------------------------------------------------------------------------
+# Remove below test once we release Kedro 1.0.0
 def test_after_catalog_created_standard(hooks, sample_catalog):
     hooks.after_catalog_created(sample_catalog)
     assert hooks._datasets == sample_catalog._datasets
 
 
+# Remove below test once we release Kedro 1.0.0
 def test_after_catalog_created_import_error(hooks, sample_catalog, monkeypatch):
     """Branch where `kedro.io` exists but lacks KedroDataCatalog."""
     monkeypatch.setitem(sys.modules, "kedro.io", ModuleType("kedro.io"))
