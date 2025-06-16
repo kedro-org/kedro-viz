@@ -99,7 +99,7 @@ def test_create_dataset_event_includes_size(tmp_path):
 
     assert evt["event"] == "after_dataset_saved"
     assert evt["dataset"] == "d"
-    assert evt["size_bytes"] == 3
+    assert evt["size"] == 3
 
 
 # -----------------------------------------------------------------------------

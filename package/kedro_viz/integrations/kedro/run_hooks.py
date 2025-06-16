@@ -105,7 +105,7 @@ class PipelineRunStatusHook:
                 return
         except ImportError:
             pass
-        # fallback older versions
+        # fallback older versions. Remove fallback once Kedro 1.0.0 released
         self._datasets = getattr(
             catalog, "_datasets", getattr(catalog, "_data_sets", {})
         )
@@ -176,7 +176,7 @@ class PipelineRunStatusHook:
                 "event": "after_node_run",
                 "node": node.name,
                 "node_id": hash_node(node),
-                "duration_sec": duration,
+                "duration": duration,  # duration in seconds
                 "status": "success",
             }
         )
