@@ -50,7 +50,11 @@ class NodeErrorInfo(BaseErrorInfo):
 
 
 class DatasetErrorInfo(BaseErrorInfo):
-    """Information about a dataset error."""
+    """Information about a dataset error.
+
+    Attributes:
+        error_node: Optional; the name of the node who tried to load/save the failed dataset
+        error_operation: Optional; the operation that caused the error"""
 
     error_node: Optional[str] = None
     error_operation: Optional[str] = None
