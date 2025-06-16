@@ -140,14 +140,14 @@ def test_node_execution_workflow(hooks, sample_node, monkeypatch):
 
     event = hooks._events[-1]
     assert event["event"] == "after_node_run"
-    assert pytest.approx(event["duration_sec"], abs=1e-6) == 1.23
+    assert pytest.approx(event["duration"], abs=1e-6) == 1.23
     assert event["status"] == "success"
 
 
 def test_after_node_run_without_before_records_zero_duration(hooks, sample_node):
     hooks._all_nodes = [sample_node]
     hooks.after_node_run(sample_node)
-    assert hooks._events[-1]["duration_sec"] == 0.0
+    assert hooks._events[-1]["duration"] == 0.0
 
 
 # -----------------------------------------------------------------------------

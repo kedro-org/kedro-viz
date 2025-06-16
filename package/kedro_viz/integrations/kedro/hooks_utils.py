@@ -52,7 +52,7 @@ def create_dataset_event(
     if dataset_value is not None and datasets:
         size = compute_size(dataset_name, datasets)
         if size is not None:
-            event["size_bytes"] = size  # only attach size when available
+            event["size"] = size  # only attach size when available
     return event
 
 

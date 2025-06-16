@@ -176,7 +176,7 @@ class PipelineRunStatusHook:
                 "event": "after_node_run",
                 "node": node.name,
                 "node_id": hash_node(node),
-                "duration_sec": duration,
+                "duration": duration,  # duration in seconds
                 "status": "success",
             }
         )
