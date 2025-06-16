@@ -12,7 +12,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
-import ErrorLog from '../error-log/error-log'
+import ErrorLog from '../error-log/error-log';
 import { VIEW } from '../../config';
 import {
   getVisibleMetaSidebar,
@@ -23,6 +23,7 @@ import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
@@ -219,12 +220,12 @@ const MetaData = ({
                   value={translateMetadataType(metadata.type)}
                 />
                 <MetaDataRow label="Error Log:" visible={isWorkflowView}>
-                  <ErrorLog 
-                    errorHeader={"Failed while loading data from dataset"}
-                    errorDetails={getErrorDetails(metadata.id)?.message || ""}
-                    className = "pipeline-metadata__error-log"
+                  <ErrorLog
+                    errorHeader={'Failed while loading data from dataset'}
+                    errorDetails={getErrorDetails(metadata.id)?.message || ''}
+                    className="pipeline-metadata__error-log"
                     onToggleCode={(e) => onToggleCode(e.target.checked)}
-                    dataTest = 'metadata-panel--error-log'
+                    dataTest={getDataTestAttribute('metadata', 'error-log')}
                   />
                 </MetaDataRow>
                 {!isTranscoded && (
