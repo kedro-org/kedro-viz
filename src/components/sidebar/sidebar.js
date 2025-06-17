@@ -36,7 +36,7 @@ export const Sidebar = ({
         <div className="pipeline-ui">
           <PipelineList
             onToggleOpen={togglePipeline}
-            isWorkFlowView={isWorkflowView}
+            isWorkflowView={isWorkflowView}
           />
           <NodesPanel faded={pipelineIsOpen} />
         </div>
