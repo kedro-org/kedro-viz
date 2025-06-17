@@ -3,7 +3,9 @@ export function getNodeStatusKey(statusObj, node, statusConfig) {
   if (!statusObj || !statusConfig) {
     return null;
   }
-  return statusConfig.find(
+  const foundKey = statusConfig.find(
     (statusKey) => statusObj[statusKey] && statusObj[statusKey][node.id]
   );
+
+  return foundKey || 'skipped';
 }

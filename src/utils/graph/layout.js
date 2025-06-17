@@ -108,7 +108,10 @@ const createRowConstraints = (edges, layoutConfig) =>
     property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
-    separation: layoutConfig.spaceY + layoutConfig.extraVerticalGap,
+    separation:
+      layoutConfig.orientation === 'vertical'
+        ? layoutConfig.spaceY + layoutConfig.extraVerticalGap
+        : layoutConfig.spaceY,
   }));
 
 /**
@@ -239,7 +242,9 @@ const createParallelConstraints = (edges, layoutConfig) =>
   }));
 
 /**
- * Creates horizontal separation constraints for the given rows of nodes.
+ * Creates separation constraints between adjacent nodes within the same layer.
+ * The direction (horizontal or vertical) depends on the primary coordinate,
+ * which is determined by the layout orientation.
  * @param {Array} rows The rows containing nodes
  * @returns {Array} The constraints
  */

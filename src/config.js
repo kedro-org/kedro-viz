@@ -33,7 +33,7 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
-export const workFlowStatuses = ['success', 'failed'];
+export const workFlowStatuses = ['success', 'failed', 'skipped'];
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
 
@@ -187,4 +187,13 @@ export const BANNER_METADATA = {
 
 export const BANNER_KEYS = {
   LITE: 'lite',
+};
+
+export const VIEW = {
+  WORKFLOW: 'workflow',
+  FLOWCHART: 'flowchart',
+};
+
+export const PIPELINE = {
+  DEFAULT: '__default__',
 };

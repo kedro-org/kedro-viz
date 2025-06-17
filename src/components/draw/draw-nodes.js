@@ -4,6 +4,8 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
+import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
+import { workFlowStatuses } from '../../config';
 
 import './styles/index.scss';
 
@@ -34,6 +36,9 @@ export function DrawNodes({
   isInputOutputNode = () => false,
   clickedNode = null,
   linkedNodes = {},
+  showRunStatus = false,
+  nodesStatus = {},
+  dataSetsStatus = {},
 }) {
   const groupRef = useRef();
 
@@ -68,7 +73,27 @@ export function DrawNodes({
 
     enterNodes
       .attr('tabindex', '0')
-      .attr('class', 'pipeline-node')
+      .attr('class', (node) => {
+        let baseClass = 'pipeline-node';
+        if (node.type) {
+          baseClass += ` pipeline-node--${node.type}`;
+        }
+
+        if (showRunStatus) {
+          // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+          const statusSource =
+            node.type === 'data' ? dataSetsStatus : nodesStatus;
+          // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+          let finalStatus = getNodeStatusKey(
+            statusSource,
+            node,
+            workFlowStatuses
+          );
+          baseClass += ` pipeline-node--status-${finalStatus}`;
+        }
+
+        return baseClass;
+      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
       .classed(
@@ -136,6 +161,9 @@ export function DrawNodes({
     onNodeKeyDown,
     onParamsIndicatorMouseOver,
     orientation,
+    dataSetsStatus,
+    nodesStatus,
+    showRunStatus,
   ]);
 
   // --- Update node classes based on state (active, selected, etc) ---
@@ -227,12 +255,14 @@ export function DrawNodes({
         }
       });
 
-    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__bg')
+      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects);
+      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
@@ -263,6 +293,9 @@ export function DrawNodes({
     nodesWithInputParams,
     orientation,
     nodeActive,
+    dataSetsStatus,
+    nodesStatus,
+    showRunStatus,
   ]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;

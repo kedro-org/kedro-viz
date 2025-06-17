@@ -1,28 +1,25 @@
-import { select } from 'd3-selection';
-import { formatDuration, formatSize } from './workflow-utils/format';
+import {
+  formatDuration,
+  formatSize,
+} from '../../workflow/workflow-utils/format';
 import {
   getNodeStatusInfo,
   getDatasetStatusInfo,
-} from './workflow-utils/getStatus';
-
-export const MINIMUM_WIDTH = 180;
-
-export function getNodeWidth(node) {
-  return Math.max(node.width - 5, MINIMUM_WIDTH);
-}
+} from '../../workflow/workflow-utils/getStatus';
+import { NODE_DETAILS_HEIGHT } from './config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
+ * This is a pure D3 helper, no React dependencies
  */
-function renderNodeDetailsContainer(
+export function renderNodeDetailsContainer(
   parentGroup,
   node,
   nodesStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = getNodeWidth(node);
+  const nodeWidth = node.width;
   const nodeHeight = node.height - 5;
-  const detailsHeight = 60;
 
   const { nodeStatus, nodeDuration } = getNodeStatusInfo(nodesStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
@@ -71,8 +68,8 @@ function renderNodeDetailsContainer(
     .attr(
       'height',
       node.type === 'task' || node.type === 'modularPipeline'
-        ? detailsHeight
-        : detailsHeight + 20
+        ? NODE_DETAILS_HEIGHT
+        : NODE_DETAILS_HEIGHT + 20
     )
     .attr('x', nodeWidth / -2)
     .attr(
@@ -90,17 +87,17 @@ function renderNodeDetailsContainer(
     .attr('d', () => {
       if (node.type === 'task' || node.type === 'modularPipeline') {
         return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + detailsHeight
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT
         } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
         return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + detailsHeight - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight} ${
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
+        } Q ${nodeWidth / -2} ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${
           nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + detailsHeight} H ${nodeWidth / 2 - 10} Q ${
+        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} H ${nodeWidth / 2 - 10} Q ${
           nodeWidth / 2
-        } ${nodeHeight / 2 + detailsHeight} ${nodeWidth / 2} ${
-          nodeHeight / 2 + detailsHeight - 10
+        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${nodeWidth / 2} ${
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
         } V 0`;
       }
     });
@@ -167,25 +164,3 @@ function renderNodeDetailsContainer(
     .attr('x', nodeWidth / 2 - 80)
     .attr('y', nodeHeight / 2 + 45);
 }
-
-/**
- * Sets the size and position of the given node rects and renders node details.
- */
-export const updateNodeRects = (nodeRects, nodesStatus, dataSetsStatus) => {
-  nodeRects
-    .attr('width', getNodeWidth)
-    .attr('height', (node) => node.height - 5)
-    .attr('x', (node) => -getNodeWidth(node) / 2)
-    .attr('y', (node) => (node.height - 5) / -2)
-    .attr('rx', (node) =>
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? 0
-        : node.height / 2
-    );
-
-  // Render node details for each node
-  nodeRects.each(function (node) {
-    const parentGroup = select(this.parentNode);
-    renderNodeDetailsContainer(parentGroup, node, nodesStatus, dataSetsStatus);
-  });
-};

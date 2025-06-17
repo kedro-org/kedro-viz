@@ -1,5 +1,7 @@
 import { graph } from './graph';
 
+export const MINIMUM_WIDTH = 180;
+
 /**
  * Calculate chart layout with experimental new graphing algorithm
  * This is an extremely expensive operation so we want it to run as infrequently
@@ -19,7 +21,8 @@ export const graphNew = ({ nodes, edges, layers, orientation, view }) => {
     const textGap = 6;
     const innerWidth = node.iconSize + textWidth + textGap;
 
-    node.width = node.width || innerWidth + padding.x * 2;
+    let baseWidth = node.width || innerWidth + padding.x * 2;
+    node.width = Math.max(baseWidth, MINIMUM_WIDTH);
     node.height = node.height || node.iconSize + padding.y * 2;
     node.textOffset = node.textOffset || (innerWidth - textWidth) / 2;
     node.iconOffset = node.iconOffset || -innerWidth / 2;

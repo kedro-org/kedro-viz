@@ -79,6 +79,7 @@ def create_api_app_from_project(
         return FileResponse(_HTML_DIR / "favicon.ico")
 
     @app.get("/")
+    @app.get("/workflow")
     async def index():
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()

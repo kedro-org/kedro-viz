@@ -40,6 +40,7 @@ export const FlowchartPrimaryToolbar = ({
   onToggleExpandAllPipelines,
   orientation,
   onToggleOrientation,
+  isFlowchartView,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
@@ -65,7 +66,7 @@ export const FlowchartPrimaryToolbar = ({
           icon={LabelIcon}
           labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
           onClick={() => onToggleTextLabels(!textLabels)}
-          visible={display.labelBtn}
+          visible={isFlowchartView && display.labelBtn}
         />
         <IconButton
           active={visibleLayers}
@@ -105,7 +106,7 @@ export const FlowchartPrimaryToolbar = ({
             expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
           }
           onClick={handleToggleExpandAllPipelines}
-          visible={display.expandPipelinesBtn}
+          visible={isFlowchartView && display.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"

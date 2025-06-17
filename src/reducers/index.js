@@ -7,7 +7,7 @@ import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
-import status from './status';
+import runStatus from './run-status';
 import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
@@ -30,6 +30,7 @@ import {
   SET_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
+import { VIEW } from '../config';
 
 /**
  * Create a generic reducer
@@ -86,7 +87,7 @@ const combinedReducer = combineReducers({
   tag,
   modularPipeline,
   visible,
-  status,
+  runStatus,
   showBanner: bannerReducer,
   // These props don't have any actions associated with them
   display: createReducer(null),
@@ -99,7 +100,7 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
-  view: createReducer('flowchart', SET_VIEW, 'view'),
+  view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,

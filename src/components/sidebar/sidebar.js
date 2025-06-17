@@ -7,6 +7,7 @@ import MiniMapToolbar from '../minimap-toolbar';
 import NodesPanel from '../nodes-panel';
 import PipelineList from '../pipeline-list';
 import ToolbarFilterButton from '../toolbar-filter-button';
+import { VIEW } from '../../config';
 
 import './sidebar.scss';
 
@@ -18,8 +19,11 @@ export const Sidebar = ({
   displayGlobalNavigation,
   visible,
   displayFilterBtn,
+  view,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
+  const isFlowchartView = view === VIEW.FLOWCHART;
+  const isWorkflowView = view === VIEW.WORKFLOW;
 
   return (
     <>
@@ -30,12 +34,15 @@ export const Sidebar = ({
         })}
       >
         <div className="pipeline-ui">
-          {/* <PipelineList onToggleOpen={togglePipeline} /> */}
+          <PipelineList
+            onToggleOpen={togglePipeline}
+            isWorkflowView={isWorkflowView}
+          />
           <NodesPanel faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
           {displayFilterBtn && <ToolbarFilterButton />}
-          <FlowchartPrimaryToolbar />
+          <FlowchartPrimaryToolbar isFlowchartView={isFlowchartView} />
           <MiniMapToolbar />
         </nav>
         <MiniMap />
@@ -49,6 +56,7 @@ const mapStateToProps = (state) => ({
   displaySidebar: state.display.sidebar,
   displayFilterBtn: state.display.filterBtn,
   visible: state.visible.sidebar,
+  view: state.view,
 });
 
 export default connect(mapStateToProps)(Sidebar);
