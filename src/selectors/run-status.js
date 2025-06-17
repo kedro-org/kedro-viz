@@ -30,6 +30,27 @@ export const getNodesStatus = createSelector(
 );
 
 /**
+ * Check if the pipeline run status is available
+ * @param {Object} state Redux state
+ * @returns {Boolean} Whether the run status is available
+ */
+export const isRunStatusAvailable = createSelector(
+  [
+    (state) => state.runStatus?.nodes,
+    (state) => state.runStatus?.datasets,
+    (state) => state.runStatus?.pipeline?.run_id,
+  ],
+  (nodes, datasets, runId) => {
+    // Check if we have actual run data (not just empty objects) and a valid run ID
+    const hasNodes = nodes && Object.keys(nodes).length > 0;
+    const hasDatasets = datasets && Object.keys(datasets).length > 0;
+    const hasValidRunId = runId && runId !== 'default-run-id';
+
+    return (hasNodes || hasDatasets) && hasValidRunId;
+  }
+);
+
+/**
  * Get all node data grouped by node ID
  * @param {Object} state Redux state
  * @returns {Object} Nodes data grouped by node ID
@@ -83,7 +104,7 @@ export const getDatasetStatusById = (state, datasetId) => {
  * @returns {Number} Node duration in seconds
  */
 export const getNodeDurationById = (state, nodeId) => {
-  return state.runStatus?.nodes?.[nodeId]?.durationSec || 0;
+  return state.runStatus?.nodes?.[nodeId]?.duration || 0;
 };
 
 /**
@@ -94,7 +115,7 @@ export const getNodeDurationById = (state, nodeId) => {
  */
 export const hasNodeFailed = (state, nodeId) => {
   const node = state.runStatus?.nodes?.[nodeId];
-  return node?.status === 'error' || node?.status === 'failed';
+  return node?.error != null;
 };
 
 /**
@@ -105,7 +126,5 @@ export const hasNodeFailed = (state, nodeId) => {
  */
 export const getNodeError = (state, nodeId) => {
   const node = state.runStatus?.nodes?.[nodeId];
-  return node?.status === 'error' || node?.status === 'failed'
-    ? node?.error
-    : null;
+  return node?.error || null;
 };

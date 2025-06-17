@@ -14,7 +14,7 @@ import { getFiltersSearchResult } from '../../selectors/filtered-node-list-items
 /**
  * Scrollable list of toggleable items, with search & filter functionality
  */
-const NodesPanel = ({ faded }) => {
+const NodesPanel = ({ faded, isWorkflowView, isRunStatusAvailable }) => {
   const [searchValue, updateSearchValue] = useState('');
 
   const {
@@ -59,6 +59,10 @@ const NodesPanel = ({ faded }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
+  // Show the node panel data only if we are not in flowchart view or if we are in workflow view but run status is not available
+  const showNodePanelData =
+    !isWorkflowView || (isWorkflowView && isRunStatusAvailable);
+
   return (
     <div
       className={classnames('pipeline-nodelist', {
@@ -69,70 +73,74 @@ const NodesPanel = ({ faded }) => {
         onUpdateSearchValue={debounce(updateSearchValue, 250)}
         searchValue={searchValue}
       />
-      <SplitPanel>
-        {({ isResizing, props: { container, panelA, panelB, handle } }) => (
-          <div
-            className={classnames('pipeline-nodelist__split', {
-              'pipeline-nodelist__split--resizing': isResizing,
-            })}
-            {...container}
-          >
-            <div className="pipeline-nodelist__elements-panel" {...panelA}>
-              <Scrollbars
-                className="pipeline-nodelist-scrollbars"
-                style={{ width: 'auto' }}
-                autoHide
-                hideTracksWhenNotNeeded
-              >
-                <div className="pipeline-nodelist-section">
-                  <NodeListTree
-                    hoveredNode={hoveredNode}
-                    expanded={expanded}
-                    faded={faded}
-                    focusMode={focusMode}
-                    isSlicingPipelineApplied={isSlicingPipelineApplied}
-                    modularPipelinesSearchResult={modularPipelinesSearchResult}
-                    modularPipelinesTree={modularPipelinesTree}
-                    nodeSelected={selectedNodes}
-                    onItemChange={handleNodeListRowChanged}
-                    onItemClick={handleNodeListRowClicked}
-                    onItemMouseEnter={handleItemMouseEnter}
-                    onItemMouseLeave={handleItemMouseLeave}
-                    onNodeToggleExpanded={handleModularPipelineToggleExpanded}
-                    onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
+      {showNodePanelData ? (
+        <SplitPanel>
+          {({ isResizing, props: { container, panelA, panelB, handle } }) => (
+            <div
+              className={classnames('pipeline-nodelist__split', {
+                'pipeline-nodelist__split--resizing': isResizing,
+              })}
+              {...container}
+            >
+              <div className="pipeline-nodelist__elements-panel" {...panelA}>
+                <Scrollbars
+                  className="pipeline-nodelist-scrollbars"
+                  style={{ width: 'auto' }}
+                  autoHide
+                  hideTracksWhenNotNeeded
+                >
+                  <div className="pipeline-nodelist-section">
+                    <NodeListTree
+                      hoveredNode={hoveredNode}
+                      expanded={expanded}
+                      faded={faded}
+                      focusMode={focusMode}
+                      isSlicingPipelineApplied={isSlicingPipelineApplied}
+                      modularPipelinesSearchResult={
+                        modularPipelinesSearchResult
+                      }
+                      modularPipelinesTree={modularPipelinesTree}
+                      nodeSelected={selectedNodes}
+                      onItemChange={handleNodeListRowChanged}
+                      onItemClick={handleNodeListRowClicked}
+                      onItemMouseEnter={handleItemMouseEnter}
+                      onItemMouseLeave={handleItemMouseLeave}
+                      onNodeToggleExpanded={handleModularPipelineToggleExpanded}
+                      onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
+                      searchValue={searchValue}
+                      slicedPipeline={slicedPipeline}
+                      nodesDisabledViaModularPipeline={
+                        nodesDisabledViaModularPipeline
+                      }
+                    />
+                  </div>
+                </Scrollbars>
+              </div>
+              <div className="pipeline-nodelist__filter-panel" {...panelB}>
+                <div className="pipeline-nodelist__split-handle" {...handle} />
+                <Scrollbars
+                  className="pipeline-nodelist-scrollbars"
+                  style={{ width: 'auto' }}
+                  autoHide
+                  hideTracksWhenNotNeeded
+                >
+                  <Filters
+                    groupCollapsed={groupCollapsed}
+                    groups={groups}
+                    isResetFilterActive={isResetFilterActive}
+                    items={searchValue.length > 0 ? filtersSearchResult : items}
+                    onGroupToggleChanged={handleGroupToggleChanged}
+                    onItemChange={handleFiltersRowClicked}
+                    onResetFilter={handleResetFilter}
+                    onToggleGroupCollapsed={handleToggleGroupCollapsed}
                     searchValue={searchValue}
-                    slicedPipeline={slicedPipeline}
-                    nodesDisabledViaModularPipeline={
-                      nodesDisabledViaModularPipeline
-                    }
                   />
-                </div>
-              </Scrollbars>
+                </Scrollbars>
+              </div>
             </div>
-            <div className="pipeline-nodelist__filter-panel" {...panelB}>
-              <div className="pipeline-nodelist__split-handle" {...handle} />
-              <Scrollbars
-                className="pipeline-nodelist-scrollbars"
-                style={{ width: 'auto' }}
-                autoHide
-                hideTracksWhenNotNeeded
-              >
-                <Filters
-                  groupCollapsed={groupCollapsed}
-                  groups={groups}
-                  isResetFilterActive={isResetFilterActive}
-                  items={searchValue.length > 0 ? filtersSearchResult : items}
-                  onGroupToggleChanged={handleGroupToggleChanged}
-                  onItemChange={handleFiltersRowClicked}
-                  onResetFilter={handleResetFilter}
-                  onToggleGroupCollapsed={handleToggleGroupCollapsed}
-                  searchValue={searchValue}
-                />
-              </Scrollbars>
-            </div>
-          </div>
-        )}
-      </SplitPanel>
+          )}
+        </SplitPanel>
+      ) : null}
     </div>
   );
 };
