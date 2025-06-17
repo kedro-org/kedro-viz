@@ -224,12 +224,13 @@ const MetaData = ({
                 />
                 <MetaDataRow label="Error Log:" visible={isWorkflowView}>
                   <ErrorLog
-                    errorHeader={'Failed while loading data from dataset'}
-                    errorDetails={getErrorDetails(metadata.id)?.message || ''}
+                    errorDetails={getErrorDetails(metadata.id)}
                     className="pipeline-metadata__error-log"
                     onToggleCode={(e) => onToggleTraceback(e.target.checked)}
                     dataTest={getDataTestAttribute('metadata', 'error-log')}
                     visibleTraceback={visibleTraceback}
+                    isDataNode={isDataNode}
+                    nodeName={metadata.name}
                   />
                 </MetaDataRow>
                 {!isTranscoded && (
