@@ -222,7 +222,12 @@ const MetaData = ({
                   label="Type:"
                   value={translateMetadataType(metadata.type)}
                 />
-                <MetaDataRow label="Error Log:" visible={isWorkflowView}>
+                <MetaDataRow
+                  label="Error Log:"
+                  visible={
+                    isWorkflowView && Boolean(getErrorDetails(metadata.id))
+                  }
+                >
                   <ErrorLog
                     errorDetails={getErrorDetails(metadata.id)}
                     className="pipeline-metadata__error-log"
