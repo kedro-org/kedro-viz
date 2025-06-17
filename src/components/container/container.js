@@ -2,6 +2,7 @@ import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
 import './container.scss';
+import runData from './run-data.json';
 
 /**
  * Top-level component for the use-case where Kedro-Viz is run as a standalone
@@ -9,7 +10,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} />
+    <App data={getPipelineData()} runData={runData} />
   </>
 );
 

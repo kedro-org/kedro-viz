@@ -4,20 +4,22 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
+import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import Workflow from '../workflow/workflow';
+import WorkflowWrapper from '../workflow-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
 
 import './wrapper.scss';
+import { VIEW } from '../../config';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme }) => {
+export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -62,13 +64,26 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
-              <Route exact path="/">
-                <FlowChartWrapper />
-                <FeatureHints />
-              </Route>
-              <Route to={{ pathname: `${sanitizedPathname()}workflow` }}>
-                <Workflow />
-              </Route>
+              <Route
+                exact
+                path={sanitizedPathname()}
+                render={() => {
+                  onSetView(VIEW.FLOWCHART);
+                  return (
+                    <>
+                      <FlowChartWrapper />
+                      <FeatureHints />
+                    </>
+                  );
+                }}
+              />
+              <Route
+                path={`${sanitizedPathname()}workflow`}
+                render={() => {
+                  onSetView(VIEW.WORKFLOW);
+                  return <WorkflowWrapper />;
+                }}
+              />
             </Switch>
           </>
         ) : (
@@ -84,4 +99,10 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(Wrapper);
+export const mapDispatchToProps = (dispatch) => ({
+  onSetView: (view) => {
+    dispatch(setView(view));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);

@@ -24,7 +24,11 @@ import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { getRunCommand } from '../../selectors/run-command';
-import { getNodesStatus, getDatasetsStatus } from '../../selectors/run-status';
+import {
+  getNodesStatus,
+  getDatasetsStatus,
+  isRunStatusAvailable,
+} from '../../selectors/run-status';
 import {
   viewing,
   isOrigin,
@@ -788,6 +792,7 @@ export const mapStateToProps = (state, ownProps) => ({
   runCommand: getRunCommand(state),
   tasksStatus: getNodesStatus(state),
   dataSetsStatus: getDatasetsStatus(state),
+  isRunStatusAvailable: isRunStatusAvailable(state),
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
