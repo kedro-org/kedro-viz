@@ -8,6 +8,7 @@ import {
   TOGGLE_SETTINGS_MODAL,
   TOGGLE_SHAREABLE_URL_MODAL,
   TOGGLE_SIDEBAR,
+  TOGGLE_TRACEBACK,
 } from '../actions';
 
 function visibleReducer(visibleState = {}, action) {
@@ -57,6 +58,12 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_CODE: {
       return Object.assign({}, visibleState, {
         code: action.visible,
+      });
+    }
+
+    case TOGGLE_TRACEBACK: {
+      return Object.assign({}, visibleState, {
+        traceback: action.visible,
       });
     }
 

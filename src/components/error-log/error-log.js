@@ -10,6 +10,7 @@ export default function ErrorLog({
   className = '',
   onToggleCode,
   dataTest = 'error-log',
+  visibleTraceback,
 }) {
   return (
     <div className={classNames('error-log--wrapper', className)}>
@@ -18,6 +19,7 @@ export default function ErrorLog({
         dataTest={dataTest}
         title="Show traceback"
         onChange={onToggleCode}
+        checked={visibleTraceback}
       />
 
       <div className="error-log--header">{errorHeader}</div>

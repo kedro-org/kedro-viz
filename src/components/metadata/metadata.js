@@ -20,7 +20,7 @@ import {
 } from '../../selectors/metadata';
 import { getNodeError, getDatasetError } from '../../selectors/run-status';
 import { toggleNodeClicked } from '../../actions/nodes';
-import { toggleCode, togglePlotModal } from '../../actions';
+import { toggleCode, togglePlotModal, toggleTraceback } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
@@ -35,11 +35,13 @@ const MetaData = ({
   isPrettyName,
   metadata,
   onToggleCode,
+  onToggleTraceback,
   onToggleMetadataModal,
   onToggleNodeSelected,
   theme,
   visible = true,
   visibleCode,
+  visibleTraceback,
   showDatasetPreviews,
   getDatasetError,
   getNodeError,
@@ -49,6 +51,10 @@ const MetaData = ({
 
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
+
+  // Hide traceback panel when selected metadata changes
+  useEffect(() => onToggleTraceback(false), [metadata, onToggleTraceback]);
+
   // Hide plot modal when selected metadata changes
   useEffect(
     () => onToggleMetadataModal(false),
@@ -67,8 +73,9 @@ const MetaData = ({
   const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
-  const showCodePanel = visible && visibleCode && hasCode;
   const isWorkflowView = view === VIEW.WORKFLOW;
+  const showCodePanel = visible && visibleCode && hasCode;
+  const showTracebackPanel = isWorkflowView && visibleTraceback;
   const showCodeSwitch = hasCode;
 
   let runCommand = metadata?.runCommand;
@@ -144,9 +151,27 @@ const MetaData = ({
     return '';
   };
 
+  const showPanel = () => {
+    if (isWorkflowView) {
+      return showTracebackPanel;
+    }
+    return showCodePanel;
+  };
+
+  const getTitle = () => {
+    if (isWorkflowView) {
+      return 'Error traceback';
+    }
+    return 'Code block';
+  };
+
   return (
     <>
-      <MetaDataCode visible={showCodePanel} value={getCodeValue()} />
+      <MetaDataCode
+        visible={showPanel()}
+        value={getCodeValue()}
+        title={getTitle()}
+      />
       <div className={modifiers('pipeline-metadata', { visible }, 'kedro')}>
         {metadata && (
           <>
@@ -202,8 +227,9 @@ const MetaData = ({
                     errorHeader={'Failed while loading data from dataset'}
                     errorDetails={getErrorDetails(metadata.id)?.message || ''}
                     className="pipeline-metadata__error-log"
-                    onToggleCode={(e) => onToggleCode(e.target.checked)}
+                    onToggleCode={(e) => onToggleTraceback(e.target.checked)}
                     dataTest={getDataTestAttribute('metadata', 'error-log')}
+                    visibleTraceback={visibleTraceback}
                   />
                 </MetaDataRow>
                 {!isTranscoded && (
@@ -392,6 +418,7 @@ export const mapStateToProps = (state, ownProps) => ({
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
+  visibleTraceback: state.visible.traceback,
   showDatasetPreviews: state.showDatasetPreviews,
   getDatasetError: (nodeId) => getDatasetError(state, nodeId),
   getNodeError: (nodeId) => getNodeError(state, nodeId),
@@ -405,6 +432,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
+  },
+  onToggleTraceback: (visible) => {
+    dispatch(toggleTraceback(visible));
   },
   onToggleMetadataModal: (visible) => {
     dispatch(togglePlotModal(visible));
