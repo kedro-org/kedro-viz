@@ -8,6 +8,7 @@ import NodesPanel from '../nodes-panel';
 import PipelineList from '../pipeline-list';
 import ToolbarFilterButton from '../toolbar-filter-button';
 import { VIEW } from '../../config';
+import { isRunStatusAvailable } from '../../selectors/run-status';
 
 import './sidebar.scss';
 
@@ -20,6 +21,7 @@ export const Sidebar = ({
   visible,
   displayFilterBtn,
   view,
+  isRunStatusAvailable,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
   const isFlowchartView = view === VIEW.FLOWCHART;
@@ -38,7 +40,11 @@ export const Sidebar = ({
             onToggleOpen={togglePipeline}
             isWorkflowView={isWorkflowView}
           />
-          <NodesPanel faded={pipelineIsOpen} />
+          <NodesPanel
+            isWorkflowView={isWorkflowView}
+            isRunStatusAvailable={isRunStatusAvailable}
+            faded={pipelineIsOpen}
+          />
         </div>
         <nav className="pipeline-toolbar">
           {displayFilterBtn && <ToolbarFilterButton />}
@@ -57,6 +63,7 @@ const mapStateToProps = (state) => ({
   displayFilterBtn: state.display.filterBtn,
   visible: state.visible.sidebar,
   view: state.view,
+  isRunStatusAvailable: isRunStatusAvailable(state),
 });
 
 export default connect(mapStateToProps)(Sidebar);
