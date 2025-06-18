@@ -19,7 +19,7 @@ export function getNodeStatusInfo(nodesStatus, node) {
   const status = nodesStatus[statusKey][node.id];
   return {
     nodeStatus: status?.status ?? null,
-    nodeDuration: status?.duration_sec ?? null,
+    nodeDuration: status?.duration ?? null,
   };
 }
 
@@ -42,6 +42,6 @@ export function getDatasetStatusInfo(dataSetsStatus, node) {
   const dataset = dataSetsStatus[statusKey][node.id];
   return {
     datasetStatus: dataset?.status ?? null,
-    datasetSize: dataset?.size_bytes ?? null,
+    datasetSize: dataset?.size ?? null,
   };
 }
