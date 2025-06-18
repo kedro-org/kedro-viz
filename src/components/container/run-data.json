@@ -1,0 +1,68 @@
+{
+  "nodes": {
+    "69c523b6": {
+      "status": "Successful",
+      "duration_sec": 0.019535416970029473,
+      "error": null
+    },
+    "ea604da4": {
+      "status": "Successful",
+      "duration_sec": 0.014165416010655463,
+      "error": null
+    }
+  },
+  "datasets": {
+    "aed46479": {
+      "name": "companies",
+      "size_bytes": 1810602,
+      "status": "Available",
+      "error": null
+    },
+    "f23ad217": {
+      "name": "ingestion.int_typed_companies",
+      "size_bytes": 550104,
+      "status": "Available",
+      "error": null
+    },
+    "7b2c6e04": {
+      "name": "reviews",
+      "size_bytes": 2937144,
+      "status": "Available",
+      "error": null
+    },
+    "b5609df0": {
+      "name": "params:ingestion.typing.reviews.columns_as_floats",
+      "size_bytes": 0,
+      "status": "Available",
+      "error": null
+    },
+    "4f7ffa1b": {
+      "name": "ingestion.int_typed_reviews",
+      "size_bytes": 1334176,
+      "status": "Available",
+      "error": null
+    },
+    "f1d596c2": {
+      "name": "shuttles",
+      "size_bytes": 0,
+      "status": "Missing",
+      "error": {
+        "message": "Failed while loading data from dataset ExcelDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx, load_args={'engine': openpyxl}, protocol=file, save_args={'index': False}, writer_args={'engine': openpyxl}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/core.py\", line 299, in load\n    return load_func(self)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro_datasets/pandas/excel_dataset.py\", line 232, in load\n    return pd.read_excel(load_path, **self._load_args)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 495, in read_excel\n    io = ExcelFile(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 1567, in __init__\n    self._reader = self._engines[engine](\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_openpyxl.py\", line 553, in __init__\n    super().__init__(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 563, in __init__\n    self.handles = get_handle(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/framework/session/session.py\", line 399, in run\n    run_result = runner.run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 129, in run\n    self._run(pipeline, catalog, hook_or_null_manager, session_id)  # type: ignore[arg-type]\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/sequential_runner.py\", line 72, in _run\n    super()._run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 239, in _run\n    ).execute()\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 88, in execute\n    node = self._run_node_sequential(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 152, in _run_node_sequential\n    inputs[name] = catalog.load(name)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/data_catalog.py\", line 408, in load\n    result = dataset.load()\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/core.py\", line 306, in load\n    raise DatasetError(message) from exc\nkedro.io.core.DatasetError: Failed while loading data from dataset ExcelDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx, load_args={'engine': openpyxl}, protocol=file, save_args={'index': False}, writer_args={'engine': openpyxl}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'\n",
+        "error_node": "ingestion.apply_types_to_shuttles",
+        "error_operation": "loading"
+      }
+    }
+  },
+  "pipeline": {
+    "run_id": "85c3ee01-d292-42d1-b4b0-176599aa4e23",
+    "start_time": "2025-06-16T09.10.12.698693Z",
+    "end_time": "2025-06-16T09.10.13.779090Z",
+    "duration_sec": 0.033700832980684936,
+    "status": "Failed",
+    "error": {
+      "message": "Failed while loading data from dataset ExcelDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx, load_args={'engine': openpyxl}, protocol=file, save_args={'index': False}, writer_args={'engine': openpyxl}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/core.py\", line 299, in load\n    return load_func(self)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro_datasets/pandas/excel_dataset.py\", line 232, in load\n    return pd.read_excel(load_path, **self._load_args)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 495, in read_excel\n    io = ExcelFile(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 1567, in __init__\n    self._reader = self._engines[engine](\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_openpyxl.py\", line 553, in __init__\n    super().__init__(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/excel/_base.py\", line 563, in __init__\n    self.handles = get_handle(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/pandas/io/common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/framework/session/session.py\", line 399, in run\n    run_result = runner.run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 129, in run\n    self._run(pipeline, catalog, hook_or_null_manager, session_id)  # type: ignore[arg-type]\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/sequential_runner.py\", line 72, in _run\n    super()._run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 239, in _run\n    ).execute()\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 88, in execute\n    node = self._run_node_sequential(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 152, in _run_node_sequential\n    inputs[name] = catalog.load(name)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/data_catalog.py\", line 408, in load\n    result = dataset.load()\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/io/core.py\", line 306, in load\n    raise DatasetError(message) from exc\nkedro.io.core.DatasetError: Failed while loading data from dataset ExcelDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx, load_args={'engine': openpyxl}, protocol=file, save_args={'index': False}, writer_args={'engine': openpyxl}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'\n"
+    }
+  }
+}
