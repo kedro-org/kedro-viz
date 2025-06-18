@@ -375,3 +375,16 @@ export function setView(view) {
     view,
   };
 }
+
+export const UPDATE_IS_LATEST_RUN = 'UPDATE_IS_LATEST_RUN';
+
+/**
+ * Update run status isLatestRun flag
+ * @param {Object} isLatestRun Run status flag indicating if it is the latest run
+ */
+export function updateIsLatestRun(isLatestRun) {
+  return {
+    type: UPDATE_IS_LATEST_RUN,
+    isLatestRun,
+  };
+}

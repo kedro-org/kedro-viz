@@ -1,4 +1,6 @@
 import { fetchRunStatus, processRunStatus } from '../utils/normalizeRunStatus';
+import { handleLatestRunStatus } from '../utils';
+import { updateIsLatestRun } from '../actions';
 
 export const UPDATE_RUN_STATUS_DATA = 'UPDATE_RUN_STATUS_DATA';
 
@@ -21,6 +23,8 @@ export function loadRunStatusData() {
   return async function (dispatch) {
     const runData = await fetchRunStatus();
     const processedData = processRunStatus(runData);
+    const isLatestRun = handleLatestRunStatus(processedData);
+    dispatch(updateIsLatestRun(isLatestRun));
     dispatch(updateRunStatusData(processedData));
   };
 }

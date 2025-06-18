@@ -297,3 +297,23 @@ export const mapNodeTypes = (nodeTypes) => {
 export const isValidBoolean = (inputString) => {
   return /^(true|false)$/i.test(inputString);
 };
+
+export const handleLatestRunStatus = (processedData) => {
+  const endTime = processedData.pipeline.endTime;
+  const lastEndTime = localStorage.getItem('lastRunEndTime');
+  console.log('endTime', endTime);
+  console.log('lastEndTime', lastEndTime);
+  console.log('!!!!!!isLatestRun', !lastEndTime);
+  console.log(
+    'new Date(endTime).getTime() > new Date(lastEndTime).getTime()',
+    new Date(endTime).getTime() > new Date(lastEndTime).getTime()
+  );
+  const isLatestRun =
+    !lastEndTime ||
+    new Date(endTime).getTime() > new Date(lastEndTime).getTime();
+  console.log('isLatestRun', isLatestRun);
+  if (isLatestRun) {
+    localStorage.setItem('lastRunEndTime', endTime);
+  }
+  return isLatestRun;
+};

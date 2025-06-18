@@ -35,9 +35,11 @@ export const GlobalToolbar = ({
   onToggleTheme,
   onSetView,
   theme,
+  isLatestRun,
   onUpdateActivePipeline,
   onToggleExpandAllPipelines,
 }) => {
+  console.log('isLatestRunisLatestRunisLatestRunisLatestRun', isLatestRun);
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -85,8 +87,7 @@ export const GlobalToolbar = ({
                 onToggleExpandAllPipelines(true);
               }}
             />
-            {/* TODO: Remove this once we have a real run status indicator */}
-            {true && <span className="update-reminder-dot"></span>}
+            {isLatestRun && <span className="update-reminder-dot"></span>}
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
@@ -138,6 +139,7 @@ export const GlobalToolbar = ({
 export const mapStateToProps = (state) => ({
   theme: state.theme,
   visible: state.visible,
+  isLatestRun: state.isLatestRun,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
