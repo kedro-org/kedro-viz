@@ -81,7 +81,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
                   onSetView(VIEW.WORKFLOW);
-                  return (<Workflow />);
+                  return <Workflow />;
                 }}
               />
             </Switch>
