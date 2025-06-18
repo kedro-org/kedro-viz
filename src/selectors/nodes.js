@@ -433,6 +433,7 @@ export const getVisibleNodes = createSelector(
       name: nodeLabel[id],
       fullName: nodeFullName[id],
       icon: getShortType(nodeDatasetType[id], nodeType[id]),
+      datasetType: nodeDatasetType[id],
       type: nodeType[id],
       layer: nodeLayer[id],
       rank: nodeRank[id],

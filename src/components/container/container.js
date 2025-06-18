@@ -1,6 +1,7 @@
 import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
+import { workingAllGreen } from '../../utils/run-status-mock-data/working-all-green';
 import './container.scss';
 /**
  * Top-level component for the use-case where Kedro-Viz is run as a standalone
@@ -8,7 +9,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} />
+    <App data={getPipelineData()} runData={workingAllGreen} />
   </>
 );
 

@@ -33,15 +33,20 @@ export function getDatasetStatusInfo(dataSetsStatus, node) {
   if (!dataSetsStatus || node.type !== 'data') {
     return { datasetStatus: null, datasetSize: null };
   }
+
   const statusKey = Object.keys(dataSetsStatus).find(
     (key) => dataSetsStatus[key][node.id]
   );
   if (!statusKey) {
     return { datasetStatus: null, datasetSize: null };
   }
+
   const dataset = dataSetsStatus[statusKey][node.id];
+  const isMemoryDataset =
+    node?.datasetType?.toLowerCase().includes('memory') ?? false;
+
   return {
-    datasetStatus: dataset?.status ?? null,
-    datasetSize: dataset?.size ?? null,
+    datasetStatus: isMemoryDataset ? 'Not persisted' : dataset?.status ?? null,
+    datasetSize: isMemoryDataset ? null : dataset?.size ?? null,
   };
 }

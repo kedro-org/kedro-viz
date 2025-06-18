@@ -13,11 +13,23 @@ export function formatDuration(seconds) {
   return `${secsStr}s`;
 }
 
-// Helper to format bytes as MB with up to 2 decimals
+// Helper to format bytes as B, KB, or MB
 export function formatSize(bytes) {
-  if (isNaN(bytes)) {
+  if (isNaN(bytes) || bytes === null) {
     return 'N/A';
   }
-  const megabytes = bytes / (1024 * 1024);
+
+  const numBytes = Number(bytes);
+
+  if (numBytes < 1024) {
+    return `${numBytes}B`;
+  }
+
+  const kilobytes = numBytes / 1024;
+  if (kilobytes < 1024) {
+    return `${kilobytes % 1 === 0 ? kilobytes : kilobytes.toFixed(2)}KB`;
+  }
+
+  const megabytes = kilobytes / 1024;
   return `${megabytes % 1 === 0 ? megabytes : megabytes.toFixed(2)}MB`;
 }
