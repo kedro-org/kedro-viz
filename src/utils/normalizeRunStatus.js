@@ -32,7 +32,7 @@ export const processRunStatus = (response) => {
   Object.entries(response.nodes || {}).forEach(([nodeId, nodeInfo]) => {
     runStatusData.nodes[nodeId] = {
       status: nodeInfo.status,
-      durationSec: nodeInfo.duration_sec,
+      duration: nodeInfo.duration,
       error: nodeInfo.error,
     };
   });
@@ -42,7 +42,7 @@ export const processRunStatus = (response) => {
     ([datasetId, datasetInfo]) => {
       runStatusData.datasets[datasetId] = {
         name: datasetInfo.name,
-        sizeBytes: datasetInfo.size_bytes,
+        size: datasetInfo.size,
         status: datasetInfo.status,
         error: datasetInfo.error,
       };
@@ -55,7 +55,7 @@ export const processRunStatus = (response) => {
       runId: response.pipeline.run_id,
       startTime: response.pipeline.start_time,
       endTime: response.pipeline.end_time,
-      totalDurationSec: response.pipeline.total_duration_sec,
+      duration: response.pipeline.duration,
       status: response.pipeline.status,
       error: response.pipeline.error,
     };
