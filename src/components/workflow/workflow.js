@@ -716,7 +716,7 @@ export class Workflow extends Component {
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
                 nodesStatus={nodesStatus}
-                datasetsStatus={datasetsStatus}
+                dataSetsStatus={datasetsStatus}
               />
             </GraphSVG>
             <DrawLayerNamesGroup
