@@ -7,6 +7,7 @@ import {
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
 import { NODE_DETAILS_HEIGHT } from './config';
+import { MINIMUM_WIDTH } from './config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -18,7 +19,7 @@ export function renderNodeDetailsContainer(
   nodesStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = node.width;
+  const nodeWidth = Math.max(node.width || 0, MINIMUM_WIDTH);
   const nodeHeight = node.height - 5;
 
   const { nodeStatus, nodeDuration } = getNodeStatusInfo(nodesStatus, node);
@@ -126,7 +127,12 @@ export function renderNodeDetailsContainer(
         : nodeStatus ?? 'Skipped'
     )
     .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / 2 - 80)
+    .attr(
+      'x',
+      datasetStatus === 'Not persisted'
+        ? nodeWidth / 2 - 100
+        : nodeWidth / 2 - 80
+    )
     .attr('y', nodeHeight / 2 + 20);
 
   // Duration/Size group (label + value)
@@ -161,6 +167,11 @@ export function renderNodeDetailsContainer(
         : 'N/A'
     )
     .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / 2 - 80)
+    .attr(
+      'x',
+      datasetStatus === 'Not persisted'
+        ? nodeWidth / 2 - 100
+        : nodeWidth / 2 - 80
+    )
     .attr('y', nodeHeight / 2 + 45);
 }
