@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import SuccessIcon from '../icons/success';
 import FailureIcon from '../icons/failure';
 import './run-status-notification.scss';
+import { formatDuration } from '../workflow/workflow-utils/format';
 
 const STATUS_CONFIG = {
   Successful: {
@@ -42,7 +43,12 @@ export const RunStatusNotification = ({
         <span className="run-status-notification__icon">
           {Icon && <Icon />}
         </span>
-        <span className="run-status-notification__text">{statusText}</span>
+        <span className="run-status-notification__text">
+          {statusText}
+          {status === 'Successful' && duration > 0 && (
+            <> in {formatDuration(duration)}</>
+          )}
+        </span>
       </div>
 
       <div className="run-status-notification__divider" />
