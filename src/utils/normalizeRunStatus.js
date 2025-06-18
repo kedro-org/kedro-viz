@@ -32,7 +32,7 @@ export const processRunStatus = (response) => {
   Object.entries(response.nodes || {}).forEach(([nodeId, nodeInfo]) => {
     runStatusData.nodes[nodeId] = {
       status: nodeInfo.status,
-      durationSec: nodeInfo.duration,
+      duration: nodeInfo.duration,
       error: nodeInfo.error,
     };
   });
@@ -42,7 +42,7 @@ export const processRunStatus = (response) => {
     ([datasetId, datasetInfo]) => {
       runStatusData.datasets[datasetId] = {
         name: datasetInfo.name,
-        sizeBytes: datasetInfo.size,
+        size: datasetInfo.size,
         status: datasetInfo.status,
         error: datasetInfo.error,
       };

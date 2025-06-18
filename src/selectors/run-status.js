@@ -83,7 +83,7 @@ export const getDatasetStatusById = (state, datasetId) => {
  * @returns {Number} Node duration in seconds
  */
 export const getNodeDurationById = (state, nodeId) => {
-  return state.runStatus?.nodes?.[nodeId]?.durationSec || 0;
+  return state.runStatus?.nodes?.[nodeId]?.duration || 0;
 };
 
 /**
