@@ -730,7 +730,7 @@ export class Workflow extends Component {
             <RunStatusNotification
               status={pipelineStatus.status}
               timestamp={pipelineStatus.endTime}
-              duration={0}
+              duration={pipelineStatus.duration}
               visibleSidebar={visibleSidebar}
             />
             <Tooltip

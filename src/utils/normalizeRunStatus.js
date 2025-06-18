@@ -55,7 +55,7 @@ export const processRunStatus = (response) => {
       runId: response.pipeline.run_id,
       startTime: response.pipeline.start_time,
       endTime: response.pipeline.end_time,
-      totalDurationSec: response.pipeline.duration,
+      duration: response.pipeline.duration,
       status: response.pipeline.status,
       error: response.pipeline.error,
     };
