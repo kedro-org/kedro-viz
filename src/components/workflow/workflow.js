@@ -6,6 +6,7 @@ import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
 } from '../../actions/modular-pipelines';
+import { RunStatusNotification } from '../run-status-notification/run-status-notification';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -53,8 +54,6 @@ import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 
 import './workflow.scss';
-
-export const workFlowStatuses = ['success', 'failed'];
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -241,15 +240,19 @@ export class Workflow extends Component {
 
     // Apply animating class to zoom wrapper
     select(this.wrapperRef.current).classed(
-      'pipeline-workflow-wrapper--animating',
+      '.pipeline-workflow__zoom-wrapper--animating',
       true
     );
-
     // Update layer label y positions
     if (this.layerNamesRef?.current) {
       const layerNames = this.layerNamesRef.current.querySelectorAll(
         '.pipeline-layer-name'
       );
+      if (layerNames.length !== this.props.layers.length) {
+        // If ot all layer labels are rendered yet; defer the update
+        setTimeout(() => this.onViewChange(transform), 0);
+        return;
+      }
       this.props.layers.forEach((layer, i) => {
         const el = layerNames[i];
         if (!el) {
@@ -639,6 +642,7 @@ export class Workflow extends Component {
       displayExportBtn,
       layers,
       visibleGraph,
+      visibleSidebar,
       clickedNode,
       nodes,
       nodeActive,
@@ -654,7 +658,8 @@ export class Workflow extends Component {
       linkedNodes,
       inputOutputDataEdges,
       nodesStatus,
-      dataSetsStatus,
+      datasetsStatus,
+      pipelineStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -711,7 +716,7 @@ export class Workflow extends Component {
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
                 nodesStatus={nodesStatus}
-                dataSetsStatus={dataSetsStatus}
+                datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
             <DrawLayerNamesGroup
@@ -721,6 +726,12 @@ export class Workflow extends Component {
               chartSize={chartSize}
               orientation={orientation}
               layerNamesRef={this.layerNamesRef}
+            />
+            <RunStatusNotification
+              status={pipelineStatus.status}
+              timestamp={pipelineStatus.endTime}
+              duration={0}
+              visibleSidebar={visibleSidebar}
             />
             <Tooltip
               chartSize={chartSize}
@@ -785,7 +796,8 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
   nodesStatus: getNodesStatus(state),
-  dataSetsStatus: getDatasetsStatus(state),
+  datasetsStatus: getDatasetsStatus(state),
+  pipelineStatus: state.runStatus.pipeline,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({

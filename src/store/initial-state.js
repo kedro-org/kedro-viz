@@ -9,6 +9,8 @@ import {
   localStorageName,
   params,
   BANNER_KEYS,
+  VIEW,
+  PIPELINE,
 } from '../config';
 
 /**
@@ -22,7 +24,8 @@ export const createInitialState = () => ({
   textLabels: true,
   theme: 'dark',
   expandAllPipelines: false,
-  orientation: 'vertical',
+  orientation: 'vertical', // 'horizontal' or 'vertical'
+  view: 'flowchart', // 'flowchart' (default), or 'workflow'
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   showDatasetPreviews: settings.showDatasetPreviews.default,
@@ -207,6 +210,11 @@ export const preparePipelineState = (
   }
   if (urlParams) {
     state = applyUrlParametersToPipelineState(state, urlParams);
+  }
+
+  // If user is on the workflow view, set the active pipeline to default
+  if (state.view === VIEW.WORKFLOW) {
+    state.pipeline.active = PIPELINE.DEFAULT;
   }
 
   return state;
