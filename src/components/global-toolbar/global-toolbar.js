@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
   toggleSettingsModal,
@@ -21,7 +21,7 @@ import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
 import { PIPELINE, VIEW } from '../../config';
 import { getPipelineRunData } from '../../selectors/run-status';
-import { resetIsLatestRun } from '../../actions';
+import { resetIsLatestRun } from '../../utils/normalizeRunStatus';
 
 import './global-toolbar.scss';
 
@@ -41,8 +41,9 @@ export const GlobalToolbar = ({
   onUpdateActivePipeline,
   onToggleExpandAllPipelines,
   runStatusPipelineInfo,
-  onResetIsLatestRun,
 }) => {
+  const dispatch = useDispatch();
+
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -90,10 +91,10 @@ export const GlobalToolbar = ({
                 onToggleExpandAllPipelines(true);
 
                 // Handle the new run status indicator
-                onResetIsLatestRun(runStatusPipelineInfo.endTime);
+                resetIsLatestRun(runStatusPipelineInfo.endTime, dispatch);
               }}
             />
-            {isLatestRun && <span className="update-reminder-dot"></span>}
+            {isLatestRun && <span className="run-status-dot"></span>}
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
@@ -161,9 +162,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onSetView: (view) => {
     dispatch(setView(view));
-  },
-  onResetIsLatestRun: (endTime) => {
-    dispatch(resetIsLatestRun(endTime));
   },
   onUpdateActivePipeline: (pipelineID) => {
     dispatch(loadPipelineData(pipelineID));

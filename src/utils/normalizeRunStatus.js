@@ -1,3 +1,6 @@
+import { localStorageLastRunEndTime } from '../config';
+import { updateIsLatestRun } from '../actions';
+
 /**
  * Fetch pipeline run status from the API endpoint
  * @returns {Promise<Object>} Pipeline run status in structured format
@@ -76,10 +79,20 @@ export const processRunStatus = (response) => {
  */
 export const handleLatestRunStatus = (processedData) => {
   const endTime = processedData.pipeline.endTime;
-  const lastEndTime = localStorage.getItem('lastRunEndTime');
+  const lastEndTime = localStorage.getItem(localStorageLastRunEndTime);
 
   const isLatestRun =
     !lastEndTime ||
     new Date(endTime).getTime() > new Date(lastEndTime).getTime();
   return isLatestRun;
 };
+
+/**
+ * Reset the isLatestRun flag and store the endTime in localStorage
+ * @param {string} endTime The end time to be stored
+ */
+export function resetIsLatestRun(endTime, dispatch) {
+    dispatch(updateIsLatestRun(false));
+    localStorage.setItem(localStorageLastRunEndTime, endTime);
+  
+}

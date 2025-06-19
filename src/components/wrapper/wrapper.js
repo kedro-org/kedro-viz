@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
-import { setView, resetIsLatestRun } from '../../actions';
+import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -13,6 +13,7 @@ import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
 import { getPipelineRunData } from '../../selectors/run-status';
+import { resetIsLatestRun } from '../../utils/normalizeRunStatus';
 
 import './wrapper.scss';
 import { VIEW } from '../../config';
@@ -24,9 +25,9 @@ export const Wrapper = ({
   displayGlobalNavigation,
   theme,
   onSetView,
-  onResetIsLatestRun,
   runStatusPipelineInfo,
 }) => {
+  const dispatch = useDispatch();
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -88,7 +89,7 @@ export const Wrapper = ({
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
                   onSetView(VIEW.WORKFLOW);
-                  onResetIsLatestRun(runStatusPipelineInfo.endTime);
+                  resetIsLatestRun(runStatusPipelineInfo.endTime, dispatch);
                   return <Workflow />;
                 }}
               />
@@ -111,10 +112,7 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onSetView: (view) => {
     dispatch(setView(view));
-  },
-  onResetIsLatestRun: (endTime) => {
-    dispatch(resetIsLatestRun(endTime));
-  },
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);

@@ -401,14 +401,3 @@ export function updateIsLatestRun(isLatestRun) {
     isLatestRun,
   };
 }
-
-/**
- * Reset the isLatestRun flag and store the endTime in localStorage
- * @param {string} endTime The end time to be stored
- */
-export function resetIsLatestRun(endTime) {
-  return function (dispatch) {
-    dispatch(updateIsLatestRun(false));
-    localStorage.setItem('lastRunEndTime', endTime);
-  };
-}
