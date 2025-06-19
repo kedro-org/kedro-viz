@@ -9,6 +9,7 @@ from demo_project.pipelines.reporting.nodes import (
     create_feature_importance_plot,
     create_matplotlib_chart,
     get_top_shuttles_data,
+    generate_top_shuttles_plot,  # <-- Added this
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
@@ -48,6 +49,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=get_top_shuttles_data,
                 inputs="prm_shuttle_company_reviews",
                 outputs="top_shuttle_data",
+            ),
+            node(  # <-- New Plotly node
+                func=generate_top_shuttles_plot,
+                inputs="top_shuttle_data",
+                outputs="top_shuttles_plot",
             ),
         ],
         inputs=["prm_shuttle_company_reviews", "feature_importance_output"],

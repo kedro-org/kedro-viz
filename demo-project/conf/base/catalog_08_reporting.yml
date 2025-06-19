@@ -45,3 +45,7 @@ reporting.top_shuttle_data:
   metadata:
     kedro-viz:
       layer: reporting
+
+reporting.top_shuttles_plot:
+  type: plotly.JSONDataset
+  filepath: data/08_reporting/top_shuttles_plot.json
