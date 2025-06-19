@@ -295,6 +295,19 @@ export function toggleCode(visible) {
   };
 }
 
+export const TOGGLE_TRACEBACK = 'TOGGLE_TRACEBACK';
+
+/**
+ * Toggle traceback panel
+ * @param {String} visible Visibility status
+ */
+export function toggleTraceback(visible) {
+  return {
+    type: TOGGLE_TRACEBACK,
+    visible,
+  };
+}
+
 export const TOGGLE_PARAMETERS_HOVERED = 'TOGGLE_PARAMETERS_HOVERED';
 
 /**
@@ -362,3 +375,16 @@ export const updateStateFromOptions = (updatedOptions) => {
     payload: updatedOptions,
   };
 };
+
+export const SET_VIEW = 'SET_VIEW';
+
+/**
+ * Set the current view between flowchart and workflow
+ * @param {String} view The view to set ('flowchart' or 'workflow')
+ */
+export function setView(view) {
+  return {
+    type: SET_VIEW,
+    view,
+  };
+}

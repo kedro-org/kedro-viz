@@ -223,14 +223,17 @@ export const isRunningLocally = () => {
 };
 
 /**
- * Append trailing slash to the pathname for shareable viz
+ * Append trailing slash to the pathname and remove route-specific parts like /workflow
  * @returns {string} Sanitized pathname
  */
 export const sanitizedPathname = () => {
   const { pathname } = window.location;
-  const pathnameWithTrailingSlash = pathname.endsWith('/')
-    ? pathname
-    : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+
+  // Remove route-specific parts like /workflow from the path
+  const basePath = pathname.replace(/\/(workflow).*$/, '');
+  const pathnameWithTrailingSlash = basePath.endsWith('/')
+    ? basePath
+    : `${basePath}/`; // the `pathname` will have a trailing slash if it didn't initially
 
   return pathnameWithTrailingSlash;
 };

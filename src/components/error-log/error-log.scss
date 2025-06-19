@@ -1,0 +1,45 @@
+@use '../../styles/extends';
+@use '../../styles/variables' as variables;
+
+.kui-theme--light {
+  --error-log-preview-bg: #{variables.$grey-200};
+}
+
+.kui-theme--dark {
+  --error-log-preview-bg: #{variables.$slate-800};
+}
+
+.error-log--wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-log--wrapper {
+  .pipeline-toggle {
+    margin-bottom: 0;
+  }
+}
+
+.error-log--header, 
+.error-log--footer {
+  color: #f56565; /*need a name */
+}
+
+.error-log--details {
+  border-radius: 4px;
+  overflow: hidden;
+
+  pre {
+    margin: 0;
+    background-color: var(--error-log-preview-bg);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    padding: 1rem;
+    max-height: 289px;
+
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+  }
+}
