@@ -7,6 +7,7 @@ import {
   crossingConstraint,
   separationConstraint,
 } from './constraints';
+import { NODE_DETAILS_HEIGHT } from '../../components/draw/utils/config';
 
 /**
  * Finds positions for the given nodes relative to their edges.
@@ -35,8 +36,9 @@ export const layout = ({
   orientation,
   view,
 }) => {
-  //60 is height of the run status details rectangle in workflow view
-  const extraVerticalGap = view === 'workflow' ? 60 : 0;
+  // Height of the run status details rectangle in workflow view
+  const extraVerticalGap = view === 'workflow' ? NODE_DETAILS_HEIGHT : 0;
+  const extraHorizontalGap = view === 'workflow' ? 20 : 0;
 
   let coordPrimary = 'x';
   let coordSecondary = 'y';
@@ -61,6 +63,7 @@ export const layout = ({
     coordPrimary,
     coordSecondary,
     extraVerticalGap,
+    extraHorizontalGap,
   };
 
   // Constraints to separate nodes into rows and layers
@@ -249,8 +252,14 @@ const createParallelConstraints = (edges, layoutConfig) =>
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, layoutConfig) => {
-  const { spaceX, coordPrimary, spreadX, orientation, extraVerticalGap } =
-    layoutConfig;
+  const {
+    spaceX,
+    coordPrimary,
+    spreadX,
+    orientation,
+    extraVerticalGap,
+    extraHorizontalGap,
+  } = layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
@@ -281,7 +290,8 @@ const createSeparationConstraints = (rows, layoutConfig) => {
       const spread = Math.min(10, degreeA * degreeB * spreadX);
       const space = snap(spread * spaceX, spaceX);
 
-      let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
+      let separation =
+        nodeA.width * 0.5 + space + nodeB.width * 0.5 + extraHorizontalGap;
 
       if (orientation === 'horizontal') {
         separation = nodeA.height + nodeB.height + extraVerticalGap;
