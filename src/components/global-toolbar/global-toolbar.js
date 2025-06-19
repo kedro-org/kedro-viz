@@ -20,6 +20,8 @@ import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
 import { PIPELINE, VIEW } from '../../config';
+import { getPipelineRunData } from '../../selectors/run-status';
+import { resetIsLatestRun } from '../../actions';
 
 import './global-toolbar.scss';
 
@@ -38,8 +40,9 @@ export const GlobalToolbar = ({
   isLatestRun,
   onUpdateActivePipeline,
   onToggleExpandAllPipelines,
+  runStatusPipelineInfo,
+  onResetIsLatestRun,
 }) => {
-  console.log('isLatestRunisLatestRunisLatestRunisLatestRun', isLatestRun);
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -85,6 +88,9 @@ export const GlobalToolbar = ({
                 // and only show the default pipeline as a first MVP of run status
                 onUpdateActivePipeline(PIPELINE.DEFAULT);
                 onToggleExpandAllPipelines(true);
+
+                // Handle the new run status indicator
+                onResetIsLatestRun(runStatusPipelineInfo.endTime);
               }}
             />
             {isLatestRun && <span className="update-reminder-dot"></span>}
@@ -140,6 +146,7 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
   visible: state.visible,
   isLatestRun: state.isLatestRun,
+  runStatusPipelineInfo: getPipelineRunData(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -154,6 +161,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onSetView: (view) => {
     dispatch(setView(view));
+  },
+  onResetIsLatestRun: (endTime) => {
+    dispatch(resetIsLatestRun(endTime));
   },
   onUpdateActivePipeline: (pipelineID) => {
     dispatch(loadPipelineData(pipelineID));

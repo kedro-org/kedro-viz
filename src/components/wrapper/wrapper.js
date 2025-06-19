@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
-import { setView } from '../../actions';
+import { setView, resetIsLatestRun } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -12,6 +12,7 @@ import Workflow from '../workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
+import { getPipelineRunData } from '../../selectors/run-status';
 
 import './wrapper.scss';
 import { VIEW } from '../../config';
@@ -19,7 +20,13 @@ import { VIEW } from '../../config';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
+export const Wrapper = ({
+  displayGlobalNavigation,
+  theme,
+  onSetView,
+  onResetIsLatestRun,
+  runStatusPipelineInfo,
+}) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -81,6 +88,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
                   onSetView(VIEW.WORKFLOW);
+                  onResetIsLatestRun(runStatusPipelineInfo.endTime);
                   return <Workflow />;
                 }}
               />
@@ -97,11 +105,15 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
 export const mapStateToProps = (state) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   theme: state.theme,
+  runStatusPipelineInfo: getPipelineRunData(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   onSetView: (view) => {
     dispatch(setView(view));
+  },
+  onResetIsLatestRun: (endTime) => {
+    dispatch(resetIsLatestRun(endTime));
   },
 });
 

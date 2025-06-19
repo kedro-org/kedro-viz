@@ -1,5 +1,5 @@
 import { fetchRunStatus, processRunStatus } from '../utils/normalizeRunStatus';
-import { handleLatestRunStatus } from '../utils';
+import { handleLatestRunStatus } from '../utils/normalizeRunStatus';
 import { updateIsLatestRun } from '../actions';
 
 export const UPDATE_RUN_STATUS_DATA = 'UPDATE_RUN_STATUS_DATA';

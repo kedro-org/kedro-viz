@@ -69,3 +69,17 @@ export const processRunStatus = (response) => {
 
   return runStatusData;
 };
+
+/** * Handle the latest run status by comparing end times
+ * @param {Object} processedData Processed run status data
+ * @returns {boolean} True if the latest run is newer than the last stored run
+ */
+export const handleLatestRunStatus = (processedData) => {
+  const endTime = processedData.pipeline.endTime;
+  const lastEndTime = localStorage.getItem('lastRunEndTime');
+
+  const isLatestRun =
+    !lastEndTime ||
+    new Date(endTime).getTime() > new Date(lastEndTime).getTime();
+  return isLatestRun;
+};
