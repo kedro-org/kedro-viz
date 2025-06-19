@@ -8,7 +8,7 @@ import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import Workflow from '../workflow/workflow';
+import Workflow from '../workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
