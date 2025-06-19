@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import { useGeneratePathname } from './use-generate-pathname';
 
 export const withHooksHOC = (Component) => {
   return (props) => {
