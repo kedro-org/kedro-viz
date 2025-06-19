@@ -3,7 +3,7 @@ This is a boilerplate pipeline 'reporting'
 generated using Kedro 0.18.1
 """
 
-from typing import Dict
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -137,6 +137,42 @@ def get_top_shuttles_data(model_input_table: pd.DataFrame) -> Dict:
     """
 
     # Get the top N rows of the model input table
-    top_shuttle_df = model_input_table.head(5)
+    top_shuttle_df = model_input_table.head(0)
     top_shuttle_json = top_shuttle_df.to_dict(orient="records")
     return top_shuttle_json
+
+def generate_top_shuttles_plot(shuttle_data: List[Dict]) -> go.Figure:
+    df = pd.DataFrame(shuttle_data)
+
+    # If DataFrame is empty or key column is missing, just return an empty plot
+    if df.empty or "review_scores_rating" not in df.columns:
+        fig = go.Figure()
+        fig.update_layout(
+            title="Top Shuttles: Rating vs Price",
+            xaxis_title="Price",
+            yaxis_title="Review Score",
+        )
+        return fig
+
+    # Proceed normally
+    df = df.sort_values(by="review_scores_rating", ascending=False)
+
+    fig = px.scatter(
+        df,
+        x="price",
+        y="review_scores_rating",
+        size="passenger_capacity",
+        color="engine_type",
+        hover_name="shuttle_id",
+        text="shuttle_location",
+        title="Top Shuttles: Rating vs Price",
+        labels={
+            "price": "Shuttle Price ($)",
+            "review_scores_rating": "Review Score",
+            "engine_type": "Engine Type",
+            "passenger_capacity": "Passengers",
+        }
+    )
+
+    fig.update_traces(textposition='top center')
+    return fig

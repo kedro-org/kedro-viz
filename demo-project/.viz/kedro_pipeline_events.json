@@ -1,7 +1,7 @@
 [
   {
     "event": "before_pipeline_run",
-    "timestamp": "2025-06-03T10.59.17.704458Z"
+    "timestamp": "2025-06-19T08.44.39.627165Z"
   },
   {
     "event": "after_dataset_loaded",
@@ -14,7 +14,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_companies",
     "node_id": "69c523b6",
-    "duration": 0.019909750029910356,
+    "duration": 0.009818167076446116,
     "status": "success"
   },
   {
@@ -41,7 +41,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_reviews",
     "node_id": "ea604da4",
-    "duration": 0.018141041975468397,
+    "duration": 0.0038318339502438903,
     "status": "success"
   },
   {
@@ -62,7 +62,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_shuttles",
     "node_id": "f33b9291",
-    "duration": 0.0436144580016844,
+    "duration": 0.025136959040537477,
     "status": "success"
   },
   {
@@ -83,7 +83,7 @@
     "event": "after_node_run",
     "node": "ingestion.company_agg",
     "node_id": "8de402c1",
-    "duration": 0.60970383399399,
+    "duration": 0.3816630420042202,
     "status": "success"
   },
   {
@@ -116,7 +116,7 @@
     "event": "after_node_run",
     "node": "ingestion.combine_step",
     "node_id": "cb5166f3",
-    "duration": 0.05434016702929512,
+    "duration": 0.022877583047375083,
     "status": "success"
   },
   {
@@ -157,7 +157,7 @@
     "event": "after_node_run",
     "node": "feature_engineering.create_derived_features([prm_spine_table;prm_shuttle_company_reviews;params:feature_engineering.feature.derived]) -> [feature_engineering.feat_derived_features]",
     "node_id": "04ba733a",
-    "duration": 0.021437250019516796,
+    "duration": 0.0071182079846039414,
     "status": "success"
   },
   {
@@ -177,7 +177,7 @@
     "event": "after_node_run",
     "node": "feature_engineering.create_feature_importance([prm_spine_table]) -> [feature_importance_output]",
     "node_id": "7932e672",
-    "duration": 0.003806374967098236,
+    "duration": 0.0007603339618071914,
     "status": "success"
   },
   {
@@ -185,7 +185,7 @@
     "dataset": "feature_importance_output",
     "node_id": "1e3cc50a",
     "status": "Available",
-    "size": 458
+    "size": 456
   },
   {
     "event": "after_dataset_loaded",
@@ -204,7 +204,7 @@
     "event": "after_node_run",
     "node": "feature_engineering.create_static_features([prm_shuttle_company_reviews;params:feature_engineering.feature.static]) -> [feature_engineering.feat_static_features]",
     "node_id": "e50f81b8",
-    "duration": 0.01313387497793883,
+    "duration": 0.0008893749909475446,
     "status": "success"
   },
   {
@@ -224,7 +224,7 @@
     "event": "after_node_run",
     "node": "ingestion.<lambda>([prm_spine_table]) -> [ingestion.prm_spine_table_clone]",
     "node_id": "9a6ef457",
-    "duration": 0.0038898339844308794,
+    "duration": 0.00039520906284451485,
     "status": "success"
   },
   {
@@ -244,7 +244,7 @@
     "event": "after_node_run",
     "node": "reporting.create_matplotlib_chart([prm_shuttle_company_reviews]) -> [reporting.confusion_matrix]",
     "node_id": "be6b7919",
-    "duration": 0.25152412499301136,
+    "duration": 0.13394887500908226,
     "status": "success"
   },
   {
@@ -252,7 +252,7 @@
     "dataset": "reporting.confusion_matrix",
     "node_id": "3b199c6b",
     "status": "Available",
-    "size": 1024
+    "size": 704
   },
   {
     "event": "after_dataset_loaded",
@@ -265,7 +265,7 @@
     "event": "after_node_run",
     "node": "reporting.get_top_shuttles_data([prm_shuttle_company_reviews]) -> [reporting.top_shuttle_data]",
     "node_id": "44ef9b48",
-    "duration": 0.011709082988090813,
+    "duration": 0.0013494580052793026,
     "status": "success"
   },
   {
@@ -273,7 +273,7 @@
     "dataset": "reporting.top_shuttle_data",
     "node_id": "c0be8342",
     "status": "Available",
-    "size": 4100
+    "size": 2
   },
   {
     "event": "after_dataset_loaded",
@@ -286,7 +286,7 @@
     "event": "after_node_run",
     "node": "reporting.make_cancel_policy_bar_chart([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_breakdown]",
     "node_id": "c7646ea1",
-    "duration": 0.015510708035435528,
+    "duration": 0.0036009580362588167,
     "status": "success"
   },
   {
@@ -294,7 +294,7 @@
     "dataset": "reporting.cancellation_policy_breakdown",
     "node_id": "d0e9b00f",
     "status": "Available",
-    "size": 8610
+    "size": 8879
   },
   {
     "event": "after_dataset_loaded",
@@ -307,7 +307,7 @@
     "event": "after_node_run",
     "node": "reporting.make_price_analysis_image([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_grid]",
     "node_id": "3fb71518",
-    "duration": 0.01119254098739475,
+    "duration": 0.0028606250416487455,
     "status": "success"
   },
   {
@@ -328,7 +328,7 @@
     "event": "after_node_run",
     "node": "reporting.make_price_histogram([prm_shuttle_company_reviews]) -> [reporting.price_histogram]",
     "node_id": "40886786",
-    "duration": 0.057450166961643845,
+    "duration": 0.02720329095609486,
     "status": "success"
   },
   {
@@ -336,7 +336,7 @@
     "dataset": "reporting.price_histogram",
     "node_id": "c6992660",
     "status": "Available",
-    "size": 1024
+    "size": 736
   },
   {
     "event": "after_dataset_loaded",
@@ -361,7 +361,7 @@
     "event": "after_node_run",
     "node": "feature_engineering.joiner([prm_spine_table;feature_engineering.feat_static_features;feature_engineering.feat_derived_features]) -> [model_input_table]",
     "node_id": "6ea2ec2c",
-    "duration": 0.016979040985461324,
+    "duration": 0.005149708013050258,
     "status": "success"
   },
   {
@@ -376,13 +376,13 @@
     "dataset": "feature_importance_output",
     "node_id": "1e3cc50a",
     "status": "Available",
-    "size": 458
+    "size": 456
   },
   {
     "event": "after_node_run",
     "node": "reporting.create_feature_importance_plot([feature_importance_output]) -> [reporting.feature_importance]",
     "node_id": "4adb5c8b",
-    "duration": 0.028318417025730014,
+    "duration": 0.016458290978334844,
     "status": "success"
   },
   {
@@ -390,7 +390,28 @@
     "dataset": "reporting.feature_importance",
     "node_id": "eb7d6d28",
     "status": "Available",
-    "size": 960
+    "size": 704
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "reporting.top_shuttle_data",
+    "node_id": "c0be8342",
+    "status": "Available",
+    "size": 2
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.generate_top_shuttles_plot([reporting.top_shuttle_data]) -> [reporting.top_shuttles_plot]",
+    "node_id": "af382477",
+    "duration": 0.0018552920082584023,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.top_shuttles_plot",
+    "node_id": "5eb4a54e",
+    "status": "Available",
+    "size": 7063
   },
   {
     "event": "after_dataset_loaded",
@@ -409,7 +430,7 @@
     "event": "after_node_run",
     "node": "split_data([model_input_table;params:split_options]) -> [X_train;X_test;y_train;y_test]",
     "node_id": "2816ba38",
-    "duration": 0.01545824995264411,
+    "duration": 0.0026576248928904533,
     "status": "success"
   },
   {
@@ -458,7 +479,7 @@
     "event": "after_node_run",
     "node": "train_evaluation.linear_regression.train_model([X_train;y_train;params:train_evaluation.model_options.linear_regression]) -> [train_evaluation.linear_regression.regressor;train_evaluation.linear_regression.experiment_params]",
     "node_id": "af9a43c8",
-    "duration": 0.10215837502619252,
+    "duration": 0.06473791704047471,
     "status": "success"
   },
   {
@@ -466,7 +487,7 @@
     "dataset": "train_evaluation.linear_regression.regressor",
     "node_id": "10e51dea",
     "status": "Available",
-    "size": 640
+    "size": 512
   },
   {
     "event": "after_dataset_saved",
@@ -496,7 +517,7 @@
     "event": "after_node_run",
     "node": "train_evaluation.random_forest.train_model([X_train;y_train;params:train_evaluation.model_options.random_forest]) -> [train_evaluation.random_forest.regressor;train_evaluation.random_forest.experiment_params]",
     "node_id": "038647c7",
-    "duration": 9.027734917006455,
+    "duration": 7.067857792018913,
     "status": "success"
   },
   {
@@ -504,7 +525,7 @@
     "dataset": "train_evaluation.random_forest.regressor",
     "node_id": "01675921",
     "status": "Available",
-    "size": 640
+    "size": 512
   },
   {
     "event": "after_dataset_saved",
@@ -517,7 +538,7 @@
     "dataset": "train_evaluation.linear_regression.regressor",
     "node_id": "10e51dea",
     "status": "Available",
-    "size": 640
+    "size": 512
   },
   {
     "event": "after_dataset_loaded",
@@ -535,7 +556,7 @@
     "event": "after_node_run",
     "node": "train_evaluation.linear_regression.evaluate_model([train_evaluation.linear_regression.regressor;X_test;y_test]) -> [train_evaluation.linear_regression.r2_score]",
     "node_id": "d2885635",
-    "duration": 0.008146999985910952,
+    "duration": 0.0019278749823570251,
     "status": "success"
   },
   {
@@ -549,7 +570,7 @@
     "dataset": "train_evaluation.random_forest.regressor",
     "node_id": "01675921",
     "status": "Available",
-    "size": 640
+    "size": 512
   },
   {
     "event": "after_dataset_loaded",
@@ -567,7 +588,7 @@
     "event": "after_node_run",
     "node": "train_evaluation.random_forest.evaluate_model([train_evaluation.random_forest.regressor;X_test;y_test]) -> [train_evaluation.random_forest.r2_score]",
     "node_id": "bf8530bc",
-    "duration": 0.13887566700577736,
+    "duration": 0.10251462494488806,
     "status": "success"
   },
   {
@@ -578,6 +599,6 @@
   },
   {
     "event": "after_pipeline_run",
-    "timestamp": "2025-06-03T10.59.35.297883Z"
+    "timestamp": "2025-06-19T08.44.51.492784Z"
   }
 ]
