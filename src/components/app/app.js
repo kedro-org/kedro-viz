@@ -18,6 +18,7 @@ import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
+import { processRunStatus } from '../../utils/normalizeRunStatus';
 import './app.scss';
 
 /**
@@ -46,7 +47,8 @@ class App extends React.Component {
 
     // If runData is provided, update the store with it or load it from the API
     if (this.props.runData) {
-      this.store.dispatch(updateRunStatusData(this.props.runData));
+      const processedData = processRunStatus(this.props.runData);
+      this.store.dispatch(updateRunStatusData(processedData));
     } else {
       this.store.dispatch(loadRunStatusData());
     }
@@ -58,7 +60,8 @@ class App extends React.Component {
       this.updatePipelineData();
     }
     if (this.props.runData && prevProps.runData !== this.props.runData) {
-      this.store.dispatch(updateRunStatusData(this.props.runData));
+      const processedData = processRunStatus(this.props.runData);
+      this.store.dispatch(updateRunStatusData(processedData));
     }
     if (!isEqual(prevProps.options, this.props.options)) {
       this.store.dispatch(updateStateFromOptions(this.props.options));

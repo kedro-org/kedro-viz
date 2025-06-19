@@ -70,7 +70,7 @@ export const getNodeDurationById = (state, nodeId) => {
  */
 export const hasNodeFailed = (state, nodeId) => {
   const node = state.runStatus?.nodes?.[nodeId];
-  return node?.status === 'error' || node?.status === 'failed';
+  return node?.error != null;
 };
 
 /**
@@ -81,7 +81,5 @@ export const hasNodeFailed = (state, nodeId) => {
  */
 export const getNodeError = (state, nodeId) => {
   const node = state.runStatus?.nodes?.[nodeId];
-  return node?.status === 'error' || node?.status === 'failed'
-    ? node?.error
-    : null;
+  return node?.error || null;
 };
