@@ -215,7 +215,7 @@ def _process_node_completion_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id", "unknown_node")
-    status = event.get("status", "Successful")
+    status = event.get("status", NodeStatus.SUCCESSFUL)
     duration = float(event.get("duration", 0.0))
 
     nodes[node_id] = NodeInfo(
@@ -268,7 +268,7 @@ def _process_dataset_event(
         size = int(event.get("size", 0))
     except (TypeError, ValueError):
         size = 0
-    status = event.get("status", "Available")
+    status = event.get("status", DatasetStatus.AVAILABLE)
     event_type = event.get("event")
 
     # Overwrite size for save operations

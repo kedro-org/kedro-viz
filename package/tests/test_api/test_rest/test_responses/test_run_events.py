@@ -263,7 +263,7 @@ def test_event_transformation_end_to_end() -> None:
         {
             "event": run_events.EventType.AFTER_NODE_RUN,
             "node_id": "load_customers_node",
-            "status": "Successful",
+            "status": "successful",
             "duration": 1,
         },
         _make_event(
@@ -271,7 +271,7 @@ def test_event_transformation_end_to_end() -> None:
             node_id="load_customers_node",
             dataset="customers.csv",
             size=1,
-            status="Available",
+            status="available",
         ),
         _make_event(
             run_events.EventType.ON_NODE_ERROR,
@@ -353,7 +353,7 @@ def test_get_run_status_response_code_paths(
             "event": run_events.EventType.AFTER_NODE_RUN,
             "node_id": "nX",
             "duration": 1,
-            "status": "Successful",
+            "status": "successful",
         },
         {
             "event": run_events.EventType.AFTER_PIPELINE_RUN,

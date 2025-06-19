@@ -19,22 +19,22 @@ EnumType = TypeVar("EnumType", bound=Enum)
 class PipelineStatus(str, Enum):
     """Constants for pipeline statuses."""
 
-    SUCCESSFUL = "Successful"
-    FAILED = "Failed"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
 
 
 class NodeStatus(str, Enum):
     """Enum representing the possible statuses of a node."""
 
-    SUCCESSFUL = "Successful"
-    FAILED = "Failed"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
 
 
 class DatasetStatus(str, Enum):
     """Enum representing the possible statuses of a dataset."""
 
-    AVAILABLE = "Available"
-    MISSING = "Missing"
+    AVAILABLE = "available"
+    MISSING = "missing"
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
