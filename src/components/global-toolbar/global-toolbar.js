@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
   toggleSettingsModal,
@@ -20,6 +20,8 @@ import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
 import { PIPELINE, VIEW } from '../../config';
+import { getPipelineRunData } from '../../selectors/run-status';
+import { resetIsLatestRun } from '../../utils/normalizeRunStatus';
 
 import './global-toolbar.scss';
 
@@ -35,9 +37,13 @@ export const GlobalToolbar = ({
   onToggleTheme,
   onSetView,
   theme,
+  isLatestRun,
   onUpdateActivePipeline,
   onToggleExpandAllPipelines,
+  runStatusPipelineInfo,
 }) => {
+  const dispatch = useDispatch();
+
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -83,10 +89,12 @@ export const GlobalToolbar = ({
                 // and only show the default pipeline as a first MVP of run status
                 onUpdateActivePipeline(PIPELINE.DEFAULT);
                 onToggleExpandAllPipelines(true);
+
+                // Handle the new run status indicator
+                resetIsLatestRun(runStatusPipelineInfo.endTime, dispatch);
               }}
             />
-            {/* TODO: Remove this once we have a real run status indicator */}
-            {true && <span className="update-reminder-dot"></span>}
+            {isLatestRun && <span className="run-status-dot"></span>}
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
@@ -138,6 +146,8 @@ export const GlobalToolbar = ({
 export const mapStateToProps = (state) => ({
   theme: state.theme,
   visible: state.visible,
+  isLatestRun: state.isLatestRun,
+  runStatusPipelineInfo: getPipelineRunData(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

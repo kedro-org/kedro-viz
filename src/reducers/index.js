@@ -28,6 +28,7 @@ import {
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
   SET_VIEW,
+  UPDATE_IS_LATEST_RUN,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 import { VIEW } from '../config';
@@ -102,6 +103,7 @@ const combinedReducer = combineReducers({
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
   view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
+  isLatestRun: createReducer(false, UPDATE_IS_LATEST_RUN, 'isLatestRun'),
   showFeatureHints: createReducer(
     true,
     TOGGLE_SHOW_FEATURE_HINTS,

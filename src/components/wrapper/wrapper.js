@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
@@ -12,6 +12,8 @@ import Workflow from '../workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
+import { getPipelineRunData } from '../../selectors/run-status';
+import { resetIsLatestRun } from '../../utils/normalizeRunStatus';
 
 import './wrapper.scss';
 import { VIEW } from '../../config';
@@ -19,7 +21,13 @@ import { VIEW } from '../../config';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
+export const Wrapper = ({
+  displayGlobalNavigation,
+  theme,
+  onSetView,
+  runStatusPipelineInfo,
+}) => {
+  const dispatch = useDispatch();
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -81,6 +89,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
                   onSetView(VIEW.WORKFLOW);
+                  resetIsLatestRun(runStatusPipelineInfo.endTime, dispatch);
                   return <Workflow />;
                 }}
               />
@@ -97,12 +106,13 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
 export const mapStateToProps = (state) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   theme: state.theme,
+  runStatusPipelineInfo: getPipelineRunData(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   onSetView: (view) => {
     dispatch(setView(view));
-  },
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);
