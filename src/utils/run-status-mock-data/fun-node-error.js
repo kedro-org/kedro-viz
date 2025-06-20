@@ -1,34 +1,32 @@
 export const funNodeError = {
     "nodes": {
         "69c523b6": {
-            "status": "Success",
-            "duration": 102,
+            "status": "Successful",
+            "duration": 0.0196882919408381,
             "error": null
         },
         "ea604da4": {
-            "status": "Success",
-            "duration": 0.01458304189145565,
+            "status": "Successful",
+            "duration": 0.015030583832412958,
             "error": null
         },
         "f33b9291": {
-            "status": "Success",
-            "duration": 0.04575512511655688,
+            "status": "Successful",
+            "duration": 0.04600137518718839,
             "error": null
         },
         "8de402c1": {
-            "status": "Success",
-            "duration": 0.6109939999878407,
+            "status": "Successful",
+            "duration": 0.6291972501203418,
             "error": null
         },
         "cb5166f3": {
-            "status": "Success",
-            "duration": 0.06349179102107882,
-            "error": null
-        },
-        "04ba733a": {
             "status": "Failed",
             "duration": 0.0,
-            "error": "_get_id_columns() missing 1 required positional argument: 'data'"
+            "error": {
+                "message": "DataFrame.merge() missing 1 required positional argument: 'right'",
+                "traceback": "Traceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 298, in _call_node_run\n    outputs = node.run(inputs)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 398, in run\n    raise exc\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 386, in run\n    outputs = self._run_with_dict(inputs, self._inputs)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 443, in _run_with_dict\n    return self._func(**kwargs)\n  File \"/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/src/demo_project/pipelines/data_ingestion/nodes.py\", line 114, in combine_shuttle_level_information\n    combined_table = rated_shuttles.merge()\nTypeError: DataFrame.merge() missing 1 required positional argument: 'right'\n"
+            }
         }
     },
     "datasets": {
@@ -79,32 +77,17 @@ export const funNodeError = {
             "size": 0,
             "status": "Available",
             "error": null
-        },
-        "9f266f06": {
-            "name": "prm_shuttle_company_reviews",
-            "size": 1053909,
-            "status": "Available",
-            "error": null
-        },
-        "f063cc82": {
-            "name": "prm_spine_table",
-            "size": 659388,
-            "status": "Available",
-            "error": null
-        },
-        "abed6a4d": {
-            "name": "params:feature_engineering.feature.derived",
-            "size": 0,
-            "status": "Available",
-            "error": null
         }
     },
     "pipeline": {
-        "run_id": "7b241f60-ef64-4158-abc8-1f1435050041",
-        "start_time": "2025-05-22T15:54:02.307925",
-        "end_time": "2025-05-22T15:54:08.696715",
-        "duration": 6.38879,
-        "status": "failed",
-        "error": "_get_id_columns() missing 1 required positional argument: 'data'"
+        "run_id": "e1883c8c-892c-4bbb-ae4c-b639e3513099",
+        "start_time": "2025-06-20T09.54.25.993228Z",
+        "end_time": "2025-06-20T09.54.33.160517Z",
+        "duration": 0.7099175010807812,
+        "status": "Failed",
+        "error": {
+            "message": "DataFrame.merge() missing 1 required positional argument: 'right'",
+            "traceback": "Traceback (most recent call last):\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/framework/session/session.py\", line 399, in run\n    run_result = runner.run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 129, in run\n    self._run(pipeline, catalog, hook_or_null_manager, session_id)  # type: ignore[arg-type]\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/sequential_runner.py\", line 72, in _run\n    super()._run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/runner.py\", line 239, in _run\n    ).execute()\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 88, in execute\n    node = self._run_node_sequential(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 164, in _run_node_sequential\n    outputs = self._call_node_run(\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 308, in _call_node_run\n    raise exc\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/runner/task.py\", line 298, in _call_node_run\n    outputs = node.run(inputs)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 398, in run\n    raise exc\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 386, in run\n    outputs = self._run_with_dict(inputs, self._inputs)\n  File \"/Users/Jitendra_Gundaniya/miniconda3/envs/viz-run-ws/lib/python3.10/site-packages/kedro/pipeline/node.py\", line 443, in _run_with_dict\n    return self._func(**kwargs)\n  File \"/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/src/demo_project/pipelines/data_ingestion/nodes.py\", line 114, in combine_shuttle_level_information\n    combined_table = rated_shuttles.merge()\nTypeError: DataFrame.merge() missing 1 required positional argument: 'right'\n"
+        }
     }
 }
