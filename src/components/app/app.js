@@ -19,6 +19,8 @@ import getInitialState, {
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
 import { processRunStatus } from '../../utils/normalizeRunStatus';
+import { handleLatestRunStatus } from '../../utils/normalizeRunStatus';
+import { updateIsLatestRun } from '../../actions';
 import './app.scss';
 
 /**
@@ -48,6 +50,8 @@ class App extends React.Component {
     // If runData is provided, update the store with it or load it from the API
     if (this.props.runData) {
       const processedData = processRunStatus(this.props.runData);
+      const isLatestRun = handleLatestRunStatus(processedData);
+      this.store.dispatch(updateIsLatestRun(isLatestRun));
       this.store.dispatch(updateRunStatusData(processedData));
     } else {
       this.store.dispatch(loadRunStatusData());
@@ -61,6 +65,8 @@ class App extends React.Component {
     }
     if (this.props.runData && prevProps.runData !== this.props.runData) {
       const processedData = processRunStatus(this.props.runData);
+      const isLatestRun = handleLatestRunStatus(processedData);
+      this.store.dispatch(updateIsLatestRun(isLatestRun));
       this.store.dispatch(updateRunStatusData(processedData));
     }
     if (!isEqual(prevProps.options, this.props.options)) {

@@ -73,7 +73,8 @@ export const processRunStatus = (response) => {
   return runStatusData;
 };
 
-/** * Handle the latest run status by comparing end times
+/**
+ * Handle the latest run status by comparing end times
  * @param {Object} processedData Processed run status data
  * @returns {boolean} True if the latest run is newer than the last stored run
  */
@@ -81,10 +82,27 @@ export const handleLatestRunStatus = (processedData) => {
   const endTime = processedData.pipeline.endTime;
   const lastEndTime = localStorage.getItem(localStorageLastRunEndTime);
 
-  const isLatestRun =
-    !lastEndTime ||
-    new Date(endTime).getTime() > new Date(lastEndTime).getTime();
-  return isLatestRun;
+  // If no endTime available, assume it's not the latest run
+  if (!endTime) {
+    return false;
+  }
+
+  // If no previous run recorded, this is considered the latest
+  if (!lastEndTime) {
+    return true;
+  }
+
+  try {
+    const currentRunTime = new Date(endTime).getTime();
+    const lastRunTime = new Date(lastEndTime).getTime();
+
+    // Return true if current run is newer than the last recorded run
+    return currentRunTime > lastRunTime;
+  } catch (error) {
+    console.warn('Error comparing run timestamps:', error);
+    // If there's an error parsing dates, assume it's not the latest run
+    return false;
+  }
 };
 
 /**
@@ -92,7 +110,6 @@ export const handleLatestRunStatus = (processedData) => {
  * @param {string} endTime The end time to be stored
  */
 export function resetIsLatestRun(endTime, dispatch) {
-    dispatch(updateIsLatestRun(false));
-    localStorage.setItem(localStorageLastRunEndTime, endTime);
-  
+  dispatch(updateIsLatestRun(false));
+  localStorage.setItem(localStorageLastRunEndTime, endTime);
 }
