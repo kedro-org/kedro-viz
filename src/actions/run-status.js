@@ -32,10 +32,10 @@ export const fetchRunStatus = async () => {
 };
 
 /**
- * Load run status data
+ * Load run status data on initial page-load
  * @returns {Function} Thunk that loads run status data
  */
-export function loadRunStatusData() {
+export function loadInitialRunStatusData() {
   return async function (dispatch) {
     const runData = await fetchRunStatus();
     const processedData = processRunStatus(runData);

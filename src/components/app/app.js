@@ -10,7 +10,7 @@ import {
   loadPipelineData,
 } from '../../actions/pipelines';
 import {
-  loadRunStatusData,
+  loadInitialRunStatusData,
   updateRunStatusData,
 } from '../../actions/run-status';
 import Wrapper from '../wrapper';
@@ -47,7 +47,7 @@ class App extends React.Component {
 
     // If runData is not provided, load it from the API
     if (!this.props.runData) {
-      this.store.dispatch(loadRunStatusData());
+      this.store.dispatch(loadInitialRunStatusData());
     }
     this.announceFlags(this.store.getState().flags);
   }
