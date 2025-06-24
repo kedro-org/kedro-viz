@@ -3,7 +3,7 @@ import {
   formatSize,
 } from '../../workflow/workflow-utils/format';
 import {
-  getNodeStatusInfo,
+  getTasksStatusInfo,
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
 import { NODE_DETAILS_HEIGHT } from './config';
@@ -16,13 +16,13 @@ import { MINIMUM_WIDTH } from './config';
 export function renderNodeDetailsContainer(
   parentGroup,
   node,
-  nodesStatus,
+  tasksStatus,
   dataSetsStatus
 ) {
   const nodeWidth = Math.max(node.width || 0, MINIMUM_WIDTH);
   const nodeHeight = node.height - 5;
 
-  const { nodeStatus, nodeDuration } = getNodeStatusInfo(nodesStatus, node);
+  const { taskStatus, nodeDuration } = getTasksStatusInfo(tasksStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
     dataSetsStatus,
     node
@@ -121,11 +121,7 @@ export function renderNodeDetailsContainer(
   statusGroup
     .append('text')
     .attr('class', 'pipeline-node__details-value')
-    .text(
-      datasetStatus
-        ? `${nodeStatus ?? ''} ${datasetStatus}`
-        : nodeStatus ?? 'Skipped'
-    )
+    .text(datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped')
     .attr('text-anchor', 'start')
     .attr(
       'x',

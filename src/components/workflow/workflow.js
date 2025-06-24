@@ -655,7 +655,7 @@ export class Workflow extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      nodesStatus,
+      tasksStatus,
       dataSetsStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
@@ -712,7 +712,7 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                nodesStatus={nodesStatus}
+                tasksStatus={tasksStatus}
                 dataSetsStatus={dataSetsStatus}
               />
             </GraphSVG>
@@ -786,7 +786,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
-  nodesStatus: getNodesStatus(state),
+  tasksStatus: getNodesStatus(state),
   dataSetsStatus: getDatasetsStatus(state),
 });
 

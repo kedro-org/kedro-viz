@@ -23,7 +23,7 @@ function setNodeRectAttrs(nodeRects, widthFn) {
 export const updateNodeRects = (
   nodeRects,
   showRunStatus,
-  nodesStatus,
+  tasksStatus,
   dataSetsStatus
 ) => {
   if (showRunStatus) {
@@ -37,7 +37,7 @@ export const updateNodeRects = (
       renderNodeDetailsContainer(
         parentGroup,
         node,
-        nodesStatus,
+        tasksStatus,
         dataSetsStatus
       );
     });
