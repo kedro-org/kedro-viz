@@ -25,35 +25,6 @@ def hash_node(node: Any) -> str:
     return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
 
 
-def create_dataset_event(
-    event_type: str,
-    dataset_name: str,
-    dataset_value: Any = None,
-    datasets: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
-    """Generic builder for dataset load/save events.
-
-    Args:
-        event_type: Event type/name
-        dataset_name: Dataset name
-        dataset_value: Dataset data
-        datasets: Dictionary of available datasets
-
-    Returns:
-        Dictionary with event data
-    """
-    event: Dict[str, Any] = {
-        "event": event_type,
-        "dataset": dataset_name,
-        "node_id": _hash_input_output(dataset_name),
-        "status": "Available",
-    }
-
-    if dataset_value is not None and datasets:
-        size = compute_size(dataset_name, datasets)
-        if size is not None:
-            event["size"] = size  # only attach size when available
-    return event
 
 
 def extract_file_paths(dataset: Any) -> List[str]:

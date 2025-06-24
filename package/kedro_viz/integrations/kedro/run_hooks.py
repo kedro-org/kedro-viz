@@ -3,13 +3,14 @@
 import logging
 import traceback
 from time import perf_counter
-from typing import Any, Optional, Union
+from typing import Any, Optional, Dict
 
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
-    create_dataset_event,
+    _hash_input_output,
+    compute_size,
     generate_timestamp,
     hash_node,
     is_default_run,
@@ -17,6 +18,36 @@ from kedro_viz.integrations.kedro.hooks_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+def create_dataset_event(
+    event_name: str,
+    dataset_name: str,
+    dataset_value: Any = None,
+    datasets: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Generic builder for dataset load/save events.
+
+    Args:
+        event_type: Event type/name
+        dataset_name: Dataset name
+        dataset_value: Dataset data
+        datasets: Dictionary of available datasets
+
+    Returns:
+        Dictionary with event data
+    """
+    event: Dict[str, Any] = {
+        "event": event_name,
+        "dataset": dataset_name,
+        "node_id": _hash_input_output(dataset_name),
+        "status": "Available",
+    }
+
+    if dataset_value is not None and datasets:
+        size = compute_size(dataset_name, datasets)
+        if size is not None:
+            event["size"] = size  # only attach size when available
+    return event
 
 
 class PipelineRunStatusHook:
@@ -61,9 +92,6 @@ class PipelineRunStatusHook:
         self._all_nodes: list[KedroNode] = []
         self._started_nodes: set[str] = set()
 
-    def _write_events(self) -> None:
-        """Persist events list to the project's .viz JSON file."""
-        write_events(self._events)
 
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
@@ -75,7 +103,7 @@ class PipelineRunStatusHook:
 
         self._events.append(event)
         if flush:
-            self._write_events()
+            write_events(self._events)
 
     def _set_context(self, dataset: str, operation: str, node: KedroNode) -> None:
         """Save dataset I/O and node context for error handling."""
@@ -96,19 +124,10 @@ class PipelineRunStatusHook:
         has been loaded or saved yet — so only static dataset configuration (not size/content)
         can be accessed.
         """
-        try:
-            # prefer new KedroDataCatalog
-            from kedro.io import KedroDataCatalog
-
-            if isinstance(catalog, KedroDataCatalog):
+        from kedro.io import KedroDataCatalog
+        
+        if isinstance(catalog, KedroDataCatalog):
                 self._datasets = catalog.datasets
-                return
-        except ImportError:
-            pass
-        # fallback older versions. Remove fallback once Kedro 1.0.0 released
-        self._datasets = getattr(
-            catalog, "_datasets", getattr(catalog, "_data_sets", {})
-        )
 
     @hook_impl
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:

@@ -62,19 +62,22 @@ def test_extract_file_paths_variants():
     assert extract_file_paths(Single()) == ["single.txt"]
 
 
-def test_compute_size_and_get_file_size(tmp_path):
-    fp = tmp_path / "file.txt"
-    fp.write_text("abcdef")  # 6 bytes
+def test_get_file_size_existing_file(tmp_path):
+    filepath = tmp_path / "file.txt"
+    filepath.write_text("abcdef")  # 6 bytes
+    assert get_file_size(str(filepath)) == 6
 
-    assert get_file_size(str(fp)) == 6
+def test_compute_size_for_valid_dataset(tmp_path):
+    filepath = tmp_path / "file.txt"
+    filepath.write_text("abcdef")
+    datasets = {"mock_dataset": type("Local", (), {"filepath": str(filepath)})()}
+    assert compute_size("mock_dataset", datasets) == 6
 
-    datasets = {"ds": type("Local", (), {"filepath": str(fp)})()}
-    assert compute_size("ds", datasets) == 6
 
-
-def test_compute_size_fallbacks():
+def test_compute_size_returns_none_for_missing_dataset():
     assert compute_size("missing", {}) is None
-
+    
+def test_compute_size_returns_none_when_no_filepath_attr():
     class NoPath:
         pass
 
