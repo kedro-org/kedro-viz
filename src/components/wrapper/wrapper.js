@@ -4,21 +4,19 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
-import { setView } from '../../actions';
-import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
-import FlowChartWrapper from '../flowchart-wrapper';
+import FlowchartRouteWrapper from '../flowchart-route-wrapper';
+import WorkflowRouteWrapper from '../workflow-route-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
 
 import './wrapper.scss';
-import { VIEW } from '../../config';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
+export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -42,6 +40,17 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
     checkKedroVizVersion();
   }, []);
 
+  const allKedroVizRoutes = (
+    <Switch>
+      <Route exact path={sanitizedPathname()}>
+        <FlowchartRouteWrapper />
+      </Route>
+      <Route path={`${sanitizedPathname()}workflow`}>
+        <WorkflowRouteWrapper />
+      </Route>
+    </Switch>
+  );
+
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -62,31 +71,10 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
             {version && (
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
-            <Switch>
-              <Route
-                exact
-                path={sanitizedPathname()}
-                render={() => {
-                  onSetView(VIEW.FLOWCHART);
-                  return (
-                    <>
-                      <FlowChartWrapper />
-                      <FeatureHints />
-                    </>
-                  );
-                }}
-              />
-              <Route
-                path={`${sanitizedPathname()}workflow`}
-                render={() => {
-                  onSetView(VIEW.WORKFLOW);
-                  return <div>WorkflowWrapper component will come here</div>;
-                }}
-              />
-            </Switch>
+            {allKedroVizRoutes}
           </>
         ) : (
-          <FlowChartWrapper />
+          <>{allKedroVizRoutes}</>
         )}
       </Router>
     </div>
@@ -98,10 +86,4 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  onSetView: (view) => {
-    dispatch(setView(view));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);
+export default connect(mapStateToProps)(Wrapper);
