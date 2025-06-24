@@ -8,7 +8,7 @@ import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import WorkflowWrapper from '../workflow-wrapper';
+import Workflow from '../workflow/workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -78,10 +78,10 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
                 }}
               />
               <Route
-                path={`${sanitizedPathname()}workflow`}
+                to={{ pathname: `${sanitizedPathname()}workflow` }}
                 render={() => {
                   onSetView(VIEW.WORKFLOW);
-                  return <WorkflowWrapper />;
+                  return <Workflow />;
                 }}
               />
             </Switch>
