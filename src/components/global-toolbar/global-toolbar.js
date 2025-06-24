@@ -5,6 +5,7 @@ import {
   toggleSettingsModal,
   toggleShareableUrlModal,
   toggleTheme,
+  setView,
 } from '../../actions';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 
@@ -15,6 +16,7 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
+import { VIEW } from '../../config';
 
 import './global-toolbar.scss';
 
@@ -28,6 +30,7 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleShareableUrlModal,
   onToggleTheme,
+  onSetView,
   theme,
 }) => {
   return (
@@ -51,6 +54,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
+              onClick={() => onSetView(VIEW.FLOWCHART)}
             />
           </NavLink>
           <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
@@ -63,6 +67,9 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={WorkflowIcon}
               labelText="Workflow"
+              onClick={() => {
+                onSetView(VIEW.WORKFLOW);
+              }}
             />
           </NavLink>
         </ul>
@@ -126,6 +133,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
+  },
+  onSetView: (view) => {
+    dispatch(setView(view));
   },
 });
 
