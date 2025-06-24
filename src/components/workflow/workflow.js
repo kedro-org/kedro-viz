@@ -249,7 +249,7 @@ export class Workflow extends Component {
         '.pipeline-layer-name'
       );
       if (layerNames.length !== this.props.layers.length) {
-        // If ot all layer labels are rendered yet; defer the update
+        // If all layer labels are rendered yet; defer the update
         setTimeout(() => this.onViewChange(transform), 0);
         return;
       }
@@ -657,7 +657,7 @@ export class Workflow extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      nodesStatus,
+      tasksStatus,
       datasetsStatus,
       pipelineStatus,
     } = this.props;
@@ -715,7 +715,7 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                nodesStatus={nodesStatus}
+                tasksStatus={tasksStatus}
                 datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
@@ -795,7 +795,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
-  nodesStatus: getNodesStatus(state),
+  tasksStatus: getNodesStatus(state),
   datasetsStatus: getDatasetsStatus(state),
   pipelineStatus: state.runStatus.pipeline,
 });
