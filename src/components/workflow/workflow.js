@@ -248,7 +248,7 @@ export class Workflow extends Component {
         '.pipeline-layer-name'
       );
       if (layerNames.length !== this.props.layers.length) {
-        // If ot all layer labels are rendered yet; defer the update
+        // If all layer labels are rendered yet; defer the update
         setTimeout(() => this.onViewChange(transform), 0);
         return;
       }
