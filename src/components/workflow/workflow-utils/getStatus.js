@@ -29,17 +29,17 @@ export function getTasksStatusInfo(tasksStatus, node) {
  * @param {Object} node
  * @returns {{datasetStatus: string|null, datasetSize: number|null}}
  */
-export function getDatasetStatusInfo(dataSetsStatus, node) {
-  if (!dataSetsStatus || node.type !== 'data') {
+export function getDatasetStatusInfo(datasetStatus, node) {
+  if (!datasetStatus || node.type !== 'data') {
     return { datasetStatus: null, datasetSize: null };
   }
-  const statusKey = Object.keys(dataSetsStatus).find(
-    (key) => dataSetsStatus[key][node.id]
+  const statusKey = Object.keys(datasetStatus).find(
+    (key) => datasetStatus[key][node.id]
   );
   if (!statusKey) {
     return { datasetStatus: null, datasetSize: null };
   }
-  const dataset = dataSetsStatus[statusKey][node.id];
+  const dataset = datasetStatus[statusKey][node.id];
   return {
     datasetStatus: dataset?.status ?? null,
     datasetSize: dataset?.size_bytes ?? null,
