@@ -67,6 +67,7 @@ def test_get_file_size_existing_file(tmp_path):
     filepath.write_text("abcdef")  # 6 bytes
     assert get_file_size(str(filepath)) == 6
 
+
 def test_compute_size_for_valid_dataset(tmp_path):
     filepath = tmp_path / "file.txt"
     filepath.write_text("abcdef")
@@ -76,7 +77,8 @@ def test_compute_size_for_valid_dataset(tmp_path):
 
 def test_compute_size_returns_none_for_missing_dataset():
     assert compute_size("missing", {}) is None
-    
+
+
 def test_compute_size_returns_none_when_no_filepath_attr():
     class NoPath:
         pass

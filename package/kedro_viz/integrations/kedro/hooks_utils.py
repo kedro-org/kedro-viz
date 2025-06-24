@@ -25,8 +25,6 @@ def hash_node(node: Any) -> str:
     return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
 
 
-
-
 def extract_file_paths(dataset: Any) -> List[str]:
     """Extract file paths from a dataset object.
 

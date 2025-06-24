@@ -3,7 +3,7 @@
 import logging
 import traceback
 from time import perf_counter
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
 
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
@@ -18,6 +18,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 def create_dataset_event(
     event_name: str,
@@ -92,7 +93,6 @@ class PipelineRunStatusHook:
         self._all_nodes: list[KedroNode] = []
         self._started_nodes: set[str] = set()
 
-
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
 
@@ -125,9 +125,9 @@ class PipelineRunStatusHook:
         can be accessed.
         """
         from kedro.io import KedroDataCatalog
-        
+
         if isinstance(catalog, KedroDataCatalog):
-                self._datasets = catalog.datasets
+            self._datasets = catalog.datasets
 
     @hook_impl
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:
