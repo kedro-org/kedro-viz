@@ -62,11 +62,7 @@ export const GlobalToolbar = ({
               onClick={() => onSetView(VIEW.FLOWCHART)}
             />
           </NavLink>
-          <NavLink
-            className="run-status-nav-wrapper"
-            exact
-            to={{ pathname: `${sanitizedPathname()}workflow` }}
-          >
+          <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
             <IconButton
               ariaLabel={'View your workflow'}
               dataTest={'global-toolbar-workflow-btn'}

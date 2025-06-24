@@ -1,25 +1,25 @@
 // Utility functions for extracting node and dataset status info
 
 /**
- * Get node status and duration from nodesStatus object.
- * @param {Object} nodesStatus
+ * Get node status and duration from tasksStatus object.
+ * @param {Object} tasksStatus
  * @param {Object} node
- * @returns {{nodeStatus: string|null, nodeDuration: number|null}}
+ * @returns {{taskStatus: string|null, taskDuration: number|null}}
  */
-export function getNodeStatusInfo(nodesStatus, node) {
-  if (!nodesStatus) {
-    return { nodeStatus: null, nodeDuration: null };
+export function getTasksStatusInfo(tasksStatus, node) {
+  if (!tasksStatus) {
+    return { taskStatus: null, taskDuration: null };
   }
-  const statusKey = Object.keys(nodesStatus).find(
-    (key) => nodesStatus[key][node.id]
+  const statusKey = Object.keys(tasksStatus).find(
+    (key) => tasksStatus[key][node.id]
   );
   if (!statusKey) {
-    return { nodeStatus: null, nodeDuration: null };
+    return { taskStatus: null, taskDuration: null };
   }
-  const status = nodesStatus[statusKey][node.id];
+  const status = tasksStatus[statusKey][node.id];
   return {
-    nodeStatus: status?.status ?? null,
-    nodeDuration: status?.duration_sec ?? null,
+    taskStatus: status?.status ?? null,
+    taskDuration: status?.duration_sec ?? null,
   };
 }
 
@@ -29,17 +29,17 @@ export function getNodeStatusInfo(nodesStatus, node) {
  * @param {Object} node
  * @returns {{datasetStatus: string|null, datasetSize: number|null}}
  */
-export function getDatasetStatusInfo(dataSetsStatus, node) {
-  if (!dataSetsStatus || node.type !== 'data') {
+export function getDatasetStatusInfo(datasetStatus, node) {
+  if (!datasetStatus || node.type !== 'data') {
     return { datasetStatus: null, datasetSize: null };
   }
-  const statusKey = Object.keys(dataSetsStatus).find(
-    (key) => dataSetsStatus[key][node.id]
+  const statusKey = Object.keys(datasetStatus).find(
+    (key) => datasetStatus[key][node.id]
   );
   if (!statusKey) {
     return { datasetStatus: null, datasetSize: null };
   }
-  const dataset = dataSetsStatus[statusKey][node.id];
+  const dataset = datasetStatus[statusKey][node.id];
   return {
     datasetStatus: dataset?.status ?? null,
     datasetSize: dataset?.size_bytes ?? null,

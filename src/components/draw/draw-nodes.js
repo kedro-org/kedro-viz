@@ -37,7 +37,7 @@ export function DrawNodes({
   clickedNode = null,
   linkedNodes = {},
   showRunStatus = false,
-  nodesStatus = {},
+  tasksStatus = {},
   dataSetsStatus = {},
 }) {
   const groupRef = useRef();
@@ -80,9 +80,9 @@ export function DrawNodes({
         }
 
         if (showRunStatus) {
-          // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+          // Get the correct status source (dataSetsStatus for data nodes, tasksStatus otherwise),
           const statusSource =
-            node.type === 'data' ? dataSetsStatus : nodesStatus;
+            node.type === 'data' ? dataSetsStatus : tasksStatus;
           // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
           let finalStatus = getNodeStatusKey(
             statusSource,
@@ -151,6 +151,7 @@ export function DrawNodes({
 
     // Cancel exit transitions if re-entered
     updateNodes.transition('exit-nodes').style('opacity', null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nodes,
     onNodeClick,
@@ -257,12 +258,12 @@ export function DrawNodes({
 
     enterNodes
       .select('.pipeline-node__bg')
-      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
+      .call(updateNodeRects, showRunStatus, tasksStatus, dataSetsStatus);
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
+      .call(updateNodeRects, showRunStatus, tasksStatus, dataSetsStatus);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
@@ -287,6 +288,7 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nodes,
     nodeTypeDisabled.parameters,
