@@ -7,7 +7,7 @@ import {
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
 import { NODE_DETAILS_HEIGHT } from './config';
-import { MINIMUM_DETAILS_WIDTH } from './config';
+import { NODE_DETAILS_WIDTH } from './config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -19,7 +19,7 @@ export function renderNodeDetailsContainer(
   tasksStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = Math.max(node.width || 0, MINIMUM_DETAILS_WIDTH);
+  const nodeWidth = Math.max(node.width || 0, NODE_DETAILS_WIDTH);
   const nodeHeight = node.height - 5;
 
   const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
