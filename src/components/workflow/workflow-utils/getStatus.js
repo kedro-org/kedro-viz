@@ -4,22 +4,22 @@
  * Get node status and duration from tasksStatus object.
  * @param {Object} tasksStatus
  * @param {Object} node
- * @returns {{nodeStatus: string|null, nodeDuration: number|null}}
+ * @returns {{taskStatus: string|null, taskDuration: number|null}}
  */
 export function getTasksStatusInfo(tasksStatus, node) {
   if (!tasksStatus) {
-    return { nodeStatus: null, nodeDuration: null };
+    return { taskStatus: null, taskDuration: null };
   }
   const statusKey = Object.keys(tasksStatus).find(
     (key) => tasksStatus[key][node.id]
   );
   if (!statusKey) {
-    return { nodeStatus: null, nodeDuration: null };
+    return { taskStatus: null, taskDuration: null };
   }
   const status = tasksStatus[statusKey][node.id];
   return {
-    nodeStatus: status?.status ?? null,
-    nodeDuration: status?.duration_sec ?? null,
+    taskStatus: status?.status ?? null,
+    taskDuration: status?.duration_sec ?? null,
   };
 }
 

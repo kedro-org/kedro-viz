@@ -22,7 +22,7 @@ export function renderNodeDetailsContainer(
   const nodeWidth = Math.max(node.width || 0, MINIMUM_WIDTH);
   const nodeHeight = node.height - 5;
 
-  const { taskStatus, nodeDuration } = getTasksStatusInfo(tasksStatus, node);
+  const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
     dataSetsStatus,
     node
@@ -155,8 +155,8 @@ export function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-value')
     .text(
       node.type === 'task' || node.type === 'modularPipeline'
-        ? nodeDuration != null
-          ? formatDuration(nodeDuration)
+        ? taskDuration != null
+          ? formatDuration(taskDuration)
           : 'N/A'
         : datasetSize != null
         ? formatSize(datasetSize)
