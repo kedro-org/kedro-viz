@@ -1,12 +1,13 @@
 import { UPDATE_RUN_STATUS_DATA } from '../actions/run-status';
 
-const initialState = {
-  nodes: {},
-  datasets: {},
-  pipeline: {},
-};
-
-function runStatusReducer(state = initialState, action) {
+function runStatusReducer(
+  state = {
+    nodes: {},
+    datasets: {},
+    pipeline: {},
+  },
+  action
+) {
   switch (action.type) {
     case UPDATE_RUN_STATUS_DATA:
       return {

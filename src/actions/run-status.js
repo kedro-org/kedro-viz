@@ -1,4 +1,4 @@
-import { fetchRunStatus, processRunStatus } from '../utils/normalizeRunStatus';
+import { processRunStatus } from '../store/normalize-run-data';
 
 export const UPDATE_RUN_STATUS_DATA = 'UPDATE_RUN_STATUS_DATA';
 
@@ -12,6 +12,24 @@ export function updateRunStatusData(data) {
     data,
   };
 }
+
+/**
+ * Fetch pipeline run status from the API endpoint
+ * @returns {Promise<Object>} Pipeline run status in structured format
+ */
+export const fetchRunStatus = async () => {
+  try {
+    const response = await fetch(`/api/run-status`);
+    if (!response.ok) {
+      throw new Error(`Error fetching run status: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to load run status:', error);
+    return { nodes: {}, datasets: {}, pipeline: {} };
+  }
+};
 
 /**
  * Load run status data
