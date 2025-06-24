@@ -16,25 +16,11 @@ EnumType = TypeVar("EnumType", bound=Enum)
 
 
 # Shared status enums for pipeline, nodes, and datasets
-class PipelineStatus(str, Enum):
+class Status(str, Enum):
     """Constants for pipeline statuses."""
 
-    SUCCESSFUL = "successful"
+    SUCCESS = "success"
     FAILED = "failed"
-
-
-class NodeStatus(str, Enum):
-    """Enum representing the possible statuses of a node."""
-
-    SUCCESSFUL = "successful"
-    FAILED = "failed"
-
-
-class DatasetStatus(str, Enum):
-    """Enum representing the possible statuses of a dataset."""
-
-    AVAILABLE = "available"
-    MISSING = "missing"
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
