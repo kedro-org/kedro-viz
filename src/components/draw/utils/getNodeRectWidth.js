@@ -1,5 +1,5 @@
-import { MINIMUM_WIDTH } from './config';
+import { MINIMUM_DETAILS_WIDTH } from './config';
 
 export function getNodeWidth(node) {
-  return Math.max(node.width - 5, MINIMUM_WIDTH);
+  return Math.max(node.width - 5, MINIMUM_DETAILS_WIDTH);
 }

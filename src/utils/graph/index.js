@@ -1,6 +1,5 @@
 import { graph } from './graph';
-
-export const MINIMUM_WIDTH = 180;
+import { MINIMUM_DETAILS_WIDTH } from '../../components/draw/utils/config';
 
 /**
  * Calculate chart layout with experimental new graphing algorithm
@@ -22,7 +21,7 @@ export const graphNew = ({ nodes, edges, layers, orientation, view }) => {
     const innerWidth = node.iconSize + textWidth + textGap;
 
     let baseWidth = node.width || innerWidth + padding.x * 2;
-    node.width = Math.max(baseWidth, MINIMUM_WIDTH);
+    node.width = Math.max(baseWidth, MINIMUM_DETAILS_WIDTH);
     node.height = node.height || node.iconSize + padding.y * 2;
     node.textOffset = node.textOffset || (innerWidth - textWidth) / 2;
     node.iconOffset = node.iconOffset || -innerWidth / 2;
