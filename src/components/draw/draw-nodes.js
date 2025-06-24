@@ -151,6 +151,7 @@ export function DrawNodes({
 
     // Cancel exit transitions if re-entered
     updateNodes.transition('exit-nodes').style('opacity', null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nodes,
     onNodeClick,
@@ -161,8 +162,6 @@ export function DrawNodes({
     onNodeKeyDown,
     onParamsIndicatorMouseOver,
     orientation,
-    dataSetsStatus,
-    nodesStatus,
   ]);
 
   // --- Update node classes based on state (active, selected, etc) ---
@@ -286,6 +285,7 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nodes,
     nodeTypeDisabled.parameters,
