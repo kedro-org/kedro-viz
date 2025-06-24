@@ -17,7 +17,7 @@ describe('GlobalToolbar', () => {
     const buttons = container.querySelectorAll(
       '.pipeline-icon-toolbar__button'
     );
-    expect(buttons.length).toBe(5);
+    expect(buttons.length).toBe(6);
   });
 
   const functionCalls = [

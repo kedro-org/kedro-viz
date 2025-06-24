@@ -7,6 +7,7 @@ import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
+import Workflow from '../workflow/workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -61,9 +62,12 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
-              <Route exact path={sanitizedPathname()}>
+              <Route exact path="/">
                 <FlowChartWrapper />
                 <FeatureHints />
+              </Route>
+              <Route to={{ pathname: `${sanitizedPathname()}workflow` }}>
+                <Workflow />
               </Route>
             </Switch>
           </>

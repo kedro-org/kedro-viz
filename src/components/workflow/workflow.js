@@ -54,8 +54,6 @@ import Sidebar from '../sidebar';
 
 import './workflow.scss';
 
-export const workFlowStatuses = ['success', 'failed'];
-
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
@@ -241,15 +239,19 @@ export class Workflow extends Component {
 
     // Apply animating class to zoom wrapper
     select(this.wrapperRef.current).classed(
-      'pipeline-workflow-wrapper--animating',
+      '.pipeline-workflow__zoom-wrapper--animating',
       true
     );
-
     // Update layer label y positions
     if (this.layerNamesRef?.current) {
       const layerNames = this.layerNamesRef.current.querySelectorAll(
         '.pipeline-layer-name'
       );
+      if (layerNames.length !== this.props.layers.length) {
+        // If all layer labels are rendered yet; defer the update
+        setTimeout(() => this.onViewChange(transform), 0);
+        return;
+      }
       this.props.layers.forEach((layer, i) => {
         const el = layerNames[i];
         if (!el) {
@@ -653,7 +655,7 @@ export class Workflow extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      nodesStatus,
+      tasksStatus,
       dataSetsStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
@@ -710,7 +712,7 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                nodesStatus={nodesStatus}
+                tasksStatus={tasksStatus}
                 dataSetsStatus={dataSetsStatus}
               />
             </GraphSVG>
@@ -784,7 +786,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
-  nodesStatus: getNodesStatus(state),
+  tasksStatus: getNodesStatus(state),
   dataSetsStatus: getDatasetsStatus(state),
 });
 
