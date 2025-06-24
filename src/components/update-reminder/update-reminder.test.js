@@ -1,7 +1,8 @@
 import React from 'react';
+import { fireEvent, screen } from '@testing-library/react';
 import UpdateReminder from './update-reminder';
-import { setup } from '../../utils/state.mock';
 import { updateContent } from './update-reminder-content';
+import { setup } from '../../utils/state.mock';
 
 const numberNewFeatures = updateContent.features.length;
 
@@ -18,108 +19,116 @@ describe('Update Reminder', () => {
   };
 
   it('renders without crashing', () => {
-    const wrapper = setup.mount(
+    const { container } = setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    expect(wrapper.find('.update-reminder-unexpanded').length).toBe(1);
+    expect(
+      container.querySelector('.update-reminder-unexpanded')
+    ).toBeInTheDocument();
   });
 
   it('popup expands when it is clicked', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    const container = wrapper.find('.update-reminder-unexpanded');
-
-    container.find('.buttons-container').find('button').at(0).simulate('click');
-    expect(wrapper.find('.update-reminder-expanded-header').length).toBe(1);
+    const expandBtn = document.querySelectorAll('.buttons-container button')[0];
+    fireEvent.click(expandBtn);
+    expect(
+      document.querySelector('.update-reminder-expanded-header')
+    ).toBeInTheDocument();
   });
 
   it('dismisses when the dismiss button is clicked', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    const container = wrapper.find('.update-reminder-unexpanded');
-    container.find('.buttons-container').find('button').at(1).simulate('click');
-    expect(wrapper.find('.update-reminder-expanded-header').length).toBe(0);
+    const dismissBtn = document.querySelectorAll(
+      '.buttons-container button'
+    )[1];
+    fireEvent.click(dismissBtn);
+    expect(
+      document.querySelector('.update-reminder-expanded-header')
+    ).not.toBeInTheDocument();
   });
 
   it('shows the correct version tag when outdated', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    wrapper.find('.buttons-container').find('button').at(1).simulate('click');
-    expect(wrapper.find('.update-reminder-version-tag--outdated').length).toBe(
-      1
+    const buttons = document.querySelectorAll('.buttons-container button');
+    fireEvent.click(buttons[1]);
+    const tag = document.querySelector(
+      '.update-reminder-version-tag--outdated'
     );
+    expect(tag).toBeInTheDocument();
   });
 
   it('shows the correct version tag when up to date', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionsUpToDate.isOutdated}
         version={versionsUpToDate}
       />
     );
     expect(
-      wrapper.find('.update-reminder-version-tag--up-to-date').length
-    ).toBe(1);
+      document.querySelector('.update-reminder-version-tag--up-to-date')
+    ).toBeInTheDocument();
   });
 
   it('shows feature release information', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    const container = wrapper.find('.update-reminder-unexpanded');
-    container.find('.buttons-container').find('button').at(0).simulate('click');
-    expect(wrapper.find('.update-reminder-expanded-content').length).toBe(1);
+    const expandBtn = document.querySelectorAll('.buttons-container button')[0];
+    fireEvent.click(expandBtn);
     expect(
-      wrapper.find('.update-reminder-expanded-content--feature').length
+      document.querySelector('.update-reminder-expanded-content')
+    ).toBeInTheDocument();
+    expect(
+      document.querySelectorAll('.update-reminder-expanded-content--feature')
+        .length
     ).toBe(numberNewFeatures);
   });
 
   it('shows new version information', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
         version={versionOutOfDate}
       />
     );
-    const container = wrapper.find('.update-reminder-unexpanded');
-    container.find('.buttons-container').find('button').at(0).simulate('click');
-    expect(wrapper.find('.update-reminder-expanded-detail > h3').text()).toBe(
-      'Kedro-Viz 4.3.1 is here!'
-    );
+    const expandBtn = document.querySelectorAll('.buttons-container button')[0];
+    fireEvent.click(expandBtn);
+    expect(screen.getByText('Kedro-Viz 4.3.1 is here!')).toBeInTheDocument();
   });
 
   it('shows the user is up to date', () => {
-    const wrapper = setup.mount(
+    setup.render(
       <UpdateReminder
         isOutdated={versionsUpToDate.isOutdated}
         version={versionsUpToDate}
       />
     );
-    const container = wrapper.find('.update-reminder-version-tag--up-to-date');
-    container.simulate('click');
-    expect(
-      wrapper.find('.update-reminder-expanded-detail--up-to-date > h3').text()
-    ).toBe("You're up to date");
-    expect(
-      wrapper.find('.update-reminder-expanded-detail--up-to-date > p').text()
-    ).toBe('Kedro-Viz 4.3.1');
+    const tag = document.querySelector(
+      '.update-reminder-version-tag--up-to-date'
+    );
+    fireEvent.click(tag);
+    expect(screen.getByText("You're up to date")).toBeInTheDocument();
+    expect(screen.getByText('Kedro-Viz 4.3.1')).toBeInTheDocument();
   });
 });

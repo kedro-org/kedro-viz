@@ -9,12 +9,15 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('GlobalToolbar', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(
+    const { container } = setup.render(
       <MemoryRouter>
         <ConnectedGlobalToolbar />
       </MemoryRouter>
     );
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
+    const buttons = container.querySelectorAll(
+      '.pipeline-icon-toolbar__button'
+    );
+    expect(buttons.length).toBe(6);
   });
 
   const functionCalls = [
@@ -31,14 +34,17 @@ describe('GlobalToolbar', () => {
         visible: mockState.spaceflights.visible,
         [callback]: mockFn,
       };
-      const wrapper = setup.mount(
+
+      const { container } = setup.render(
         <MemoryRouter>
           <GlobalToolbar {...props} />
         </MemoryRouter>
       );
-      expect(mockFn.mock.calls.length).toBe(0);
-      wrapper.find(selector).find('button').simulate('click');
-      expect(mockFn.mock.calls.length).toBe(1);
+
+      const button = container.querySelector(selector);
+      expect(button).not.toBeNull();
+      button.click();
+      expect(mockFn).toHaveBeenCalledTimes(1);
     }
   );
 
@@ -65,7 +71,7 @@ describe('GlobalToolbar', () => {
     it('onToggleTheme', () => {
       const dispatch = jest.fn();
       mapDispatchToProps(dispatch).onToggleTheme('light');
-      expect(dispatch.mock.calls[0][0]).toEqual({
+      expect(dispatch).toHaveBeenCalledWith({
         theme: 'light',
         type: 'TOGGLE_THEME',
       });
@@ -74,7 +80,7 @@ describe('GlobalToolbar', () => {
     it('onToggleSettingsModal', () => {
       const dispatch = jest.fn();
       mapDispatchToProps(dispatch).onToggleSettingsModal(true);
-      expect(dispatch.mock.calls[0][0]).toEqual({
+      expect(dispatch).toHaveBeenCalledWith({
         visible: true,
         type: 'TOGGLE_SETTINGS_MODAL',
       });
