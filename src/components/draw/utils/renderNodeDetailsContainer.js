@@ -38,7 +38,7 @@ export function renderNodeDetailsContainer(
     .append('path')
     .attr('class', 'pipeline-node__main-outline')
     .attr('d', () => {
-      if (node.type === 'task' || node.type === 'modularPipeline') {
+      if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${nodeHeight / -2} H ${nodeWidth / 2} V ${
           nodeHeight / 2
         } H ${nodeWidth / -2} V ${nodeHeight / -2} Z`;
@@ -68,17 +68,10 @@ export function renderNodeDetailsContainer(
     .attr('width', nodeWidth)
     .attr(
       'height',
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? NODE_DETAILS_HEIGHT
-        : NODE_DETAILS_HEIGHT + 20
+      node.type === 'task' ? NODE_DETAILS_HEIGHT : NODE_DETAILS_HEIGHT + 20
     )
     .attr('x', nodeWidth / -2)
-    .attr(
-      'y',
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? nodeHeight / 2 + 1
-        : 0
-    )
+    .attr('y', node.type === 'task' ? nodeHeight / 2 + 1 : 0)
     .attr('rx', 0);
 
   // Details outline (bottom part only)
@@ -86,7 +79,7 @@ export function renderNodeDetailsContainer(
     .append('path')
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
-      if (node.type === 'task' || node.type === 'modularPipeline') {
+      if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
           nodeHeight / 2 + NODE_DETAILS_HEIGHT
         } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
