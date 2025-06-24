@@ -163,8 +163,6 @@ export function DrawNodes({
     onParamsIndicatorMouseOver,
     orientation,
     dataSetsStatus,
-    nodesStatus,
-    showRunStatus,
   ]);
 
   // --- Update node classes based on state (active, selected, etc) ---
@@ -295,9 +293,6 @@ export function DrawNodes({
     nodesWithInputParams,
     orientation,
     nodeActive,
-    dataSetsStatus,
-    nodesStatus,
-    showRunStatus,
   ]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
