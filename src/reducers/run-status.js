@@ -1,8 +1,21 @@
-import { statusMockData } from '../utils/status-mock-data';
-import { datasetError } from '../utils/run-status-mock-data/dataset-error';
-import { workingAllGreen } from '../utils/run-status-mock-data/working-all-green';
-import { funNodeError } from '../utils/run-status-mock-data/fun-node-error';
+import { UPDATE_RUN_STATUS_DATA } from '../actions/run-status';
 
-export default function runStatus(state = funNodeError || {}, action) {
-  return state;
+const initialState = {
+  nodes: {},
+  datasets: {},
+  pipeline: {},
+};
+
+function runStatusReducer(state = initialState, action) {
+  switch (action.type) {
+    case UPDATE_RUN_STATUS_DATA:
+      return {
+        ...state,
+        ...action.data,
+      };
+    default:
+      return state;
+  }
 }
+
+export default runStatusReducer;
