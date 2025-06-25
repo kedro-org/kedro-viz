@@ -449,16 +449,11 @@ export class Workflow extends Component {
 
   handleSingleNodeClick = (node) => {
     const { id } = node;
-    const {
-      displayMetadataPanel,
-      onLoadNodeData,
-      onToggleNodeClicked,
-      toSelectedNode,
-    } = this.props;
+    const { displayMetadataPanel, onLoadNodeData, onToggleNodeClicked } =
+      this.props;
 
     // Handle metadata panel display or node click toggle
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
-    toSelectedNode(node);
   };
 
   /**
@@ -495,8 +490,6 @@ export class Workflow extends Component {
     // If a node was previously clicked, clear the selected node data and reset the URL.
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
-      // To reset URL to current active pipeline when click outside of a node on flowchart
-      this.props.toSelectedPipeline();
     }
   };
 
