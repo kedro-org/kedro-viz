@@ -33,3 +33,22 @@ export function formatSize(bytes) {
   const megabytes = kilobytes / 1024;
   return `${megabytes % 1 === 0 ? megabytes : megabytes.toFixed(2)}MB`;
 }
+
+export function formatTimestamp(timestamp) {
+  if (!timestamp) {
+    return 'N/A';
+  }
+
+  // Pads a number to 2 digits with a leading zero if needed (e.g., 3 -> '03', 12 -> '12')
+  const pad2 = (num) => num.toString().padStart(2, '0');
+
+  const date = new Date(timestamp);
+  const day = pad2(date.getUTCDate());
+  const month = pad2(date.getUTCMonth() + 1);
+  const year = date.getUTCFullYear();
+  const hour = pad2(date.getUTCHours());
+  const minute = pad2(date.getUTCMinutes());
+  const second = pad2(date.getUTCSeconds());
+
+  return `${day}.${month}.${year} - ${hour}:${minute}:${second} UTC`;
+}

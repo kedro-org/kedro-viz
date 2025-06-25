@@ -36,6 +36,7 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
+import { formatTimestamp } from './workflow-utils/format';
 import Tooltip from '../ui/tooltip';
 import PipelineLoading from '../pipeline-loading/pipeline-loading';
 
@@ -723,7 +724,7 @@ export class Workflow extends Component {
             />
             <RunStatusNotification
               status={pipelineStatus.status}
-              timestamp={pipelineStatus.end_time}
+              timestamp={formatTimestamp(pipelineStatus.end_time)}
               duration={pipelineStatus.duration}
               visibleSidebar={visibleSidebar}
               visibleMetaSidebar={visibleMetaSidebar}
