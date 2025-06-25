@@ -58,7 +58,7 @@ class TestPipelineTiming:
         now = datetime.now()
         start, end = now.isoformat(), (now + timedelta(seconds=5)).isoformat()
         info = run_events.PipelineInfo()
-        run_events._update_pipeline_info_from_events(
+        run_events._update_pipeline_info(
             [
                 _make_event(run_events.EventType.BEFORE_PIPELINE_RUN, timestamp=start),
                 _make_event(run_events.EventType.AFTER_PIPELINE_RUN, timestamp=end),
@@ -73,7 +73,7 @@ class TestPipelineTiming:
         now = datetime.now()
         start, end = now.isoformat(), (now + timedelta(seconds=5)).isoformat()
         failed = run_events.PipelineInfo()
-        run_events._update_pipeline_info_from_events(
+        run_events._update_pipeline_info(
             [
                 _make_event(run_events.EventType.BEFORE_PIPELINE_RUN, timestamp=start),
                 _make_event(
@@ -91,7 +91,7 @@ class TestPipelineTiming:
     def test_pipeline_error_sets_only_end_time(self) -> None:
         ts = datetime.now().isoformat()
         info = run_events.PipelineInfo()
-        run_events._update_pipeline_info_from_events(
+        run_events._update_pipeline_info(
             [
                 _make_event(
                     run_events.EventType.ON_PIPELINE_ERROR, timestamp=ts, error="x"

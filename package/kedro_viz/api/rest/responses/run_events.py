@@ -185,7 +185,7 @@ def _update_dataset_info(
     dataset_info.status = status
 
 
-def _update_pipeline_info_from_events(
+def _update_pipeline_info(
     events: list[dict[str, Any]], pipeline_info: PipelineInfo
 ) -> None:
     """Update pipeline start time, end time, and status from events.
@@ -424,7 +424,7 @@ def transform_events_to_structured_format(
     pipeline = PipelineInfo()
 
     # Update pipeline metadata first
-    _update_pipeline_info_from_events(events, pipeline)
+    _update_pipeline_info(events, pipeline)
 
     # Process events by type
     for event in events:
@@ -475,7 +475,9 @@ def get_run_status_response() -> RunStatusAPIResponse:
         pipeline_events_file_path = PIPELINE_EVENT_FULL_PATH
 
         if not pipeline_events_file_path.exists():
-            logger.warning(f"Run events file {pipeline_events_file_path} not found")
+            logger.warning(
+                f"Run events file {pipeline_events_file_path} not found. It may be due to missing `kedro run`"
+            )
             return RunStatusAPIResponse()
 
         with pipeline_events_file_path.open("r", encoding="utf8") as file:
