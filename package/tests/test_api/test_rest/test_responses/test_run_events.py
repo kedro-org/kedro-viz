@@ -192,6 +192,34 @@ class TestDatasetHelpers:
         )
         assert datasets["load_customers_node"].size == 128
 
+    def test_dataset_event_handles_invalid_size_type_and_value(self):
+        """Ensure size falls back to 0 on ValueError or TypeError."""
+        datasets: dict[str, run_events.DatasetInfo] = {}
+
+        # ValueError: size cannot be converted to int
+        run_events._process_dataset_event(
+            {
+                "event": run_events.EventType.AFTER_DATASET_LOADED,
+                "node_id": "node_a",
+                "dataset": "data.csv",
+                "size": "not_a_number",
+            },
+            datasets,
+        )
+        assert datasets["node_a"].size == 0
+
+        # TypeError: size is a list instead of a valid int/str
+        run_events._process_dataset_event(
+            {
+                "event": run_events.EventType.AFTER_DATASET_LOADED,
+                "node_id": "node_b",
+                "dataset": "data.csv",
+                "size": [123],
+            },
+            datasets,
+        )
+        assert datasets["node_b"].size == 0
+
     def test_dataset_error_sets_status_node_and_pipeline(self):
         """ON_PIPELINE_ERROR sets dataset + node + pipeline to FAILED."""
         datasets: dict[str, run_events.DatasetInfo] = {}
