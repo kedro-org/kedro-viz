@@ -4,14 +4,14 @@
   --run-status-notification--background: #{colors.$slate-400};
   --run-status-notification-status--color: #{colors.$white-600};
   --run-status-notification-timestamp--color: #b2b2b2;
-  --run-status-notification--border: rgb(255 255 255 / 10%);
+  --run-status-notification--border: #{colors.$black-600};
 }
 
 .kui-theme--light {
-  --run-status-notification--background: #{colors.$slate-400};
-  --run-status-notification-status--color: #{colors.$black-900};
-  --run-status-notification-timestamp--color: #5c5c5c;
-  --run-status-notification--border: #{colors.$black-600};
+  --run-status-notification--background: #{colors.$white-100};
+  --run-status-notification-status--color: #{colors.$black-700};
+  --run-status-notification-timestamp--color: #{colors.$black-200};
+  --run-status-notification--border: #{colors.$white-600};
 }
 
 // Animation
