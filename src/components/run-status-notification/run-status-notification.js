@@ -23,7 +23,7 @@ export const RunStatusNotification = ({
   status,
   duration = 0,
 }) => {
-  const config = STATUS_CONFIG[status] || {};
+  const config = STATUS_CONFIG[status?.toLowerCase()] || {};
   const Icon = config.icon;
   const statusText = config.text;
   const timestampLabel = config.timestampLabel;
