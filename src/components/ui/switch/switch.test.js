@@ -1,31 +1,34 @@
 import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
 import Switch from './switch';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
-import { configure, mount, shallow } from 'enzyme';
 
-configure({ adapter: new Adapter() });
-
-describe('RunsListCard', () => {
+describe('Switch', () => {
   it('renders without crashing', () => {
-    const wrapper = shallow(<Switch />);
-
-    expect(wrapper.find('.switch').length).toBe(1);
+    const { container } = render(<Switch />);
+    expect(container.querySelector('.switch')).toBeInTheDocument();
   });
 
   it('renders with a default checked option', () => {
-    const wrapper = shallow(<Switch defaultChecked />);
-
-    expect(wrapper.find('.switch__base--active').length).toBe(1);
+    const { container } = render(<Switch defaultChecked />);
+    expect(
+      container.querySelector('.switch__base--active')
+    ).toBeInTheDocument();
   });
 
   it('calls a function on click and adds an active class', () => {
-    const setChecked = jest.fn();
-    const wrapper = mount(<Switch />);
-    const onClick = jest.spyOn(React, 'useState');
+    const { container } = render(<Switch />);
+    const toggle = container.querySelector('.switch');
 
-    onClick.mockImplementation((checked) => [checked, setChecked]);
-    wrapper.simulate('click');
-    expect(setChecked).toBeTruthy();
-    expect(wrapper.find('.switch__base--active').length).toBe(1);
+    // Pre-check: should not have active class
+    expect(
+      container.querySelector('.switch__base--active')
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(toggle);
+
+    // Post-check: should have active class
+    expect(
+      container.querySelector('.switch__base--active')
+    ).toBeInTheDocument();
   });
 });
