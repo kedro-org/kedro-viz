@@ -665,7 +665,7 @@ class TestAddPipelines:
         data_access_manager: DataAccessManager,
         example_modular_pipelines_repo_obj,
     ):
-        from kedro.io import KedroDataCatalog, MemoryDataset
+        from kedro.io import MemoryDataset
 
         kedro_catalog = KedroDataCatalog()
         kedro_catalog["test_dataset"] = {"data": "value"}

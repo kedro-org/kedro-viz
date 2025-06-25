@@ -191,8 +191,6 @@ class TestDataCatalogRepositoryExtended:
         not HAS_KEDRO_DATA_CATALOG, reason="KedroDataCatalog not available"
     )
     def test_layers_mapping_kedro_data_catalog(self, mocker):
-        from kedro.io import KedroDataCatalog
-
         from kedro_viz.data_access.repositories import catalog as catalog_module
 
         # Patch IS_KEDRODATACATALOG to True
