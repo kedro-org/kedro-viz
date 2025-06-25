@@ -12,12 +12,9 @@ from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    KedroDataCatalog = None
 
 from kedro.io.core import get_filepath_str
 
@@ -133,7 +130,7 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-                current_dataset = self.datasets.get(dataset_name, None)
+                current_dataset = self.datasets.get(dataset_name)
 
                 if current_dataset:
                     dataset_file_size = self.get_file_size(current_dataset)

@@ -7,12 +7,9 @@ from typing import Dict, List, Set, Union
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    KedroDataCatalog = None
 
 try:
     # kedro 0.18.11 onwards
@@ -108,7 +105,7 @@ class DataAccessManager:
                     # for Kedro >= 1.0
                     catalog.get(dataset_name)
                 else:
-                    catalog._get_dataset(dataset_name, suggest=False)
+                    catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[union-attr]
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 

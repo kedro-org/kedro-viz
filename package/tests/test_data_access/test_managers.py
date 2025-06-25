@@ -7,14 +7,13 @@ import pytest
 from kedro.io import DataCatalog, MemoryDataset
 
 try:
-    from kedro.io import KedroDataCatalog
+    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
 
     HAS_KEDRO_DATA_CATALOG = True
 except ImportError:
     HAS_KEDRO_DATA_CATALOG = False
 from kedro.io.core import DatasetError
-from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
+from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
@@ -194,7 +193,7 @@ class TestAddNode:
     ):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
-        catalog.add_feed_dict({"parameters": parameters})
+        catalog["parameters"] = parameters
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
@@ -219,7 +218,7 @@ class TestAddNode:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog.add_feed_dict({"params:train_test_split": 0.1})
+        catalog["params:train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
@@ -246,7 +245,7 @@ class TestAddNode:
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
-        catalog.add_feed_dict({parameter_name: 0.1})
+        catalog[parameter_name] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(
@@ -433,9 +432,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog.add_feed_dict(
-            {"parameters": {"train_test_split": 0.1, "num_epochs": 1000}}
-        )
+        catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "parameters", example_modular_pipelines_repo_obj
@@ -458,7 +455,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog.add_feed_dict({"params:train_test_split": 0.1})
+        catalog["params:train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params:train_test_split", example_modular_pipelines_repo_obj
@@ -477,7 +474,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog.add_feed_dict({"params_train_test_split": 0.1})
+        catalog["params_train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params_train_test_split", example_modular_pipelines_repo_obj
@@ -657,33 +654,6 @@ class TestAddPipelines:
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
 
-    @pytest.mark.skipif(
-        not HAS_KEDRO_DATA_CATALOG, reason="KedroDataCatalog not available"
-    )
-    def test_add_dataset_with_kedro_data_catalog(
-        self,
-        data_access_manager: DataAccessManager,
-        example_modular_pipelines_repo_obj,
-    ):
-        from kedro.io import MemoryDataset
-
-        kedro_catalog = KedroDataCatalog()
-        kedro_catalog["test_dataset"] = {"data": "value"}
-
-        data_access_manager.add_catalog(kedro_catalog, {})
-
-        # Test that adding the dataset works properly
-        result_node = data_access_manager.add_dataset(
-            "my_pipeline", "test_dataset", example_modular_pipelines_repo_obj
-        )
-
-        nodes_list = data_access_manager.nodes.as_list()
-        assert len(nodes_list) == 1
-        graph_node = nodes_list[0]
-        assert graph_node is result_node
-
-        assert isinstance(graph_node.kedro_obj, MemoryDataset)
-
 
 class TestResolveDatasetFactoryPatterns:
     def test_resolve_dataset_factory_patterns(
@@ -691,6 +661,7 @@ class TestResolveDatasetFactoryPatterns:
         pipeline_with_datasets_mock,
         pipeline_with_data_sets_mock,
         data_access_manager: DataAccessManager,
+        mocker,
     ):
         catalog_repo = CatalogRepository()
         catalog_config = {
@@ -739,7 +710,8 @@ class TestResolveDatasetFactoryPatterns:
 
         # Testing for DataCatalog 2.0
         # Mock the `get` method on the catalog
-        catalog.get = MagicMock(return_value="mocked_dataset")  # type: ignore[attr-defined]
+        mocked_get = mocker.patch.object(catalog, "get", return_value="mocked_dataset")
+
         # Set the catalog in the repository
         catalog_repo.set_catalog(catalog)
 
@@ -753,4 +725,4 @@ class TestResolveDatasetFactoryPatterns:
         )
 
         # Assert that the `get` method was called
-        assert catalog.get.call_count == 3  # type: ignore[attr-defined]
+        assert mocked_get.call_count == 3

@@ -7,12 +7,9 @@ from typing import Any, Dict, Optional, Union
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    KedroDataCatalog = None
 
 from kedro.pipeline import Pipeline
 

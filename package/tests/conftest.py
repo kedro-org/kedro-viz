@@ -7,8 +7,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from kedro.io import DataCatalog, MemoryDataset
-from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
+from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets import pandas
 from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
@@ -315,13 +314,13 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     internal_pipe = Pipeline(
         [
             pipeline(
-                pipe=generic_pipe,
+                nodes=generic_pipe,
                 inputs={"input_dataset": "initial_customer_data"},
                 outputs={"output_dataset": "processed_customer_data"},
                 namespace="first_processing_step",
             ),
             pipeline(
-                pipe=generic_pipe,
+                nodes=generic_pipe,
                 inputs={"input_dataset": "processed_customer_data"},
                 outputs={"output_dataset": "final_customer_data_insights"},
                 namespace="second_processing_step",
@@ -333,7 +332,7 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     # with internal datasets (processed_customer_data) that
     # should not be exposed outside of the namespace
     main_pipeline = pipeline(
-        pipe=internal_pipe,
+        nodes=internal_pipe,
         inputs="initial_customer_data",
         outputs="final_customer_data_insights",
         namespace="customer_lifecycle_processing",
@@ -410,16 +409,14 @@ def example_catalog():
                 metadata={"kedro-viz": {"layer": "model_inputs"}},
             ),
             "uk.data_science.model": MemoryDataset(),
-        },
-        feed_dict={
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:uk.data_processing.train_test_split": 0.1,
-        },
-        dataset_patterns={
             "{dataset_name}#csv": {
                 "type": "pandas.CSVDataset",
                 "filepath": "data/01_raw/{dataset_name}#csv.csv",
             },
+        },
+        raw_data={
+            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "params:uk.data_processing.train_test_split": 0.1,
         },
     )
 
@@ -466,7 +463,7 @@ def example_transcoded_catalog():
             ),
             "model_inputs@pandas2": pandas.CSVDataset(filepath="model_inputs.csv"),
         },
-        feed_dict={
+        raw_data={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
             "params:uk.data_processing.train_test_split": 0.1,
         },
