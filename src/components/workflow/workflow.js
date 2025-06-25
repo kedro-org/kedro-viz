@@ -636,6 +636,7 @@ export class Workflow extends Component {
       layers,
       visibleGraph,
       visibleSidebar,
+      visibleMetaSidebar,
       clickedNode,
       nodes,
       nodeActive,
@@ -725,6 +726,7 @@ export class Workflow extends Component {
               timestamp={pipelineStatus.end_time}
               duration={pipelineStatus.duration}
               visibleSidebar={visibleSidebar}
+              visibleMetaSidebar={visibleMetaSidebar}
             />
             <Tooltip
               chartSize={chartSize}

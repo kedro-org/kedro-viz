@@ -20,6 +20,7 @@ const STATUS_CONFIG = {
 export const RunStatusNotification = ({
   timestamp,
   visibleSidebar,
+  visibleMetaSidebar,
   status,
   duration = 0,
 }) => {
@@ -30,13 +31,10 @@ export const RunStatusNotification = ({
 
   return (
     <div
-      className={classnames(
-        'run-status-notification',
-        `run-status-notification--${status}`,
-        {
-          'run-status-notification--no-sidebar': !visibleSidebar,
-        }
-      )}
+      className={classnames('run-status-notification', {
+        'run-status-notification--no-sidebar': !visibleSidebar,
+        'run-status-notification--with-meta-sidebar': visibleMetaSidebar,
+      })}
     >
       <div className="run-status-notification__status">
         <span className="run-status-notification__icon">

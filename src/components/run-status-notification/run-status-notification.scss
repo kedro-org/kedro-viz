@@ -41,11 +41,11 @@
   font-weight: 500;
   box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
   animation: fadeIn 0.3s ease-out forwards;
-  z-index: 1000;
   max-width: 90%;
 }
 
-.run-status-notification--no-sidebar {
+.run-status-notification--no-sidebar,
+.run-status-notification--with-meta-sidebar {
   left: 35%;
 }
 
