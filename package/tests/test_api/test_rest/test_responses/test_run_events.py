@@ -25,7 +25,7 @@ class TestDatasetInfo:
             dataset_id="sale_dataset",
             dataset_name="",
             size=None,
-            status=run_events.RunEventStatusSUCCESS,
+            status=run_events.RunEventStatus.SUCCESS,
         )
         assert (
             datasets["sale_dataset"].name == "" and datasets["sale_dataset"].size == 0
