@@ -80,7 +80,7 @@ export function DrawNodes({
         }
 
         if (showRunStatus) {
-          // Get the correct status source (datasetsStatus for data nodes, tasksStatus otherwise),
+          // Get the correct status source (tasksStatus for function nodes, tasksStatus otherwise),
           const statusSource =
             node.type === 'data' ? datasetsStatus : tasksStatus;
           // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
