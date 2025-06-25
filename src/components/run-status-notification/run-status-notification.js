@@ -5,12 +5,12 @@ import FailureIcon from '../icons/failure';
 import './run-status-notification.scss';
 
 const STATUS_CONFIG = {
-  Successful: {
+  successful: {
     icon: SuccessIcon,
     text: 'Run execution completed successfully',
     timestampLabel: 'Completed on',
   },
-  Failed: {
+  failed: {
     icon: FailureIcon,
     text: 'Run execution failed',
     timestampLabel: 'Failed on',

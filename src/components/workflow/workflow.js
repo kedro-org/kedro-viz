@@ -715,7 +715,7 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                nodesStatus={tasksStatus}
+                tasksStatus={tasksStatus}
                 datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
@@ -729,8 +729,8 @@ export class Workflow extends Component {
             />
             <RunStatusNotification
               status={pipelineStatus.status}
-              timestamp={pipelineStatus.endTime}
-              duration={0}
+              timestamp={pipelineStatus.end_time}
+              duration={pipelineStatus.duration}
               visibleSidebar={visibleSidebar}
             />
             <Tooltip
