@@ -105,13 +105,13 @@ class PipelineRunStatusHook:
         if flush:
             write_events(self._events)
 
-    def _set_context(self, dataset: str, operation: str, node: KedroNode) -> None:
+    def _set_event_context(self, dataset: str, operation: str, node: KedroNode) -> None:
         """Save dataset I/O and node context for error handling."""
         self._current_dataset = dataset
         self._current_operation = operation
         self._current_node = node
 
-    def _clear_context(self) -> None:
+    def _clear_event_context(self) -> None:
         """Clear dataset I/O context after successful operations."""
         self._current_dataset = None
         self._current_operation = None
@@ -124,10 +124,19 @@ class PipelineRunStatusHook:
         has been loaded or saved yet — so only static dataset configuration (not size/content)
         can be accessed.
         """
-        from kedro.io import KedroDataCatalog
+        try:
+            # prefer new KedroDataCatalog
+            from kedro.io import KedroDataCatalog
 
-        if isinstance(catalog, KedroDataCatalog):
-            self._datasets = catalog.datasets
+            if isinstance(catalog, KedroDataCatalog):
+                self._datasets = catalog.datasets
+                return
+        except ImportError:
+            pass
+        # fallback older versions. Remove fallback once Kedro 1.0.0 released
+        self._datasets = getattr(
+            catalog, "_datasets", getattr(catalog, "_data_sets", {})
+        )
 
     @hook_impl
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:
@@ -148,7 +157,7 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_dataset_loaded(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is loaded by a node."""
-        self._set_context(dataset_name, "loading", node)
+        self._set_event_context(dataset_name, "loading", node)
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any) -> None:
@@ -158,12 +167,12 @@ class PipelineRunStatusHook:
                 "after_dataset_loaded", dataset_name, data, self._datasets
             )
         )
-        self._clear_context()
+        self._clear_event_context()
 
     @hook_impl
     def before_dataset_saved(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is saved by a node."""
-        self._set_context(dataset_name, "saving", node)
+        self._set_event_context(dataset_name, "saving", node)
 
     @hook_impl
     def after_dataset_saved(self, dataset_name: str, data: Any) -> None:
@@ -173,7 +182,7 @@ class PipelineRunStatusHook:
                 "after_dataset_saved", dataset_name, data, self._datasets
             )
         )
-        self._clear_context()
+        self._clear_event_context()
 
     @hook_impl
     def before_node_run(self, node: KedroNode) -> None:

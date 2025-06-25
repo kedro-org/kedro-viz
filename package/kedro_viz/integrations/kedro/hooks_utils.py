@@ -64,28 +64,18 @@ def get_file_size(file_path: str) -> Optional[int]:
         return None
 
 
-def compute_size(dataset_name: str, datasets: Dict[str, Any]) -> Optional[int]:
-    """Determine file size for dataset with filepath attribute.
-
-    Args:
-        dataset_name: Dataset name
-        datasets: Dictionary of available datasets
-
-    Returns:
-        File size in bytes, if available
-    """
+def compute_size(dataset_name: str, datasets: Any) -> int:
+    """Return file size in bytes if path(s) exist, else 0."""
     dataset = datasets.get(dataset_name)
     if not dataset:
-        return None
+        return 0
 
-    # Look for filepath attributes and return size of first existing file
     file_paths = extract_file_paths(dataset)
     for file_path in file_paths:
         size = get_file_size(file_path)
         if size is not None:
             return size
-
-    return None
+    return 0
 
 
 def write_events(
