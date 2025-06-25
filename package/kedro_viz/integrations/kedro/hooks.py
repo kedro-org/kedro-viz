@@ -4,7 +4,7 @@ functionalities for a kedro run."""
 import json
 import logging
 from collections import defaultdict
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Union
 
 import fsspec
@@ -43,14 +43,12 @@ class DatasetStatsHook:
         Args:
             catalog: The catalog that was created.
         """
-        # Check for KedroDataCatalog first (DataCatalog 2.0)
         try:
-            if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-                self.datasets = (
-                    catalog.datasets
-                )  # This gives access to both lazy normal datasets
-                logger.debug("Using KedroDataCatalog for dataset statistics collection")
-            # For original DataCatalog
+            # Check for DataCatalog 2.0 and KedroDataCatalog
+            if hasattr(catalog, "keys") and callable(catalog.keys):
+                # since catalog is made like a dictionary interface
+                self.datasets = catalog
+            # Check DataCatalog 1.0
             elif hasattr(catalog, "_datasets"):
                 self.datasets = catalog._datasets
             else:
@@ -138,9 +136,9 @@ class DatasetStatsHook:
                 current_dataset = self.datasets.get(dataset_name, None)
 
                 if current_dataset:
-                    self._stats[stats_dataset_name]["file_size"] = self.get_file_size(
-                        current_dataset
-                    )
+                    dataset_file_size = self.get_file_size(current_dataset)
+                    if dataset_file_size:
+                        self._stats[stats_dataset_name]["file_size"] = dataset_file_size
 
         except ImportError as exc:  # pragma: no cover
             logger.warning(
@@ -173,7 +171,7 @@ class DatasetStatsHook:
             else:
                 return None
 
-            fs, path_in_fs = fsspec.core.url_to_fs(filepath)
+            fs, path_in_fs = fsspec.core.url_to_fs(str(filepath))
             if fs.exists(path_in_fs):
                 file_size = fs.size(path_in_fs)
                 return file_size

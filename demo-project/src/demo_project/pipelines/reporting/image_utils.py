@@ -71,7 +71,7 @@ class DrawTable:
         self.col_step = col_step
 
     def _populate(self, _df2: pd.DataFrame):
-        font = ImageFont.load_default().font
+        font = ImageFont.load_default_imagefont()
         for row in range(self.rows):
             self.draw.text(
                 (self.border - self.row_step // 2, self.border + self.row_step * row),
@@ -81,13 +81,15 @@ class DrawTable:
             )
             for col in range(self.cols):
                 text = str(_df2.iloc[row, col])
-                text_w, text_h = font.getsize(text)
+                left, _, right, _ = font.getbbox(text)
+                text_w = right - left
                 x_pos = self.border + self.col_step * (col + 1) - text_w
                 y_pos = self.border + self.row_step * row
                 self.draw.text((x_pos, y_pos), text, font=font, fill=(0, 0, 128))
         for col in range(self.cols):
             text = str(_df2.columns[col])
-            text_w, _ = font.getsize(text)
+            left, _, right, _ = font.getbbox(text)
+            text_w = right - left
             x_pos = self.border + self.col_step * (col + 1) - text_w
             y_pos = self.border - self.row_step // 2
             self.draw.text((x_pos, y_pos), text, font=font, fill=(0, 0, 128))

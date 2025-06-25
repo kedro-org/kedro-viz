@@ -105,7 +105,7 @@ class DataAccessManager:
         for dataset_name in all_datasets:
             try:
                 if hasattr(catalog, "get") and callable(catalog.get):
-                    # [TODO] Not sure of version
+                    # for Kedro >= 1.0
                     catalog.get(dataset_name)
                 else:
                     catalog._get_dataset(dataset_name, suggest=False)
