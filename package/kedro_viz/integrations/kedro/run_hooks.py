@@ -131,11 +131,13 @@ class PipelineRunStatusHook:
             if isinstance(catalog, KedroDataCatalog):
                 self._datasets = catalog.datasets
                 return
-        except ImportError:
-            pass
+        except ImportError:  # pragma: no cover
+            pass  # pragma: no cover
         # fallback older versions. Remove fallback once Kedro 1.0.0 released
-        self._datasets = getattr(
-            catalog, "_datasets", getattr(catalog, "_data_sets", {})
+        self._datasets = getattr(  # pragma: no cover
+            catalog,
+            "_datasets",
+            getattr(catalog, "_data_sets", {}),  # pragma: no cover
         )
 
     @hook_impl

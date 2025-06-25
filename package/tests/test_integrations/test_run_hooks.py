@@ -81,6 +81,11 @@ class TestPipelineRunLifecycle:
         assert hooks._events[-1]["event"] == "after_pipeline_run"
         assert flush_called["flag"] is True
 
+    def test_after_pipeline_run_named_pipeline_skips(self, hooks):
+        """Should not emit event for non-default pipelines."""
+        hooks.after_pipeline_run({"pipeline_name": "etl"})
+        assert hooks._events == []
+
 
 class TestDatasetLifecycle:
     def test_dataset_loaded_emits_event(self, hooks, sample_node):
