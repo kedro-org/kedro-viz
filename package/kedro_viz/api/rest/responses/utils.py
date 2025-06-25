@@ -15,9 +15,8 @@ logger = logging.getLogger(__name__)
 EnumType = TypeVar("EnumType", bound=Enum)
 
 
-# Shared status enums for pipeline, nodes, and datasets
-class Status(str, Enum):
-    """Constants for pipeline statuses."""
+class RunEventStatus(str, Enum):
+    """Enum representing pipeline run events status."""
 
     SUCCESS = "success"
     FAILED = "failed"

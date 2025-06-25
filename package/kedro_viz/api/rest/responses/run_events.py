@@ -10,7 +10,7 @@ from typing import Any, Optional, Union
 from pydantic import BaseModel, Field
 
 from kedro_viz.api.rest.responses.utils import (
-    Status,
+    RunEventStatus,
     calculate_pipeline_duration,
     convert_status_to_enum,
 )
@@ -21,9 +21,8 @@ from kedro_viz.utils import _hash_input_output
 logger = logging.getLogger(__name__)
 
 
-# Constants for event types
 class EventType(str, Enum):
-    """Constants for event types."""
+    """Enum for supported event types in run logs."""
 
     BEFORE_PIPELINE_RUN = "before_pipeline_run"
     AFTER_PIPELINE_RUN = "after_pipeline_run"
@@ -35,65 +34,99 @@ class EventType(str, Enum):
 
 
 class BaseErrorInfo(BaseModel):
-    """Base class for error information."""
+    """Base class for error information.
+
+    Attributes:
+        message: A string containing the error message.
+        traceback: Optional traceback for debugging purposes.
+    """
 
     message: str
     traceback: str = ""
 
 
 class NodeErrorInfo(BaseErrorInfo):
-    """Information about a node error."""
+    """Error information specific to a node execution failure."""
 
     pass
 
 
 class DatasetErrorInfo(BaseErrorInfo):
-    """Information about a dataset error.
+    """Error information related to dataset loading or saving.
 
     Attributes:
-        error_node: Optional; the name of the node that tried to load/save the failed dataset
-        error_operation: Optional; the operation that caused the error"""
+        error_node: The name of the node that caused the dataset error.
+        error_operation: The type of operation ("loading" or "saving").
+    """
 
     error_node: Optional[str] = None
     error_operation: Optional[str] = None
 
 
 class PipelineErrorInfo(BaseErrorInfo):
-    """Information about a pipeline error."""
+    """Error information specific to pipeline-level failures."""
 
     pass
 
 
 class NodeInfo(BaseModel):
-    """Information about a node."""
+    """Metadata associated with a node execution.
 
-    duration: float = 0.0  # duration in seconds
-    status: Status = Status.SUCCESS
+    Attributes:
+        duration: Time taken to execute the node in seconds.
+        status: status of the node (e.g., SUCCESS, FAILED).
+        error: Optional error information if execution failed.
+    """
+
+    duration: float = 0.0
+    status: RunEventStatus = RunEventStatus.SUCCESS
     error: Optional[NodeErrorInfo] = None
 
 
 class DatasetInfo(BaseModel):
-    """Information about a dataset."""
+    """Metadata associated with a dataset load/save operation.
+
+    Attributes:
+        name: Name of the dataset.
+        size: Size of the dataset in bytes.
+        status: status of the dataset operation.
+        error: Optional error info if operation failed.
+    """
 
     name: str
     size: int = 0
-    status: Status = Status.SUCCESS
+    status: RunEventStatus = RunEventStatus.SUCCESS
     error: Optional[DatasetErrorInfo] = None
 
 
 class PipelineInfo(BaseModel):
-    """Information about the pipeline run."""
+    """Metadata related to the overall pipeline run.
+
+    Attributes:
+        run_id: Unique identifier for the pipeline run.
+        start_time: ISO-formatted start timestamp.
+        end_time: ISO-formatted end timestamp.
+        duration: Total duration of the pipeline in seconds.
+        status: Overall status of the pipeline.
+        error: Optional error info if the pipeline failed.
+    """
 
     run_id: str = "default-run-id"
     start_time: Optional[str] = None
     end_time: Optional[str] = None
-    duration: float = 0.0  # duration in seconds
-    status: Status = Status.SUCCESS
+    duration: float = 0.0
+    status: RunEventStatus = RunEventStatus.SUCCESS
     error: Optional[PipelineErrorInfo] = None
 
 
 class RunStatusAPIResponse(BaseModel):
-    """Format for structured run status endpoint response."""
+    """Structured response model for run status API endpoint.
+
+    Attributes:
+        nodes: Dictionary of node execution metadata.
+        datasets: Dictionary of dataset metadata.
+        pipeline: Metadata for the entire pipeline execution.
+    """
 
     nodes: dict[str, NodeInfo] = Field(default_factory=dict)
     datasets: dict[str, DatasetInfo] = Field(default_factory=dict)
@@ -105,7 +138,7 @@ def _create_dataset_info(
     dataset_id: str,
     dataset_name: str,
     size: Optional[int],
-    status: Status,
+    status: RunEventStatus,
 ) -> None:
     """Create new DatasetInfo entry for a dataset.
 
@@ -128,7 +161,7 @@ def _update_dataset_info(
     dataset_id: str,
     dataset_name: str,
     size: Optional[int],
-    status: Status,
+    status: RunEventStatus,
     overwrite_size: bool = False,
 ) -> None:
     """Update existing DatasetInfo entry for a dataset.
@@ -192,7 +225,7 @@ def _update_pipeline_info_from_events(
             pipeline_info.end_time = end_event.get("timestamp")
 
         if end_event.get("event") == EventType.ON_PIPELINE_ERROR:
-            pipeline_info.status = Status.FAILED
+            pipeline_info.status = RunEventStatus.FAILED
             error_message = end_event.get("error", "Unknown pipeline error")
             traceback_message = end_event.get("traceback", "")
             pipeline_info.error = PipelineErrorInfo(
@@ -200,7 +233,7 @@ def _update_pipeline_info_from_events(
                 traceback=traceback_message,
             )
         else:
-            pipeline_info.status = Status.SUCCESS
+            pipeline_info.status = RunEventStatus.SUCCESS
 
 
 def _process_node_completion_event(
@@ -213,11 +246,11 @@ def _process_node_completion_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id", "unknown_node")
-    status = event.get("status", Status.SUCCESS)
+    status = event.get("status", RunEventStatus.SUCCESS)
     duration = float(event.get("duration", 0.0))
 
     nodes[node_id] = NodeInfo(
-        status=convert_status_to_enum(status, Status.SUCCESS),
+        status=convert_status_to_enum(status, RunEventStatus.SUCCESS),
         duration=duration,
     )
 
@@ -241,11 +274,11 @@ def _process_node_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = Status.FAILED
+        nodes[node_id].status = RunEventStatus.FAILED
         nodes[node_id].error = error_info
     else:
         nodes[node_id] = NodeInfo(
-            status=Status.FAILED,
+            status=RunEventStatus.FAILED,
             error=error_info,
         )
 
@@ -266,14 +299,14 @@ def _process_dataset_event(
         size = int(event.get("size", 0))
     except (TypeError, ValueError):
         size = 0
-    status = event.get("status", Status.SUCCESS)
+    status = event.get("status", RunEventStatus.SUCCESS)
     event_type = event.get("event")
 
     # Overwrite size for save operations
     overwrite_size = event_type == EventType.AFTER_DATASET_SAVED
 
     # Convert status to enum
-    status_enum = convert_status_to_enum(status, Status.SUCCESS)
+    status_enum = convert_status_to_enum(status, RunEventStatus.SUCCESS)
     # Create or update entry based on existence
     if node_id not in datasets:
         _create_dataset_info(
@@ -325,12 +358,12 @@ def _process_dataset_error_event(
         )
 
         if dataset_id in datasets:
-            datasets[dataset_id].status = Status.FAILED
+            datasets[dataset_id].status = RunEventStatus.FAILED
             datasets[dataset_id].error = dataset_error_info
         else:
             datasets[dataset_id] = DatasetInfo(
                 name=dataset_name,
-                status=Status.FAILED,
+                status=RunEventStatus.FAILED,
                 error=dataset_error_info,
             )
 
@@ -341,12 +374,12 @@ def _process_dataset_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = Status.FAILED
+        nodes[node_id].status = RunEventStatus.FAILED
         nodes[node_id].error = node_error_info
 
     # Update pipeline error status if not already set
     if not pipeline_info.error:
-        pipeline_info.status = Status.FAILED
+        pipeline_info.status = RunEventStatus.FAILED
         pipeline_info.error = PipelineErrorInfo(
             message=error_message,
             traceback=traceback_message,

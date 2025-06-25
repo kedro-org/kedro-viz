@@ -25,7 +25,7 @@ class TestDatasetInfo:
             dataset_id="sale_dataset",
             dataset_name="",
             size=None,
-            status=run_events.Status.SUCCESS,
+            status=run_events.RunEventStatusSUCCESS,
         )
         assert (
             datasets["sale_dataset"].name == "" and datasets["sale_dataset"].size == 0
@@ -38,14 +38,14 @@ class TestDatasetInfo:
             dataset_id="sale_dataset",
             dataset_name="",
             size=None,
-            status=run_events.Status.SUCCESS,
+            status=run_events.RunEventStatus.SUCCESS,
         )
         run_events._update_dataset_info(
             datasets,
             dataset_id="sale_dataset",
             dataset_name="sales",
             size=111,
-            status=run_events.Status.SUCCESS,
+            status=run_events.RunEventStatus.SUCCESS,
         )
         assert (
             datasets["sale_dataset"].name == "sales"
@@ -67,7 +67,7 @@ class TestPipelineTiming:
         )
         assert info.start_time == start
         assert info.end_time == end
-        assert info.status is run_events.Status.SUCCESS
+        assert info.status is run_events.RunEventStatus.SUCCESS
 
     def test_pipeline_timing_failure(self) -> None:
         now = datetime.now()
@@ -85,7 +85,7 @@ class TestPipelineTiming:
             ],
             failed,
         )
-        assert failed.status is run_events.Status.FAILED
+        assert failed.status is run_events.RunEventStatus.FAILED
         assert failed.error is not None and failed.error.message == "kaput"
 
     def test_pipeline_error_sets_only_end_time(self) -> None:
@@ -117,7 +117,7 @@ class TestNodeHelpers:
             },
             nodes,
         )
-        assert nodes["load_customers_node"].status is run_events.Status.SUCCESS
+        assert nodes["load_customers_node"].status is run_events.RunEventStatus.SUCCESS
         assert nodes["load_customers_node"].duration == 1.5
 
     def test_node_error_updates_existing_node_status_and_error(self) -> None:
@@ -134,7 +134,7 @@ class TestNodeHelpers:
             },
             nodes,
         )
-        assert nodes["load_customers_node"].status is run_events.Status.FAILED
+        assert nodes["load_customers_node"].status is run_events.RunEventStatus.FAILED
         err = nodes["load_customers_node"].error
         assert (
             err is not None
@@ -216,9 +216,9 @@ class TestDatasetHelpers:
         )
 
         hashed = _hash_input_output("customers.csv")
-        assert datasets[hashed].status is run_events.Status.FAILED
-        assert nodes["load_customers_node"].status is run_events.Status.FAILED
-        assert pipeline.status is run_events.Status.FAILED
+        assert datasets[hashed].status is run_events.RunEventStatus.FAILED
+        assert nodes["load_customers_node"].status is run_events.RunEventStatus.FAILED
+        assert pipeline.status is run_events.RunEventStatus.FAILED
 
     def test_dataset_error_second_occurrence_replaces_error_message(self):
         """Second error on same dataset replaces the error message."""
@@ -296,7 +296,7 @@ class TestTransformEventsToStructuredFormat:
             ),
         ]
         response = run_events.transform_events_to_structured_format(events)
-        assert response.pipeline.status is run_events.Status.FAILED
+        assert response.pipeline.status is run_events.RunEventStatus.FAILED
         assert response.nodes["load_customers_node"].duration == 1
 
 

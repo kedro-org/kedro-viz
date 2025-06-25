@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kedro_viz.api.rest.responses.run_events import Status
+from kedro_viz.api.rest.responses.run_events import RunEventStatus
 from kedro_viz.api.rest.responses.utils import (
     EnhancedORJSONResponse,
     calculate_pipeline_duration,
@@ -52,10 +52,10 @@ def test_get_encoded_response(mocker):
 @pytest.mark.parametrize(
     "input_value, default, expected",
     [
-        ("SUCCESS", Status.FAILED, Status.SUCCESS),
-        ("FAILED", Status.SUCCESS, Status.FAILED),
-        ("does-not-exist", Status.SUCCESS, Status.SUCCESS),
-        (None, Status.SUCCESS, Status.SUCCESS),
+        ("SUCCESS", RunEventStatus.FAILED, RunEventStatus.SUCCESS),
+        ("FAILED", RunEventStatus.SUCCESS, RunEventStatus.FAILED),
+        ("does-not-exist", RunEventStatus.SUCCESS, RunEventStatus.SUCCESS),
+        (None, RunEventStatus.SUCCESS, RunEventStatus.SUCCESS),
     ],
 )
 def test_convert_status_to_enum_cases(input_value, default, expected):

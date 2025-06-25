@@ -4,10 +4,9 @@ import hashlib
 import sys
 import threading
 import time
-from enum import Enum
 from itertools import cycle
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, TypeVar
+from typing import Any, Optional, Tuple
 
 from pathspec import GitIgnoreSpec
 

@@ -9,7 +9,10 @@ runs:
       shell: bash
     - name: Install Python dependencies
       run: |-
-        uv pip install --system git+https://github.com/kedro-org/kedro@main
+        # Previously used bleeding-edge Kedro from main branch:
+        # uv pip install --system git+https://github.com/kedro-org/kedro@main
+        # Now using latest Kedro 0.19.x from PyPI until Kedro-Viz is upgraded for 1.0
+        uv pip install --system kedro
         uv pip install --system -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
       shell: bash
     - name: Echo package versions
