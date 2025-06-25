@@ -375,3 +375,14 @@ export function setView(view) {
     view,
   };
 }
+
+export const RESET_STATE_FOR_WORKFLOW_VIEW = 'RESET_STATE_FOR_WORKFLOW_VIEW';
+
+/**
+ * Reset the state when the view changes to workflow view.
+ */
+export function resetStateForWorkflowView() {
+  return {
+    type: RESET_STATE_FOR_WORKFLOW_VIEW,
+  };
+}

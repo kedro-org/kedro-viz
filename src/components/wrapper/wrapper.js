@@ -4,9 +4,10 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
+import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
-import FlowchartRouteWrapper from '../flowchart-route-wrapper';
-import WorkflowRouteWrapper from '../workflow-route-wrapper';
+import FlowChartWrapper from '../flowchart-wrapper';
+// import Workflow from '../workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -43,10 +44,17 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   const allKedroVizRoutes = (
     <Switch>
       <Route exact path={sanitizedPathname()}>
-        <FlowchartRouteWrapper />
+        <FlowChartWrapper />
+        <FeatureHints />
       </Route>
       <Route path={`${sanitizedPathname()}workflow`}>
-        <WorkflowRouteWrapper />
+        {/* <Workflow /> Placeholder for Workflow component */}
+        {/* Also 
+        below action will be called in workflow component
+
+        this.props.onSetView(VIEW.WORKFLOW);
+        this.props.onResetStateForWorkflowView();
+        */}
       </Route>
     </Switch>
   );

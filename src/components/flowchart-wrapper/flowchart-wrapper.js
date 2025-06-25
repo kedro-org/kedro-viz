@@ -12,7 +12,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode } from '../../actions';
+import { toggleFocusMode, setView } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -40,6 +40,7 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
 import Banner from '../ui/banner';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import { VIEW } from '../../config';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -66,6 +67,7 @@ export const FlowChartWrapper = ({
   displayMetadataPanel,
   displayExportBtn,
   displayBanner,
+  setView,
 }) => {
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -119,6 +121,10 @@ export const FlowChartWrapper = ({
       }
     }
   };
+
+  useEffect(() => {
+    setView(VIEW.FLOWCHART);
+  }, [setView]);
 
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
@@ -361,6 +367,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
   },
+  setView: (view) => dispatch(setView(view)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlowChartWrapper);

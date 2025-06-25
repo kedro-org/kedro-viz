@@ -12,6 +12,7 @@ import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import slice from './slice';
 import bannerReducer from './banner';
+import resetStateForWorkflowView from './reset-state-for-workflow-view';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -135,6 +136,7 @@ const combinedReducer = combineReducers({
 const rootReducer = (state, action) => {
   let newState = resetDataReducer(state, action);
   newState = updateStateFromOptionsReducer(newState, action);
+  newState = resetStateForWorkflowView(newState, action);
   return combinedReducer(newState, action);
 };
 
