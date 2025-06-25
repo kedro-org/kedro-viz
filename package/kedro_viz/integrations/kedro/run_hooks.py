@@ -3,13 +3,14 @@
 import logging
 import traceback
 from time import perf_counter
-from typing import Any, Optional, Union
+from typing import Any, Dict, Optional
 
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
-    create_dataset_event,
+    _hash_input_output,
+    compute_size,
     generate_timestamp,
     hash_node,
     is_default_run,
@@ -17,6 +18,37 @@ from kedro_viz.integrations.kedro.hooks_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def create_dataset_event(
+    event_name: str,
+    dataset_name: str,
+    dataset_value: Any = None,
+    datasets: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Generic builder for dataset load/save events.
+
+    Args:
+        event_type: Event type/name
+        dataset_name: Dataset name
+        dataset_value: Dataset data
+        datasets: Dictionary of available datasets
+
+    Returns:
+        Dictionary with event data
+    """
+    event: Dict[str, Any] = {
+        "event": event_name,
+        "dataset": dataset_name,
+        "node_id": _hash_input_output(dataset_name),
+        "status": "Available",
+    }
+
+    if dataset_value is not None and datasets:
+        size = compute_size(dataset_name, datasets)
+        if size is not None:
+            event["size"] = size  # only attach size when available
+    return event
 
 
 class PipelineRunStatusHook:
@@ -61,10 +93,6 @@ class PipelineRunStatusHook:
         self._all_nodes: list[KedroNode] = []
         self._started_nodes: set[str] = set()
 
-    def _write_events(self) -> None:
-        """Persist events list to the project's .viz JSON file."""
-        write_events(self._events)
-
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
 
@@ -75,15 +103,15 @@ class PipelineRunStatusHook:
 
         self._events.append(event)
         if flush:
-            self._write_events()
+            write_events(self._events)
 
-    def _set_context(self, dataset: str, operation: str, node: KedroNode) -> None:
+    def _set_event_context(self, dataset: str, operation: str, node: KedroNode) -> None:
         """Save dataset I/O and node context for error handling."""
         self._current_dataset = dataset
         self._current_operation = operation
         self._current_node = node
 
-    def _clear_context(self) -> None:
+    def _clear_event_context(self) -> None:
         """Clear dataset I/O context after successful operations."""
         self._current_dataset = None
         self._current_operation = None
@@ -103,11 +131,13 @@ class PipelineRunStatusHook:
             if isinstance(catalog, KedroDataCatalog):
                 self._datasets = catalog.datasets
                 return
-        except ImportError:
-            pass
+        except ImportError:  # pragma: no cover
+            pass  # pragma: no cover
         # fallback older versions. Remove fallback once Kedro 1.0.0 released
-        self._datasets = getattr(
-            catalog, "_datasets", getattr(catalog, "_data_sets", {})
+        self._datasets = getattr(  # pragma: no cover
+            catalog,
+            "_datasets",
+            getattr(catalog, "_data_sets", {}),  # pragma: no cover
         )
 
     @hook_impl
@@ -129,7 +159,7 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_dataset_loaded(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is loaded by a node."""
-        self._set_context(dataset_name, "loading", node)
+        self._set_event_context(dataset_name, "loading", node)
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any) -> None:
@@ -139,12 +169,12 @@ class PipelineRunStatusHook:
                 "after_dataset_loaded", dataset_name, data, self._datasets
             )
         )
-        self._clear_context()
+        self._clear_event_context()
 
     @hook_impl
     def before_dataset_saved(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is saved by a node."""
-        self._set_context(dataset_name, "saving", node)
+        self._set_event_context(dataset_name, "saving", node)
 
     @hook_impl
     def after_dataset_saved(self, dataset_name: str, data: Any) -> None:
@@ -154,7 +184,7 @@ class PipelineRunStatusHook:
                 "after_dataset_saved", dataset_name, data, self._datasets
             )
         )
-        self._clear_context()
+        self._clear_event_context()
 
     @hook_impl
     def before_node_run(self, node: KedroNode) -> None:

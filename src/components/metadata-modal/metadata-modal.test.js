@@ -1,36 +1,60 @@
 import React from 'react';
 import MetadataModal from './metadata-modal';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
-import { setup } from '../../utils/state.mock';
 import { togglePlotModal } from '../../actions';
+import { setup, prepareState } from '../../utils/state.mock';
 import nodePlot from '../../utils/data/node_plot.mock.json';
-
+import spaceflights from '../../utils/data/spaceflights.mock.json';
+import { fireEvent } from '@testing-library/react';
 const nodeID = '966b9734';
 
 describe('Plotly Modal', () => {
-  const mount = (props) => {
-    return setup.mount(<MetadataModal />, {
-      beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
-      afterLayoutActions: [
-        () => togglePlotModal(true),
-        () => addNodeMetadata({ id: nodeID, data: nodePlot }),
-      ],
+  const renderWithState = () =>
+    setup.render(<MetadataModal />, {
+      state: prepareState({
+        beforeLayoutActions: [
+          () => toggleNodeClicked(nodeID),
+          () => togglePlotModal(true),
+          () => addNodeMetadata({ id: nodeID, data: nodePlot }),
+        ],
+        data: spaceflights,
+      }),
     });
-  };
+
   it('renders without crashing', () => {
-    const wrapper = mount({ nodeId: nodeID });
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(1);
+    const { container } = renderWithState();
+    expect(
+      container.querySelector('.pipeline-metadata-modal')
+    ).toBeInTheDocument();
   });
 
   it('modal closes when back button is clicked', () => {
-    const wrapper = mount({ nodeId: nodeID });
-    wrapper.find('.pipeline-metadata-modal__back').simulate('click');
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
+    const { store, getByRole } = setup.render(<MetadataModal />, {
+      state: prepareState({
+        beforeLayoutActions: [
+          () => toggleNodeClicked(nodeID),
+          () => togglePlotModal(true),
+          () => addNodeMetadata({ id: nodeID, data: nodePlot }),
+        ],
+        data: spaceflights,
+      }),
+    });
+
+    expect(store.getState().visible.metadataModal).toBe(true);
+
+    const backBtn = getByRole('button', { name: /back/i });
+    fireEvent.click(backBtn);
+
+    expect(store.getState().visible.metadataModal).toBe(false);
   });
 
   it('shows plot when a plot node is clicked', () => {
-    const wrapper = mount({ nodeId: nodeID });
-    expect(wrapper.find('.pipeline-metadata-modal__header').length).toBe(1);
-    expect(wrapper.find('.pipeline-plotly-chart').length).toBe(1);
+    const { container } = renderWithState();
+    expect(
+      container.querySelector('.pipeline-metadata-modal__header')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('.pipeline-plotly-chart')
+    ).toBeInTheDocument();
   });
 });

@@ -25,37 +25,6 @@ def hash_node(node: Any) -> str:
     return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
 
 
-def create_dataset_event(
-    event_type: str,
-    dataset_name: str,
-    dataset_value: Any = None,
-    datasets: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
-    """Generic builder for dataset load/save events.
-
-    Args:
-        event_type: Event type/name
-        dataset_name: Dataset name
-        dataset_value: Dataset data
-        datasets: Dictionary of available datasets
-
-    Returns:
-        Dictionary with event data
-    """
-    event: Dict[str, Any] = {
-        "event": event_type,
-        "dataset": dataset_name,
-        "node_id": _hash_input_output(dataset_name),
-        "status": "Available",
-    }
-
-    if dataset_value is not None and datasets:
-        size = compute_size(dataset_name, datasets)
-        if size is not None:
-            event["size"] = size  # only attach size when available
-    return event
-
-
 def extract_file_paths(dataset: Any) -> List[str]:
     """Extract file paths from a dataset object.
 
@@ -95,28 +64,18 @@ def get_file_size(file_path: str) -> Optional[int]:
         return None
 
 
-def compute_size(dataset_name: str, datasets: Dict[str, Any]) -> Optional[int]:
-    """Determine file size for dataset with filepath attribute.
-
-    Args:
-        dataset_name: Dataset name
-        datasets: Dictionary of available datasets
-
-    Returns:
-        File size in bytes, if available
-    """
+def compute_size(dataset_name: str, datasets: Any) -> int:
+    """Return file size in bytes if path(s) exist, else 0."""
     dataset = datasets.get(dataset_name)
     if not dataset:
-        return None
+        return 0
 
-    # Look for filepath attributes and return size of first existing file
     file_paths = extract_file_paths(dataset)
     for file_path in file_paths:
         size = get_file_size(file_path)
         if size is not None:
             return size
-
-    return None
+    return 0
 
 
 def write_events(
