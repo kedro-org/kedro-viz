@@ -7,6 +7,7 @@
 import { offsetNode, offsetEdge } from './common';
 import { layout } from './layout';
 import { routing } from './routing';
+import { workflowNodeDetailsWidth } from '../../config';
 
 const defaultOptions = {
   layout: {
@@ -52,7 +53,15 @@ export const graph = (
   addEdgeLinks(nodes, edges);
   addNearestLayers(nodes, layers);
 
-  layout({ nodes, edges, layers, orientation, view, ...options.layout });
+  layout({
+    nodes,
+    edges,
+    layers,
+    orientation,
+    view,
+    workflowNodeDetailsWidth,
+    ...options.layout,
+  });
   routing({ nodes, edges, layers, orientation, ...options.routing });
 
   const size = bounds(nodes, options.layout.padding);

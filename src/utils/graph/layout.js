@@ -36,7 +36,7 @@ export const layout = ({
   orientation,
   view,
 }) => {
-  //60 is height of the run status details rectangle in workflow view
+  // Height of the run status details rectangle in workflow view
   const extraVerticalGap = view === 'workflow' ? workflowNodeDetailsHeight : 0;
 
   let coordPrimary = 'x';
@@ -282,11 +282,10 @@ const createSeparationConstraints = (rows, layoutConfig) => {
       const spread = Math.min(10, degreeA * degreeB * spreadX);
       const space = snap(spread * spaceX, spaceX);
 
-      let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
-
-      if (orientation === 'horizontal') {
-        separation = nodeA.height + nodeB.height + extraVerticalGap;
-      }
+      const separation =
+        orientation === 'horizontal'
+          ? nodeA.height + nodeB.height + extraVerticalGap
+          : nodeA.width * 0.5 + space + nodeB.width * 0.5 + extraVerticalGap;
 
       separationConstraints.push({
         base: separationConstraint,
