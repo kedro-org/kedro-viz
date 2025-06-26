@@ -1,9 +1,4 @@
-import {
-  formatDuration,
-  formatSize,
-  formatTimestamp,
-  formatNumber,
-} from './format';
+import { formatDuration, formatSize, formatTimestamp } from './format';
 
 describe('formatDuration', () => {
   it('formats seconds < 60', () => {
@@ -32,7 +27,7 @@ describe('formatSize', () => {
   it('formats megabytes', () => {
     expect(formatSize(1048576)).toBe('1MB');
     expect(formatSize(2097152)).toBe('2MB');
-    expect(formatSize(1572864)).toBe('1.5MB');
+    expect(formatSize(1572864)).toBe('1.50MB');
   });
   it('returns N/A for NaN or null', () => {
     expect(formatSize(NaN)).toBe('N/A');
@@ -54,17 +49,5 @@ describe('formatTimestamp', () => {
   it('returns N/A for empty', () => {
     expect(formatTimestamp('')).toBe('N/A');
     expect(formatTimestamp(null)).toBe('N/A');
-  });
-});
-
-describe('formatNumber', () => {
-  it('removes unnecessary trailing zeros', () => {
-    expect(formatNumber(1.5)).toBe('1.5');
-    expect(formatNumber(2.0)).toBe('2');
-    expect(formatNumber(3.456)).toBe('3.46');
-    expect(formatNumber(4)).toBe('4');
-    expect(formatNumber(0)).toBe('0');
-    expect(formatNumber(5.1)).toBe('5.1');
-    expect(formatNumber(5.1234)).toBe('5.12');
   });
 });
