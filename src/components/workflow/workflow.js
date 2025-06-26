@@ -6,6 +6,7 @@ import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
 } from '../../actions/modular-pipelines';
+import { RunStatusNotification } from '../run-status-notification/run-status-notification';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -35,6 +36,7 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
+import { formatTimestamp } from './workflow-utils/format';
 import Tooltip from '../ui/tooltip';
 import PipelineLoading from '../pipeline-loading/pipeline-loading';
 
@@ -448,16 +450,11 @@ export class Workflow extends Component {
 
   handleSingleNodeClick = (node) => {
     const { id } = node;
-    const {
-      displayMetadataPanel,
-      onLoadNodeData,
-      onToggleNodeClicked,
-      toSelectedNode,
-    } = this.props;
+    const { displayMetadataPanel, onLoadNodeData, onToggleNodeClicked } =
+      this.props;
 
     // Handle metadata panel display or node click toggle
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
-    toSelectedNode(node);
   };
 
   /**
@@ -494,8 +491,6 @@ export class Workflow extends Component {
     // If a node was previously clicked, clear the selected node data and reset the URL.
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
-      // To reset URL to current active pipeline when click outside of a node on flowchart
-      this.props.toSelectedPipeline();
     }
   };
 
@@ -641,6 +636,8 @@ export class Workflow extends Component {
       displayExportBtn,
       layers,
       visibleGraph,
+      visibleSidebar,
+      visibleMetaSidebar,
       clickedNode,
       nodes,
       nodeActive,
@@ -656,7 +653,8 @@ export class Workflow extends Component {
       linkedNodes,
       inputOutputDataEdges,
       tasksStatus,
-      dataSetsStatus,
+      datasetsStatus,
+      pipelineStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -713,7 +711,7 @@ export class Workflow extends Component {
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
                 tasksStatus={tasksStatus}
-                dataSetsStatus={dataSetsStatus}
+                datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
             <DrawLayerNamesGroup
@@ -723,6 +721,13 @@ export class Workflow extends Component {
               chartSize={chartSize}
               orientation={orientation}
               layerNamesRef={this.layerNamesRef}
+            />
+            <RunStatusNotification
+              status={pipelineStatus.status}
+              timestamp={formatTimestamp(pipelineStatus.end_time)}
+              duration={pipelineStatus.duration}
+              visibleSidebar={visibleSidebar}
+              visibleMetaSidebar={visibleMetaSidebar}
             />
             <Tooltip
               chartSize={chartSize}
@@ -787,7 +792,8 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
   tasksStatus: getNodesStatus(state),
-  dataSetsStatus: getDatasetsStatus(state),
+  datasetsStatus: getDatasetsStatus(state),
+  pipelineStatus: state.runStatus.pipeline,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
