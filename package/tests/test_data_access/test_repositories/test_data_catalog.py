@@ -1,8 +1,9 @@
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import node, pipeline
-from kedro_viz.data_access.managers import DataAccessManager
 from packaging.version import parse
+
+from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.data_access.repositories import CatalogRepository
 
 

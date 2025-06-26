@@ -9,8 +9,8 @@ runs:
       shell: bash
     - name: Install Python dependencies
       run: |-
-        uv pip install --system git+https://github.com/kedro-org/kedro@main
         uv pip install --system -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
+        uv pip install --system git+https://github.com/kedro-org/kedro@main
       shell: bash
     - name: Echo package versions
       run: |-

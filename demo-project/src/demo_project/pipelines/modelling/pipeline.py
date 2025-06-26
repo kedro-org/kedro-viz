@@ -3,9 +3,10 @@ from typing import List
 from kedro.pipeline import Pipeline, node
 
 try:
-    from kedro.pipeline.modular_pipeline import pipeline
-except ModuleNotFoundError:
     from kedro.pipeline import pipeline
+except ModuleNotFoundError:
+    from kedro.pipeline.modular_pipeline import pipeline
+
 
 from .nodes import evaluate_model, split_data, train_model
 
