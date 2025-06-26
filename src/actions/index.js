@@ -384,5 +384,6 @@ export const RESET_STATE_FOR_WORKFLOW_VIEW = 'RESET_STATE_FOR_WORKFLOW_VIEW';
 export function resetStateForWorkflowView() {
   return {
     type: RESET_STATE_FOR_WORKFLOW_VIEW,
+    expandAllPipelines: true,
   };
 }

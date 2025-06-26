@@ -12,7 +12,6 @@ import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import slice from './slice';
 import bannerReducer from './banner';
-import resetStateForWorkflowView from './reset-state-for-workflow-view';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -28,9 +27,15 @@ import {
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
   SET_VIEW,
+  RESET_STATE_FOR_WORKFLOW_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 import { VIEW } from '../config';
+
+const resetDefaults = {
+  shouldExpandAllPipelines: true,
+  textLabels: true,
+};
 
 /**
  * Create a generic reducer
@@ -45,6 +50,13 @@ const createReducer =
     if (typeof key !== 'undefined' && action.type === type) {
       return action[key];
     }
+
+    if (action.type === RESET_STATE_FOR_WORKFLOW_VIEW) {
+      if (resetDefaults.hasOwnProperty(key)) {
+        return resetDefaults[key];
+      }
+    }
+
     return state;
   };
 
@@ -136,7 +148,6 @@ const combinedReducer = combineReducers({
 const rootReducer = (state, action) => {
   let newState = resetDataReducer(state, action);
   newState = updateStateFromOptionsReducer(newState, action);
-  newState = resetStateForWorkflowView(newState, action);
   return combinedReducer(newState, action);
 };
 
