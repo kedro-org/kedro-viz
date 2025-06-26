@@ -47,7 +47,16 @@ export function formatTimestamp(timestamp) {
   // Pads a number to 2 digits with a leading zero if needed (e.g., 3 -> '03', 12 -> '12')
   const pad2 = (num) => num.toString().padStart(2, '0');
 
-  const date = new Date(timestamp);
+  // Ensure the timestamp is treated as UTC if no timezone is present
+  let timestampStr = timestamp;
+  if (
+    typeof timestampStr === 'string' &&
+    !/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)
+  ) {
+    timestampStr += 'Z';
+  }
+
+  const date = new Date(timestampStr);
   const day = pad2(date.getUTCDate());
   const month = pad2(date.getUTCMonth() + 1);
   const year = date.getUTCFullYear();
