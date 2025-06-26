@@ -5,8 +5,6 @@ import {
   toggleSettingsModal,
   toggleShareableUrlModal,
   toggleTheme,
-  setView,
-  resetStateForWorkflowView,
 } from '../../actions';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 
@@ -17,8 +15,6 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
-import { VIEW } from '../../config';
-
 import './global-toolbar.scss';
 
 /**
@@ -31,15 +27,8 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleShareableUrlModal,
   onToggleTheme,
-  onSetView,
-  onResetStateForWorkflowView,
   theme,
 }) => {
-  const handleWorkflowClick = () => {
-    onSetView(VIEW.WORKFLOW);
-    onResetStateForWorkflowView();
-  };
-
   return (
     <div className="pipeline-global-toolbar">
       <ul className="pipeline-global-routes-toolbar kedro">
@@ -68,7 +57,6 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={WorkflowIcon}
             labelText="Workflow"
-            onClick={handleWorkflowClick}
           />
         </NavLink>
       </ul>
@@ -123,12 +111,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
-  },
-  onSetView: (view) => {
-    dispatch(setView(view));
-  },
-  onResetStateForWorkflowView: () => {
-    dispatch(resetStateForWorkflowView());
   },
 });
 

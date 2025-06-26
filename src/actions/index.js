@@ -381,9 +381,9 @@ export const RESET_STATE_FOR_WORKFLOW_VIEW = 'RESET_STATE_FOR_WORKFLOW_VIEW';
 /**
  * Reset the state when the view changes to workflow view.
  */
-export function resetStateForWorkflowView() {
+export function resetStateForWorkflowView(expandAllPipelines = true) {
   return {
     type: RESET_STATE_FOR_WORKFLOW_VIEW,
-    expandAllPipelines: true,
+    expandAllPipelines,
   };
 }

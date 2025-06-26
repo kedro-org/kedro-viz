@@ -20,6 +20,7 @@ import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
 import CollapsePipelinesIcon from '../icons/collapse-pipelines';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import { VIEW } from '../../config';
 
 /**
  * Main controls for filtering the chart data
@@ -130,6 +131,7 @@ export const mapStateToProps = (state) => ({
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
+  isFlowchartView: state.view === VIEW.FLOWCHART,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
