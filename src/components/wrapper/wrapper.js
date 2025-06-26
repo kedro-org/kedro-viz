@@ -7,7 +7,7 @@ import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-// import Workflow from '../workflow';
+import Workflow from '../workflow/workflow';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -48,13 +48,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
         <FeatureHints />
       </Route>
       <Route path={`${sanitizedPathname()}workflow`}>
-        {/* <Workflow /> Placeholder for Workflow component */}
-        {/* Also 
-        below action will be called in workflow component
-
-        this.props.onSetView(VIEW.WORKFLOW);
-        this.props.onResetStateForWorkflowView();
-        */}
+        <Workflow />
       </Route>
     </Switch>
   );
@@ -82,7 +76,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
             {allKedroVizRoutes}
           </>
         ) : (
-          <>{allKedroVizRoutes}</>
+          allKedroVizRoutes
         )}
       </Router>
     </div>

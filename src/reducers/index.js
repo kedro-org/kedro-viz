@@ -7,6 +7,7 @@ import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
+import runStatus from './run-status';
 import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
@@ -99,6 +100,7 @@ const combinedReducer = combineReducers({
   tag,
   modularPipeline,
   visible,
+  runStatus,
   showBanner: bannerReducer,
   // These props don't have any actions associated with them
   display: createReducer(null),

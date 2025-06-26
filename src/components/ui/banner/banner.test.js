@@ -1,7 +1,6 @@
 import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Banner from './banner';
-import sinon from 'sinon';
-import { mount } from 'enzyme';
 
 describe('Banner', () => {
   const message = {
@@ -9,58 +8,52 @@ describe('Banner', () => {
     body: 'test body',
   };
 
-  it('shows the  banner component with the required message', () => {
-    const wrapper = mount(<Banner message={message} />);
-
-    const bannerMessageTitle = wrapper.find('.banner-message-title');
-    const bannerMessageBody = wrapper.find('.banner-message-body');
-
-    expect(bannerMessageTitle.text()).toEqual(message.title);
-    expect(bannerMessageBody.text()).toEqual(message.body);
+  it('shows the banner component with the required message', () => {
+    render(<Banner message={message} />);
+    expect(screen.getByText(message.title)).toBeInTheDocument();
+    expect(screen.getByText(message.body)).toBeInTheDocument();
   });
 
   it('renders the optional icon when provided', () => {
-    const wrapper = mount(
-      <Banner message={message} icon={<svg data-testid="test-icon"></svg>} />
+    const { container } = render(
+      <Banner message={message} icon={<svg data-testid="test-icon" />} />
     );
-    expect(wrapper.find('.banner-icon').length).toBe(1);
+    expect(container.querySelector('.banner-icon')).toBeInTheDocument();
   });
 
   it('does not render the optional redirect button by default', () => {
-    const wrapper = mount(<Banner message={message} />);
-    expect(wrapper.find('.kedro button').length).toBe(0);
+    const { container } = render(<Banner message={message} />);
+    expect(container.querySelector('.kedro button')).not.toBeInTheDocument();
   });
 
   it('renders the optional redirect button when provided', () => {
     const btnUrl = 'https://example.com';
     const btnText = 'Test Redirect';
+    render(<Banner message={message} btnUrl={btnUrl} btnText={btnText} />);
 
-    const wrapper = mount(
-      <Banner message={message} btnUrl={btnUrl} btnText={btnText} />
-    );
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', btnUrl);
 
-    const anchorTag = wrapper.find('a');
-    expect(anchorTag.prop('href')).toBe(btnUrl);
-
-    const redirectButton = wrapper.find('button');
-    expect(redirectButton.text()).toBe(btnText);
+    const button = screen.getByRole('button', { name: btnText });
+    expect(button).toBeInTheDocument();
   });
 
-  it('closes the banner when close icon is clicked', () => {
-    const onClose = sinon.spy();
-    const wrapper = mount(
-      <Banner message={message} onClose={onClose}></Banner>
+  it('calls onClose when close icon is clicked', () => {
+    const onClose = jest.fn();
+    const { container } = render(
+      <Banner message={message} onClose={onClose} />
     );
 
-    wrapper.find('.banner-close').simulate('click');
-    expect(onClose.callCount).toBe(1);
-    expect(wrapper.find('banner').length).toBe(0);
+    const closeButton = container.querySelector('.banner-close');
+    fireEvent.click(closeButton);
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('renders the banner with correct positioning class', () => {
-    const wrapper = mount(
-      <Banner message={message} position="bottom"></Banner>
+    const { container } = render(
+      <Banner message={message} position="bottom" />
     );
-    expect(wrapper.find('.banner-bottom').length).toBe(1);
+    expect(container.querySelector('.banner-bottom')).toBeInTheDocument();
   });
 });

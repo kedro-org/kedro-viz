@@ -1,3 +1,4 @@
+import React from 'react';
 import Tooltip, { insertZeroWidthSpace } from './tooltip';
 import { setup } from '../../../utils/state.mock';
 import { globalToolbarWidth, sidebarWidth } from '../../../config';
@@ -28,118 +29,141 @@ const mockProps = {
 
 describe('Tooltip', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.shallow(Tooltip);
-    const container = wrapper.find('.pipeline-tooltip');
-    expect(container.length).toBe(1);
+    const { container } = setup.render(<Tooltip {...mockProps} />);
+    expect(container.querySelector('.pipeline-tooltip')).toBeInTheDocument();
   });
 
-  it('should not add the top class when the tooltip is towards the bottom', () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      top: mockProps.chartSize.height - 10,
-    };
-    const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
-    const container = wrapper.find('.pipeline-tooltip--top');
-    expect(container.length).toBe(0);
+  it('does not add --top when tooltip is towards bottom', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        targetRect={{
+          ...mockProps.targetRect,
+          top: mockProps.chartSize.height - 10,
+        }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--top')
+    ).not.toBeInTheDocument();
   });
 
-  it('should not add the right class when the tooltip is towards the left', () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      left: 10,
-    };
-    const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
-    const container = wrapper.find('.pipeline-tooltip--right');
-    expect(container.length).toBe(0);
+  it('does not add --right when tooltip is towards left', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        targetRect={{ ...mockProps.targetRect, left: 10 }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--right')
+    ).not.toBeInTheDocument();
   });
 
-  it("should add the 'top' class when the tooltip is towards the top", () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      top: 10,
-    };
-    const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
-    const container = wrapper.find('.pipeline-tooltip--top');
-    expect(container.length).toBe(1);
+  it('adds --top when tooltip is towards top', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        targetRect={{ ...mockProps.targetRect, top: 10 }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--top')
+    ).toBeInTheDocument();
   });
 
-  it("should add the 'right' class when the tooltip is towards the right", () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
-    };
-    const wrapper = setup.shallow(Tooltip, { ...mockProps, targetRect });
-    const container = wrapper.find('.pipeline-tooltip--right');
-    expect(container.length).toBe(1);
+  it('adds --right when tooltip is towards right', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        targetRect={{
+          ...mockProps.targetRect,
+          left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+        }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--right')
+    ).toBeInTheDocument();
   });
 
-  it("should add the 'no-delay' class to the tooltip when noDelay prop is true", () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
-    };
-    const wrapper = setup.shallow(Tooltip, {
-      ...mockProps,
-      targetRect,
-      noDelay: true,
-    });
-    const container = wrapper.find('.pipeline-tooltip--no-delay');
-    expect(container.length).toBe(1);
+  it('adds --no-delay when noDelay is true', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        noDelay
+        targetRect={{
+          ...mockProps.targetRect,
+          left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+        }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--no-delay')
+    ).toBeInTheDocument();
   });
 
-  it("should add the 'center-arrow' class to the tooltip when centerArrow prop is true", () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
-    };
-    const wrapper = setup.shallow(Tooltip, {
-      ...mockProps,
-      targetRect,
-      centerArrow: true,
-    });
-    const container = wrapper.find('.pipeline-tooltip--center-arrow');
-    expect(container.length).toBe(1);
+  it('adds --center-arrow when centerArrow is true', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        centerArrow
+        targetRect={{
+          ...mockProps.targetRect,
+          left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+        }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--center-arrow')
+    ).toBeInTheDocument();
   });
 
-  it("should add the 'small-arrow' class to the tooltip when arrowSize prop is 'small'", () => {
-    const targetRect = {
-      ...mockProps.targetRect,
-      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
-    };
-    const wrapper = setup.shallow(Tooltip, {
-      ...mockProps,
-      targetRect,
-      arrowSize: 'small',
-    });
-    const container = wrapper.find('.pipeline-tooltip--small-arrow');
-    expect(container.length).toBe(1);
+  it('adds --small-arrow when arrowSize is small', () => {
+    const { container } = setup.render(
+      <Tooltip
+        {...mockProps}
+        arrowSize="small"
+        targetRect={{
+          ...mockProps.targetRect,
+          left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+        }}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-tooltip--small-arrow')
+    ).toBeInTheDocument();
   });
 });
 
 describe('insertZeroWidthSpace', () => {
+  const zero = String.fromCharCode(0x200b);
+  const wrap = (text) => zero + text + zero;
+
   describe('special characters', () => {
-    const zero = String.fromCharCode(0x200b);
-    const wrap = (text) => zero + text + zero;
     const characters = '-_[]/:\\!@£$%^&*()'.split('');
-    test.each(characters)('wraps %s with a zero-width space', (d) => {
-      expect(insertZeroWidthSpace(d)).toBe(wrap(d));
-      expect(insertZeroWidthSpace(d).length).toBe(3);
+    test.each(characters)('wraps %s with zero-width space', (char) => {
+      const result = insertZeroWidthSpace(char);
+      expect(result).toBe(wrap(char));
+      expect(result.length).toBe(3);
     });
   });
 
   describe('alphanumeric characters', () => {
     const characters = ['a', 'B', '123', 'aBc123', '0', ''];
-    test.each(characters)('does not wrap %s with a zero-width space', (d) => {
-      expect(insertZeroWidthSpace(d)).toBe(d);
-      expect(insertZeroWidthSpace(d).length).toBe(d.length);
+    test.each(characters)('does not wrap %s', (char) => {
+      const result = insertZeroWidthSpace(char);
+      expect(result).toBe(char);
+      expect(result.length).toBe(char.length);
     });
   });
 
   describe('spaces', () => {
     const characters = [' ', '\t', '\n', 'a b', ' a '];
-    test.each(characters)('does not wrap %s with a zero-width space', (d) => {
-      expect(insertZeroWidthSpace(d)).toBe(d);
-      expect(insertZeroWidthSpace(d).length).toBe(d.length);
+    test.each(characters)('does not wrap %s', (char) => {
+      const result = insertZeroWidthSpace(char);
+      expect(result).toBe(char);
+      expect(result.length).toBe(char.length);
     });
   });
 });
