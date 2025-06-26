@@ -1,108 +1,108 @@
-export const workingAllGreen = {
+export const workingAllGreen = {  
     "nodes": {
         "69c523b6": {
-            "status": "Successful",
-            "duration": 0.02171195892151445,
+            "status": "Success",
+            "duration": 0.019762333016842604,
             "error": null
         },
         "ea604da4": {
-            "status": "Successful",
-            "duration": 0.031324208015576005,
+            "status": "Success",
+            "duration": 0.01362512493506074,
             "error": null
         },
         "f33b9291": {
-            "status": "Successful",
-            "duration": 0.05910258402582258,
+            "status": "Success",
+            "duration": 0.043035666923969984,
             "error": null
         },
         "8de402c1": {
-            "status": "Successful",
-            "duration": 0.6882015420123935,
+            "status": "Success",
+            "duration": 0.6079435832798481,
             "error": null
         },
         "cb5166f3": {
-            "status": "Successful",
-            "duration": 0.05577341699972749,
+            "status": "Success",
+            "duration": 0.05473699979484081,
             "error": null
         },
         "04ba733a": {
-            "status": "Successful",
-            "duration": 0.020299041992984712,
+            "status": "Success",
+            "duration": 0.02043904224410653,
             "error": null
         },
         "7932e672": {
-            "status": "Successful",
-            "duration": 0.010609874967485666,
+            "status": "Success",
+            "duration": 0.0051386659033596516,
             "error": null
         },
         "e50f81b8": {
-            "status": "Successful",
-            "duration": 0.015589041984640062,
+            "status": "Success",
+            "duration": 0.013552166055887938,
             "error": null
         },
         "9a6ef457": {
-            "status": "Successful",
-            "duration": 0.004246208001859486,
+            "status": "Success",
+            "duration": 0.004188125021755695,
             "error": null
         },
         "be6b7919": {
-            "status": "Successful",
-            "duration": 0.8109394999919459,
+            "status": "Success",
+            "duration": 0.29981604078784585,
             "error": null
         },
         "44ef9b48": {
-            "status": "Successful",
-            "duration": 0.013631332898512483,
+            "status": "Success",
+            "duration": 0.012252415996044874,
             "error": null
         },
         "c7646ea1": {
-            "status": "Successful",
-            "duration": 0.01859370805323124,
+            "status": "Success",
+            "duration": 0.01658183289691806,
             "error": null
         },
         "3fb71518": {
-            "status": "Successful",
-            "duration": 0.01459566701669246,
+            "status": "Success",
+            "duration": 0.01380841713398695,
             "error": null
         },
         "40886786": {
-            "status": "Successful",
-            "duration": 0.1362450000597164,
+            "status": "Success",
+            "duration": 0.14521300001069903,
             "error": null
         },
         "6ea2ec2c": {
-            "status": "Successful",
-            "duration": 0.019788417033851147,
+            "status": "Success",
+            "duration": 0.01678370777517557,
             "error": null
         },
         "4adb5c8b": {
-            "status": "Successful",
-            "duration": 0.05448287504259497,
+            "status": "Success",
+            "duration": 0.0859907497651875,
             "error": null
         },
         "2816ba38": {
-            "status": "Successful",
-            "duration": 0.01715854206122458,
+            "status": "Success",
+            "duration": 0.016428917180746794,
             "error": null
         },
         "af9a43c8": {
-            "status": "Successful",
-            "duration": 0.5004755409900099,
+            "status": "Success",
+            "duration": 0.302541000302881,
             "error": null
         },
         "038647c7": {
-            "status": "Successful",
-            "duration": 10.082166415988468,
+            "status": "Success",
+            "duration": 9.384745582938194,
             "error": null
         },
         "d2885635": {
-            "status": "Successful",
-            "duration": 0.009252125048078597,
+            "status": "Success",
+            "duration": 0.008213916793465614,
             "error": null
         },
         "bf8530bc": {
-            "status": "Successful",
-            "duration": 0.1467611249536276,
+            "status": "Success",
+            "duration": 0.13445558305829763,
             "error": null
         }
     },
@@ -181,7 +181,7 @@ export const workingAllGreen = {
         },
         "1e3cc50a": {
             "name": "feature_importance_output",
-            "size": 458,
+            "size": 459,
             "status": "Available",
             "error": null
         },
@@ -205,7 +205,7 @@ export const workingAllGreen = {
         },
         "3b199c6b": {
             "name": "reporting.confusion_matrix",
-            "size": 2784,
+            "size": 8096,
             "status": "Available",
             "error": null
         },
@@ -217,7 +217,7 @@ export const workingAllGreen = {
         },
         "d0e9b00f": {
             "name": "reporting.cancellation_policy_breakdown",
-            "size": 8879,
+            "size": 8610,
             "status": "Available",
             "error": null
         },
@@ -229,7 +229,7 @@ export const workingAllGreen = {
         },
         "c6992660": {
             "name": "reporting.price_histogram",
-            "size": 2560,
+            "size": 7968,
             "status": "Available",
             "error": null
         },
@@ -241,7 +241,7 @@ export const workingAllGreen = {
         },
         "eb7d6d28": {
             "name": "reporting.feature_importance",
-            "size": 2528,
+            "size": 7936,
             "status": "Available",
             "error": null
         },
@@ -283,7 +283,7 @@ export const workingAllGreen = {
         },
         "10e51dea": {
             "name": "train_evaluation.linear_regression.regressor",
-            "size": 2304,
+            "size": 1184,
             "status": "Available",
             "error": null
         },
@@ -301,7 +301,7 @@ export const workingAllGreen = {
         },
         "01675921": {
             "name": "train_evaluation.random_forest.regressor",
-            "size": 2304,
+            "size": 1184,
             "status": "Available",
             "error": null
         },
@@ -325,11 +325,11 @@ export const workingAllGreen = {
         }
     },
     "pipeline": {
-        "run_id": "6d962877-1fdf-4b9a-b953-3377f476d48e",
-        "start_time": "2025-06-18T12.10.44.342274Z",
-        "end_time": "2025-06-18T12.11.09.584093Z",
-        "duration": 12.730948126059957,
-        "status": "Successful",
+        "run_id": "2e6fe776-6ab2-4b6e-ae78-21bacec8d3e8",
+        "start_time": "2025-05-22T15:36:36.635899",
+        "end_time": "2025-05-22T15:36:58.013039",
+        "duration": 21.37714,
+        "status": "Success",
         "error": null
     }
 }
