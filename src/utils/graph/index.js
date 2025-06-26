@@ -1,5 +1,5 @@
 import { graph } from './graph';
-import { workflowNodeDetailsWidth } from '../../config';
+import { VIEW } from '../../config';
 
 /**
  * Calculate chart layout with experimental new graphing algorithm
@@ -7,7 +7,14 @@ import { workflowNodeDetailsWidth } from '../../config';
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const graphNew = ({ nodes, edges, layers, orientation, view }) => {
+export const graphNew = ({
+  nodes,
+  edges,
+  layers,
+  orientation,
+  view,
+  workflowNodeDetailsWidth,
+}) => {
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
     node.icon = node.icon || 'node';
@@ -21,7 +28,12 @@ export const graphNew = ({ nodes, edges, layers, orientation, view }) => {
     const innerWidth = node.iconSize + textWidth + textGap;
 
     let baseWidth = node.width || innerWidth + padding.x * 2;
-    node.width = Math.max(baseWidth, workflowNodeDetailsWidth);
+    // Only apply workflowNodeDetailsWidth if in workflow view and the value is a valid number
+    node.width =
+      view === VIEW.WORKFLOW && typeof workflowNodeDetailsWidth === 'number'
+        ? Math.max(baseWidth, workflowNodeDetailsWidth)
+        : baseWidth;
+
     node.height = node.height || node.iconSize + padding.y * 2;
     node.textOffset = node.textOffset || (innerWidth - textWidth) / 2;
     node.iconOffset = node.iconOffset || -innerWidth / 2;

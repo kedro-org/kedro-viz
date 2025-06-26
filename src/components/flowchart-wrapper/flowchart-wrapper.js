@@ -31,6 +31,7 @@ import {
   params,
   BANNER_METADATA,
   BANNER_KEYS,
+  VIEW,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
@@ -121,7 +122,7 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
-    setView('flowchart');
+    setView(VIEW.FLOWCHART);
   }, [setView]);
 
   useEffect(() => {
