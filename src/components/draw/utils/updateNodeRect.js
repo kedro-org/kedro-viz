@@ -1,7 +1,6 @@
 import { select } from 'd3-selection';
-
 import { renderNodeDetailsContainer } from './renderNodeDetailsContainer';
-import { getNodeWidth } from './getNodeRectWidth';
+import { workflowNodeDetailsWidth } from '../../../config';
 
 function setNodeRectAttrs(nodeRects, widthFn) {
   return nodeRects
@@ -27,7 +26,9 @@ export const updateNodeRects = (
   dataSetsStatus
 ) => {
   if (showRunStatus) {
-    setNodeRectAttrs(nodeRects, getNodeWidth);
+    setNodeRectAttrs(nodeRects, (node) =>
+      Math.max(node.width - 5, workflowNodeDetailsWidth)
+    );
 
     // Render node details for each node
     nodeRects.each(function (node) {

@@ -7,7 +7,7 @@ import {
   crossingConstraint,
   separationConstraint,
 } from './constraints';
-import { NODE_DETAILS_HEIGHT } from '../../components/draw/utils/config';
+import { workflowNodeDetailsHeight } from '../../config';
 
 /**
  * Finds positions for the given nodes relative to their edges.
@@ -37,7 +37,7 @@ export const layout = ({
   view,
 }) => {
   //60 is height of the run status details rectangle in workflow view
-  const extraVerticalGap = view === 'workflow' ? NODE_DETAILS_HEIGHT : 0;
+  const extraVerticalGap = view === 'workflow' ? workflowNodeDetailsHeight : 0;
 
   let coordPrimary = 'x';
   let coordSecondary = 'y';

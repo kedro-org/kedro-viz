@@ -6,8 +6,10 @@ import {
   getTasksStatusInfo,
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
-import { NODE_DETAILS_HEIGHT } from './config';
-import { NODE_DETAILS_WIDTH } from './config';
+import {
+  workflowNodeDetailsHeight,
+  workflowNodeDetailsWidth,
+} from '../../../config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -19,7 +21,7 @@ export function renderNodeDetailsContainer(
   tasksStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = Math.max(node.width || 0, NODE_DETAILS_WIDTH);
+  const nodeWidth = Math.max(node.width || 0, workflowNodeDetailsWidth);
   const nodeHeight = node.height - 5;
 
   const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
@@ -68,7 +70,9 @@ export function renderNodeDetailsContainer(
     .attr('width', nodeWidth)
     .attr(
       'height',
-      node.type === 'task' ? NODE_DETAILS_HEIGHT : NODE_DETAILS_HEIGHT + 20
+      node.type === 'task'
+        ? workflowNodeDetailsHeight
+        : workflowNodeDetailsHeight + 20
     )
     .attr('x', nodeWidth / -2)
     .attr('y', node.type === 'task' ? nodeHeight / 2 + 1 : 0)
@@ -81,18 +85,18 @@ export function renderNodeDetailsContainer(
     .attr('d', () => {
       if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT
+          nodeHeight / 2 + workflowNodeDetailsHeight
         } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
         return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${
+          nodeHeight / 2 + workflowNodeDetailsHeight - 10
+        } Q ${nodeWidth / -2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
           nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} H ${nodeWidth / 2 - 10} Q ${
+        } ${nodeHeight / 2 + workflowNodeDetailsHeight} H ${
+          nodeWidth / 2 - 10
+        } Q ${nodeWidth / 2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
           nodeWidth / 2
-        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${nodeWidth / 2} ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
-        } V 0`;
+        } ${nodeHeight / 2 + workflowNodeDetailsHeight - 10} V 0`;
       }
     });
 
