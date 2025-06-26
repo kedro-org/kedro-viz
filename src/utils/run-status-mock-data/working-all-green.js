@@ -329,7 +329,7 @@ export const workingAllGreen = {
         "start_time": "2025-05-22T15:36:36.635899",
         "end_time": "2025-05-22T15:36:58.013039",
         "duration": 21.37714,
-        "status": "completed",
+        "status": "Success",
         "error": null
     }
 }
