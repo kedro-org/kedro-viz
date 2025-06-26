@@ -15,12 +15,6 @@ from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
-
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -115,9 +109,6 @@ def _load_data_helper(
                 catalog = context.catalog
         else:
             catalog = context.catalog
-
-        if isinstance(catalog, KedroDataCatalog):
-            logger.info("Using KedroDataCatalog which has lazy loading by default")
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.

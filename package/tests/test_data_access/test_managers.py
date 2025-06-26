@@ -5,13 +5,6 @@ from unittest.mock import MagicMock
 import networkx as nx
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
-
-try:
-    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
-
-    HAS_KEDRO_DATA_CATALOG = True
-except ImportError:
-    HAS_KEDRO_DATA_CATALOG = False
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets.pandas import CSVDataset

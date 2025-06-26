@@ -1,18 +1,8 @@
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import node, pipeline
-
 from kedro_viz.data_access.managers import DataAccessManager
-
-try:
-    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
-
-    HAS_KEDRO_DATA_CATALOG = True
-except ImportError:
-    HAS_KEDRO_DATA_CATALOG = False
-
 from packaging.version import parse
-
 from kedro_viz.data_access.repositories import CatalogRepository
 
 
