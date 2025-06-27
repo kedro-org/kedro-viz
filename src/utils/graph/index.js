@@ -1,5 +1,5 @@
 import { graph } from './graph';
-import { VIEW } from '../../config';
+import { VIEW, workflowNodeDetailsWidth } from '../../config';
 
 /**
  * Calculate chart layout with experimental new graphing algorithm
@@ -7,14 +7,7 @@ import { VIEW } from '../../config';
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const graphNew = ({
-  nodes,
-  edges,
-  layers,
-  orientation,
-  view,
-  workflowNodeDetailsWidth,
-}) => {
+export const graphNew = ({ nodes, edges, layers, orientation, view }) => {
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
     node.icon = node.icon || 'node';
