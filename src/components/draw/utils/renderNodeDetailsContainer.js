@@ -65,12 +65,7 @@ export function renderNodeDetailsContainer(
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
-    .attr(
-      'height',
-      node.type === 'task'
-        ? workflowNodeDetailsHeight
-        : workflowNodeDetailsHeight + 20
-    )
+    .attr('height', nodeHeight)
     .attr('x', nodeWidth / -2)
     .attr('y', node.type === 'task' ? nodeHeight / 2 + 1 : 0)
     .attr('rx', 0);
