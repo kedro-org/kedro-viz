@@ -60,14 +60,16 @@ export function renderNodeDetailsContainer(
     })
     .style('fill', 'none');
 
-  // Details background
+  // Draw the background rectangle for the node details section
+  // The height is calculated as half the node height plus the workflow node details height
+  // While the width remains the same as the node width, which is calculated inside graph/index.js
   detailsContainer
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
+    .attr('height', nodeHeight / 2 + workflowNodeDetailsHeight)
     .attr('x', nodeWidth / -2)
-    .attr('y', node.type === 'task' ? nodeHeight / 2 + 1 : 0)
+    .attr('y', 0)
     .attr('rx', 0);
 
   // Details outline (bottom part only)
