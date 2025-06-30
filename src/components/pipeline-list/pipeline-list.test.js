@@ -81,6 +81,18 @@ describe('PipelineList', () => {
     expect(wrapper).toHaveClass('dropdown--disabled');
   });
 
+  it('should disable the dropdown when isWorkflowView is true', () => {
+    const { container } = setup.render(
+      <PipelineList onToggleOpen={jest.fn()} isWorkflowView={true} />
+    );
+
+    const button = container.querySelector('.dropdown__label');
+    expect(button).toBeDisabled();
+
+    const wrapper = container.querySelector('.dropdown');
+    expect(wrapper).toHaveClass('dropdown--disabled');
+  });
+
   test.each(pipelineIDs)(
     'should change the active pipeline to %s on clicking menu option %s, and set URL to "/?pid=%s"',
     async (id, i) => {
