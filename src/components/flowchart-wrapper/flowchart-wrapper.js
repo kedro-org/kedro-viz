@@ -11,7 +11,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode } from '../../actions';
+import { toggleFocusMode, setView } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -31,6 +31,7 @@ import {
   params,
   BANNER_METADATA,
   BANNER_KEYS,
+  VIEW,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
@@ -65,6 +66,7 @@ export const FlowChartWrapper = ({
   displayMetadataPanel,
   displayExportBtn,
   displayBanner,
+  setView,
 }) => {
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -118,6 +120,10 @@ export const FlowChartWrapper = ({
       }
     }
   };
+
+  useEffect(() => {
+    setView(VIEW.FLOWCHART);
+  }, [setView]);
 
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
@@ -354,6 +360,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
   },
+  setView: (view) => dispatch(setView(view)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlowChartWrapper);
