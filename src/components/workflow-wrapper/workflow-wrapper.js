@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { setView, resetStateForWorkflowView } from '../../actions';
 import Workflow from '../workflow/workflow';
-import { VIEW } from '../../config';
+import { loadPipelineData } from '../../actions/pipelines';
+import { VIEW, PIPELINE } from '../../config';
 
 /**
  * Main workflow container.
@@ -24,7 +25,10 @@ const WorkflowWrapper = ({ onSetView, onResetState }) => {
 
 const mapDispatchToProps = (dispatch) => ({
   onSetView: (view) => dispatch(setView(view)),
-  onResetState: () => dispatch(resetStateForWorkflowView()),
+  onResetState: () => {
+    dispatch(resetStateForWorkflowView());
+    dispatch(loadPipelineData(PIPELINE.DEFAULT));
+  },
 });
 
 export default connect(null, mapDispatchToProps)(WorkflowWrapper);
