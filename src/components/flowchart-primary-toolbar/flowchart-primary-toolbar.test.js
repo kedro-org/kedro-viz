@@ -41,6 +41,7 @@ describe('PrimaryToolbar', () => {
       expandedPipelines: false,
       disableLayerBtn: false,
       visibleLayers: true,
+      isFlowchartView: true,
     };
 
     const { container } = setup.render(<FlowchartPrimaryToolbar {...props} />, {
@@ -70,6 +71,7 @@ describe('PrimaryToolbar', () => {
       expandedPipelines: false,
       disableLayerBtn: false,
       visibleLayers: true,
+      isFlowchartView: true,
     };
 
     const { container } = setup.render(<FlowchartPrimaryToolbar {...props} />);
@@ -124,6 +126,7 @@ describe('PrimaryToolbar', () => {
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
       orientation: expect.any(String),
+      isFlowchartView: expect.any(Boolean),
       visible: expect.objectContaining({
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),

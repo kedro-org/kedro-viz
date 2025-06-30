@@ -60,7 +60,7 @@ describe('Wrapper', () => {
     });
 
     // Optional: adjust if exact children count changes
-    expect(container.querySelector('.kedro-pipeline').children.length).toBe(2);
+    expect(container.querySelector('.kedro-pipeline').children.length).toBe(3);
   });
 
   it('maps state to props', () => {
