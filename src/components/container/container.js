@@ -1,6 +1,7 @@
 import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
+// import { funNodeError } from '../../utils/run-status-mock-data/fun-node-error';
 import './container.scss';
 import runData from './run-data.json';
 

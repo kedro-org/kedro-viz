@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
+import normalizeRunData from './normalize-run-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { mapNodeType, isValidBoolean } from '../utils';
 import {
@@ -213,6 +214,15 @@ export const preparePipelineState = (
   return state;
 };
 
+/** * Prepare the run status data part of the state by normalizing the raw data.
+ * @param {Object} runData Run status data
+ * @returns {Object} The new run status state with modifications applied.
+ */
+export const prepareRunStatusState = (runData) => {
+  let state = normalizeRunData(runData);
+  return state;
+};
+
 /**
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
@@ -257,9 +267,12 @@ const getInitialState = (props = {}) => {
     expandAllPipelines
   );
 
+  const runStatusState = prepareRunStatusState(props.runData);
+
   const initialState = {
     ...nonPipelineState,
     ...pipelineState,
+    runStatus: runStatusState,
   };
 
   return props.options ? deepmerge(initialState, props.options) : initialState;
