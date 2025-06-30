@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Sidebar from '../sidebar';
 import { PipelineWarningContent } from '../pipeline-warning/pipeline-warning';
 
-export const NoRunStatus = ({ displaySidebar, sidebarVisible }) => {
+export const RunNotFoundWarning = ({ displaySidebar, sidebarVisible }) => {
   return (
     <div className="kedro-pipeline">
       {displaySidebar && <Sidebar />}
@@ -22,4 +22,4 @@ export const mapStateToProps = (state) => ({
   sidebarVisible: state.visible.sidebar,
 });
 
-export default connect(mapStateToProps)(NoRunStatus);
+export default connect(mapStateToProps)(RunNotFoundWarning);

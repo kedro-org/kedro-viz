@@ -5,7 +5,7 @@ import { setView } from '../../actions';
 import { VIEW } from '../../config';
 import { isRunStatusAvailable } from '../../selectors/run-status';
 import Workflow from '../workflow/workflow';
-import NoRunStatus from '../no-run-status/no-run-status';
+import RunNotFoundWarning from '../run-not-found-warning/run-not-found-warning';
 
 /**
  * Main workflow container. Handles showing/hiding run status and no data messages
@@ -16,8 +16,7 @@ export const WorkflowWrapper = ({ onSetView, isRunStatusAvailable }) => {
     onSetView(VIEW.WORKFLOW);
   }, [onSetView]);
 
-  return <>{isRunStatusAvailable ? <Workflow /> : <NoRunStatus />}</>;
-
+  return <>{isRunStatusAvailable ? <Workflow /> : <RunNotFoundWarning />}</>;
 };
 
 export const mapStateToProps = (state) => ({
