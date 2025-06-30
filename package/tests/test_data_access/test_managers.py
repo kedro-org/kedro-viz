@@ -701,9 +701,12 @@ class TestResolveDatasetFactoryPatterns:
             == "factory_test"
         )
 
-        # Testing for DataCatalog 2.0
-        # Mock the `get` method on the catalog
-        mocked_get = mocker.patch.object(catalog, "get", return_value="mocked_dataset")
+        # Testing for Kedro < 1.0
+        # Mock the `_get_dataset` method on the catalog
+        mocker.patch.object(catalog, "get", None)
+        mocked_get = mocker.patch.object(
+            catalog, "_get_dataset", return_value="mocked_dataset", create=True
+        )
 
         # Set the catalog in the repository
         catalog_repo.set_catalog(catalog)
