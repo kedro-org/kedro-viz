@@ -24,7 +24,8 @@ export const createInitialState = () => ({
   textLabels: true,
   theme: 'dark',
   expandAllPipelines: false,
-  orientation: 'vertical',
+  orientation: 'vertical', // 'horizontal' or 'vertical'
+  view: 'flowchart', // 'flowchart' (default), or 'workflow'
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   showDatasetPreviews: settings.showDatasetPreviews.default,

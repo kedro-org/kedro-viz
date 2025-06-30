@@ -192,6 +192,9 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
+  if (typeof window === 'undefined' || !window.location) {
+    return false;
+  }
   const hosts = [
     'localhost',
     '127.0.0.1',
@@ -227,6 +230,9 @@ export const isRunningLocally = () => {
  * @returns {string} Sanitized pathname
  */
 export const sanitizedPathname = () => {
+  if (typeof window === 'undefined' || !window.location) {
+    return '/';
+  }
   const { pathname } = window.location;
 
   // Remove route-specific parts like /workflow from the path

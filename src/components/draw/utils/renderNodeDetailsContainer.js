@@ -6,8 +6,7 @@ import {
   getTasksStatusInfo,
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
-import { NODE_DETAILS_HEIGHT } from './config';
-import { MINIMUM_WIDTH } from './config';
+import { workflowNodeDetailsHeight } from '../../../config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -19,7 +18,7 @@ export function renderNodeDetailsContainer(
   tasksStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = Math.max(node.width || 0, MINIMUM_WIDTH);
+  const nodeWidth = node.width - 5;
   const nodeHeight = node.height - 5;
 
   const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
@@ -61,17 +60,16 @@ export function renderNodeDetailsContainer(
     })
     .style('fill', 'none');
 
-  // Details background
+  // Draw the background rectangle for the node details section
+  // The height is calculated as half the node height plus the workflow node details height
+  // While the width remains the same as the node width, which is calculated inside graph/index.js
   detailsContainer
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
-    .attr(
-      'height',
-      node.type === 'task' ? NODE_DETAILS_HEIGHT : NODE_DETAILS_HEIGHT + 20
-    )
+    .attr('height', nodeHeight / 2 + workflowNodeDetailsHeight)
     .attr('x', nodeWidth / -2)
-    .attr('y', node.type === 'task' ? nodeHeight / 2 + 1 : 0)
+    .attr('y', 0)
     .attr('rx', 0);
 
   // Details outline (bottom part only)
@@ -81,18 +79,18 @@ export function renderNodeDetailsContainer(
     .attr('d', () => {
       if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT
+          nodeHeight / 2 + workflowNodeDetailsHeight
         } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
         return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${
+          nodeHeight / 2 + workflowNodeDetailsHeight - 10
+        } Q ${nodeWidth / -2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
           nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} H ${nodeWidth / 2 - 10} Q ${
+        } ${nodeHeight / 2 + workflowNodeDetailsHeight} H ${
+          nodeWidth / 2 - 10
+        } Q ${nodeWidth / 2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
           nodeWidth / 2
-        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${nodeWidth / 2} ${
-          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
-        } V 0`;
+        } ${nodeHeight / 2 + workflowNodeDetailsHeight - 10} V 0`;
       }
     });
 

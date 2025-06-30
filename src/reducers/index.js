@@ -113,6 +113,7 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
+  view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,
@@ -144,7 +145,6 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
   ),
-  view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
 });
 
 const rootReducer = (state, action) => {

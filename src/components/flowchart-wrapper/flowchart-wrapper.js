@@ -31,6 +31,7 @@ import {
   params,
   BANNER_METADATA,
   BANNER_KEYS,
+  VIEW,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
@@ -39,7 +40,6 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
 import Banner from '../ui/banner';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
-import { VIEW } from '../../config';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
