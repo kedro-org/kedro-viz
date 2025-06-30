@@ -9,6 +9,7 @@ import pipeline from './pipeline';
 import tag from './tags';
 import runStatus from './run-status';
 import merge from 'lodash/merge';
+import runStatus from './run-status';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import slice from './slice';
@@ -88,6 +89,7 @@ const combinedReducer = combineReducers({
   visible,
   runStatus,
   showBanner: bannerReducer,
+  runStatus,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),

@@ -1,5 +1,22 @@
-import { funNodeError } from '../utils/run-status-mock-data/fun-node-error';
+import { UPDATE_RUN_STATUS_DATA } from '../actions/run-status';
 
-export default function runStatus(state = funNodeError || {}, action) {
-  return state;
+function runStatusReducer(
+  state = {
+    nodes: {},
+    datasets: {},
+    pipeline: {},
+  },
+  action
+) {
+  switch (action.type) {
+    case UPDATE_RUN_STATUS_DATA:
+      return {
+        ...state,
+        ...action.data,
+      };
+    default:
+      return state;
+  }
 }
+
+export default runStatusReducer;
