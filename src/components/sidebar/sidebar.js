@@ -41,8 +41,10 @@ export const Sidebar = ({
             isWorkflowView={isWorkflowView}
           />
           <NodesPanel
-            isWorkflowView={isWorkflowView}
-            isRunStatusAvailable={isRunStatusAvailable}
+            // Show the node panel data only if we are not in flowchart view or if we are in workflow view but run status is not available
+            visible={
+              !isWorkflowView || (isWorkflowView && isRunStatusAvailable)
+            }
             faded={pipelineIsOpen}
           />
         </div>

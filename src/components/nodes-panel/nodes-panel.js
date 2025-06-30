@@ -14,7 +14,7 @@ import { getFiltersSearchResult } from '../../selectors/filtered-node-list-items
 /**
  * Scrollable list of toggleable items, with search & filter functionality
  */
-const NodesPanel = ({ faded, isWorkflowView, isRunStatusAvailable }) => {
+const NodesPanel = ({ visible, faded }) => {
   const [searchValue, updateSearchValue] = useState('');
 
   const {
@@ -59,10 +59,6 @@ const NodesPanel = ({ faded, isWorkflowView, isRunStatusAvailable }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
-  // Show the node panel data only if we are not in flowchart view or if we are in workflow view but run status is not available
-  const showNodePanelData =
-    !isWorkflowView || (isWorkflowView && isRunStatusAvailable);
-
   return (
     <div
       className={classnames('pipeline-nodelist', {
@@ -73,7 +69,7 @@ const NodesPanel = ({ faded, isWorkflowView, isRunStatusAvailable }) => {
         onUpdateSearchValue={debounce(updateSearchValue, 250)}
         searchValue={searchValue}
       />
-      {showNodePanelData ? (
+      {visible ? (
         <SplitPanel>
           {({ isResizing, props: { container, panelA, panelB, handle } }) => (
             <div
