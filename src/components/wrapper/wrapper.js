@@ -64,19 +64,10 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
-              <Route
-                exact
-                path={sanitizedPathname()}
-                render={() => {
-                  onSetView(VIEW.FLOWCHART);
-                  return (
-                    <>
-                      <FlowChartWrapper />
-                      <FeatureHints />
-                    </>
-                  );
-                }}
-              />
+              <Route exact path="/">
+                <FlowChartWrapper />
+                <FeatureHints />
+              </Route>
               <Route
                 to={{ pathname: `${sanitizedPathname()}workflow` }}
                 render={() => {

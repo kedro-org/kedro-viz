@@ -38,7 +38,7 @@ export function DrawNodes({
   linkedNodes = {},
   showRunStatus = false,
   tasksStatus = {},
-  dataSetsStatus = {},
+  datasetsStatus = {},
 }) {
   const groupRef = useRef();
 
@@ -80,9 +80,9 @@ export function DrawNodes({
         }
 
         if (showRunStatus) {
-          // Get the correct status source (dataSetsStatus for data nodes, tasksStatus otherwise),
+          // Get the correct status source (tasksStatus for function nodes, tasksStatus otherwise),
           const statusSource =
-            node.type === 'data' ? dataSetsStatus : tasksStatus;
+            node.type === 'data' ? datasetsStatus : tasksStatus;
           // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
           let finalStatus = getNodeStatusKey(
             statusSource,
@@ -255,12 +255,12 @@ export function DrawNodes({
 
     enterNodes
       .select('.pipeline-node__bg')
-      .call(updateNodeRects, showRunStatus, tasksStatus, dataSetsStatus);
+      .call(updateNodeRects, showRunStatus, tasksStatus, datasetsStatus);
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects, showRunStatus, tasksStatus, dataSetsStatus);
+      .call(updateNodeRects, showRunStatus, tasksStatus, datasetsStatus);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
