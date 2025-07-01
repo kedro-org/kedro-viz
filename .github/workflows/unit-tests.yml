@@ -15,6 +15,7 @@ jobs:
 
         # below condition checks if the operating system is Ubuntu, or 
         # if the operating system is Windows and the branch is main/demo
+        # TODO: Revert back after testing
         # if: >
         #   inputs.os == 'ubuntu-latest' || 
         #   (
