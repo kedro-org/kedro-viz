@@ -32,6 +32,8 @@ describe('GlobalToolbar', () => {
       const props = {
         theme: mockState.spaceflights.theme,
         visible: mockState.spaceflights.visible,
+        runStatusPipelineInfo: {},
+        view: 'flowchart',
         [callback]: mockFn,
       };
 
@@ -63,6 +65,8 @@ describe('GlobalToolbar', () => {
         sidebar: true,
         slicing: true,
       },
+      view: 'flowchart',
+      runStatusPipelineInfo: {},
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
