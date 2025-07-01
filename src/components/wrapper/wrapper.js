@@ -41,6 +41,18 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     checkKedroVizVersion();
   }, []);
 
+  const allKedroVizRoutes = (
+    <Switch>
+      <Route exact path={sanitizedPathname()}>
+        <FlowChartWrapper />
+        <FeatureHints />
+      </Route>
+      <Route path={`${sanitizedPathname()}workflow`}>
+        <WorkflowWrapper />
+      </Route>
+    </Switch>
+  );
+
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -61,18 +73,10 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
             {version && (
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
-            <Switch>
-              <Route exact path="/">
-                <FlowChartWrapper />
-                <FeatureHints />
-              </Route>
-              <Route to={{ pathname: `${sanitizedPathname()}workflow` }}>
-                <WorkflowWrapper />
-              </Route>
-            </Switch>
+            {allKedroVizRoutes}
           </>
         ) : (
-          <FlowChartWrapper />
+          allKedroVizRoutes
         )}
       </Router>
     </div>

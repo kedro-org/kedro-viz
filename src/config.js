@@ -196,3 +196,7 @@ export const VIEW = {
   WORKFLOW: 'workflow',
   FLOWCHART: 'flowchart',
 };
+
+export const PIPELINE = {
+  DEFAULT: '__default__',
+};
