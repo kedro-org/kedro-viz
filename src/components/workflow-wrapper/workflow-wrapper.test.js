@@ -6,16 +6,33 @@ import { setup } from '../../utils/state.mock';
 jest.mock('../workflow/workflow', () => () => (
   <div data-testid="mock-workflow" />
 ));
+// Mock the RunNotFoundWarning component
+jest.mock('../run-not-found-warning/run-not-found-warning', () => () => (
+  <div data-testid="mock-run-not-found-warning" />
+));
+
+// Mock the selector to control which component is rendered
+const mockIsRunStatusAvailable = jest.fn();
+jest.mock('../../selectors/run-status', () => ({
+  isRunStatusAvailable: () => mockIsRunStatusAvailable(),
+}));
 
 describe('WorkflowWrapper', () => {
-  it('renders without crashing', () => {
-    const { container } = setup.render(<WorkflowWrapper />);
-    const workflow = container.querySelector('[data-testid="mock-workflow"]');
-    expect(workflow).toBeInTheDocument();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('renders the Workflow component', () => {
-    const { getByTestId } = setup.render(<WorkflowWrapper />);
+  it('renders the Workflow component when run status is available', () => {
+    mockIsRunStatusAvailable.mockReturnValue(true);
+    const { getByTestId, queryByTestId } = setup.render(<WorkflowWrapper />);
     expect(getByTestId('mock-workflow')).toBeInTheDocument();
+    expect(queryByTestId('mock-run-not-found-warning')).not.toBeInTheDocument();
+  });
+
+  it('renders the RunNotFoundWarning component when run status is not available', () => {
+    mockIsRunStatusAvailable.mockReturnValue(false);
+    const { getByTestId, queryByTestId } = setup.render(<WorkflowWrapper />);
+    expect(getByTestId('mock-run-not-found-warning')).toBeInTheDocument();
+    expect(queryByTestId('mock-workflow')).not.toBeInTheDocument();
   });
 });
