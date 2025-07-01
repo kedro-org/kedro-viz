@@ -41,13 +41,16 @@ export function formatTimestamp(timestamp) {
   // Pads a number to 2 digits with a leading zero if needed (e.g., 3 -> '03', 12 -> '12')
   const pad2 = (num) => num.toString().padStart(2, '0');
 
-  // Ensure the timestamp is treated as UTC if no timezone is present
+  // Normalize the timestamp format
   let timestampStr = timestamp;
-  if (
-    typeof timestampStr === 'string' &&
-    !/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)
-  ) {
-    timestampStr += 'Z';
+  if (typeof timestampStr === 'string') {
+    // Replace dots with colons in the time portion (e.g., "09.54.33" -> "09:54:33")
+    timestampStr = timestampStr.replace(/T(\d{2})\.(\d{2})\.(\d{2})/, 'T$1:$2:$3');
+
+    // Ensure the timestamp is treated as UTC if no timezone is present
+    if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)) {
+      timestampStr += 'Z';
+    }
   }
 
   const date = new Date(timestampStr);
