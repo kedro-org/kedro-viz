@@ -1,0 +1,12 @@
+{
+  "nodes": {},
+  "datasets": {},
+  "pipeline": {
+    "run_id": "default-run-id",
+    "start_time": null,
+    "end_time": null,
+    "duration": 0.0,
+    "status": "Successful",
+    "error": null
+  }
+}
