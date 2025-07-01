@@ -14,23 +14,12 @@ const STATUS_VALUE_X_OFFSET = 80;
 const STATUS_LABEL_Y_OFFSET = 20;
 const SIZE_LABEL_Y_OFFSET = 45;
 
-// Helper to append a details label to a group
-function appendDetailsLabel(group, label, x, y) {
+// General helper to append a text element to a group
+function appendDetailsText(group, classNames, text, x, y) {
   group
     .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text(label)
-    .attr('text-anchor', 'start')
-    .attr('x', x)
-    .attr('y', y);
-}
-
-// Helper to append a details value to a group
-function appendDetailsValue(group, value, x, y) {
-  group
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(value)
+    .attr('class', classNames)
+    .text(text)
     .attr('text-anchor', 'start')
     .attr('x', x)
     .attr('y', y);
@@ -105,34 +94,38 @@ export function renderNodeDetailsContainer(
     .append('g')
     .attr('class', 'pipeline-node__details-status-group');
 
-  appendDetailsLabel(
+  appendDetailsText(
     statusGroup,
+    'pipeline-node__details-label',
     'Status:',
     nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
-    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET,
   );
 
-  appendDetailsValue(
+  appendDetailsText(
     statusGroup,
+    'pipeline-node__details-value',
     datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped',
     nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
-    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET,
   );
 
-  // Duration/Size group (label + value)
-  const sizeGroup = detailsContainer
+  // Metrics group (duration or size label + value)
+  const metricsGroup = detailsContainer
     .append('g')
-    .attr('class', 'pipeline-node__details-size-group');
+    .attr('class', 'pipeline-node__details-metrics-group');
 
-  appendDetailsLabel(
-    sizeGroup,
+  appendDetailsText(
+    metricsGroup,
+    'pipeline-node__details-label',
     node.type === 'task' || node.type === 'modularPipeline' ? 'Duration:' : 'Size:',
     nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
-    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET,
   );
 
-  appendDetailsValue(
-    sizeGroup,
+  appendDetailsText(
+    metricsGroup,
+    'pipeline-node__details-value',
     node.type === 'task' || node.type === 'modularPipeline'
       ? taskDuration != null
         ? formatDuration(taskDuration)
@@ -141,6 +134,6 @@ export function renderNodeDetailsContainer(
       ? formatSize(datasetSize)
       : 'N/A',
     nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
-    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET,
   );
 }
