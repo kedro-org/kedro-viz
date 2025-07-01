@@ -32,34 +32,6 @@ export function renderNodeDetailsContainer(
     .insert('g', ':first-child')
     .attr('class', 'pipeline-node__details-container');
 
-  // Main node outline (top part only)
-  parentGroup
-    .append('path')
-    .attr('class', 'pipeline-node__main-outline')
-    .attr('d', () => {
-      if (node.type === 'task') {
-        return `M ${nodeWidth / -2} ${nodeHeight / -2} H ${nodeWidth / 2} V ${
-          nodeHeight / 2
-        } H ${nodeWidth / -2} V ${nodeHeight / -2} Z`;
-      } else {
-        const radius = nodeHeight / 2;
-        return `M ${nodeWidth / -2 + radius} ${nodeHeight / -2} H ${
-          nodeWidth / 2 - radius
-        } Q ${nodeWidth / 2} ${nodeHeight / -2} ${nodeWidth / 2} ${
-          nodeHeight / -2 + radius
-        } V ${nodeHeight / 2 - radius} Q ${nodeWidth / 2} ${nodeHeight / 2} ${
-          nodeWidth / 2 - radius
-        } ${nodeHeight / 2} H ${nodeWidth / -2 + radius} Q ${nodeWidth / -2} ${
-          nodeHeight / 2
-        } ${nodeWidth / -2} ${nodeHeight / 2 - radius} V ${
-          nodeHeight / -2 + radius
-        } Q ${nodeWidth / -2} ${nodeHeight / -2} ${nodeWidth / -2 + radius} ${
-          nodeHeight / -2
-        } Z`;
-      }
-    })
-    .style('fill', 'none');
-
   // Draw the background rectangle for the node details section
   // The height is calculated as half the node height plus the workflow node details height
   // While the width remains the same as the node width, which is calculated inside graph/index.js
