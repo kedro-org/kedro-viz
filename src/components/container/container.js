@@ -1,8 +1,7 @@
 import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
-// import { funNodeError } from '../../utils/run-status-mock-data/fun-node-error';
-import runData from './run-data.json';
+import { funNodeError } from '../../utils/run-status-mock-data/fun-node-error';
 import './container.scss';
 
 /**
@@ -11,7 +10,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} runData={runData} />
+    <App data={getPipelineData()} runData={funNodeError} />
   </>
 );
 
