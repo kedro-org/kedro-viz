@@ -68,3 +68,13 @@
   top: 31px;
   width: 8px;
 }
+
+.run-status-nav-wrapper {
+  position: relative;
+}
+
+.run-status-dot {
+  @extend .update-reminder-dot;
+  right: 20px;
+  top: 25px;
+}
