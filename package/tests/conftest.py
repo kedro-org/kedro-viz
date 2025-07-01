@@ -314,13 +314,13 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     internal_pipe = Pipeline(
         [
             pipeline(
-                nodes=generic_pipe,
+                generic_pipe,
                 inputs={"input_dataset": "initial_customer_data"},
                 outputs={"output_dataset": "processed_customer_data"},
                 namespace="first_processing_step",
             ),
             pipeline(
-                nodes=generic_pipe,
+                generic_pipe,
                 inputs={"input_dataset": "processed_customer_data"},
                 outputs={"output_dataset": "final_customer_data_insights"},
                 namespace="second_processing_step",
@@ -332,7 +332,7 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     # with internal datasets (processed_customer_data) that
     # should not be exposed outside of the namespace
     main_pipeline = pipeline(
-        nodes=internal_pipe,
+        internal_pipe,
         inputs="initial_customer_data",
         outputs="final_customer_data_insights",
         namespace="customer_lifecycle_processing",
