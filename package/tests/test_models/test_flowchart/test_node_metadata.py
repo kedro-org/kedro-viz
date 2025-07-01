@@ -1,3 +1,4 @@
+import sys
 from functools import partial, wraps
 from pathlib import Path
 from textwrap import dedent
@@ -6,7 +7,6 @@ import pytest
 from kedro.io import MemoryDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
-from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
 
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -361,7 +361,10 @@ class TestGraphNodeMetadata:
         assert transcoded_data_node_metadata.stats.get("rows") == 10
         assert transcoded_data_node_metadata.stats.get("columns") == 2
 
+    @pytest.mark.skipif(sys.version_info[:2] == (3, 9), reason="Skip on Python 3.9")
     def test_partitioned_data_node_metadata(self):
+        from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
+
         dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataset")
         data_node = GraphNode.create_data_node(
             dataset_id="dataset",
