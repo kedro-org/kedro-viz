@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
-import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -18,7 +17,7 @@ import './wrapper.scss';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
+export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -89,10 +88,4 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  onSetView: (view) => {
-    dispatch(setView(view));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);
+export default connect(mapStateToProps, null)(Wrapper);
