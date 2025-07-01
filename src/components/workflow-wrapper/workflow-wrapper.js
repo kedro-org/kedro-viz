@@ -3,25 +3,26 @@ import { connect } from 'react-redux';
 import { setView, resetStateForWorkflowView } from '../../actions';
 import Workflow from '../workflow/workflow';
 import { loadPipelineData } from '../../actions/pipelines';
+import { isRunStatusAvailable } from '../../selectors/run-status';
+import RunNotFoundWarning from '../run-not-found-warning/run-not-found-warning';
 import { VIEW, PIPELINE } from '../../config';
 
 /**
  * Main workflow container.
  * Sets the current view to 'workflow' and resets relevant state on mount.
  */
-const WorkflowWrapper = ({ onSetView, onResetState }) => {
+const WorkflowWrapper = ({ onSetView, onResetState, isRunStatusAvailable }) => {
   useEffect(() => {
     onSetView(VIEW.WORKFLOW);
     onResetState();
   }, [onSetView, onResetState]);
 
-  return <Workflow />;
-
-  // To enable run status fallback later:
-  // import { isRunStatusAvailable } from '../../selectors/run-status';
-  // import NoRunStatus from '../no-run-status/no-run-status';
-  // return <>{isRunStatusAvailable ? <Workflow /> : <NoRunStatus />}</>;
+   return <>{isRunStatusAvailable ? <Workflow /> : <RunNotFoundWarning />}</>;
 };
+
+export const mapStateToProps = (state) => ({
+  isRunStatusAvailable: isRunStatusAvailable(state),
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onSetView: (view) => dispatch(setView(view)),
@@ -31,4 +32,4 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(WorkflowWrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(WorkflowWrapper);

@@ -23,7 +23,27 @@ export const getNodesStatus = createSelector(
 );
 
 /**
- * Get all node data grouped by node ID
+ * Check if the pipeline run status is available
+ * @param {Object} state Redux state
+ * @returns {Boolean} Whether the run status is available
+ */
+export const isRunStatusAvailable = createSelector(
+  [
+    (state) => state.runStatus?.nodes,
+    (state) => state.runStatus?.datasets,
+    (state) => state.runStatus?.pipeline?.run_id,
+  ],
+  (nodes, datasets, runId) => {
+    // Check if we have actual run data (not just empty objects) and a valid run ID
+    const hasNodes = nodes && Object.keys(nodes).length > 0;
+    const hasDatasets = datasets && Object.keys(datasets).length > 0;
+    const hasValidRunId = runId && runId !== 'default-run-id';
+
+    return (hasNodes || hasDatasets) && hasValidRunId;
+  }
+);
+
+/** Get all node data grouped by node ID
  * @param {Object} state Redux state
  * @returns {Object} Nodes data grouped by node ID
  */

@@ -7,7 +7,7 @@ import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import WorkflowWrapper from '../workflow-wrapper/workflow-wrapper';
+import WorkflowWrapper from '../workflow-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -88,4 +88,4 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(Wrapper);
+export default connect(mapStateToProps, null)(Wrapper);
