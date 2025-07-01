@@ -37,9 +37,6 @@ export function normalizeTimestamp(timestamp) {
   // Normalize the timestamp format
   let timestampStr = timestamp;
 
-  if (!timestamp) {
-    return null;
-  }
   if (typeof timestampStr === 'string') {
     // Replace dots with colons in the time portion (e.g., "09.54.33" -> "09:54:33")
     timestampStr = timestampStr.replace(
@@ -65,11 +62,6 @@ export function formatTimestamp(timestamp) {
 
   // Normalize the timestamp format
   let timestampStr = normalizeTimestamp(timestamp);
-
-  // Ensure the timestamp is treated as UTC if no timezone is present
-  if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)) {
-    timestampStr += 'Z';
-  }
 
   const date = new Date(timestampStr);
   const day = pad2(date.getUTCDate());

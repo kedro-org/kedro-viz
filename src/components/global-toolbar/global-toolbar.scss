@@ -59,7 +59,7 @@
   opacity: 1;
 }
 
-.update-reminder-dot {
+%update-reminder-dot {
   background-color: variables.$yellow-300;
   border-radius: 50%;
   height: 8px;
@@ -69,12 +69,17 @@
   width: 8px;
 }
 
+.update-reminder-dot {
+  @extend %update-reminder-dot;
+}
+
 .run-status-nav-wrapper {
   position: relative;
 }
 
 .run-status-dot {
-  @extend .update-reminder-dot;
+  @extend %update-reminder-dot;
+
   right: 20px;
   top: 25px;
 }
