@@ -28,9 +28,15 @@ import {
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
   SET_VIEW,
+  RESET_STATE_FOR_WORKFLOW_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 import { VIEW } from '../config';
+
+const resetDefaults = {
+  shouldExpandAllPipelines: true,
+  textLabels: true,
+};
 
 /**
  * Create a generic reducer
@@ -45,6 +51,13 @@ const createReducer =
     if (typeof key !== 'undefined' && action.type === type) {
       return action[key];
     }
+
+    if (action.type === RESET_STATE_FOR_WORKFLOW_VIEW) {
+      if (resetDefaults.hasOwnProperty(key)) {
+        return resetDefaults[key];
+      }
+    }
+
     return state;
   };
 

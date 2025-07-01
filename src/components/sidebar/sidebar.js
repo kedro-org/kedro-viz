@@ -24,6 +24,7 @@ export const Sidebar = ({
   isRunStatusAvailable,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
+  const isFlowchartView = view === VIEW.FLOWCHART;
   const isWorkflowView = view === VIEW.WORKFLOW;
 
   return (
@@ -49,7 +50,7 @@ export const Sidebar = ({
         </div>
         <nav className="pipeline-toolbar">
           {displayFilterBtn && <ToolbarFilterButton />}
-          <FlowchartPrimaryToolbar />
+          <FlowchartPrimaryToolbar isFlowchartView={isFlowchartView} />
           <MiniMapToolbar />
         </nav>
         <MiniMap />

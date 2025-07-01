@@ -366,12 +366,24 @@ export const updateStateFromOptions = (updatedOptions) => {
 export const SET_VIEW = 'SET_VIEW';
 
 /**
- * Set the current view mode for pipeline layout
- * @param {string} view - 'flowchart' or 'workflow'
+ * Set the current view between flowchart and workflow
+ * @param {String} view The view to set ('flowchart' or 'workflow')
  */
 export function setView(view) {
   return {
     type: SET_VIEW,
     view,
+  };
+}
+
+export const RESET_STATE_FOR_WORKFLOW_VIEW = 'RESET_STATE_FOR_WORKFLOW_VIEW';
+
+/**
+ * Reset the state when the view changes to workflow view.
+ */
+export function resetStateForWorkflowView(expandAllPipelines = true) {
+  return {
+    type: RESET_STATE_FOR_WORKFLOW_VIEW,
+    expandAllPipelines,
   };
 }
