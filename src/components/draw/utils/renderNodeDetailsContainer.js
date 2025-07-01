@@ -14,6 +14,28 @@ const STATUS_VALUE_X_OFFSET = 80;
 const STATUS_LABEL_Y_OFFSET = 20;
 const SIZE_LABEL_Y_OFFSET = 45;
 
+// Helper to append a details label to a group
+function appendDetailsLabel(group, label, x, y) {
+  group
+    .append('text')
+    .attr('class', 'pipeline-node__details-label')
+    .text(label)
+    .attr('text-anchor', 'start')
+    .attr('x', x)
+    .attr('y', y);
+}
+
+// Helper to append a details value to a group
+function appendDetailsValue(group, value, x, y) {
+  group
+    .append('text')
+    .attr('class', 'pipeline-node__details-value')
+    .text(value)
+    .attr('text-anchor', 'start')
+    .attr('x', x)
+    .attr('y', y);
+}
+
 /**
  * Render the details container for a node (status, duration, outline, etc)
  * This is a pure D3 helper, no React dependencies
@@ -83,57 +105,42 @@ export function renderNodeDetailsContainer(
     .append('g')
     .attr('class', 'pipeline-node__details-status-group');
 
-  // Status label
-  statusGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text('Status:')
-    .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + DETAILS_LABEL_X_OFFSET)
-    .attr('y', nodeHeight / 2 + STATUS_LABEL_Y_OFFSET);
+  appendDetailsLabel(
+    statusGroup,
+    'Status:',
+    nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET
+  );
 
-  // Status value
-  const statusValueX = nodeWidth / 2 - STATUS_VALUE_X_OFFSET;
-  statusGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped')
-    .attr('text-anchor', 'start')
-    .attr('x', statusValueX)
-    .attr('y', nodeHeight / 2 + STATUS_LABEL_Y_OFFSET);
+  appendDetailsValue(
+    statusGroup,
+    datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped',
+    nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET
+  );
 
   // Duration/Size group (label + value)
   const sizeGroup = detailsContainer
     .append('g')
     .attr('class', 'pipeline-node__details-size-group');
 
-  // Duration/Size label
-  sizeGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text(
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? 'Duration:'
-        : 'Size:'
-    )
-    .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + DETAILS_LABEL_X_OFFSET)
-    .attr('y', nodeHeight / 2 + SIZE_LABEL_Y_OFFSET);
+  appendDetailsLabel(
+    sizeGroup,
+    node.type === 'task' || node.type === 'modularPipeline' ? 'Duration:' : 'Size:',
+    nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET
+  );
 
-  // Duration/Size value
-  sizeGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? taskDuration != null
-          ? formatDuration(taskDuration)
-          : 'N/A'
-        : datasetSize != null
-        ? formatSize(datasetSize)
+  appendDetailsValue(
+    sizeGroup,
+    node.type === 'task' || node.type === 'modularPipeline'
+      ? taskDuration != null
+        ? formatDuration(taskDuration)
         : 'N/A'
-    )
-    .attr('text-anchor', 'start')
-    .attr('x', statusValueX)
-    .attr('y', nodeHeight / 2 + SIZE_LABEL_Y_OFFSET);
+      : datasetSize != null
+      ? formatSize(datasetSize)
+      : 'N/A',
+    nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET
+  );
 }
