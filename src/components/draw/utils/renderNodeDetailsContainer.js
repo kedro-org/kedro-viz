@@ -8,6 +8,13 @@ import {
 } from '../../workflow/workflow-utils/getStatus';
 import { workflowNodeDetailsHeight } from '../../../config';
 
+// Layout constants
+const DETAILS_BG_RADIUS = 0;
+const DETAILS_LABEL_X_OFFSET = 15;
+const STATUS_VALUE_X_OFFSET = 80;
+const STATUS_LABEL_Y_OFFSET = 20;
+const SIZE_LABEL_Y_OFFSET = 45;
+
 /**
  * Render the details container for a node (status, duration, outline, etc)
  * This is a pure D3 helper, no React dependencies
@@ -20,6 +27,7 @@ export function renderNodeDetailsContainer(
 ) {
   const nodeWidth = node.width - 5;
   const nodeHeight = node.height - 5;
+  const detailsSectionHeight = nodeHeight / 2 + workflowNodeDetailsHeight;
 
   const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
@@ -33,16 +41,14 @@ export function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-container');
 
   // Draw the background rectangle for the node details section
-  // The height is calculated as half the node height plus the workflow node details height
-  // While the width remains the same as the node width, which is calculated inside graph/index.js
   detailsContainer
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
-    .attr('height', nodeHeight / 2 + workflowNodeDetailsHeight)
+    .attr('height', detailsSectionHeight)
     .attr('x', nodeWidth / -2)
     .attr('y', 0)
-    .attr('rx', 0);
+    .attr('rx', DETAILS_BG_RADIUS);
 
   // Details outline (bottom part only)
   detailsContainer
@@ -50,19 +56,19 @@ export function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
       if (node.type === 'task') {
-        return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + workflowNodeDetailsHeight
-        } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
+        return `M ${nodeWidth / -2} ${
+          nodeHeight / 2
+        } V ${detailsSectionHeight} H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
-        return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + workflowNodeDetailsHeight - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
-          nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + workflowNodeDetailsHeight} H ${
-          nodeWidth / 2 - 10
-        } Q ${nodeWidth / 2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
+        const curveY = detailsSectionHeight - 10;
+        const curveX = 10;
+        return `M ${nodeWidth / -2} 0 V ${curveY} Q ${
+          nodeWidth / -2
+        } ${detailsSectionHeight} ${
+          nodeWidth / -2 + curveX
+        } ${detailsSectionHeight} H ${nodeWidth / 2 - curveX} Q ${
           nodeWidth / 2
-        } ${nodeHeight / 2 + workflowNodeDetailsHeight - 10} V 0`;
+        } ${detailsSectionHeight} ${nodeWidth / 2} ${curveY} V 0`;
       }
     });
 
@@ -77,22 +83,18 @@ export function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-label')
     .text('Status:')
     .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + 15)
-    .attr('y', nodeHeight / 2 + 20);
+    .attr('x', nodeWidth / -2 + DETAILS_LABEL_X_OFFSET)
+    .attr('y', nodeHeight / 2 + STATUS_LABEL_Y_OFFSET);
 
   // Status value
+  const statusValueX = nodeWidth / 2 - STATUS_VALUE_X_OFFSET;
   statusGroup
     .append('text')
     .attr('class', 'pipeline-node__details-value')
     .text(datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped')
     .attr('text-anchor', 'start')
-    .attr(
-      'x',
-      datasetStatus === 'Not persisted'
-        ? nodeWidth / 2 - 100
-        : nodeWidth / 2 - 80
-    )
-    .attr('y', nodeHeight / 2 + 20);
+    .attr('x', statusValueX)
+    .attr('y', nodeHeight / 2 + STATUS_LABEL_Y_OFFSET);
 
   // Duration/Size group (label + value)
   const sizeGroup = detailsContainer
@@ -109,8 +111,8 @@ export function renderNodeDetailsContainer(
         : 'Size:'
     )
     .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + 15)
-    .attr('y', nodeHeight / 2 + 45);
+    .attr('x', nodeWidth / -2 + DETAILS_LABEL_X_OFFSET)
+    .attr('y', nodeHeight / 2 + SIZE_LABEL_Y_OFFSET);
 
   // Duration/Size value
   sizeGroup
@@ -126,11 +128,6 @@ export function renderNodeDetailsContainer(
         : 'N/A'
     )
     .attr('text-anchor', 'start')
-    .attr(
-      'x',
-      datasetStatus === 'Not persisted'
-        ? nodeWidth / 2 - 100
-        : nodeWidth / 2 - 80
-    )
-    .attr('y', nodeHeight / 2 + 45);
+    .attr('x', statusValueX)
+    .attr('y', nodeHeight / 2 + SIZE_LABEL_Y_OFFSET);
 }
