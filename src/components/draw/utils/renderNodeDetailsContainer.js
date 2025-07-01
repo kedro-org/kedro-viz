@@ -8,7 +8,7 @@ import {
 } from '../../workflow/workflow-utils/getStatus';
 import { workflowNodeDetailsHeight } from '../../../config';
 
-// Layout constants
+// Node details layout constants
 const DETAILS_BG_RADIUS = 0;
 const DETAILS_LABEL_X_OFFSET = 15;
 const STATUS_VALUE_X_OFFSET = 80;
