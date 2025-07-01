@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
@@ -15,7 +15,13 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
+import { VIEW } from '../../config';
 import './global-toolbar.scss';
+import { getPipelineRunData } from '../../selectors/run-status';
+import {
+  isNewRun,
+  setLocalStorageLastRunEndTime,
+} from '../../utils/run-status';
 
 /**
  * Main controls for filtering the chart data
@@ -28,7 +34,22 @@ export const GlobalToolbar = ({
   onToggleShareableUrlModal,
   onToggleTheme,
   theme,
+  runStatusPipelineInfo,
+  view,
 }) => {
+  const [isLatestRun, setIsLatestRun] = useState(false);
+
+  useEffect(() => {
+    setIsLatestRun(isNewRun(runStatusPipelineInfo.endTime));
+  }, [isLatestRun, runStatusPipelineInfo.endTime]);
+
+  useEffect(() => {
+    if (view === VIEW.WORKFLOW) {
+      setLocalStorageLastRunEndTime(runStatusPipelineInfo.endTime);
+      setIsLatestRun(false);
+    }
+  }, [view, runStatusPipelineInfo.endTime]);
+
   return (
     <div className="pipeline-global-toolbar">
       <ul className="pipeline-global-routes-toolbar kedro">
@@ -49,7 +70,11 @@ export const GlobalToolbar = ({
             labelText="Flowchart"
           />
         </NavLink>
-        <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
+        <NavLink
+          className="run-status-nav-wrapper"
+          exact
+          to={{ pathname: `${sanitizedPathname()}workflow` }}
+        >
           <IconButton
             ariaLabel="View your workflow"
             dataTest="global-toolbar-workflow-btn"
@@ -58,6 +83,9 @@ export const GlobalToolbar = ({
             icon={WorkflowIcon}
             labelText="Workflow"
           />
+          {view === VIEW.FLOWCHART && isLatestRun && (
+            <span className="run-status-dot"></span>
+          )}
         </NavLink>
       </ul>
       <ul className="pipeline-global-control-toolbar kedro">
@@ -100,6 +128,8 @@ export const GlobalToolbar = ({
 export const mapStateToProps = (state) => ({
   theme: state.theme,
   visible: state.visible,
+  runStatusPipelineInfo: getPipelineRunData(state),
+  view: state.view,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
