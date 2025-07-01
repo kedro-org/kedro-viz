@@ -55,6 +55,8 @@ export function renderNodeDetailsContainer(
     .append('path')
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
+      // For task nodes, draw a simple vertical line
+      // For data nodes, draw a curved outline
       if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${
           nodeHeight / 2
