@@ -62,15 +62,19 @@ export function renderNodeDetailsContainer(
           nodeHeight / 2
         } V ${detailsSectionHeight} H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
-        const curveY = detailsSectionHeight - 10;
-        const curveX = 10;
-        return `M ${nodeWidth / -2} 0 V ${curveY} Q ${
-          nodeWidth / -2
-        } ${detailsSectionHeight} ${
-          nodeWidth / -2 + curveX
-        } ${detailsSectionHeight} H ${nodeWidth / 2 - curveX} Q ${
-          nodeWidth / 2
-        } ${detailsSectionHeight} ${nodeWidth / 2} ${curveY} V 0`;
+        // Draw a rounded bottom outline for non-task nodes
+        const curveX = 10; // Horizontal radius for the curve
+        const curveY = detailsSectionHeight - curveX; // Vertical start/end for the curve
+        const leftX = nodeWidth / -2;
+        const rightX = nodeWidth / 2;
+        const bottomY = detailsSectionHeight;
+        return `
+          M ${leftX} 0 
+          V ${curveY} 
+          Q ${leftX} ${bottomY} ${leftX + curveX} ${bottomY} 
+          H ${rightX - curveX} 
+          Q ${rightX} ${bottomY} ${rightX} ${curveY} 
+          V 0`;
       }
     });
 
