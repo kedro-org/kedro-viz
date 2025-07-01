@@ -37,7 +37,7 @@ describe('formatSize', () => {
 
 describe('formatTimestamp', () => {
   it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss UTC', () => {
-    expect(formatTimestamp('2025-05-22T15:54:08.696715')).toBe(
+    expect(formatTimestamp('2025-05-22T15:54:08.696715Z')).toBe(
       '22.05.2025 - 15:54:08 UTC'
     );
   });

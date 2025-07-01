@@ -5,7 +5,7 @@ export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageShareableUrl = 'KedroViz-shareable-url';
 export const localStorageFeedbackSeen = 'KedroViz-feedback-seen';
 export const localStorageBannerStatus = 'KedroViz-banners';
-export const localStorageLastRunEndTime = 'KedroViz-last-run-end-time';
+export const localStorageLastRunEndTime = 'KedroViz-workflow-last-run-end-time';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
@@ -19,7 +19,7 @@ import { VIEW } from '../../config';
 import './global-toolbar.scss';
 import { getPipelineRunData } from '../../selectors/run-status';
 import {
-  handleLatestRunStatus,
+  isNewRun,
   setLocalStorageLastRunEndTime,
 } from '../../utils/run-status';
 
@@ -37,10 +37,10 @@ export const GlobalToolbar = ({
   runStatusPipelineInfo,
   view,
 }) => {
-  const [isLatestRun, setIsLatestRun] = React.useState(false);
+  const [isLatestRun, setIsLatestRun] = useState(false);
 
   useEffect(() => {
-    setIsLatestRun(handleLatestRunStatus(runStatusPipelineInfo.endTime));
+    setIsLatestRun(isNewRun(runStatusPipelineInfo.endTime));
   }, [isLatestRun, runStatusPipelineInfo.endTime]);
 
   useEffect(() => {
