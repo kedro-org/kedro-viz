@@ -56,9 +56,11 @@ export function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
       if (node.type === 'task') {
-        return `M ${nodeWidth / -2} ${
-          nodeHeight / 2
-        } V ${detailsSectionHeight} H ${nodeWidth / 2} V ${nodeHeight / 2}`;
+        return `
+        M ${nodeWidth / -2} ${nodeHeight / 2} 
+        V ${detailsSectionHeight} 
+        H ${nodeWidth / 2} 
+        V ${nodeHeight / 2}`;
       } else {
         // Draw a rounded bottom outline for non-task nodes
         const curveX = 10; // Horizontal radius for the curve
