@@ -14,7 +14,6 @@ import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
 
 import './wrapper.scss';
-import { VIEW } from '../../config';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
