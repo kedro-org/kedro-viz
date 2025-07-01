@@ -33,6 +33,28 @@ export function formatSize(bytes) {
   return `${megabytes % 1 === 0 ? megabytes : megabytes.toFixed(2)}MB`;
 }
 
+export function normalizeTimestamp(timestamp) {
+  // Normalize the timestamp format
+  let timestampStr = timestamp;
+
+  if (!timestamp) {
+    return null;
+  }
+  if (typeof timestampStr === 'string') {
+    // Replace dots with colons in the time portion (e.g., "09.54.33" -> "09:54:33")
+    timestampStr = timestampStr.replace(
+      /T(\d{2})\.(\d{2})\.(\d{2})/,
+      'T$1:$2:$3'
+    );
+
+    // Ensure the timestamp is treated as UTC if no timezone is present
+    if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)) {
+      timestampStr += 'Z';
+    }
+  }
+  return timestampStr;
+}
+
 export function formatTimestamp(timestamp) {
   if (!timestamp) {
     return 'N/A';
@@ -42,15 +64,11 @@ export function formatTimestamp(timestamp) {
   const pad2 = (num) => num.toString().padStart(2, '0');
 
   // Normalize the timestamp format
-  let timestampStr = timestamp;
-  if (typeof timestampStr === 'string') {
-    // Replace dots with colons in the time portion (e.g., "09.54.33" -> "09:54:33")
-    timestampStr = timestampStr.replace(/T(\d{2})\.(\d{2})\.(\d{2})/, 'T$1:$2:$3');
+  let timestampStr = normalizeTimestamp(timestamp);
 
-    // Ensure the timestamp is treated as UTC if no timezone is present
-    if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)) {
-      timestampStr += 'Z';
-    }
+  // Ensure the timestamp is treated as UTC if no timezone is present
+  if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(timestampStr)) {
+    timestampStr += 'Z';
   }
 
   const date = new Date(timestampStr);

@@ -46,6 +46,7 @@ export const GlobalToolbar = ({
   useEffect(() => {
     if (view === VIEW.WORKFLOW) {
       setLocalStorageLastRunEndTime(runStatusPipelineInfo.endTime);
+      setIsLatestRun(false);
     }
   }, [view, runStatusPipelineInfo.endTime]);
 

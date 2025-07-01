@@ -1,4 +1,5 @@
 import { localStorageLastRunEndTime } from '../config';
+import { normalizeTimestamp } from '../components/workflow/workflow-utils/format';
 
 /**
  * Handle the latest run status by comparing end times
@@ -19,8 +20,11 @@ export const handleLatestRunStatus = (endTime) => {
   }
 
   try {
-    const currentRunTime = new Date(endTime).getTime();
-    const lastRunTime = new Date(lastEndTime).getTime();
+    const normalizedEndTime = normalizeTimestamp(endTime);
+    const normalizedLastEndTime = normalizeTimestamp(lastEndTime);
+
+    const currentRunTime = new Date(normalizedEndTime).getTime();
+    const lastRunTime = new Date(normalizedLastEndTime).getTime();
 
     // Return true if current run is newer than the last recorded run
     return currentRunTime > lastRunTime;
