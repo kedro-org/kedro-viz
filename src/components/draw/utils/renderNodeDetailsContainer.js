@@ -9,7 +9,6 @@ import {
 import { workflowNodeDetailsHeight } from '../../../config';
 
 // Node details layout constants
-const DETAILS_BG_RADIUS = 0;
 const DETAILS_LABEL_X_OFFSET = 15;
 const STATUS_VALUE_X_OFFSET = 80;
 const STATUS_LABEL_Y_OFFSET = 20;
@@ -40,23 +39,22 @@ export function renderNodeDetailsContainer(
     .insert('g', ':first-child')
     .attr('class', 'pipeline-node__details-container');
 
-  // Draw the background rectangle for the node details section
+  // First draw the background rectangle for the node details section
   detailsContainer
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
     .attr('height', detailsSectionHeight)
     .attr('x', nodeWidth / -2)
-    .attr('y', 0)
-    .attr('rx', DETAILS_BG_RADIUS);
+    .attr('y', 0);
 
-  // Details outline (bottom part only)
+  // Second draw the outline path
+  // For task nodes, draw a simple vertical line
+  // For data nodes, draw a curved outline
   detailsContainer
     .append('path')
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
-      // For task nodes, draw a simple vertical line
-      // For data nodes, draw a curved outline
       if (node.type === 'task') {
         return `M ${nodeWidth / -2} ${
           nodeHeight / 2
