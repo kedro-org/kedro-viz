@@ -159,6 +159,17 @@ class TestDataCatalogRepository:
         result = mock_data_repo.get_dataset("my_dataset")
         assert isinstance(result, MemoryDataset)
 
+    def test_get_dataset_returns_none(self, mock_data_repo, mocker):
+        # Simulate .get returning None
+        mocker.patch.object(
+            mock_data_repo._catalog,
+            "get",
+            return_value=None,
+        )
+
+        result = mock_data_repo.get_dataset("my_dataset")
+        assert isinstance(result, MemoryDataset)
+
 
 class TestDataCatalogRepositoryExtended:
     def test_dataset_no_metadata(self):
