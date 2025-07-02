@@ -6,7 +6,7 @@ import './run-status-notification.scss';
 import { formatDuration } from '../workflow/workflow-utils/format';
 
 const STATUS_CONFIG = {
-  successful: {
+  success: {
     icon: SuccessIcon,
     text: 'Run execution completed successfully',
     timestampLabel: 'Completed on',
@@ -47,7 +47,7 @@ export const RunStatusNotification = ({
         </span>
         <span className="run-status-notification__text">
           {statusText}
-          {status === 'successful' && duration > 0 && (
+          {status === 'success' && duration > 0 && (
             <> in {formatDuration(duration)}</>
           )}
         </span>

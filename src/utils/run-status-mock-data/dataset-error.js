@@ -2,7 +2,7 @@
 export const datasetError = {
   nodes: {
     '69c523b6': {
-      status: 'successful',
+      status: 'success',
       duration: 0.020162458065897226,
       error: null,
     },
@@ -11,19 +11,19 @@ export const datasetError = {
     aed46479: {
       name: 'companies',
       size: 1810602,
-      status: 'available',
+      status: 'success',
       error: null,
     },
     f23ad217: {
       name: 'ingestion.int_typed_companies',
       size: 550104,
-      status: 'available',
+      status: 'success',
       error: null,
     },
     '7b2c6e04': {
       name: 'reviews',
       size: 0,
-      status: 'missing',
+      status: 'failed',
       error: {
         message:
           "Failed while loading data from dataset CSVDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/reviews.csv, load_args={}, protocol=file, save_args={'index': False}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-non-ws/kedro-viz/demo-project/data/01_raw/reviews.csv'",
