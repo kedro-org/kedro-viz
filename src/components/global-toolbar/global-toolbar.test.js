@@ -64,6 +64,7 @@ describe('GlobalToolbar', () => {
         shareableUrlModal: false,
         sidebar: true,
         slicing: true,
+        traceback: false,
       },
       view: 'flowchart',
       runStatusPipelineInfo: {},

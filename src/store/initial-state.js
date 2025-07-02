@@ -50,6 +50,7 @@ export const createInitialState = () => ({
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
     slicing: true,
+    traceback: false,
   },
   display: {
     globalNavigation: true,

@@ -295,6 +295,19 @@ export function toggleCode(visible) {
   };
 }
 
+export const TOGGLE_TRACEBACK = 'TOGGLE_TRACEBACK';
+
+/**
+ * Toggle traceback panel
+ * @param {String} visible Visibility status
+ */
+export function toggleTraceback(visible) {
+  return {
+    type: TOGGLE_TRACEBACK,
+    visible,
+  };
+}
+
 export const TOGGLE_PARAMETERS_HOVERED = 'TOGGLE_PARAMETERS_HOVERED';
 
 /**

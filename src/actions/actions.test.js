@@ -14,6 +14,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   TOGGLE_CODE,
+  TOGGLE_TRACEBACK,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
@@ -27,6 +28,7 @@ import {
   toggleMiniMap,
   toggleParametersHovered,
   toggleCode,
+  toggleTraceback,
   toggleSidebar,
   toggleIsPrettyName,
   toggleTextLabels,
@@ -334,6 +336,15 @@ describe('actions', () => {
       visible: true,
     };
     expect(toggleCode(true)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle the traceback display', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_TRACEBACK,
+      visible,
+    };
+    expect(toggleTraceback(visible)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle focus mode for modular pipelines', () => {
