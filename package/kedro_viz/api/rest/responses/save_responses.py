@@ -91,13 +91,15 @@ def save_api_node_response_to_fs(
             )
             raise exc
 
+
 def save_api_run_status_response_to_fs(run_status_path: str, remote_fs: Any):
     """Saves API /run-status response to a directory."""
     try:
         write_api_response_to_fs(run_status_path, get_run_status_response(), remote_fs)
     except Exception as exc:  # pragma: no cover
         logger.exception("Failed to save run status response. Error: %s", str(exc))
-        raise exc 
+        raise exc
+
 
 def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
     """Get encoded responses and writes it to a file"""
