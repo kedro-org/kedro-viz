@@ -12,6 +12,7 @@ import {
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
   TOGGLE_CODE,
+  TOGGLE_TRACEBACK,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_IS_PRETTY_NAME,
@@ -403,6 +404,16 @@ describe('Reducer', () => {
         visible: true,
       });
       expect(newState.visible.code).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_TRACEBACK', () => {
+    it('should toggle whether the traceback panel is open', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_TRACEBACK,
+        visible: true,
+      });
+      expect(newState.visible.traceback).toBe(true);
     });
   });
 

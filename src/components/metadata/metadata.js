@@ -12,7 +12,7 @@ import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
-import ErrorLog from '../error-log/error-log';
+import ErrorLog from '../error-log';
 import { VIEW } from '../../config';
 import {
   getVisibleMetaSidebar,
@@ -128,20 +128,19 @@ const MetaData = ({
     return isList ? value.map(getQualifier) : getQualifier(value);
   };
 
-
   // Retrieves error details for a specific node
   const getErrorDetails = (nodeId) => {
     if (!nodeId) {
       return null;
     }
-    
-    return isDataNode 
-      ? getDatasetError(nodeId) 
-      : getNodeError(nodeId);
+
+    return isDataNode ? getDatasetError(nodeId) : getNodeError(nodeId);
   };
 
   // Cache error details to avoid multiple calls
-  const currentErrorDetails = metadata?.id ? getErrorDetails(metadata.id) : null;
+  const currentErrorDetails = metadata?.id
+    ? getErrorDetails(metadata.id)
+    : null;
   const hasError = Boolean(currentErrorDetails);
 
   // Gets the appropriate code/traceback value based on current view
@@ -152,18 +151,16 @@ const MetaData = ({
 
     return metadata?.code || '';
   };
-  
+
   // Determines if the code/traceback panel should be shown
   const shouldShowPanel = () => {
     return isWorkflowView ? showTracebackPanel : showCodePanel;
   };
 
-  
   // Gets the appropriate title for the code panel
   const getPanelTitle = () => {
     return isWorkflowView ? 'Error traceback' : 'Code block';
   };
-
 
   // Handles the error log toggle callback safely
   const handleErrorLogToggle = (event) => {
