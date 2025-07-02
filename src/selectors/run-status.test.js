@@ -12,7 +12,7 @@ describe('Run Status Selectors', () => {
     runStatus: {
       nodes: {
         '69c523b6': {
-          status: 'successful',
+          status: 'success',
           duration: 0.02171195892151445,
           error: null,
         },
@@ -29,13 +29,13 @@ describe('Run Status Selectors', () => {
         aed46479: {
           name: 'companies',
           size: 1810602,
-          status: 'available',
+          status: 'success',
           error: null,
         },
         f23ad217: {
           name: 'reviews',
           size: 2937144,
-          status: 'unavailable',
+          status: 'failed',
           error: {
             message: 'Dataset not found',
             type: 'DatasetNotFoundError',
@@ -47,7 +47,7 @@ describe('Run Status Selectors', () => {
         startTime: '2025-06-18T12.10.44.342274Z',
         endTime: '2025-06-18T12.11.09.584093Z',
         duration: 12.730948126059957,
-        status: 'successful',
+        status: 'success',
         error: null,
       },
     },
@@ -63,10 +63,6 @@ describe('Run Status Selectors', () => {
     },
   };
 
-  const undefinedState = {
-    runStatus: undefined,
-  };
-
   describe('getDatasetsStatus', () => {
     it('groups datasets by success and failed status based on error property', () => {
       const result = getDatasetsStatus(mockRunStatusState);
@@ -76,7 +72,7 @@ describe('Run Status Selectors', () => {
           aed46479: {
             name: 'companies',
             size: 1810602,
-            status: 'available',
+            status: 'success',
             error: null,
           },
         },
@@ -84,7 +80,7 @@ describe('Run Status Selectors', () => {
           f23ad217: {
             name: 'reviews',
             size: 2937144,
-            status: 'unavailable',
+            status: 'failed',
             error: {
               message: 'Dataset not found',
               type: 'DatasetNotFoundError',
@@ -111,7 +107,7 @@ describe('Run Status Selectors', () => {
       expect(result).toEqual({
         success: {
           '69c523b6': {
-            status: 'successful',
+            status: 'success',
             duration: 0.02171195892151445,
             error: null,
           },
@@ -153,7 +149,7 @@ describe('Run Status Selectors', () => {
     it('returns true when only nodes are present with valid run ID', () => {
       const stateWithOnlyNodes = {
         runStatus: {
-          nodes: { '69c523b6': { status: 'successful' } },
+          nodes: { '69c523b6': { status: 'success' } },
           datasets: {},
           pipeline: {
             runId: '6d962877-1fdf-4b9a-b953-3377f476d48e',
@@ -175,7 +171,7 @@ describe('Run Status Selectors', () => {
         startTime: '2025-06-18T12.10.44.342274Z',
         endTime: '2025-06-18T12.11.09.584093Z',
         duration: 12.730948126059957,
-        status: 'successful',
+        status: 'success',
         error: null,
       });
     });
