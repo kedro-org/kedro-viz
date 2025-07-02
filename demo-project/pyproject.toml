@@ -1,7 +1,7 @@
 [tool.kedro]
 package_name = "demo_project"
 project_name = "modular-spaceflights"
-kedro_init_version = "0.19.14"
+kedro_init_version = "1.0.0"
 
 [tool.pytest.ini_options]
 addopts = """
