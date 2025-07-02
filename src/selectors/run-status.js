@@ -31,7 +31,7 @@ export const isRunStatusAvailable = createSelector(
   [
     (state) => state.runStatus?.nodes,
     (state) => state.runStatus?.datasets,
-    (state) => state.runStatus?.pipeline?.run_id,
+    (state) => state.runStatus?.pipeline?.runId,
   ],
   (nodes, datasets, runId) => {
     // Check if we have actual run data (not just empty objects) and a valid run ID
@@ -43,23 +43,6 @@ export const isRunStatusAvailable = createSelector(
   }
 );
 
-/** Get all node data grouped by node ID
- * @param {Object} state Redux state
- * @returns {Object} Nodes data grouped by node ID
- */
-export const getNodesById = (state) => {
-  return state.runStatus?.nodes || {};
-};
-
-/**
- * Get all dataset data grouped by node ID
- * @param {Object} state Redux state
- * @returns {Object} Datasets data grouped by node ID
- */
-export const getDatasetsById = (state) => {
-  return state.runStatus?.datasets || {};
-};
-
 /**
  * Get pipeline run metadata
  * @param {Object} state Redux state
@@ -70,47 +53,6 @@ export const getPipelineRunData = (state) => {
 };
 
 /**
- * Get the status of a node by ID
- * @param {Object} state Redux state
- * @param {String} nodeId Node ID
- * @returns {Object} Node status data
- */
-export const getNodeStatusById = (state, nodeId) => {
-  return state.runStatus?.nodes?.[nodeId];
-};
-
-/**
- * Get the status of a dataset by ID
- * @param {Object} state Redux state
- * @param {String} datasetId Dataset ID
- * @returns {Object} Dataset status data
- */
-export const getDatasetStatusById = (state, datasetId) => {
-  return state.runStatus?.datasets?.[datasetId];
-};
-
-/**
- * Get the duration of a node by ID
- * @param {Object} state Redux state
- * @param {String} nodeId Node ID
- * @returns {Number} Node duration in seconds
- */
-export const getNodeDurationById = (state, nodeId) => {
-  return state.runStatus?.nodes?.[nodeId]?.duration || 0;
-};
-
-/**
- * Check if a node has failed
- * @param {Object} state Redux state
- * @param {String} nodeId Node ID
- * @returns {Boolean} Whether the node has failed
- */
-export const hasNodeFailed = (state, nodeId) => {
-  const node = state.runStatus?.nodes?.[nodeId];
-  return node?.error != null;
-};
-
-/**
  * Get error message for a failed node
  * @param {Object} state Redux state
  * @param {String} nodeId Node ID
@@ -118,5 +60,16 @@ export const hasNodeFailed = (state, nodeId) => {
  */
 export const getNodeError = (state, nodeId) => {
   const node = state.runStatus?.nodes?.[nodeId];
-  return node?.error || null;
+  return node?.error;
+};
+
+/**
+ * Get error message for a missing dataset
+ * @param {Object} state Redux state
+ * @param {String} nodeId Node ID
+ * @returns {String|null} Error message or null if the dataset hasn't missing
+ */
+export const getDatasetError = (state, nodeId) => {
+  const dataset = state.runStatus?.datasets?.[nodeId];
+  return dataset?.error;
 };
