@@ -47,7 +47,7 @@ describe('processRunStatus', () => {
         dataset1: {
           name: 'Test Dataset',
           size: 1024,
-          status: 'available',
+          status: 'success',
           error: null,
         },
       },
@@ -74,7 +74,7 @@ describe('processRunStatus', () => {
     expect(result.datasets.dataset1).toEqual({
       name: 'Test Dataset',
       size: 1024,
-      status: 'available',
+      status: 'success',
       error: null,
     });
     expect(result.pipeline).toEqual({
