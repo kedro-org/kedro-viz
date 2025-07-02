@@ -146,6 +146,5 @@ class CatalogRepository:
 
         return dataset_obj
 
-
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))
