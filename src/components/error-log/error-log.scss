@@ -13,17 +13,15 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
 
-.error-log--wrapper {
   .pipeline-toggle {
     margin-bottom: 0;
   }
 }
 
-.error-log--header, 
+.error-log--header,
 .error-log--footer {
-  color: #f56565; /*need a name */
+  color: #f56565; /* need a name */
 }
 
 .error-log--details {
