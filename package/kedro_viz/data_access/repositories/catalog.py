@@ -141,6 +141,10 @@ class CatalogRepository:
         except DatasetNotFoundError:
             dataset_obj = MemoryDataset()
 
+        # TODO: Remove this for Kedro-Viz 12.0.0 release
+        if dataset_obj is None:
+            dataset_obj = MemoryDataset()
+
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
