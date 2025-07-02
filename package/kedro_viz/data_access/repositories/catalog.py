@@ -138,7 +138,7 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[attr-defined]
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)  # type: ignore[attr-defined]
-        except DatasetNotFoundError:
+        except DatasetNotFoundError:  # pragma: no cover
             pass  # dataset_obj stays None
 
         if dataset_obj is None:

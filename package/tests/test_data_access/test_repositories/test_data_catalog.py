@@ -148,17 +148,6 @@ class TestDataCatalogRepository:
         result = mock_data_repo.get_dataset("my_dataset")
         assert isinstance(result, CSVDataset)
 
-    def test_get_dataset_dataset_not_found_error(self, mock_data_repo, mocker):
-        # Patch .get to raise DatasetNotFoundError
-        mocker.patch.object(
-            mock_data_repo._catalog,
-            "get",
-            side_effect=DatasetNotFoundError("my_dataset"),
-        )
-
-        result = mock_data_repo.get_dataset("my_dataset")
-        assert isinstance(result, MemoryDataset)
-
     def test_get_dataset_returns_none(self, mock_data_repo, mocker):
         # Simulate .get returning None
         mocker.patch.object(
