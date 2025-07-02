@@ -130,7 +130,7 @@ class CatalogRepository:
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
-        dataset_obj: Optional["AbstractDataset"]
+        dataset_obj: Optional["AbstractDataset"] = None
         try:
             if hasattr(self._catalog, "get") and callable(self._catalog.get):
                 dataset_obj = self._catalog.get(dataset_name)
