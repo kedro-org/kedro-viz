@@ -4,6 +4,19 @@ import Toggle from '../ui/toggle';
 
 import './error-log.scss';
 
+const ERROR_MESSAGES = {
+  noError: 'No error details available.',
+  unknownError: 'An unknown error occurred.',
+  genericDataError: 'Failed while loading/saving data to/from dataset.',
+  genericFunctionError: (name) =>
+    `Failed while performing function: ${name || 'Unknown'}`,
+  loadingOrSaving: (operation) =>
+    `Failed while ${operation} data ${
+      operation === 'loading' ? 'from' : 'to'
+    } dataset.`,
+  footer: 'Please refer to the CLI for the full error log and details.',
+};
+
 /**
  * ErrorLog component displays error information with a toggleable traceback
  */
@@ -20,24 +33,23 @@ export default function ErrorLog({
   if (!errorDetails) {
     return (
       <div className={classNames('error-log--wrapper', className)}>
-        <div className="error-log--message">No error details available.</div>
+        <div className="error-log--message">{ERROR_MESSAGES.noError}</div>
       </div>
     );
   }
 
-  const errorMessage = errorDetails.message || 'An unknown error occurred.';
+  const errorMessage = errorDetails.message || ERROR_MESSAGES.unknownError;
 
   const getErrorHeader = () => {
     if (isDataNode) {
       const operation = errorDetails.error_operation;
       if (operation) {
-        const toOrFrom = operation === 'loading' ? 'from' : 'to';
-        return `Failed while ${operation} data ${toOrFrom} dataset.`;
+        return ERROR_MESSAGES.loadingOrSaving(operation);
       }
-      return 'Failed while loading/saving data to/from dataset.';
+      return ERROR_MESSAGES.genericDataError;
     }
 
-    return `Failed while performing function: ${nodeName || 'Unknown'}`;
+    return ERROR_MESSAGES.genericFunctionError(nodeName);
   };
 
   return (
@@ -56,9 +68,7 @@ export default function ErrorLog({
         <pre dangerouslySetInnerHTML={{ __html: errorMessage }} />
       </div>
 
-      <div className="error-log--footer">
-        Please refer to the CLI for the full error log and details.
-      </div>
+      <div className="error-log--footer">{ERROR_MESSAGES.footer}</div>
     </div>
   );
 }
