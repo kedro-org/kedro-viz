@@ -153,4 +153,10 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
             (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
         )
 
+    @app.get("/api/run-status", response_class=JSONResponse)
+    async def get_run_status():
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "run-status").read_text(encoding="utf8")
+        )
+
     return app

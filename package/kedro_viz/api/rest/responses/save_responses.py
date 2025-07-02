@@ -6,6 +6,7 @@ from typing import Any
 
 from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
 from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
+from kedro_viz.api.rest.responses.run_events import get_run_status_response
 from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
@@ -24,6 +25,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled:
         main_path = f"{path}/api/main"
         nodes_path = f"{path}/api/nodes"
         pipelines_path = f"{path}/api/pipelines"
+        run_status_path = f"{path}/api/run-status"
 
         if "file" in remote_fs.protocol:
             remote_fs.makedirs(path, exist_ok=True)
@@ -33,6 +35,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled:
         save_api_main_response_to_fs(main_path, remote_fs)
         save_api_node_response_to_fs(nodes_path, remote_fs, is_all_previews_enabled)
         save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
+        save_api_run_status_response_to_fs(run_status_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover
         logger.exception(
@@ -88,6 +91,13 @@ def save_api_node_response_to_fs(
             )
             raise exc
 
+def save_api_run_status_response_to_fs(run_status_path: str, remote_fs: Any):
+    """Saves API /run-status response to a directory."""
+    try:
+        write_api_response_to_fs(run_status_path, get_run_status_response(), remote_fs)
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Failed to save run status response. Error: %s", str(exc))
+        raise exc 
 
 def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
     """Get encoded responses and writes it to a file"""
