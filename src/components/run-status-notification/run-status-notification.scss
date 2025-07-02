@@ -1,0 +1,96 @@
+@use '../../styles/variables' as colors;
+
+.kui-theme--dark {
+  --run-status-notification--background: #{colors.$slate-400};
+  --run-status-notification-status--color: #{colors.$white-600};
+  --run-status-notification-timestamp--color: #b2b2b2;
+  --run-status-notification--border: #{colors.$black-600};
+}
+
+.kui-theme--light {
+  --run-status-notification--background: #{colors.$white-100};
+  --run-status-notification-status--color: #{colors.$black-700};
+  --run-status-notification-timestamp--color: #{colors.$black-200};
+  --run-status-notification--border: #{colors.$white-600};
+}
+
+// Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.run-status-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 45%; // 👈 Default when sidebar is visible
+  transition: left 0.3s ease;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background-color: var(--run-status-notification--background);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  animation: fadeIn 0.3s ease-out forwards;
+  max-width: 90%;
+}
+
+.run-status-notification--no-sidebar,
+.run-status-notification--with-meta-sidebar {
+  left: 35%;
+}
+
+// Status section
+.run-status-notification__status {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: var(--run-status-notification-status--color);
+  height: 100%;
+  line-height: 1;
+}
+
+// Timestamp section
+.run-status-notification__timestamp {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: var(--run-status-notification-timestamp--color);
+  height: 100%;
+  font-weight: 400;
+  line-height: 1;
+}
+
+// Divider
+.run-status-notification__divider {
+  width: 1px;
+  height: 100%;
+  background-color: var(--run-status-notification--border);
+  align-self: center;
+  flex-shrink: 0;
+}
+
+// Icon wrapper
+.run-status-notification__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+// Optional status text wrapper
+.run-status-notification__text {
+  display: inline-block;
+}

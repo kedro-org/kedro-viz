@@ -6,6 +6,7 @@ import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
 } from '../../actions/modular-pipelines';
+import { RunStatusNotification } from '../run-status-notification/run-status-notification';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -24,7 +25,11 @@ import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { getRunCommand } from '../../selectors/run-command';
-import { getNodesStatus, getDatasetsStatus } from '../../selectors/run-status';
+import {
+  getNodesStatus,
+  getDatasetsStatus,
+  isRunStatusAvailable,
+} from '../../selectors/run-status';
 import {
   viewing,
   isOrigin,
@@ -35,6 +40,7 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
+import { formatTimestamp } from './workflow-utils/format';
 import Tooltip from '../ui/tooltip';
 import PipelineLoading from '../pipeline-loading/pipeline-loading';
 
@@ -53,8 +59,6 @@ import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 
 import './workflow.scss';
-
-export const workFlowStatuses = ['success', 'failed'];
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -241,15 +245,19 @@ export class Workflow extends Component {
 
     // Apply animating class to zoom wrapper
     select(this.wrapperRef.current).classed(
-      'pipeline-workflow-wrapper--animating',
+      '.pipeline-workflow__zoom-wrapper--animating',
       true
     );
-
     // Update layer label y positions
     if (this.layerNamesRef?.current) {
       const layerNames = this.layerNamesRef.current.querySelectorAll(
         '.pipeline-layer-name'
       );
+      if (layerNames.length !== this.props.layers.length) {
+        // If all layer labels are rendered yet; defer the update
+        setTimeout(() => this.onViewChange(transform), 0);
+        return;
+      }
       this.props.layers.forEach((layer, i) => {
         const el = layerNames[i];
         if (!el) {
@@ -446,16 +454,11 @@ export class Workflow extends Component {
 
   handleSingleNodeClick = (node) => {
     const { id } = node;
-    const {
-      displayMetadataPanel,
-      onLoadNodeData,
-      onToggleNodeClicked,
-      toSelectedNode,
-    } = this.props;
+    const { displayMetadataPanel, onLoadNodeData, onToggleNodeClicked } =
+      this.props;
 
     // Handle metadata panel display or node click toggle
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
-    toSelectedNode(node);
   };
 
   /**
@@ -492,8 +495,6 @@ export class Workflow extends Component {
     // If a node was previously clicked, clear the selected node data and reset the URL.
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
-      // To reset URL to current active pipeline when click outside of a node on flowchart
-      this.props.toSelectedPipeline();
     }
   };
 
@@ -639,6 +640,8 @@ export class Workflow extends Component {
       displayExportBtn,
       layers,
       visibleGraph,
+      visibleSidebar,
+      visibleMetaSidebar,
       clickedNode,
       nodes,
       nodeActive,
@@ -653,8 +656,9 @@ export class Workflow extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      nodesStatus,
-      dataSetsStatus,
+      tasksStatus,
+      datasetsStatus,
+      pipelineStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -710,8 +714,8 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                nodesStatus={nodesStatus}
-                dataSetsStatus={dataSetsStatus}
+                tasksStatus={tasksStatus}
+                datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
             <DrawLayerNamesGroup
@@ -721,6 +725,13 @@ export class Workflow extends Component {
               chartSize={chartSize}
               orientation={orientation}
               layerNamesRef={this.layerNamesRef}
+            />
+            <RunStatusNotification
+              status={pipelineStatus.status}
+              timestamp={formatTimestamp(pipelineStatus.endTime)}
+              duration={pipelineStatus.duration}
+              visibleSidebar={visibleSidebar}
+              visibleMetaSidebar={visibleMetaSidebar}
             />
             <Tooltip
               chartSize={chartSize}
@@ -784,8 +795,10 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
-  nodesStatus: getNodesStatus(state),
-  dataSetsStatus: getDatasetsStatus(state),
+  tasksStatus: getNodesStatus(state),
+  datasetsStatus: getDatasetsStatus(state),
+  isRunStatusAvailable: isRunStatusAvailable(state),
+  pipelineStatus: state.runStatus.pipeline,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({

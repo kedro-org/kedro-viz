@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
 import {
   getModularPipelinesTree,
@@ -12,13 +11,13 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode } from '../../actions';
+import { toggleFocusMode, setView } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
-import LoadingIcon from '../icons/loading';
+import PipelineLoading from '../pipeline-loading/pipeline-loading';
 import InfoBannerIcon from '../icons/info-banner';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
@@ -32,6 +31,7 @@ import {
   params,
   BANNER_METADATA,
   BANNER_KEYS,
+  VIEW,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
@@ -66,6 +66,7 @@ export const FlowChartWrapper = ({
   displayMetadataPanel,
   displayExportBtn,
   displayBanner,
+  setView,
 }) => {
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -119,6 +120,10 @@ export const FlowChartWrapper = ({
       }
     }
   };
+
+  useEffect(() => {
+    setView(VIEW.FLOWCHART);
+  }, [setView]);
 
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
@@ -310,13 +315,7 @@ export const FlowChartWrapper = ({
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
-          <div
-            className={classnames('pipeline-wrapper__loading', {
-              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
-            })}
-          >
-            <LoadingIcon visible={loading} />
-          </div>
+          <PipelineLoading loading={loading} sidebarVisible={sidebarVisible} />
           {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
         {displayExportBtn && <ExportModal />}
@@ -361,6 +360,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
   },
+  setView: (view) => dispatch(setView(view)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlowChartWrapper);

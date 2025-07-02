@@ -20,6 +20,7 @@ const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
 const getFlowChartOrientation = (state) => state.orientation;
+const getView = (state) => state.view;
 
 /**
  * Show the large graph warning only if there are sufficient nodes + edges,
@@ -52,14 +53,15 @@ export const getGraphInput = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getFlowChartOrientation,
+    getView,
     getTriggerLargeGraphWarning,
   ],
-  (nodes, edges, layers, orientation, triggerLargeGraphWarning) => {
+  (nodes, edges, layers, orientation, view, triggerLargeGraphWarning) => {
     if (triggerLargeGraphWarning) {
       return null;
     }
 
-    return { nodes, edges, layers, orientation };
+    return { nodes, edges, layers, orientation, view };
   }
 );
 
