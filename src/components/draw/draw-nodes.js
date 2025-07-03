@@ -257,13 +257,7 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
-  }, [
-    nodes,
-    nodeTypeDisabled.parameters,
-    nodesWithInputParams,
-    orientation,
-    nodeActive,
-  ]);
+  }, [nodes, orientation]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
