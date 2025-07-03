@@ -31,7 +31,7 @@ export const featureHintsContent = [
       "Use filters and tags to adjust the view of your visualisation and see only what you want, whether that's Nodes, Datasets, or tags you've created yourself.",
     elementId: '.pipeline-nodelist-section__title span',
     learnMoreLink:
-      'https://docs.kedro.org/en/latest/nodes_and_pipelines/nodes.html#how-to-tag-a-node',
+      'https://docs.kedro.org/en/stable/nodes_and_pipelines/nodes.html#how-to-tag-a-node',
   },
   {
     title: 'Settings panel',
