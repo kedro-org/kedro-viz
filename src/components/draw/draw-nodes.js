@@ -39,9 +39,6 @@ export function DrawNodes({
 
   // Utility function to get D3 node selection and data join
   const getNodeSelections = (groupRef, nodes) => {
-    if (!nodes.length) {
-      return null;
-    }
     const svg = d3.select(groupRef.current);
     const nodeSel = svg
       .selectAll('.pipeline-node')
@@ -59,12 +56,20 @@ export function DrawNodes({
 
   // --- Initial node creation and removal (enter/exit) ---
   useEffect(() => {
-    const selections = getNodeSelections(groupRef, nodes);
-    if (!selections) {
+    const { updateNodes, enterNodes, exitNodes } = getNodeSelections(
+      groupRef,
+      nodes
+    );
+
+    // ===== special‐case: only exit the last node =====
+    if (nodes.length === 0) {
+      exitNodes
+        .transition('exit-nodes')
+        .duration(DURATION)
+        .style('opacity', 0)
+        .remove();
       return;
     }
-
-    const { updateNodes, enterNodes, exitNodes } = selections;
 
     enterNodes
       .attr('tabindex', '0')
