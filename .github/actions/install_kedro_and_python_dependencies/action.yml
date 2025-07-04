@@ -9,11 +9,8 @@ runs:
       shell: bash
     - name: Install Python dependencies
       run: |-
-        uv pip install --system -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
         uv pip install --system git+https://github.com/kedro-org/kedro@main
-        # [TODO: Revert kedro-datasets installation after kedro-datasets support for kedro 1.0.0 release]
-        if [[ $(python -c "import sys; print(sys.version_info[:2] > (3, 9))") == "True" ]]; then
-          uv pip install --system git+https://github.com/kedro-org/kedro-plugins.git@main#subdirectory=kedro-datasets
+        uv pip install --system -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
         fi
       shell: bash
     - name: Echo package versions

@@ -32,12 +32,11 @@ jobs:
           - name: Install Kedro and other Python Dependencies
             uses: "./.github/actions/install_kedro_and_python_dependencies"
           
-          # TODO: Revert this once html folder is deleted from git
-          # - name: Run secret scan
-          #   run: make secret-scan
+          - name: Run secret scan
+            run: make secret-scan
 
-          # - name: Run security scan
-          #   run: make security-scan
+          - name: Run security scan
+            run: make security-scan
 
           - name: Run Python formatters and linters
             run: make format-check lint-check          

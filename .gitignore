@@ -49,7 +49,7 @@ dist/
 __pycache__/
 .pytest_cache/
 
-# package/*/html/ [TODO: Revert back after DataCatalog 2.0 User testing]
+package/*/html/ 
 package/*.log
 
 # Unit test / coverage reports
