@@ -73,7 +73,7 @@ class TestModularPipelinesRepository:
         sub_pipeline_mock.nodes = ["node1", "node2"]
 
         mocker.patch.object(
-            mock_pipeline, "only_nodes_with_namespace", return_value=sub_pipeline_mock
+            mock_pipeline, "only_nodes_with_namespaces", return_value=sub_pipeline_mock
         )
         rest_of_the_pipeline_mock = mock_pipeline - sub_pipeline_mock
         rest_of_the_pipeline_mock.inputs.return_value = {"output2"}
@@ -104,11 +104,11 @@ class TestModularPipelinesRepository:
                 modular_pipeline_id, ["node1", "node2"]
             )
 
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace1")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace2")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace3")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call(
-            "namespace3.sub_namespace"
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace1"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace2"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace3"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(
+            ["namespace3.sub_namespace"]
         )
 
     def test_get_or_create_modular_pipeline(self, mock_modular_pipelines):

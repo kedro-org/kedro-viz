@@ -2,17 +2,15 @@
 for Kedro pipeline visualisation."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, cast
 
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
+    KedroDataCatalog: Any
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    KedroDataCatalog = None
 
 from kedro.pipeline import Pipeline
 
