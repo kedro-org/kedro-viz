@@ -1,3 +1,12 @@
+// Helper to format a number, removing unnecessary trailing zeros (e.g., 1.50 -> 1.5, 2.00 -> 2)
+export function formatNumber(num) {
+  return num % 1 === 0
+    ? String(num)
+    : Number(num)
+        .toFixed(2)
+        .replace(/\.?0+$/, '');
+}
+
 // Helper to format seconds as Xm Ys
 export function formatDuration(seconds) {
   if (isNaN(seconds)) {
@@ -6,10 +15,11 @@ export function formatDuration(seconds) {
   const totalSeconds = Math.floor(Number(seconds));
   const minutes = Math.floor(totalSeconds / 60);
   const secs = Number(seconds) - minutes * 60;
+  const secsStr = formatNumber(secs);
   if (minutes > 0) {
-    return `${minutes}m ${secs}s`;
+    return `${minutes}m ${secsStr}s`;
   }
-  return `${secs}s`;
+  return `${secsStr}s`;
 }
 
 // Helper to format bytes as B, KB, or MB
