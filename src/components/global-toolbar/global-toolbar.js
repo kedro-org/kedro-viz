@@ -78,7 +78,7 @@ export const GlobalToolbar = ({
           <IconButton
             ariaLabel="View your workflow"
             dataTest="global-toolbar-workflow-btn"
-            className="pipeline-menu-button--large pipeline-menu-button--link"
+            className="pipeline-menu-button--workflow pipeline-menu-button--large pipeline-menu-button--link"
             disabled={false}
             icon={WorkflowIcon}
             labelText="Workflow"

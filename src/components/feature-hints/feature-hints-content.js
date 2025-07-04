@@ -1,5 +1,12 @@
 export const featureHintsContent = [
   {
+    title: 'Workflow run status',
+    description:
+      'Get a clear view of what happened during your pipeline run. The Run Status feature helps you quickly understand whether a run succeeded or failed, which nodes executed, and where any issues occurred, so you can debug faster and improve your workflows with confidence.',
+    learnMoreLink: 'to be updated when the doc is ready',
+    elementId: '.pipeline-menu-button--workflow',
+  },
+  {
     title: 'Publish and share Kedro-Viz',
     description:
       'You can publish Kedro-Viz and share it with others by hosting your project on AWS S3, Azure Blob Storage and GCP Cloud Storage, making sharing with collaborators and stakeholders easier and faster.',
