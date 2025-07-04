@@ -11,17 +11,27 @@ import { VIEW, PIPELINE } from '../../config';
  * Main workflow container.
  * Sets the current view to 'workflow' and resets relevant state on mount.
  */
-const WorkflowWrapper = ({ onSetView, onResetState, isRunStatusAvailable }) => {
+const WorkflowWrapper = ({
+  onSetView,
+  onResetState,
+  isRunStatusAvailable,
+  nodeIds,
+}) => {
   useEffect(() => {
     onSetView(VIEW.WORKFLOW);
-    onResetState();
-  }, [onSetView, onResetState]);
+    // Reset state only after pipelines are loaded
+    // This is to ensure that the workflow view is reset correctly
+    if (nodeIds.length > 0) {
+      onResetState();
+    }
+  }, [onSetView, onResetState, nodeIds]);
 
-   return <>{isRunStatusAvailable ? <Workflow /> : <RunNotFoundWarning />}</>;
+  return <>{isRunStatusAvailable ? <Workflow /> : <RunNotFoundWarning />}</>;
 };
 
 export const mapStateToProps = (state) => ({
   isRunStatusAvailable: isRunStatusAvailable(state),
+  nodeIds: state.node.ids,
 });
 
 const mapDispatchToProps = (dispatch) => ({
