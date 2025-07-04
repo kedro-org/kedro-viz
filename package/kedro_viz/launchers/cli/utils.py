@@ -45,7 +45,7 @@ def create_shareableviz_process(
         if not exception_queue.empty():  # pragma: no cover
             raise exception_queue.get_nowait()
 
-        if not process_completed.value:
+        if not process_completed.value:  # type: ignore[attr-defined]
             raise TimeoutError()
 
         if platform != "local":

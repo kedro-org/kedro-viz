@@ -58,11 +58,11 @@ class ModularPipelinesRepository:
             self.get_or_create_modular_pipeline(modular_pipeline_id)
 
             try:
-                sub_pipeline = pipeline.only_nodes_with_namespaces(
+                sub_pipeline = pipeline.only_nodes_with_namespaces(  # type: ignore[attr-defined]
                     [modular_pipeline_id]
                 )
             except AttributeError:  # pragma: no cover
-                sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)  # type: ignore[attr-defined]
+                sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
 
             rest_of_the_pipeline = pipeline - sub_pipeline
 

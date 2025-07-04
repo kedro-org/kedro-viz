@@ -186,7 +186,7 @@ class TestAddNode:
     ):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
-        catalog["parameters"] = parameters
+        catalog["parameters"] = parameters  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
@@ -211,7 +211,7 @@ class TestAddNode:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params:train_test_split"] = 0.1
+        catalog["params:train_test_split"] = 0.1  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
@@ -238,7 +238,7 @@ class TestAddNode:
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
-        catalog[parameter_name] = 0.1
+        catalog[parameter_name] = 0.1  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(
@@ -425,7 +425,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
+        catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "parameters", example_modular_pipelines_repo_obj
@@ -448,7 +448,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params:train_test_split"] = 0.1
+        catalog["params:train_test_split"] = 0.1  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params:train_test_split", example_modular_pipelines_repo_obj
@@ -467,7 +467,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params_train_test_split"] = 0.1
+        catalog["params_train_test_split"] = 0.1  # type: ignore[index]
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params_train_test_split", example_modular_pipelines_repo_obj

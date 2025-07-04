@@ -2,12 +2,13 @@
 
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog  # type: ignore[attr-defined]
+    KedroDataCatalog: Any
+    from kedro.io import KedroDataCatalog
 except ImportError:  # pragma: no cover
     KedroDataCatalog = None
 
@@ -105,7 +106,7 @@ class DataAccessManager:
                     # for Kedro >= 1.0
                     catalog.get(dataset_name)
                 else:
-                    catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[union-attr]
+                    catalog._get_dataset(dataset_name, suggest=False)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
