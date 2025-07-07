@@ -7,8 +7,8 @@ import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
-import merge from 'lodash/merge';
 import runStatus from './run-status';
+import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import slice from './slice';
@@ -27,8 +27,16 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
+  SET_VIEW,
+  RESET_STATE_FOR_WORKFLOW_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
+import { VIEW } from '../config';
+
+const resetDefaults = {
+  shouldExpandAllPipelines: true,
+  textLabels: true,
+};
 
 /**
  * Create a generic reducer
@@ -43,6 +51,13 @@ const createReducer =
     if (typeof key !== 'undefined' && action.type === type) {
       return action[key];
     }
+
+    if (action.type === RESET_STATE_FOR_WORKFLOW_VIEW) {
+      if (resetDefaults.hasOwnProperty(key)) {
+        return resetDefaults[key];
+      }
+    }
+
     return state;
   };
 
@@ -85,8 +100,8 @@ const combinedReducer = combineReducers({
   tag,
   modularPipeline,
   visible,
-  showBanner: bannerReducer,
   runStatus,
+  showBanner: bannerReducer,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
@@ -98,6 +113,7 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
+  view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,

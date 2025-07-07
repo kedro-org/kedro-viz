@@ -20,6 +20,7 @@ export const PipelineList = ({
   pipeline,
   isPrettyName,
   onToggleOpen,
+  isWorkflowView,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
 
@@ -29,7 +30,7 @@ export const PipelineList = ({
   return (
     <div className="pipeline-list">
       <Dropdown
-        disabled={!pipeline.ids.length}
+        disabled={isWorkflowView || !pipeline.ids.length}
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}

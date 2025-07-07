@@ -14,9 +14,11 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   TOGGLE_CODE,
+  TOGGLE_TRACEBACK,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
+  RESET_STATE_FOR_WORKFLOW_VIEW,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
@@ -26,6 +28,7 @@ import {
   toggleMiniMap,
   toggleParametersHovered,
   toggleCode,
+  toggleTraceback,
   toggleSidebar,
   toggleIsPrettyName,
   toggleTextLabels,
@@ -34,6 +37,7 @@ import {
   toggleFocusMode,
   toggleHoveredFocusMode,
   toggleExpandAllPipelines,
+  resetStateForWorkflowView,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -334,11 +338,39 @@ describe('actions', () => {
     expect(toggleCode(true)).toEqual(expectedAction);
   });
 
+  it('should create an action to toggle the traceback display', () => {
+    const visible = false;
+    const expectedAction = {
+      type: TOGGLE_TRACEBACK,
+      visible,
+    };
+    expect(toggleTraceback(visible)).toEqual(expectedAction);
+  });
+
   it('should create an action to toggle focus mode for modular pipelines', () => {
     const expectedAction = {
       type: TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
       modularPipeline: { id: '1234' },
     };
     expect(toggleFocusMode({ id: '1234' })).toEqual(expectedAction);
+  });
+
+  it('should create an action to reset state for workflow view', () => {
+    const expectedAction = {
+      type: RESET_STATE_FOR_WORKFLOW_VIEW,
+      expandAllPipelines: true,
+    };
+    expect(resetStateForWorkflowView()).toEqual(expectedAction);
+  });
+
+  it('should create an action to reset state for workflow view with custom expandAllPipelines value', () => {
+    const expandAllPipelines = false;
+    const expectedAction = {
+      type: RESET_STATE_FOR_WORKFLOW_VIEW,
+      expandAllPipelines,
+    };
+    expect(resetStateForWorkflowView(expandAllPipelines)).toEqual(
+      expectedAction
+    );
   });
 });
