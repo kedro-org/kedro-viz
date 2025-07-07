@@ -15,7 +15,7 @@ from kedro_viz.utils import _hash, _hash_input_output
 
 logger = logging.getLogger(__name__)
 
-TIME_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
+TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 EVENTS_DIR = VIZ_METADATA_ARGS["path"]
 EVENTS_FILE = "kedro_pipeline_events.json"
 
@@ -125,8 +125,7 @@ def generate_timestamp() -> str:
         String representation of the current timestamp.
 
     """
-    current_ts = datetime.now(tz=timezone.utc).strftime(TIME_FORMAT)
-    return current_ts
+    return datetime.now(tz=timezone.utc).strftime(TIME_FORMAT)
 
 
 def is_default_run(run_params: dict) -> bool:
