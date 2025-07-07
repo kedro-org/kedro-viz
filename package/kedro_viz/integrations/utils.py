@@ -46,17 +46,17 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
         self._data = data
         self.metadata = metadata
 
-    def _load(self, *args, **kwargs):
+    def _load(self, *args, **kwargs):  # pragma: no cover
         pass
 
-    def _save(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):  # pragma: no cover
         pass
 
     load = _load
     save = _save
 
-    def _exists(self):
+    def _exists(self):  # pragma: no cover
         pass
 
-    def _describe(self) -> dict[str, Any]:
+    def _describe(self) -> dict[str, Any]:  # pragma: no cover
         return {"data": self._data}
