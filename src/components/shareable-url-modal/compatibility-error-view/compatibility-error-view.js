@@ -7,7 +7,7 @@ const CompatibilityErrorView = ({ onClick }) => (
       Cancel
     </Button>
     <a
-      href="https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html"
+      href="https://docs.kedro.org/projects/kedro-viz/en/stable/share_kedro_viz.html"
       rel="noreferrer"
       target="_blank"
     >
