@@ -253,7 +253,7 @@ kedro viz run --load-file=my_shareable_pipeline
 
 ## Running Kedro-viz in a notebook. 
 
-Follow the [Jupyter notebook for Kedro project](https://docs.kedro.org/en/latest/notebooks_and_ipython/kedro_and_notebooks.html) guide on how to use a Jupyter notebook to explore elements of a Kedro project. It shows how to use `kedro jupyter notebook` to set up a notebook that has access to the `catalog`, `context`, `pipelines` and `session` variables of the Kedro project, so you can query them.
+Follow the [Jupyter notebook for Kedro project](https://docs.kedro.org/en/stable/notebooks_and_ipython/kedro_and_notebooks.html) guide on how to use a Jupyter notebook to explore elements of a Kedro project. It shows how to use `kedro jupyter notebook` to set up a notebook that has access to the `catalog`, `context`, `pipelines` and `session` variables of the Kedro project, so you can query them.
 
 Once you have followed the steps to set up your notebook. You can use line magic to display a Kedro-Viz visualisation of your pipeline directly in your notebook.
 

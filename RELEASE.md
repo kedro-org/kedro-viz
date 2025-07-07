@@ -14,12 +14,21 @@ Please follow the established format:
 ## Bug fixes and other changes
  - Migration from Enzyme to React Testing Library. (#2365)
 
+# Release 11.1.0
+
+## Major features and improvements
+ - Add support for both Kedro 0.19 series and Kedro 1.0. (#2329)
+
+ ## Bug fixes and other changes
+ - Migrate from Enzyme to React Testing Library. (#2365)
+ - Refactor the flowchart `draw` component. (#2358)
+
 
 # Release 11.0.2
 
 ## Bug fixes and other changes
-- Removed unused npm dependencies from Kedro-Viz. (#2339)
-- Updated documentation for `run_viz` magic command to reflect latest CLI options. (#2325)
+- Remove unused npm dependencies from Kedro-Viz. (#2339)
+- Update documentation for `run_viz` magic command to reflect latest CLI options. (#2325)
 
 # Release 11.0.1
 

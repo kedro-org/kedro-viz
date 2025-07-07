@@ -5,14 +5,6 @@ import logging
 from typing import TYPE_CHECKING, Optional
 
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
-except ImportError:  # pragma: no cover
-    IS_KEDRODATACATALOG = False
-
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
@@ -87,9 +79,8 @@ class CatalogRepository:
         self._layers_mapping = {}
 
         # Get datasets available in catalog
-        if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
-            # Returns dataset names
-            datasets = self._catalog.list()
+        if hasattr(self._catalog, "keys") and callable(self._catalog.keys):
+            datasets = self._catalog.keys()
         else:
             # try/except block so Viz is backwards compatible with older kedro versions.
             try:
@@ -114,7 +105,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
         else:
             for dataset_name in datasets:
-                if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                if hasattr(self._catalog, "get") and callable(self._catalog.get):
                     dataset = self._catalog.get(dataset_name)
                 else:
                     dataset = self._catalog._get_dataset(dataset_name)
@@ -139,15 +130,18 @@ class CatalogRepository:
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
-        dataset_obj: Optional["AbstractDataset"]
+        dataset_obj: Optional["AbstractDataset"] = None
         try:
-            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+            if hasattr(self._catalog, "get") and callable(self._catalog.get):
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
-                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
+                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[attr-defined]
             else:  # pragma: no cover
-                dataset_obj = self._catalog._get_dataset(dataset_name)
-        except DatasetNotFoundError:
+                dataset_obj = self._catalog._get_dataset(dataset_name)  # type: ignore[attr-defined]
+        except DatasetNotFoundError:  # pragma: no cover
+            pass  # dataset_obj stays None
+
+        if dataset_obj is None:
             dataset_obj = MemoryDataset()
 
         return dataset_obj

@@ -17,7 +17,7 @@ def test_after_catalog_created(example_dataset_stats_hook_obj, example_catalog):
 
     # Assert for catalog creation
     assert hasattr(example_dataset_stats_hook_obj, "datasets")
-    assert example_dataset_stats_hook_obj.datasets == example_catalog._datasets
+    assert example_dataset_stats_hook_obj.datasets == example_catalog
 
 
 @pytest.mark.parametrize(
@@ -180,17 +180,14 @@ def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
     assert file_size == 456
 
 
-def test_after_catalog_created_fallback(example_dataset_stats_hook_obj, mocker):
-    class MockKedroDataCatalog:
+def test_after_catalog_created_datasets_fallback(
+    example_dataset_stats_hook_obj, mocker
+):
+    class MockCatalog:
         def __init__(self):
-            self.datasets = {"test_dataset": "test_data"}
+            self._datasets = {"test_dataset": "test_data"}
 
-    mocker.patch(
-        "kedro_viz.integrations.kedro.hooks.KedroDataCatalog", MockKedroDataCatalog
-    )
-    mocker.patch("kedro_viz.integrations.kedro.hooks.IS_KEDRODATACATALOG", True)
-
-    mock_catalog = MockKedroDataCatalog()
+    mock_catalog = MockCatalog()
     example_dataset_stats_hook_obj.after_catalog_created(mock_catalog)
     assert example_dataset_stats_hook_obj.datasets == {"test_dataset": "test_data"}
 
@@ -201,8 +198,6 @@ def test_after_catalog_created_data_sets_fallback(
     class MockCatalog:
         def __init__(self):
             self._data_sets = {"test_dataset": "test_data"}
-
-    mocker.patch("kedro_viz.integrations.kedro.hooks.IS_KEDRODATACATALOG", False)
 
     mock_catalog = MockCatalog()
     example_dataset_stats_hook_obj.after_catalog_created(mock_catalog)
