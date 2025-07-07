@@ -4,11 +4,10 @@ This page describes how to publish Kedro-Viz on Azure to share it with others. I
 
 ## Setup your kedro project 
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html). 
 
-```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.1). To check the version installed, type `kedro -V` in your terminal window.
-```
+!!! tip
+    We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
 
 In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
@@ -46,9 +45,9 @@ You can host your Kedro-Viz project on Azure Blob Storage.
 
 1. Enable static website hosting - Follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage. 
 
-```{note}
-The process of uploading your site's files will be done through Kedro-Viz.
-```
+!!! info
+    The process of uploading your site's files will be done through Kedro-Viz.
+
 
 2. Register an app: Sign in to the Azure Portal and create an [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
@@ -60,14 +59,12 @@ for the app registration.
 5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
 
 
-```{note}
-Kedro-Viz uses Gen2 filesystem protocol `abfs` to write files on AzureBlobStorage.
-```
+!!! info
+    Kedro-Viz uses Gen2 filesystem protocol `abfs` to write files on AzureBlobStorage.
 
-```{important}
-Having a `$web` container in your AzureBlobStorage is mandatory to use Kedro-Viz publish and share feature on Azure. For more information, see the official Azure documentation about 
-[Setting up a static website](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website#setting-up-a-static-website).
-```
+!!! warning
+    Having a `$web` container in your AzureBlobStorage is mandatory to use Kedro-Viz publish and share feature on Azure. For more information, see the official Azure documentation about 
+    [Setting up a static website](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website#setting-up-a-static-website).
 
 ## Set credentials
 
@@ -99,9 +96,9 @@ Navigate to the **Publish and share** icon located in the lower-left corner of t
 Set up endpoint
 ---------------
 
-```{important}
-The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
-```
+!!! info
+    The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
+
 
 Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
@@ -116,9 +113,8 @@ Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execut
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
 ```
 
-```{note}
-Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
-```
+!!! info
+    Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
 
 ## Permissions and access control
 

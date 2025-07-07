@@ -57,3 +57,20 @@ sign-off:
 	echo '--trailer "Signed-off-by: $$(git config user.name) <$$(git config user.email)>" \c' >> .git/hooks/commit-msg
 	echo '--in-place "$$1"' >> .git/hooks/commit-msg
 	chmod +x .git/hooks/commit-msg
+
+serve-docs:
+	cd package && uv pip install -e ".[docs]"
+	mkdocs serve
+
+build-docs:
+	cd package && uv pip install -e ".[docs]"
+	mkdocs build
+
+fix-markdownlint:
+	npm install -g markdownlint-cli2
+	# markdownlint rules are defined in .markdownlint.yaml
+	markdownlint-cli2 --config .markdownlint.yaml --fix "/docs/**/*.md"
+
+check-docs:
+	cd package && uv pip install --system -e ".[docs]"
+	mkdocs build --strict
