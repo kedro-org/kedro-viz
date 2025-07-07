@@ -1,5 +1,5 @@
 site_name: ""
-site_url: https://docs.kedro.org/projects/kedro-viz/en/latest/
+site_url: https://docs.kedro.org/projects/kedro-viz/en/stable/
 repo_name: kedro-org/kedro-viz
 repo_url: https://github.com/kedro-org/kedro-viz
 
@@ -114,8 +114,8 @@ extra_javascript:
 
 
 nav:
-  - Welcome: https://docs.kedro.org/en/1.0.0rc1/
-  - Kedro: https://docs.kedro.org/en/1.0.0rc1/getting-started/course/
+  - Welcome: https://docs.kedro.org/en/stable/
+  - Kedro: https://docs.kedro.org/en/stable/getting-started/course/
   - Kedro-Viz: 
     - Overview: index.md
     - Learn about Kedro-Viz:
@@ -136,4 +136,4 @@ nav:
         - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: migrate_experiment_tracking.md
     - Other Documentation:
         - Kedro-Viz CLI reference: cli-docs.md
-  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/
+  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/stable/
