@@ -6,7 +6,7 @@ export const updateContent = {
       image: '',
       copy: "With a heavy heart, we're announcing that Experiment Tracking is no longer available through Kedro Viz. Please refer to the Kedro documentation for migration guidance.",
       buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/migrate_experiment_tracking.html',
+        'https://docs.kedro.org/projects/kedro-viz/en/stable/migrate_experiment_tracking.html',
       buttonText: 'View the docs',
     },
     {

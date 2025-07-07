@@ -49,7 +49,7 @@ dist/
 __pycache__/
 .pytest_cache/
 
-package/*/html/
+# package/*/html/
 package/*.log
 
 # Unit test / coverage reports

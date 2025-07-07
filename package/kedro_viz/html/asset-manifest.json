@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "./static/css/main.bf79a554.css",
+    "main.js": "./static/js/main.7b6783eb.js",
+    "worker.js": "./67177446b908b77d0e46.worker.js",
+    "index.html": "./index.html"
+  },
+  "entrypoints": [
+    "static/css/main.bf79a554.css",
+    "static/js/main.7b6783eb.js"
+  ]
+}
