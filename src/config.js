@@ -155,7 +155,7 @@ export const inputKeyToStateKeyMap = {
 export const PACKAGE_FSSPEC = 'fsspec';
 
 export const KEDRO_VIZ_DOCS_URL =
-  'https://docs.kedro.org/projects/kedro-viz/en/stable/';
+  'https://docs.kedro.org/projects/kedro-viz/';
 export const KEDRO_VIZ_PUBLISH_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}share_kedro_viz.html`;
 export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview_datasets.html#disabling-previews`;
 export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws.html#set-up-endpoint`;
