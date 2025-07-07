@@ -135,9 +135,9 @@ class CatalogRepository:
             if hasattr(self._catalog, "get") and callable(self._catalog.get):
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
-                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
+                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[attr-defined]
             else:  # pragma: no cover
-                dataset_obj = self._catalog._get_dataset(dataset_name)
+                dataset_obj = self._catalog._get_dataset(dataset_name)  # type: ignore[attr-defined]
         except DatasetNotFoundError:  # pragma: no cover
             pass  # dataset_obj stays None
 

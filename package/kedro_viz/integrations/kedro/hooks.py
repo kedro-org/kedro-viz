@@ -13,7 +13,7 @@ from kedro.io import DataCatalog
 
 try:  # pragma: no cover
     KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog
+    from kedro.io import KedroDataCatalog  # type: ignore
 except ImportError:  # pragma: no cover
     KedroDataCatalog = None
 
@@ -131,7 +131,7 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-                current_dataset = self.datasets.get(dataset_name)  # type: ignore[union-attr]
+                current_dataset = self.datasets.get(dataset_name)
 
                 if current_dataset:
                     dataset_file_size = self.get_file_size(current_dataset)

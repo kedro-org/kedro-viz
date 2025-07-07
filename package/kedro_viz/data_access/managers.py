@@ -8,7 +8,7 @@ from kedro.io import DataCatalog
 
 try:  # pragma: no cover
     KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog
+    from kedro.io import KedroDataCatalog  # type: ignore
 except ImportError:  # pragma: no cover
     KedroDataCatalog = None
 
@@ -106,7 +106,7 @@ class DataAccessManager:
                     # for Kedro >= 1.0
                     catalog.get(dataset_name)
                 else:
-                    catalog._get_dataset(dataset_name, suggest=False)
+                    catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[union-attr]
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 

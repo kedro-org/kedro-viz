@@ -198,19 +198,19 @@ class TestModularPipelinesRepository:
         )
         mocker.patch.object(mock_modular_pipelines, "_add_children_to_parent_pipeline")
 
-        with mocker.patch.object(
+        mocker.patch.object(
             mock_modular_pipelines,
             "get_or_create_modular_pipeline",
             return_value=mock_modular_pipeline_node,
-        ):
-            mock_modular_pipelines._add_children(modular_pipelines_id, mock_kedro_nodes)
+        )
+        mock_modular_pipelines._add_children(modular_pipelines_id, mock_kedro_nodes)
 
-            mock_modular_pipelines._add_nodes_and_datasets_as_children.assert_any_call(
-                mock_modular_pipeline_node, [mock_kedro_nodes[0]], {"input1", "output1"}
-            )
-            mock_modular_pipelines._add_children_to_parent_pipeline.assert_any_call(
-                mock_modular_pipeline_node, modular_pipelines_id, {"input1", "output1"}
-            )
+        mock_modular_pipelines._add_nodes_and_datasets_as_children.assert_any_call(
+            mock_modular_pipeline_node, [mock_kedro_nodes[0]], {"input1", "output1"}
+        )
+        mock_modular_pipelines._add_children_to_parent_pipeline.assert_any_call(
+            mock_modular_pipeline_node, modular_pipelines_id, {"input1", "output1"}
+        )
 
     def test_add_nodes_and_datasets_as_children(
         self, mocker, mock_modular_pipelines, mock_kedro_nodes
@@ -275,15 +275,16 @@ class TestModularPipelinesRepository:
             ModularPipelineChild(id="output1", type=GraphNodeType.DATA),
         }
 
-        with mocker.patch.object(
+        mocker.patch.object(
             mock_modular_pipelines,
             "get_or_create_modular_pipeline",
             return_value=parent_modular_pipeline,
-        ):
-            mock_modular_pipelines._add_children_to_parent_pipeline(
-                mock_modular_pipeline_node,
-                modular_pipeline_id,
-                modular_pipeline_inputs_outputs,
-            )
+        )
 
-            assert parent_modular_pipeline.children == expected_children
+        mock_modular_pipelines._add_children_to_parent_pipeline(
+            mock_modular_pipeline_node,
+            modular_pipeline_id,
+            modular_pipeline_inputs_outputs,
+        )
+
+        assert parent_modular_pipeline.children == expected_children

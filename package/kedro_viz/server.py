@@ -8,7 +8,7 @@ from kedro.io import DataCatalog
 
 try:  # pragma: no cover
     KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog
+    from kedro.io import KedroDataCatalog  # type: ignore
 except ImportError:  # pragma: no cover
     KedroDataCatalog = None
 

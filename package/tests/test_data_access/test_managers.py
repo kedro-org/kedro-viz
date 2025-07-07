@@ -186,7 +186,7 @@ class TestAddNode:
     ):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
-        catalog["parameters"] = parameters  # type: ignore[index]
+        catalog["parameters"] = parameters
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
@@ -211,7 +211,7 @@ class TestAddNode:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params:train_test_split"] = 0.1  # type: ignore[index]
+        catalog["params:train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
@@ -238,7 +238,7 @@ class TestAddNode:
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
-        catalog[parameter_name] = 0.1  # type: ignore[index]
+        catalog[parameter_name] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(
@@ -407,14 +407,15 @@ class TestAddDataset:
         catalog = DataCatalog(datasets={dataset_name: dataset})
         data_access_manager.add_catalog(catalog, example_pipelines)
 
-        with mocker.patch.object(
+        mocker.patch.object(
             data_access_manager.catalog,
             "get_dataset",
             side_effect=DatasetError("Dataset not found"),
-        ):
-            dataset_obj = data_access_manager.add_dataset(
-                "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
-            )
+        )
+
+        dataset_obj = data_access_manager.add_dataset(
+            "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
+        )
 
         assert isinstance(dataset_obj.kedro_obj, UnavailableDataset)
 
@@ -425,7 +426,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}  # type: ignore[index]
+        catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "parameters", example_modular_pipelines_repo_obj
@@ -448,7 +449,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params:train_test_split"] = 0.1  # type: ignore[index]
+        catalog["params:train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params:train_test_split", example_modular_pipelines_repo_obj
@@ -467,7 +468,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        catalog["params_train_test_split"] = 0.1  # type: ignore[index]
+        catalog["params_train_test_split"] = 0.1
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(
             "my_pipeline", "params_train_test_split", example_modular_pipelines_repo_obj

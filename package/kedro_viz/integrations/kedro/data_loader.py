@@ -75,14 +75,14 @@ def _load_data_helper(
         A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
     try:
-        kedro_session = KedroSession.create(  # type: ignore[call-arg]
+        kedro_session = KedroSession.create(
             project_path=project_path,
             save_on_close=False,
             env=env,
             runtime_params=extra_params,
         )
     except TypeError:
-        kedro_session = KedroSession.create(
+        kedro_session = KedroSession.create(  # type: ignore[call-arg]
             project_path=project_path,
             env=env,
             save_on_close=False,
