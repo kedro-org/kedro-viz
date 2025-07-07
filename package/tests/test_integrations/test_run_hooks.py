@@ -27,25 +27,27 @@ def sample_node() -> KedroNode:
 
 
 class TestCatalogCreation:
-    def test_after_catalog_created_with_kedro_data_catalog(
-        self, hooks, monkeypatch: pytest.MonkeyPatch
-    ):
-        """Test `after_catalog_created` with a KedroDataCatalog instance."""
+    def test_after_catalog_created_with_catalog(self, hooks):
+        """Test `after_catalog_created` stores the catalog."""
 
-        class DummyKedroDataCatalog:
+        class DummyCatalog:
             def __init__(self, datasets: Dict[str, Any]):
                 self.datasets = datasets
 
-        # Patch kedro.io.KedroDataCatalog with the dummy class
-        monkeypatch.setitem(sys.modules, "kedro.io", ModuleType("kedro.io"))
-        sys.modules["kedro.io"].KedroDataCatalog = DummyKedroDataCatalog  # type: ignore[attr-defined]
+            def keys(self):
+                """Dictionary-like interface for DataCatalog 2.0"""
+                return self.datasets.keys()
+
+            def __getitem__(self, key):
+                """Dictionary-like interface for DataCatalog 2.0"""
+                return self.datasets[key]
 
         # Create a dummy catalog and pass to the hook
-        catalog = DummyKedroDataCatalog({"memory": object()})
+        catalog = DummyCatalog({"memory": object()})
         hooks.after_catalog_created(catalog)
 
         # Assert datasets were set correctly
-        assert hooks._datasets == catalog.datasets
+        assert hooks._datasets == catalog
 
 
 class TestPipelineRunLifecycle:

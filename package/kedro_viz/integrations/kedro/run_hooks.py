@@ -124,21 +124,7 @@ class PipelineRunStatusHook:
         has been loaded or saved yet — so only static dataset configuration (not size/content)
         can be accessed.
         """
-        try:
-            # prefer new KedroDataCatalog
-            from kedro.io import KedroDataCatalog
-
-            if isinstance(catalog, KedroDataCatalog):
-                self._datasets = catalog.datasets
-                return
-        except ImportError:  # pragma: no cover
-            pass  # pragma: no cover
-        # fallback older versions. Remove fallback once Kedro 1.0.0 released
-        self._datasets = getattr(  # pragma: no cover
-            catalog,
-            "_datasets",
-            getattr(catalog, "_data_sets", {}),  # pragma: no cover
-        )
+        self._datasets = catalog
 
     @hook_impl
     def before_pipeline_run(self, run_params: dict, pipeline) -> None:
