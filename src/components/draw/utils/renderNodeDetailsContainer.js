@@ -8,6 +8,23 @@ import {
 } from '../../workflow/workflow-utils/getStatus';
 import { workflowNodeDetailsHeight } from '../../../config';
 
+// Node details layout constants
+const DETAILS_LABEL_X_OFFSET = 15;
+const STATUS_VALUE_X_OFFSET = 80;
+const STATUS_LABEL_Y_OFFSET = 20;
+const SIZE_LABEL_Y_OFFSET = 45;
+
+// General helper to append a text element to a group
+function appendDetailsText(group, classNames, text, x, y) {
+  group
+    .append('text')
+    .attr('class', classNames)
+    .text(text)
+    .attr('text-anchor', 'start')
+    .attr('x', x)
+    .attr('y', y);
+}
+
 /**
  * Render the details container for a node (status, duration, outline, etc)
  * This is a pure D3 helper, no React dependencies
@@ -20,6 +37,7 @@ export function renderNodeDetailsContainer(
 ) {
   const nodeWidth = node.width - 5;
   const nodeHeight = node.height - 5;
+  const detailsSectionHeight = nodeHeight / 2 + workflowNodeDetailsHeight;
 
   const { taskStatus, taskDuration } = getTasksStatusInfo(tasksStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
@@ -32,65 +50,42 @@ export function renderNodeDetailsContainer(
     .insert('g', ':first-child')
     .attr('class', 'pipeline-node__details-container');
 
-  // Main node outline (top part only)
-  parentGroup
-    .append('path')
-    .attr('class', 'pipeline-node__main-outline')
-    .attr('d', () => {
-      if (node.type === 'task') {
-        return `M ${nodeWidth / -2} ${nodeHeight / -2} H ${nodeWidth / 2} V ${
-          nodeHeight / 2
-        } H ${nodeWidth / -2} V ${nodeHeight / -2} Z`;
-      } else {
-        const radius = nodeHeight / 2;
-        return `M ${nodeWidth / -2 + radius} ${nodeHeight / -2} H ${
-          nodeWidth / 2 - radius
-        } Q ${nodeWidth / 2} ${nodeHeight / -2} ${nodeWidth / 2} ${
-          nodeHeight / -2 + radius
-        } V ${nodeHeight / 2 - radius} Q ${nodeWidth / 2} ${nodeHeight / 2} ${
-          nodeWidth / 2 - radius
-        } ${nodeHeight / 2} H ${nodeWidth / -2 + radius} Q ${nodeWidth / -2} ${
-          nodeHeight / 2
-        } ${nodeWidth / -2} ${nodeHeight / 2 - radius} V ${
-          nodeHeight / -2 + radius
-        } Q ${nodeWidth / -2} ${nodeHeight / -2} ${nodeWidth / -2 + radius} ${
-          nodeHeight / -2
-        } Z`;
-      }
-    })
-    .style('fill', 'none');
-
-  // Draw the background rectangle for the node details section
-  // The height is calculated as half the node height plus the workflow node details height
-  // While the width remains the same as the node width, which is calculated inside graph/index.js
+  // First draw the background rectangle for the node details section
   detailsContainer
     .append('rect')
     .attr('class', 'pipeline-node__details-bg')
     .attr('width', nodeWidth)
-    .attr('height', nodeHeight / 2 + workflowNodeDetailsHeight)
+    .attr('height', detailsSectionHeight)
     .attr('x', nodeWidth / -2)
-    .attr('y', 0)
-    .attr('rx', 0);
+    .attr('y', 0);
 
-  // Details outline (bottom part only)
+  // Second draw the outline path
+  // For task nodes, draw a simple vertical line
+  // For data nodes, draw a curved outline
   detailsContainer
     .append('path')
     .attr('class', 'pipeline-node__details-outline')
     .attr('d', () => {
       if (node.type === 'task') {
-        return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + workflowNodeDetailsHeight
-        } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
+        return `
+        M ${nodeWidth / -2} ${nodeHeight / 2} 
+        V ${detailsSectionHeight} 
+        H ${nodeWidth / 2} 
+        V ${nodeHeight / 2}`;
       } else {
-        return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + workflowNodeDetailsHeight - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
-          nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + workflowNodeDetailsHeight} H ${
-          nodeWidth / 2 - 10
-        } Q ${nodeWidth / 2} ${nodeHeight / 2 + workflowNodeDetailsHeight} ${
-          nodeWidth / 2
-        } ${nodeHeight / 2 + workflowNodeDetailsHeight - 10} V 0`;
+        // Draw a rounded bottom outline for non-task nodes
+        const curveX = 10; // Horizontal radius for the curve
+        const curveY = detailsSectionHeight - curveX; // Vertical start/end for the curve
+        const leftX = nodeWidth / -2;
+        const rightX = nodeWidth / 2;
+        const bottomY = detailsSectionHeight;
+        return `
+          M ${leftX} 0 
+          V ${curveY} 
+          Q ${leftX} ${bottomY} ${leftX + curveX} ${bottomY} 
+          H ${rightX - curveX} 
+          Q ${rightX} ${bottomY} ${rightX} ${curveY} 
+          V 0`;
       }
     });
 
@@ -99,66 +94,46 @@ export function renderNodeDetailsContainer(
     .append('g')
     .attr('class', 'pipeline-node__details-status-group');
 
-  // Status label
-  statusGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text('Status:')
-    .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + 15)
-    .attr('y', nodeHeight / 2 + 20);
+  appendDetailsText(
+    statusGroup,
+    'pipeline-node__details-label',
+    'Status:',
+    nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET,
+  );
 
-  // Status value
-  statusGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped')
-    .attr('text-anchor', 'start')
-    .attr(
-      'x',
-      datasetStatus === 'Not persisted'
-        ? nodeWidth / 2 - 100
-        : nodeWidth / 2 - 80
-    )
-    .attr('y', nodeHeight / 2 + 20);
+  appendDetailsText(
+    statusGroup,
+    'pipeline-node__details-value',
+    datasetStatus ? `${datasetStatus}` : taskStatus ?? 'Skipped',
+    nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
+    nodeHeight / 2 + STATUS_LABEL_Y_OFFSET,
+  );
 
-  // Duration/Size group (label + value)
-  const sizeGroup = detailsContainer
+  // Metrics group (duration or size label + value)
+  const metricsGroup = detailsContainer
     .append('g')
-    .attr('class', 'pipeline-node__details-size-group');
+    .attr('class', 'pipeline-node__details-metrics-group');
 
-  // Duration/Size label
-  sizeGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text(
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? 'Duration:'
-        : 'Size:'
-    )
-    .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + 15)
-    .attr('y', nodeHeight / 2 + 45);
+  appendDetailsText(
+    metricsGroup,
+    'pipeline-node__details-label',
+    node.type === 'task' || node.type === 'modularPipeline' ? 'Duration:' : 'Size:',
+    nodeWidth / -2 + DETAILS_LABEL_X_OFFSET,
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET,
+  );
 
-  // Duration/Size value
-  sizeGroup
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(
-      node.type === 'task' || node.type === 'modularPipeline'
-        ? taskDuration != null
-          ? formatDuration(taskDuration)
-          : 'N/A'
-        : datasetSize != null
-        ? formatSize(datasetSize)
+  appendDetailsText(
+    metricsGroup,
+    'pipeline-node__details-value',
+    node.type === 'task' || node.type === 'modularPipeline'
+      ? taskDuration != null
+        ? formatDuration(taskDuration)
         : 'N/A'
-    )
-    .attr('text-anchor', 'start')
-    .attr(
-      'x',
-      datasetStatus === 'Not persisted'
-        ? nodeWidth / 2 - 100
-        : nodeWidth / 2 - 80
-    )
-    .attr('y', nodeHeight / 2 + 45);
+      : datasetSize != null
+      ? formatSize(datasetSize)
+      : 'N/A',
+    nodeWidth / 2 - STATUS_VALUE_X_OFFSET,
+    nodeHeight / 2 + SIZE_LABEL_Y_OFFSET,
+  );
 }
