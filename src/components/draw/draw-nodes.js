@@ -262,10 +262,10 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
-      
-  // Adding extra dependencies may cause unnecessary re-renders or break memoization logic.
-  // Only include values that truly affect the computation inside this effect.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // Adding extra dependencies may cause unnecessary re-renders or break memoization logic.
+    // Only include values that truly affect the computation inside this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, orientation]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;

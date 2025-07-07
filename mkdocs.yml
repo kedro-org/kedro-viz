@@ -1,0 +1,139 @@
+site_name: ""
+site_url: https://docs.kedro.org/projects/kedro-viz/en/latest/
+repo_name: kedro-org/kedro-viz
+repo_url: https://github.com/kedro-org/kedro-viz
+
+
+theme:
+  name: material
+  custom_dir: docs/overrides/
+  palette:
+     # Palette toggle for light mode
+    - scheme: light
+      toggle:
+        icon: material/white-balance-sunny
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: dark
+      toggle:
+        icon: material/white-balance-sunny
+        name: Switch to light mode
+
+  language: en
+  font:
+    text: Inter
+    code: Inter Regular
+  favicon: "https://kedro.org/images/favicon.ico"
+  logo: assets/kedro_logo_black.svg
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      note: octicons/note-16
+      tip: octicons/info-16
+      warning: octicons/alert-16
+      example: octicons/code-16
+
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.tracking
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.code.annotate
+    - content.code.highlight
+
+plugins:
+  - search
+  - autorefs
+  - mermaid2
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_toc_entry: true
+            show_source: false #currently doesn't show source at correct level, and not for pydantic models
+            docstring_style: google
+            merge_init_into_class: true
+            docstring_section_style: list
+            separate_signature: true
+            show_root_heading: true
+            docstring_options:
+              ignore_init_summary: true
+              warn_unknown_params: false
+              returns_named_value: false
+            paths: [src]
+            import:
+              - https://docs.kedro.org/en/stable/objects.inv
+              - https://docs.kedro.org/projects/kedro-datasets/en/stable/objects.inv
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - footnotes
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+      title: Contents
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - stylesheets/colors.css
+  - stylesheets/globals.css
+  - stylesheets/typography.css
+  - stylesheets/themes.css
+  - stylesheets/footer.css
+  - stylesheets/welcome.css
+
+extra_javascript:
+  - javascript/readthedocs.js
+  - javascript/deindex-old-docs.js
+
+
+nav:
+  - Welcome: https://docs.kedro.org/en/1.0.0rc1/
+  - Kedro: https://docs.kedro.org/en/1.0.0rc1/getting-started/course/
+  - Kedro-Viz: 
+    - Overview: index.md
+    - Learn about Kedro-Viz:
+        - How to visualise a Kedro project: kedro-viz_visualisation.md
+        - Sharing Kedro-Viz:
+          - Publish and share Kedro-Viz: share_kedro_viz.md
+          - Platform-agnostic sharing with Kedro-Viz: platform_agnostic_sharing_with_kedro_viz.md
+          - Publish and share on AWS: publish_and_share_kedro_viz_on_aws.md
+          - Publish and share on Azure: publish_and_share_kedro_viz_on_azure.md
+          - Publish and share on GCP: publish_and_share_kedro_viz_on_gcp.md
+        - Preview datasets in Kedro-Viz: 
+          - Preview datasets overview: preview_datasets.md
+          - Preview Matplotlib charts in Kedro-Viz: preview_matplotlib_datasets.md
+          - Preview Plotly charts in Kedro-Viz: preview_plotly_datasets.md
+          - Preview tabular data in Kedro-Viz: preview_pandas_datasets.md
+          - Extend preview to custom datasets: preview_custom_datasets.md
+        - Slice a pipeline: slice_a_pipeline.md
+        - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: migrate_experiment_tracking.md
+    - Other Documentation:
+        - Kedro-Viz CLI reference: cli-docs.md
+  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/
