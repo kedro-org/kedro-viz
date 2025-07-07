@@ -4,7 +4,8 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
-import './styles/_node.scss';
+
+import './styles/index.scss';
 
 /**
  * Functional React component for drawing nodes using D3
@@ -38,9 +39,6 @@ export function DrawNodes({
 
   // Utility function to get D3 node selection and data join
   const getNodeSelections = (groupRef, nodes) => {
-    if (!nodes.length) {
-      return null;
-    }
     const svg = d3.select(groupRef.current);
     const nodeSel = svg
       .selectAll('.pipeline-node')
@@ -58,12 +56,20 @@ export function DrawNodes({
 
   // --- Initial node creation and removal (enter/exit) ---
   useEffect(() => {
-    const selections = getNodeSelections(groupRef, nodes);
-    if (!selections) {
+    const { updateNodes, enterNodes, exitNodes } = getNodeSelections(
+      groupRef,
+      nodes
+    );
+
+    // ===== special‐case: only exit the last node =====
+    if (nodes.length === 0) {
+      exitNodes
+        .transition('exit-nodes')
+        .duration(DURATION)
+        .style('opacity', 0)
+        .remove();
       return;
     }
-
-    const { updateNodes, enterNodes, exitNodes } = selections;
 
     enterNodes
       .attr('tabindex', '0')
@@ -256,13 +262,11 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
-  }, [
-    nodes,
-    nodeTypeDisabled.parameters,
-    nodesWithInputParams,
-    orientation,
-    nodeActive,
-  ]);
+
+    // Adding extra dependencies may cause unnecessary re-renders or break memoization logic.
+    // Only include values that truly affect the computation inside this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, orientation]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
