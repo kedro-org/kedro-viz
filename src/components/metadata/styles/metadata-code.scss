@@ -46,7 +46,7 @@
 
     @media (min-width: #{$sidebar-total-width}) {
       // Anchor to right sidebar
-      left: variables.$metadata-sidebar-width-open;
+      left: $sidebar-width;
     }
   }
 
