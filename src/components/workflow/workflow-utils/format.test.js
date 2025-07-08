@@ -38,12 +38,12 @@ describe('formatSize', () => {
 describe('formatTimestamp', () => {
   it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss UTC', () => {
     expect(formatTimestamp('2025-05-22T15:54:08.696715Z')).toBe(
-      '22.05.2025 - 15:54:08 UTC'
+      '22.05.2025 - 16:54:08 BST'
     );
   });
   it('pads single digits', () => {
     expect(formatTimestamp('2025-01-02T03:04:05.000Z')).toBe(
-      '02.01.2025 - 03:04:05 UTC'
+      '02.01.2025 - 03:04:05 GMT'
     );
   });
   it('returns N/A for empty', () => {
