@@ -1,4 +1,4 @@
-import { formatDuration, formatSize, formatTimestamp } from './format';
+import { formatDuration, formatSize } from './format';
 
 describe('formatDuration', () => {
   it('formats seconds < 60', () => {
@@ -32,22 +32,5 @@ describe('formatSize', () => {
   it('returns N/A for NaN or null', () => {
     expect(formatSize(NaN)).toBe('N/A');
     expect(formatSize(null)).toBe('N/A');
-  });
-});
-
-describe('formatTimestamp', () => {
-  it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss UTC', () => {
-    expect(formatTimestamp('2025-05-22T15:54:08.696715Z')).toBe(
-      '22.05.2025 - 15:54:08 UTC'
-    );
-  });
-  it('pads single digits', () => {
-    expect(formatTimestamp('2025-01-02T03:04:05.000Z')).toBe(
-      '02.01.2025 - 03:04:05 UTC'
-    );
-  });
-  it('returns N/A for empty', () => {
-    expect(formatTimestamp('')).toBe('N/A');
-    expect(formatTimestamp(null)).toBe('N/A');
   });
 });

@@ -52,12 +52,19 @@ export function formatTimestamp(timestamp) {
   const pad2 = (num) => num.toString().padStart(2, '0');
 
   const date = new Date(timestamp);
-  const day = pad2(date.getUTCDate());
-  const month = pad2(date.getUTCMonth() + 1);
-  const year = date.getUTCFullYear();
-  const hour = pad2(date.getUTCHours());
-  const minute = pad2(date.getUTCMinutes());
-  const second = pad2(date.getUTCSeconds());
+  const day = pad2(date.getDate());
+  const month = pad2(date.getMonth() + 1);
+  const year = date.getFullYear();
+  const hour = pad2(date.getHours());
+  const minute = pad2(date.getMinutes());
+  const second = pad2(date.getSeconds());
 
-  return `${day}.${month}.${year} - ${hour}:${minute}:${second} UTC`;
+  // Get the local timezone abbreviation, fallback to 'UTC' if unavailable
+  const tzLabel =
+    date
+      .toLocaleTimeString(undefined, { timeZoneName: 'short' })
+      .split(' ')
+      .pop() || 'UTC';
+
+  return `${day}.${month}.${year} - ${hour}:${minute}:${second} ${tzLabel}`;
 }
