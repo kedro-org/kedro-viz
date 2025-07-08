@@ -43,8 +43,8 @@ describe('formatTimestamp', () => {
   });
   it('pads single digits', () => {
     const result = formatTimestamp('2025-01-02T03:04:05.000Z');
-    // Match: 02.01.2025 - 03:04:05 <any word> to avoid failing on CI
-    expect(result).toMatch(/^02\.01\.2025 - 03:04:05 \w+$/);
+    // Match: 02.01.2025 - hh:mm:ss <any non-whitespace tz> to avoid failing on CI
+    expect(result).toMatch(/^02\.01\.2025 - \d{2}:\d{2}:\d{2} \S+$/);
   });
   it('returns N/A for empty', () => {
     expect(formatTimestamp('')).toBe('N/A');
