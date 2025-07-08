@@ -1,4 +1,5 @@
 import { formatDuration, formatSize, formatTimestamp } from './format';
+import timezoneMock from 'timezone-mock';
 
 describe('formatDuration', () => {
   it('formats seconds < 60', () => {
@@ -36,15 +37,24 @@ describe('formatSize', () => {
 });
 
 describe('formatTimestamp', () => {
-  it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss <TZ>', () => {
-    const result = formatTimestamp('2025-05-22T15:54:08.696715Z');
-    // Match: 22.05.2025 - 16:54:08 <any word> to avoid failing on CI
-    expect(result).toMatch(/^22\.05\.2025 - 16:54:08 \w+$/);
+  beforeAll(() => {
+    // Set the timezone to Europe/London for consistent results (BST/GMT)
+    timezoneMock.register('Europe/London');
+  });
+
+  afterAll(() => {
+    timezoneMock.unregister();
+  });
+
+  it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss', () => {
+    expect(formatTimestamp('2025-05-22T15:54:08.696715Z')).toBe(
+      '22.05.2025 - 16:54:08 BST'
+    );
   });
   it('pads single digits', () => {
-    const result = formatTimestamp('2025-01-02T03:04:05.000Z');
-    // Match: 02.01.2025 - hh:mm:ss <any non-whitespace tz> to avoid failing on CI
-    expect(result).toMatch(/^02\.01\.2025 - \d{2}:\d{2}:\d{2} \S+$/);
+    expect(formatTimestamp('2025-01-02T03:04:05.000Z')).toBe(
+      '02.01.2025 - 03:04:05 GMT'
+    );
   });
   it('returns N/A for empty', () => {
     expect(formatTimestamp('')).toBe('N/A');
