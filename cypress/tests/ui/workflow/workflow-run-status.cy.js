@@ -60,7 +60,7 @@ describe('Workflow View - Run Status Feature', () => {
       // Assert after action
       cy.wait('@successfulRunStatus');
       cy.get('.run-status-notification__text').should('contain', 'in');
-      cy.get('.run-status-notification__text').should('contain', 's'); // seconds indicator
+      cy.get('.run-status-notification__text').should('contain', '12.73s');
     });
   });
 
