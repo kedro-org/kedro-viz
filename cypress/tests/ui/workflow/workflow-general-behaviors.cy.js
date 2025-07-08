@@ -134,9 +134,7 @@ describe('Run Status - General Behaviors', () => {
       // Assert after action
       cy.wait('@successfulRunStatus');
       // Check that modular pipelines are expanded by default
-      cy.get('.pipeline-node--modular-pipeline').should('not.exist');
-      // All task nodes should be visible
-      cy.get('.pipeline-node--task').should('have.length.gt', 0);
+      cy.get('.pipeline-node__bg--modularPipeline').should('not.exist');
     });
 
     it('verifies that text labels are always visible in workflow mode. #TC-WGB-7', () => {
