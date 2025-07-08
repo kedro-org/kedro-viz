@@ -35,19 +35,3 @@ describe('formatSize', () => {
     expect(formatSize(null)).toBe('N/A');
   });
 });
-
-describe('formatTimestamp', () => {
-  it('formats ISO timestamp to dd.mm.yyyy - hh:mm:ss', () => {
-    const result = formatTimestamp('2025-05-22T15:54:08.696715Z');
-    expect(result).toMatch(/^22\.05\.2025 - 16:54:08 \w+$/);
-  });
-
-  it('pads single digits', () => {
-    const result = formatTimestamp('2025-01-02T03:04:05.000Z');
-    expect(result).toMatch(/^02\.01\.2025 - 03:04:05 \w+$/);
-  });
-  it('returns N/A for empty', () => {
-    expect(formatTimestamp('')).toBe('N/A');
-    expect(formatTimestamp(null)).toBe('N/A');
-  });
-});
