@@ -1,5 +1,4 @@
-import { formatDuration, formatSize, formatTimestamp } from './format';
-import timezoneMock from 'timezone-mock';
+import { formatDuration, formatSize } from './format';
 
 describe('formatDuration', () => {
   it('formats seconds < 60', () => {
