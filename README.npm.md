@@ -70,9 +70,9 @@ const MyApp = () => (
 );
 ```
 
-### Visualizing Run Status data
+### Visualising Run Status data
 
-You can also pass run status data directly to the React component using the `runData` prop. This allows you to visualize pipeline execution results without requiring a local Kedro project setup:
+You can also pass run status data directly to the React component using the `runData` prop. This allows you to visualise pipeline execution results without requiring a local Kedro project setup:
 
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
@@ -214,7 +214,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | Name                       | Type                                                                               | Default                                                  | Description                                                                                                                                                   |
 | -------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `data`                     | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | -                                                        | Pipeline data to be displayed on the chart                                                                                                                    |
-| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Run status data to visualize pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
+| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Run status data to visualise pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
 | `onActionCallback`         | function                                                                           | -                                                        | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);` |
 | options.display            |                                                                                    |                                                          |                                                                                                                                                               |
 | `expandPipelinesBtn`       | boolean                                                                            | true                                                     | Show/Hide expand pipelines button                                                                                                                             |
@@ -229,7 +229,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | `filterBtn`              | boolean                                                                            | false                                                     | Show/Hide filter button and sidebar toggle icon                                                                                                   |
 | options.expandAllPipelines | boolean                                                                            | false                                                    | Expand/Collapse Modular pipelines on first load                                                                                                               |
 | options.behaviour            |                                                                                    |                                                          |                                                                                                                                                               |
-| `reFocus`       | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behavior when clicking on nodes. |
+| `reFocus`                  | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behaviour when clicking on nodes |
 | options.nodeType           | `{disabled: {parameters: boolean,task: boolean,data: boolean}}`                    | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options                                                                                                                           |
 | options.tag                | `{enabled: {<tagName>: boolean}}`                                                  | -                                                        | Configuration for tag options                                                                                                                                 |
 | options.theme              | string                                                                             | dark                                                     | select `Kedro-Viz` theme : dark/light                                                                                                                         |

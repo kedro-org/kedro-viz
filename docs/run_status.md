@@ -1,6 +1,6 @@
 # Run Status tracking in Kedro-Viz
 
-The Run Status feature in Kedro-Viz provides tracking and visualization of your pipeline execution, giving you detailed insights into your workflow's performance and helping you quickly identify and debug issues.
+The Run Status feature in Kedro-Viz provides tracking and visualisation of your pipeline execution, giving you detailed insights into your workflow's performance and helping you quickly identify and debug issues.
 
 ## Overview
 
@@ -32,7 +32,7 @@ This will:
 - Automatically collect execution statistics and timing information
 - Generate run status data in the `.viz/kedro_pipeline_events.json` file
 
-Once the run is complete, you can visualize the results:
+Once the run is complete, you can visualise the results:
 
 ```bash
 kedro viz run
@@ -140,7 +140,7 @@ If run status information isn't updating after a new run:
 
 For large pipelines:
 - Run Status data is stored in JSON format for efficient loading
-- The interface automatically handles large datasets with appropriate performance optimizations
+- The interface automatically handles large datasets with appropriate performance optimisations
 - Historical run data is overwritten with each new execution
 
 ## API endpoint
@@ -206,6 +206,6 @@ The file is automatically created and updated with each pipeline run, providing 
 1. **Regular pipeline runs**: Execute `kedro run` regularly to maintain up-to-date run status information
 2. **Monitor the Workflow view**: Use the Workflow view to quickly identify performance bottlenecks and failures
 3. **Review error details**: Click on failed nodes to see detailed error information in the metadata panel
-4. **Performance optimization**: Use duration information to identify slow-running nodes that may need optimization
+4. **Performance optimisation**: Use duration information to identify slow-running nodes that may need optimisation
 
 The Run Status feature is designed to provide immediate, actionable insights into your pipeline execution, helping you build more reliable and efficient data pipelines. 
