@@ -44,9 +44,21 @@
   max-width: 90%;
 }
 
+// Adjust position when there is no sidebar or meta sidebar
 .run-status-notification--no-sidebar,
 .run-status-notification--with-meta-sidebar {
   left: 35%;
+}
+
+// Notification success bar: wider width due to more text, so adjust position for better centering
+.run-status-notification--success {
+  left: 43%; // Default when sidebar is visible
+}
+
+// shift further left to compensate for the longer width of the message
+.run-status-notification--no-sidebar.run-status-notification--success,
+.run-status-notification--with-meta-sidebar.run-status-notification--success {
+  left: 30%;
 }
 
 // Status section
