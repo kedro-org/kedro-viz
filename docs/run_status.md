@@ -18,7 +18,6 @@ The feature automatically collects execution data during your `kedro run` and pr
 
 - Kedro-Viz must be installed in your environment
 - Your project must be a valid Kedro project
-- Run Status tracking is enabled by default when Kedro-Viz is installed
 
 ### Running a pipeline with Run Status tracking
 
