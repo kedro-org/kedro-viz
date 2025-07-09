@@ -39,6 +39,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 📊 Rich metadata side panel to display parameters, plots, and more.
 - 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
+- 🔍 Run Status tracking to monitor pipeline execution and debug issues
 - 🎩 Many more to come
 
 ## Installation
@@ -68,6 +69,68 @@ const MyApp = () => (
   </div>
 );
 ```
+
+### Visualizing Run Status data
+
+You can also pass run status data directly to the React component using the `runData` prop. This allows you to visualize pipeline execution results without requiring a local Kedro project setup:
+
+```javascript
+import KedroViz from '@quantumblack/kedro-viz';
+import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
+
+const runStatusData = {
+  "nodes": {
+    "69c523b6": {
+      "status": "success",
+      "duration": 0.02171195892151445,
+      "error": null
+    },
+    "ea604da4": {
+      "status": "success", 
+      "duration": 0.031324208015576005,
+      "error": null
+    }
+  },
+  "datasets": {
+    "aed46479": {
+      "name": "companies",
+      "size": 1810602,
+      "status": "success",
+      "error": null
+    },
+    "7b2c6e04": {
+      "name": "reviews", 
+      "size": 2937144,
+      "status": "success",
+      "error": null
+    }
+  },
+  "pipeline": {
+    "run_id": "6d962877-1fdf-4b9a-b953-3377f476d48e",
+    "start_time": "2025-06-18T12.10.44.342274Z",
+    "end_time": "2025-06-18T12.11.09.584093Z", 
+    "duration": 12.730948126059957,
+    "status": "success",
+    "error": null
+  }
+};
+
+const MyApp = () => (
+  <div style={{height: `100vh`}}>
+    <KedroViz
+      data={json}
+      runData={runStatusData}
+      options={options}
+    />
+  </div>
+);
+```
+
+When `runData` is provided:
+- The component will automatically display the **Workflow** view with run status information
+- Nodes will show visual indicators (green for success, red for failure)
+- A run status notification will appear showing pipeline execution results
+- Users can navigate between **Flowchart** and **Workflow** views
 
 To use with NextJS:
 
@@ -151,6 +214,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | Name                       | Type                                                                               | Default                                                  | Description                                                                                                                                                   |
 | -------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `data`                     | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | -                                                        | Pipeline data to be displayed on the chart                                                                                                                    |
+| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Run status data to visualize pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
 | `onActionCallback`         | function                                                                           | -                                                        | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);` |
 | options.display            |                                                                                    |                                                          |                                                                                                                                                               |
 | `expandPipelinesBtn`       | boolean                                                                            | true                                                     | Show/Hide expand pipelines button                                                                                                                             |

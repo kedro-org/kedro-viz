@@ -134,6 +134,7 @@ nav:
           - Extend preview to custom datasets: preview_custom_datasets.md
         - Slice a pipeline: slice_a_pipeline.md
         - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: migrate_experiment_tracking.md
+        - Visualise pipeline run status: run_status.md
     - Other Documentation:
         - Kedro-Viz CLI reference: cli-docs.md
   - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/stable/
