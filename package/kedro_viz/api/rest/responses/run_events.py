@@ -467,9 +467,6 @@ def get_run_status_response() -> RunStatusAPIResponse:
     try:
         kedro_project_path = _find_kedro_project(Path.cwd())
         if not kedro_project_path:
-            logger.warning(
-                "Could not find a Kedro project to load pipeline events file"
-            )
             return RunStatusAPIResponse()
 
         pipeline_events_file_path = PIPELINE_EVENT_FULL_PATH
