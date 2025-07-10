@@ -1,7 +1,6 @@
 import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
-import { runData } from './run-data';
 import './container.scss';
 
 /**
@@ -10,7 +9,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} runData={runData} />
+    <App data={getPipelineData()} />
   </>
 );
 
