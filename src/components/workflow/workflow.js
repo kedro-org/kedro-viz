@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { select } from 'd3-selection';
+import { getHeap } from '../../tracking';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
   toggleSingleModularPipelineExpanded,
@@ -30,6 +32,7 @@ import {
   getDatasetsStatus,
   isRunStatusAvailable,
 } from '../../selectors/run-status';
+import { workFlowStatuses } from '../../config';
 import {
   viewing,
   isOrigin,
@@ -52,6 +55,7 @@ import {
   GraphSVG,
 } from '../draw';
 import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
+import { getNodeStatusKey } from './workflow-utils/getNodeStatusKey';
 
 import ExportModal from '../export-modal';
 import MetaData from '../metadata';
@@ -453,12 +457,31 @@ export class Workflow extends Component {
   };
 
   handleSingleNodeClick = (node) => {
-    const { id } = node;
-    const { displayMetadataPanel, onLoadNodeData, onToggleNodeClicked } =
-      this.props;
+    const { id, type } = node;
+    const {
+      displayMetadataPanel,
+      onLoadNodeData,
+      onToggleNodeClicked,
+      tasksStatus,
+      datasetsStatus,
+    } = this.props;
+
+    // Compute finalStatus for this node
+    let finalStatus;
+    const statusSource = type === 'data' ? datasetsStatus : tasksStatus;
+
+    finalStatus = getNodeStatusKey(statusSource, node, workFlowStatuses);
 
     // Handle metadata panel display or node click toggle
-    displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+    if (displayMetadataPanel) {
+      onLoadNodeData(id);
+      getHeap().track(getDataTestAttribute('workflow', 'run-status--clicked'), {
+        status: finalStatus,
+        nodeId: id,
+      });
+    } else {
+      onToggleNodeClicked(id);
+    }
   };
 
   /**
