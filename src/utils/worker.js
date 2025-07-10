@@ -49,11 +49,11 @@ export const graph = createMockWorker(createWorker);
 /**
  * Prevent worker queue conflicts by ensuring only one worker runs at a time
  */
-export function preventWorkerQueues(worker, getJob) {
+export function preventWorkerQueues(worker) {
   let instance = worker();
   let running = false;
 
-  return async (payload) => {
+  return (payload) => {
     if (running) {
       instance.terminate(); // Kill the previous worker
       instance = worker(); // Create a new worker

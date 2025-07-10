@@ -51,10 +51,6 @@ secret-scan:
 security-scan:
 	bandit -ll -q -r kedro_viz
 
-# GraphQL server
-strawberry-server:
-	strawberry server --app-dir=package kedro_viz.api.graphql.schema --host 127.0.0.1
-
 # Versioning
 version:
 	npm run build:esm
