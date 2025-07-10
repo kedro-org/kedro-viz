@@ -14,15 +14,7 @@ from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
-from kedro.io import DataCatalog  # Old version
-
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
-except ImportError:  # pragma: no cover
-    IS_KEDRODATACATALOG = False
-
+from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -82,13 +74,22 @@ def _load_data_helper(
     Returns:
         A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
+    try:
+        kedro_session = KedroSession.create(
+            project_path=project_path,
+            save_on_close=False,
+            env=env,
+            runtime_params=extra_params,
+        )
+    except TypeError:
+        kedro_session = KedroSession.create(  # type: ignore[call-arg]
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
+        )
 
-    with KedroSession.create(
-        project_path=project_path,
-        env=env,
-        save_on_close=False,
-        extra_params=extra_params,
-    ) as session:
+    with kedro_session as session:
         # check for --include-hooks option
         if not include_hooks:
             session._hook_manager = _VizNullPluginManager()  # type: ignore
@@ -108,9 +109,6 @@ def _load_data_helper(
                 catalog = context.catalog
         else:
             catalog = context.catalog
-
-        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
