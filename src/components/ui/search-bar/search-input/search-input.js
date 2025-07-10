@@ -7,6 +7,7 @@ import './search-input.scss';
 
 const SearchInput = ({
   disabled = false,
+  id,
   label,
   onBlur,
   onChange,
@@ -75,6 +76,7 @@ const SearchInput = ({
         <input
           className="search-input__field"
           disabled={disabled}
+          id={id}
           onBlur={_handleBlurred}
           onChange={_handleChanged}
           onFocus={_handleFocused}
@@ -97,6 +99,10 @@ SearchInput.propTypes = {
    * Whether the input should be editable or not.
    */
   disabled: PropTypes.bool,
+  /**
+   * The id attribute for the input element.
+   */
+  id: PropTypes.string,
   /**
    * Label indicating what should be written in the input.
    */
