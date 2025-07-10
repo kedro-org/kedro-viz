@@ -49,10 +49,10 @@ module.exports = {
             new TerserPlugin({
                 terserOptions: {
                     compress: {
-                        drop_console: true,
+                        drop_console: true, // Removes console logs
                     },
                     output: {
-                        comments: false,
+                        comments: false, // Remove comments
                     },
                 },
             }),
