@@ -467,16 +467,14 @@ export class Workflow extends Component {
     } = this.props;
 
     // Compute finalStatus for this node
-    let finalStatus;
     const statusSource = type === 'data' ? datasetsStatus : tasksStatus;
-
-    finalStatus = getNodeStatusKey(statusSource, node, workFlowStatuses);
+    const runStatus = getNodeStatusKey(statusSource, node, workFlowStatuses);
 
     // Handle metadata panel display or node click toggle
     if (displayMetadataPanel) {
       onLoadNodeData(id);
       getHeap().track(getDataTestAttribute('workflow', 'run-status--clicked'), {
-        status: finalStatus,
+        status: runStatus,
         nodeId: id,
       });
     } else {
