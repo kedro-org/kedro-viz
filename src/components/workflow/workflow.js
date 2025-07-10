@@ -473,10 +473,13 @@ export class Workflow extends Component {
     // Handle metadata panel display or node click toggle
     if (displayMetadataPanel) {
       onLoadNodeData(id);
-      getHeap().track(getDataTestAttribute('workflow', 'run-status--clicked'), {
-        status: runStatus,
-        nodeId: id,
-      });
+      getHeap().track(
+        getDataTestAttribute('workflow', 'run-status--clicked', runStatus),
+        {
+          status: runStatus,
+          nodeId: id,
+        }
+      );
     } else {
       onToggleNodeClicked(id);
     }
