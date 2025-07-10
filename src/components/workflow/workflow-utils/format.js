@@ -26,7 +26,8 @@ export function formatDuration(seconds) {
   const secs = numSeconds - minutes * 60;
   const secsStr = formatNumber(secs);
   if (minutes > 0) {
-    return `${minutes}m ${secsStr}s`;
+    // Only show seconds if there are actual seconds remaining
+    return secs > 0 ? `${minutes}m ${secsStr}s` : `${minutes}m`;
   }
   return `${secsStr}s`;
 }
