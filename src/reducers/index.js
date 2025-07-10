@@ -36,7 +36,6 @@ import { VIEW } from '../config';
 const resetDefaults = {
   shouldExpandAllPipelines: true,
   textLabels: true,
-  orientation: 'vertical',
 };
 
 /**
