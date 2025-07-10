@@ -2,15 +2,15 @@ const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-    mode: 'production',
+    mode: 'production', // Ensures optimizations for production by default
     entry: {
-        'kedro-viz': './src/utils/viz-entry.js',
+        "kedro-viz": './src/utils/viz-entry.js',
     },
     output: {
         path: path.resolve(__dirname, 'esm'),
         filename: '[name].production.mjs',
         library: {
-        type: 'module',
+            type: 'module',
         },
     },
     externalsType: 'module',
@@ -26,13 +26,13 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/, 
+                test: /\.(js|jsx)$/,
                 exclude: [/node_modules/, /(?:\.test\.js|\.spec\.js)$/],
                 use: {
                     loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-env', '@babel/preset-react'],
-                },
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react'],
+                    },
                 },
                 sideEffects: false,
             },
@@ -48,12 +48,12 @@ module.exports = {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                compress: {
-                    drop_console: true,
-                },
-                output: {
-                    comments: false,
-                },
+                    compress: {
+                        drop_console: true,
+                    },
+                    output: {
+                        comments: false,
+                    },
                 },
             }),
         ],
