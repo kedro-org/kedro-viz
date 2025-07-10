@@ -1,5 +1,3 @@
-/* eslint-disable import/no-webpack-loader-syntax */
-
 // Check for test environment
 const isTest = typeof jest !== 'undefined';
 
