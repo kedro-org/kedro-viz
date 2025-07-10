@@ -466,7 +466,7 @@ export class Workflow extends Component {
       datasetsStatus,
     } = this.props;
 
-    // Compute finalStatus for this node
+    // get the runStatus for this node
     const statusSource = type === 'data' ? datasetsStatus : tasksStatus;
     const runStatus = getNodeStatusKey(statusSource, node, workFlowStatuses);
 
