@@ -481,7 +481,7 @@ def get_run_status_response() -> RunStatusAPIResponse:
             try:
                 events = json.load(file)
             except json.JSONDecodeError as exc:
-                logger.error(f"Invalid JSON in run events file: {exc}")
+                logger.error(f"Invalid JSON in run events file '{pipeline_events_file_path}': {exc}")
                 return RunStatusAPIResponse()
 
         return transform_events_to_structured_format(events)

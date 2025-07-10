@@ -7,14 +7,23 @@ export function formatNumber(num) {
         .replace(/\.?0+$/, '');
 }
 
-// Helper to format seconds as Xm Ys
+// Helper to format seconds as Xm Ys or ms for sub-second durations
 export function formatDuration(seconds) {
   if (isNaN(seconds)) {
     return 'N/A';
   }
-  const totalSeconds = Math.floor(Number(seconds));
+
+  const numSeconds = Number(seconds);
+
+  // If duration is less than 1 second, format as milliseconds
+  if (numSeconds < 1) {
+    const milliseconds = Math.round(numSeconds * 1000);
+    return `${milliseconds}ms`;
+  }
+
+  const totalSeconds = Math.floor(numSeconds);
   const minutes = Math.floor(totalSeconds / 60);
-  const secs = Number(seconds) - minutes * 60;
+  const secs = numSeconds - minutes * 60;
   const secsStr = formatNumber(secs);
   if (minutes > 0) {
     return `${minutes}m ${secsStr}s`;
