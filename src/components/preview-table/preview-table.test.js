@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import PreviewTable from './preview-table';
 
 const mockData = {
@@ -12,21 +12,19 @@ const mockData = {
   ],
 };
 
-describe('Preview Table', () => {
+describe('PreviewTable', () => {
   it('renders without crashing', () => {
-    const wrapper = mount(<PreviewTable data={mockData} />);
-
-    expect(wrapper.find('.preview-table').length).toBe(1);
+    const { container } = render(<PreviewTable data={mockData} />);
+    expect(container.querySelector('.preview-table')).toBeInTheDocument();
   });
 
-  it('it should render the correct amount of header and rows', () => {
-    const wrapper = mount(<PreviewTable data={mockData} />);
+  it('renders the correct number of headers and rows', () => {
+    const { container } = render(<PreviewTable data={mockData} />);
 
-    expect(wrapper.find('.preview-table__header').length).toBe(
-      mockData.columns.length
-    );
-    expect(wrapper.find('.preview-table__row').length).toBe(
-      mockData.index.length
-    );
+    const headers = container.querySelectorAll('.preview-table__header');
+    const rows = container.querySelectorAll('.preview-table__row');
+
+    expect(headers.length).toBe(mockData.columns.length);
+    expect(rows.length).toBe(mockData.index.length);
   });
 });

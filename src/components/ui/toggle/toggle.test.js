@@ -1,55 +1,55 @@
 import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
 import Toggle from './toggle';
-import { setup } from '../../../utils/state.mock';
+import '@testing-library/jest-dom';
 
 describe('Toggle', () => {
-  const input = (wrapper) => wrapper.find('.pipeline-toggle-input');
-  const label = (wrapper) => wrapper.find('.pipeline-toggle-label');
+  const renderToggle = (props = {}) => {
+    const defaultProps = {
+      checked: false,
+      enabled: true,
+      onChange: jest.fn(),
+    };
+    return render(<Toggle {...defaultProps} {...props} />);
+  };
 
   it('is checked when checked is true', () => {
-    const wrapper = setup.mount(
-      <Toggle checked={true} onChange={jest.fn()}></Toggle>
-    );
-    expect(input(wrapper).prop('checked')).toBe(true);
-    expect(label(wrapper).hasClass('pipeline-toggle-label--checked')).toBe(
+    const { container } = renderToggle({ checked: true });
+    const input = container.querySelector('.pipeline-toggle-input');
+    const label = container.querySelector('.pipeline-toggle-label');
+    expect(input?.checked).toBe(true);
+    expect(label?.classList.contains('pipeline-toggle-label--checked')).toBe(
       true
     );
   });
 
   it('is not checked when checked is false', () => {
-    const wrapper = setup.mount(
-      <Toggle checked={false} onChange={jest.fn()}></Toggle>
-    );
-    expect(input(wrapper).prop('checked')).toBe(false);
-    expect(label(wrapper).hasClass('pipeline-toggle-label--checked')).toBe(
+    const { container } = renderToggle({ checked: false });
+    const input = container.querySelector('.pipeline-toggle-input');
+    const label = container.querySelector('.pipeline-toggle-label');
+    expect(input?.checked).toBe(false);
+    expect(label?.classList.contains('pipeline-toggle-label--checked')).toBe(
       false
     );
   });
 
   it('is disabled when enabled is false', () => {
-    const wrapper = setup.mount(
-      <Toggle checked={true} enabled={false} onChange={jest.fn()} />
-    );
-    expect(input(wrapper).prop('disabled')).toBe(true);
+    const { container } = renderToggle({ enabled: false });
+    const input = container.querySelector('.pipeline-toggle-input');
+    expect(input?.disabled).toBe(true);
   });
 
   it('is not disabled when enabled is true', () => {
-    const wrapper = setup.mount(
-      <Toggle checked={true} enabled={true} onChange={jest.fn()} />
-    );
-    expect(input(wrapper).prop('disabled')).toBe(false);
+    const { container } = renderToggle({ enabled: true });
+    const input = container.querySelector('.pipeline-toggle-input');
+    expect(input?.disabled).toBe(false);
   });
 
   it('onChange callback fires when input changed', () => {
-    const wrapper = setup.mount(
-      <Toggle checked={true} enabled={true} onChange={jest.fn()} />
-    );
-
-    expect(input(wrapper).prop('checked')).toBe(true);
-
-    // Simulate user changing the input (directly as Enzyme doesn't support it)
-    input(wrapper).prop('onChange')();
-
-    expect(wrapper.find(Toggle).prop('onChange')).toHaveBeenCalled();
+    const onChange = jest.fn();
+    const { container } = renderToggle({ checked: true, onChange });
+    const input = container.querySelector('.pipeline-toggle-input');
+    fireEvent.click(input);
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
 });

@@ -180,7 +180,7 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 > **Note**: Kedro-Viz>=7.0.0 will not work with projects created with Kedro<=0.17.0. Please consider migrating your project to Kedro>=0.18.0 before you develop against the latest version of Kedro-Viz.
 
 
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.9) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/latest/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.9) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
 
 The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
 
@@ -217,7 +217,7 @@ make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 
 ### JavaScript unit and component tests
 
-Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, with [Enzyme](https://enzymejs.github.io/enzyme/) and [Testing-Library](https://testing-library.com/) to mount React components and mock the DOM. You can run tests as follows:
+Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) to mount React components and mock the DOM. You can run tests as follows:
 
 ```bash
 npm test

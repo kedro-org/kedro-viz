@@ -1,16 +1,15 @@
 import React from 'react';
-import { setup } from '../../../utils/state.mock';
-import sinon from 'sinon';
+import { render, fireEvent } from '@testing-library/react';
 import MenuOption from '.';
 
 const mockData = [
   {
     primaryText: 'Test 123',
-    onSelected: sinon.spy(() => {}),
+    onSelected: jest.fn(),
   },
   {
     primaryText: 'Test 456',
-    onSelected: sinon.spy(() => {}),
+    onSelected: jest.fn(),
   },
 ];
 
@@ -23,22 +22,20 @@ mockData.forEach((dataSet, i) => {
     });
 
     it('should contain text', () => {
-      const wrapper = setup.mount(jsx);
-      expect(
-        wrapper.find('.menu-option__content').text() === dataSet.primaryText
-      ).toBeTruthy();
+      const { container } = render(jsx);
+      const content = container.querySelector('.menu-option__content');
 
-      expect(
-        wrapper.find(`.menu-option__content[title="${dataSet.primaryText}"]`)
-          .length === 1
-      ).toBeTruthy();
+      expect(content).not.toBeNull();
+      expect(content?.textContent).toBe(dataSet.primaryText);
+      expect(content?.getAttribute('title')).toBe(dataSet.primaryText);
     });
 
     if (typeof dataSet.onSelected === 'function') {
       it('should fire onSelected event handler when clicked', () => {
-        const wrapper = setup.mount(jsx);
-        wrapper.simulate('click');
-        expect(dataSet.onSelected.called).toBeTruthy();
+        const { container } = render(jsx);
+        const content = container.querySelector('.menu-option__content');
+        fireEvent.click(content);
+        expect(dataSet.onSelected).toHaveBeenCalled();
       });
     }
   });

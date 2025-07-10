@@ -5,11 +5,15 @@ import ConnectedToolbarFilterButton, {
 } from './toolbar-filter-button';
 import { setup } from '../../utils/state.mock';
 import { togglePipelineFilter } from '../../actions';
+import '@testing-library/jest-dom';
+import { screen, fireEvent } from '@testing-library/react';
 
 describe('ToolbarFilterButton', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ConnectedToolbarFilterButton />);
-    expect(wrapper.find('.pipeline-toolbar--filter-container').length).toBe(1);
+    setup.render(<ConnectedToolbarFilterButton />);
+    expect(
+      document.querySelector('.pipeline-toolbar--filter-container')
+    ).toBeInTheDocument();
   });
 
   it('renders filter button and divider', () => {
@@ -17,9 +21,13 @@ describe('ToolbarFilterButton', () => {
       displayFilterBtn: true,
       onTogglePipelineFilter: jest.fn(),
     };
-    const wrapper = setup.mount(<ToolbarFilterButton {...props} />);
-    expect(wrapper.find('IconButton').length).toBe(1);
-    expect(wrapper.find('hr.pipeline-toolbar--divider').length).toBe(1);
+    setup.render(<ToolbarFilterButton {...props} />);
+    expect(
+      document.querySelectorAll('.pipeline-icon-toolbar__button').length
+    ).toBe(1);
+    expect(
+      document.querySelectorAll('hr.pipeline-toolbar--divider').length
+    ).toBe(1);
   });
 
   it('does not render filter button when displayFilterBtn is false', () => {
@@ -27,9 +35,9 @@ describe('ToolbarFilterButton', () => {
       displayFilterBtn: false,
       onTogglePipelineFilter: jest.fn(),
     };
-    const wrapper = setup.mount(<ToolbarFilterButton {...props} />);
-    // The container will render but the button should not be visible
-    expect(wrapper.find('IconButton').prop('visible')).toBe(false);
+    setup.render(<ToolbarFilterButton {...props} />);
+    const iconButton = document.querySelector('.pipeline-icon-toolbar__button');
+    expect(iconButton).toBeNull(); // should not be visible
   });
 
   it('calls onTogglePipelineFilter function on button click', () => {
@@ -38,10 +46,10 @@ describe('ToolbarFilterButton', () => {
       displayFilterBtn: true,
       onTogglePipelineFilter: mockFn,
     };
-    const wrapper = setup.mount(<ToolbarFilterButton {...props} />);
-    expect(mockFn.mock.calls.length).toBe(0);
-    wrapper.find('button').simulate('click');
-    expect(mockFn.mock.calls.length).toBe(1);
+    setup.render(<ToolbarFilterButton {...props} />);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 
   it('maps state to props', () => {
@@ -66,7 +74,7 @@ describe('ToolbarFilterButton', () => {
     it('onTogglePipelineFilter', () => {
       const dispatch = jest.fn();
       mapDispatchToProps(dispatch).onTogglePipelineFilter();
-      expect(dispatch.mock.calls[0][0]).toEqual(togglePipelineFilter());
+      expect(dispatch).toHaveBeenCalledWith(togglePipelineFilter());
     });
   });
 });

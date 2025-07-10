@@ -19,6 +19,7 @@ import {
 import { getNodeTypes } from '../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../selectors/tags';
 import { sidebarElementTypes } from '../config';
+import IndicatorPartialIcon from '../components/icons/indicator-partial';
 
 const ungroupNodes = (groupedNodes) =>
   Object.keys(groupedNodes).reduce(
@@ -267,7 +268,7 @@ describe('node-list-selectors', () => {
       ),
     });
 
-    const groups = getGroups({ nodeTypes, items });
+    const groups = getGroups({ items });
 
     const groupType = expect.objectContaining({
       id: expect.any(String),
@@ -288,6 +289,19 @@ describe('node-list-selectors', () => {
           tag: groupType,
         })
       );
+    });
+
+    it('uses IndicatorPartialIcon when no items in a group are checked', () => {
+      // Build a custom items object where no tags are checked
+      const noneCheckedItems = {
+        tag: [
+          { id: 'features', name: 'Features', checked: false },
+          { id: 'preprocessing', name: 'Preprocessing', checked: false },
+        ],
+        elementType: items.elementType,
+      };
+      const noneCheckedGroups = getGroups({ items: noneCheckedItems });
+      expect(noneCheckedGroups.tag.visibleIcon).toBe(IndicatorPartialIcon);
     });
   });
 

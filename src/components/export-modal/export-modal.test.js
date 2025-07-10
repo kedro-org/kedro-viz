@@ -1,26 +1,33 @@
 import React from 'react';
 import ExportModal, { mapStateToProps } from './export-modal';
-import { mockState, setup } from '../../utils/state.mock';
+import { mockState, setup, prepareState } from '../../utils/state.mock';
 import { toggleExportModal } from '../../actions';
+import spaceflights from '../../utils/data/spaceflights.mock.json';
 
 describe('ExportModal', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ExportModal />);
-    expect(wrapper.find('.pipeline-export-modal').length).toBe(1);
+    setup.render(<ExportModal />);
+    expect(
+      document.querySelector('.pipeline-export-modal')
+    ).toBeInTheDocument();
   });
 
-  it('modal closes when X button is clicked', () => {
-    const mount = () => {
-      return setup.mount(<ExportModal />, {
-        afterLayoutActions: [() => toggleExportModal(true)],
-      });
-    };
-    const wrapper = mount();
-    expect(wrapper.find('.modal__content--visible').length).toBe(1);
+  it('modal shows when visible is true (afterLayoutAction)', () => {
+    const state = prepareState({
+      data: spaceflights,
+      afterLayoutActions: [() => toggleExportModal(true)],
+    });
+    const { container } = setup.render(<ExportModal />, {
+      state,
+    });
+    expect(
+      container.querySelector('.modal__content--visible')
+    ).toBeInTheDocument();
   });
 
   it('maps state to props', () => {
-    const expectedResult = {
+    const result = mapStateToProps(mockState.spaceflights);
+    expect(result).toEqual({
       graphSize: expect.objectContaining({
         height: expect.any(Number),
         width: expect.any(Number),
@@ -32,7 +39,6 @@ describe('ExportModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
-    };
-    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
+    });
   });
 });

@@ -1,4 +1,5 @@
 import React from 'react';
+import { fireEvent } from '@testing-library/react';
 import ConnectedMiniMapToolbar, {
   MiniMapToolbar,
   mapStateToProps,
@@ -8,8 +9,11 @@ import { mockState, setup } from '../../utils/state.mock';
 
 describe('MiniMapToolbar', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<ConnectedMiniMapToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
+    const { container } = setup.render(<ConnectedMiniMapToolbar />);
+    const buttons = container.querySelectorAll(
+      '.pipeline-icon-toolbar__button'
+    );
+    expect(buttons.length).toBe(4);
   });
 
   const functionCalls = [
@@ -29,21 +33,30 @@ describe('MiniMapToolbar', () => {
         visible: { miniMap: false },
         [callback]: mockFn,
       };
-      const wrapper = setup.mount(<MiniMapToolbar {...props} />);
-      expect(mockFn.mock.calls.length).toBe(0);
-      wrapper.find(selector).find('button').simulate('click');
-      expect(mockFn.mock.calls.length).toBe(1);
+
+      const { container } = setup.render(<MiniMapToolbar {...props} />);
+      const buttonWrapper = container.querySelector(selector);
+      expect(buttonWrapper).not.toBeNull();
+
+      const button =
+        buttonWrapper.querySelector('button') ??
+        buttonWrapper.closest('button') ??
+        buttonWrapper;
+
+      fireEvent.click(button);
+      expect(mockFn).toHaveBeenCalledTimes(1);
     }
   );
 
-  it('does not display the toggle minimap button if displayMinimap is false', () => {
+  it('does not display the toggle minimap button if displayMiniMap is false', () => {
     const props = {
       chartZoom: { scale: 1, minScale: 0.5, maxScale: 1.5 },
       displayMiniMap: false,
       visible: { miniMap: false },
     };
-    const wrapper = setup.mount(<MiniMapToolbar {...props} />);
-    expect(wrapper.find('.pipeline-minimap-button--map').length).toBe(0);
+
+    const { container } = setup.render(<MiniMapToolbar {...props} />);
+    expect(container.querySelector('.pipeline-minimap-button--map')).toBeNull();
   });
 
   it('maps state to props', () => {
@@ -60,10 +73,17 @@ describe('MiniMapToolbar', () => {
 
   it('mapDispatchToProps', () => {
     const dispatch = jest.fn();
-    const expectedResult = {
+    const result = mapDispatchToProps(dispatch);
+
+    expect(result).toEqual({
       onToggleMiniMap: expect.any(Function),
       onUpdateChartZoom: expect.any(Function),
-    };
-    expect(mapDispatchToProps(dispatch)).toEqual(expectedResult);
+    });
+
+    result.onUpdateChartZoom({ scale: 1 });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'UPDATE_ZOOM',
+      zoom: { scale: 1 },
+    });
   });
 });

@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { SearchList, mapStateToProps } from './search-list';
-import { mockState, setup } from '../../utils/state.mock';
+import { mockState } from '../../utils/state.mock';
 
 describe('SearchList', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.shallow(SearchList);
-    const search = wrapper.find('.pipeline-search-list');
-    expect(search.length).toBe(1);
+    const { container } = render(<SearchList />);
+    expect(
+      container.querySelector('.pipeline-search-list')
+    ).toBeInTheDocument();
   });
 
   it('clears & blurs search bar on pressing escape key', async () => {

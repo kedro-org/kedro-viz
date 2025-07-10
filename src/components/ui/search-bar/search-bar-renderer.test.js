@@ -1,26 +1,35 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import SearchBarRenderer from './search-bar-renderer';
 
-test('SearchBarRenderer should be a function', () => {
-  expect(typeof SearchBarRenderer).toBe('function');
-});
+describe('SearchBarRenderer', () => {
+  it('should be a function', () => {
+    expect(typeof SearchBarRenderer).toBe('function');
+  });
 
-test('SearchBarRenderer should render correct structure', () => {
-  const wrapper = shallow(
-    <SearchBarRenderer
-      placeholder="hello world"
-      isFocused={true}
-      onBlur={() => {}}
-      onChange={() => {}}
-      onClear={() => {}}
-      onFocus={() => {}}
-      showClearButton={true}
-      theme="dark"
-      value="hello world"
-    />
-  );
+  it('should render correct structure', () => {
+    const { container } = render(
+      <SearchBarRenderer
+        placeholder="hello world"
+        isFocused={true}
+        onBlur={() => {}}
+        onChange={() => {}}
+        onClear={() => {}}
+        onFocus={() => {}}
+        showClearButton={true}
+        theme="dark"
+        value="hello world"
+      />
+    );
 
-  expect(wrapper.find('SearchIcon')).toHaveLength(1);
-  expect(wrapper.find('CloseIcon')).toHaveLength(1);
+    const searchIcon = container.querySelector(
+      '.search-bar__icon-wrapper .icon'
+    );
+    const closeIcon = container.querySelector(
+      '.search-bar__dynamic-icon .icon'
+    );
+
+    expect(searchIcon).toBeInTheDocument();
+    expect(closeIcon).toBeInTheDocument();
+  });
 });

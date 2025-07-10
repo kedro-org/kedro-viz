@@ -1,24 +1,24 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import FiltersRow from './filters-row';
 
 describe('FiltersRow Component', () => {
   it('renders without crashing', () => {
-    const wrapper = mount(<FiltersRow container={'div'} />);
-    expect(wrapper.exists()).toBe(true);
+    const { container } = render(<FiltersRow container="div" />);
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it('renders correct visible classnames', () => {
-    const wrapper = mount(<FiltersRow container={'div'} visible={true} />);
-    expect(wrapper.find('.filter-row').hasClass('filter-row--visible')).toBe(
-      true
-    );
+    const { container } = render(<FiltersRow container="div" visible={true} />);
+    const row = container.querySelector('.filter-row');
+    expect(row).toHaveClass('filter-row--visible');
   });
 
   it('renders correct unchecked classnames', () => {
-    const wrapper = mount(<FiltersRow container={'div'} checked={false} />);
-    expect(wrapper.find('.filter-row').hasClass('filter-row--unchecked')).toBe(
-      true
+    const { container } = render(
+      <FiltersRow container="div" checked={false} />
     );
+    const row = container.querySelector('.filter-row');
+    expect(row).toHaveClass('filter-row--unchecked');
   });
 });

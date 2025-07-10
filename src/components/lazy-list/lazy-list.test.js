@@ -1,72 +1,119 @@
 import React from 'react';
+import { render, screen } from '@testing-library/react';
 import LazyList, {
   range,
   rangeUnion,
   rangeEqual,
   thresholds,
 } from './lazy-list';
-import { setup } from '../../utils/state.mock';
+import '@testing-library/jest-dom';
+
+// Constants for rendering test
+const itemCount = 500;
+const itemHeight = 30;
+const visibleStart = 10;
+const visibleEnd = 40;
+const visibleCount = visibleEnd - visibleStart;
+const viewportHeight = itemHeight * visibleCount;
+const containerHeight = viewportHeight * 2;
+const containerScrollY = itemHeight * visibleStart * 0.5;
+const viewportScrollY = containerScrollY;
+const itemWidth = itemHeight * 5;
+
+const items = Array.from({ length: itemCount }, (_, i) => i);
+const itemHeights = (start, end) => (end - start) * itemHeight;
+
+const listRender = ({
+  start,
+  end,
+  listRef,
+  upperRef,
+  lowerRef,
+  listStyle,
+  upperStyle,
+  lowerStyle,
+}) => (
+  <div
+    style={{
+      overflowY: 'scroll',
+      height: containerHeight,
+      width: itemWidth,
+    }}
+  >
+    <ul
+      className="test-list"
+      ref={listRef}
+      style={{ ...listStyle, width: itemWidth }}
+    >
+      <li ref={upperRef} style={upperStyle} />
+      <li ref={lowerRef} style={lowerStyle} />
+      {items.slice(start, end).map((i) => (
+        <li key={i} className="test-item">
+          Item {i}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+beforeAll(() => {
+  window.innerHeight = viewportHeight;
+  window.requestAnimationFrame = (callback) => callback(0);
+  window.IntersectionObserver = function (onIntersect) {
+    return {
+      observe: () => onIntersect(),
+      disconnect: () => {},
+    };
+  };
+  Element.prototype.getBoundingClientRect = function () {
+    const width = parseInt(this.style?.width) || 0;
+    const height = parseInt(this.style?.height) || 0;
+    const offsetY = -viewportScrollY - containerScrollY;
+    return {
+      x: 0,
+      y: offsetY,
+      top: offsetY,
+      bottom: offsetY + height,
+      left: 0,
+      right: width,
+      width,
+      height,
+    };
+  };
+});
 
 describe('LazyList', () => {
   it('renders expected visible child items with padding for non-visible items', () => {
-    // Settings for all test items
-    const itemCount = 500;
-    const itemHeight = 30;
-
-    // The specific range of items to make visible in this test
-    const visibleStart = 10;
-    const visibleEnd = 40;
-    const visibleCount = visibleEnd - visibleStart;
-
-    // Configure test to include some clipping and scroll conditions
-    const test = setupTest({
-      itemCount,
-      itemHeight,
-      visibleCount,
-      // Viewport to fit exactly desired number of visible items
-      viewportHeight: itemHeight * visibleCount,
-      // Container larger than viewport to test clipping
-      containerHeight: itemHeight * visibleCount * 2,
-      // Container scrolled half way to desired start item to test
-      containerScrollY: itemHeight * visibleStart * 0.5,
-      // Viewport scrolled remaining half way to desired start item
-      viewportScrollY: itemHeight * visibleStart * 0.5,
-    });
-
-    const wrapper = setup.mount(
+    render(
       <LazyList
         buffer={0}
         dispose={true}
-        height={test.itemHeights}
-        total={test.items.length}
-        container={(element) => element?.parentElement}
+        height={itemHeights}
+        total={items.length}
+        container={(el) => el?.parentElement}
       >
-        {test.listRender}
+        {listRender}
       </LazyList>
     );
 
-    // Generate expected items text for visible range
-    const expectedItemsText = Array.from(
+    const expectedItems = Array.from(
       { length: visibleCount },
       (_, i) => `Item ${visibleStart + i}`
     );
 
-    // Get actual rendered items text
-    const actualItemsText = wrapper
-      .find('.test-item')
-      .map((element) => element.text());
+    const renderedItems = screen
+      .getAllByText(/Item \d+/)
+      .map((el) => el.textContent);
 
-    // Test the items are exactly as expected
-    expect(actualItemsText).toEqual(expectedItemsText);
+    expect(renderedItems).toEqual(expectedItems);
+    expect(renderedItems.length).toBe(visibleCount);
+    expect(renderedItems.length).toBeLessThan(itemCount);
 
-    // Sanity check that not all items were rendered
-    expect(actualItemsText.length).toBe(visibleCount);
-    expect(actualItemsText.length).toBeLessThan(itemCount);
+    const listElement = document.querySelector('.test-list');
+    const computedStyle = getComputedStyle(listElement);
 
-    // Test element pads the remaining non-visible items
-    const listElementStyle = wrapper.find('.test-list').get(0).props.style;
-    expect(listElementStyle.paddingTop).toBe(visibleStart * itemHeight);
-    expect(listElementStyle.height).toBe(itemCount * itemHeight);
+    expect(parseInt(computedStyle.paddingTop)).toBe(visibleStart * itemHeight);
+    expect(parseInt(computedStyle.height)).toBe(itemCount * itemHeight);
   });
 
   it('range(from, to, min, max) returns [max(from, min), min(to, max)]', () => {
@@ -97,117 +144,3 @@ describe('LazyList', () => {
     expect(thresholds(4)).toEqual([0, 1 / 4, 2 / 4, 3 / 4, 1]);
   });
 });
-
-// Sets up the test data and environment
-const setupTest = ({
-  itemCount,
-  itemHeight,
-  visibleCount,
-  viewportHeight,
-  viewportScrollY,
-  containerHeight,
-  containerScrollY,
-}) => {
-  // Generate test data and settings
-  const items = Array.from({ length: itemCount }, (_, i) => i);
-  const itemHeights = (start, end) => (end - start) * itemHeight;
-  const itemWidth = itemHeight * 5;
-  const containerWidth = itemWidth;
-  const listWidth = itemWidth;
-
-  // List render function
-  const listRender = ({
-    start,
-    end,
-    listRef,
-    upperRef,
-    lowerRef,
-    listStyle,
-    upperStyle,
-    lowerStyle,
-  }) => (
-    <>
-      {/* Scroll container */}
-      <div
-        style={{
-          overflowY: 'scroll',
-          height: containerHeight,
-          width: containerWidth,
-        }}
-      >
-        {/* List container */}
-        <ul
-          className="test-list"
-          ref={listRef}
-          style={{ ...listStyle, width: listWidth }}
-        >
-          {/* Upper placeholder */}
-          <li ref={upperRef} style={upperStyle} />
-          {/* Lower placeholder */}
-          <li ref={lowerRef} style={lowerStyle} />
-          {/* List items in visible range */}
-          {items.slice(start, end).map((i) => (
-            <li key={i} className="test-item">
-              Item {i}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
-
-  // Emulate the browser window viewport height
-  window.innerHeight = viewportHeight;
-
-  // Emulate RAF with immediate callback
-  window.requestAnimationFrame = (callback) => callback(0);
-
-  // Emulate IntersectionObserver with immediate callback
-  window.IntersectionObserver = function (callback) {
-    return {
-      observe: () => callback(),
-      disconnect: () => null,
-    };
-  };
-
-  // Gets the React instance for a React node
-  const getInstance = (node) => {
-    const key = Object.keys(node).find((key) => key.startsWith('__reactFiber'));
-    return node[key];
-  };
-
-  // Emulate element bounds as if rendered
-  window.Element.prototype.getBoundingClientRect = function () {
-    const instance = getInstance(this);
-
-    // Check which element this is (list or container)
-    const isList = instance?.type === 'ul';
-
-    // Set by `style` in `listRender`
-    const width = Number.parseInt(this.style.width) || 0;
-    const height = Number.parseInt(this.style.height) || 0;
-
-    // Find offset for viewport scroll and container scroll
-    const offsetY = -viewportScrollY - (isList ? containerScrollY : 0);
-
-    // Return bounds in screen space as expected
-    return {
-      x: 0,
-      y: offsetY,
-      top: offsetY,
-      bottom: offsetY + height,
-      left: 0,
-      right: width,
-      width: width,
-      height: height,
-    };
-  };
-
-  // Return the test setup
-  return {
-    items,
-    visibleCount,
-    itemHeights,
-    listRender,
-  };
-};

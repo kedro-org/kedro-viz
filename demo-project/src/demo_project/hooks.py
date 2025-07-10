@@ -11,7 +11,7 @@ class TimingHooks:
     """
     This class is designed to highlight how hooks can be added
     to the lifecycle of a Kedro run. You can read more here:
-    https://kedro.readthedocs.io/en/latest/07_extend_kedro/02_hooks.html
+    https://docs.kedro.org/en/stable/hooks/
     """
 
     def __init__(self) -> None:

@@ -1,78 +1,66 @@
 import React from 'react';
-import { shallow, configure, mount } from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
-
+import { render, screen, fireEvent } from '@testing-library/react';
 import SearchInput from './search-input';
 
-configure({ adapter: new Adapter() });
+describe('SearchInput', () => {
+  it('should be a function', () => {
+    expect(typeof SearchInput).toBe('function');
+  });
 
-test('SearchInput should be a function', () => {
-  expect(typeof SearchInput).toBe('function');
-});
+  it('should include only one input field', () => {
+    render(<SearchInput />);
+    const inputs = screen.getAllByRole('textbox');
+    expect(inputs).toHaveLength(1);
+  });
 
-test('SearchInput should include only one input field', () => {
-  const wrapper = shallow(<SearchInput />);
+  it('should correctly render the value', () => {
+    const valueText = 'Value of input!';
+    render(<SearchInput value={valueText} onChange={() => {}} />);
+    expect(screen.getByDisplayValue(valueText)).toBeInTheDocument();
+  });
 
-  expect(wrapper.find('input').length === 1).toBeTruthy();
-});
+  it('should be disabled when passed disabled=true', () => {
+    render(<SearchInput disabled={true} />);
+    expect(screen.getByRole('textbox')).toBeDisabled();
+  });
 
-test('SearchInput should correctly render the value', () => {
-  const valueText = 'Value of input!';
-  const wrapper = shallow(<SearchInput value={valueText} />);
+  it('should have light theme class', () => {
+    const { container } = render(<SearchInput theme="light" />);
+    expect(container.querySelector('.search-theme--light')).toBeInTheDocument();
+  });
 
-  wrapper.find('input').html().includes(`value="${valueText}"`);
-});
+  it('should have dark theme class (default)', () => {
+    const { container } = render(<SearchInput theme="dark" />);
+    expect(container.querySelector('.search-theme--dark')).toBeInTheDocument();
+  });
 
-test('SearchInput should correctly be disabled', () => {
-  const wrapper = shallow(<SearchInput disabled={true} />);
+  it('should trigger onFocus correctly and add focus class', () => {
+    const onFocus = jest.fn();
+    const { container } = render(<SearchInput onFocus={onFocus} />);
+    const input = screen.getByRole('textbox');
 
-  wrapper.find('input').html().includes('disabled');
-});
+    fireEvent.focus(input);
 
-test('SearchInput should correctly have light theme class', () => {
-  const wrapper = shallow(<SearchInput theme="light" />);
+    expect(onFocus).toHaveBeenCalled();
+    expect(container.querySelector('.search-input')).toHaveClass(
+      'search-input--focused'
+    );
+  });
 
-  expect(wrapper.find('.search-theme--light').length === 1).toBeTruthy();
-});
+  it('should trigger onBlur correctly', () => {
+    const onBlur = jest.fn();
+    render(<SearchInput onBlur={onBlur} />);
+    fireEvent.blur(screen.getByRole('textbox'));
+    expect(onBlur).toHaveBeenCalled();
+  });
 
-test('SearchInput should correctly have dark theme class', () => {
-  // dark theme is default, so it should be automatically assigned
-  const wrapper = shallow(<SearchInput theme="dark" />);
+  it('should trigger onChange correctly and update the value', () => {
+    const onChange = jest.fn();
+    render(<SearchInput value="initial" onChange={onChange} />);
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { name: 'TestName', value: 'new value' },
+    });
 
-  expect(wrapper.find('.search-theme--dark').length === 1).toBeTruthy();
-});
-
-test('It should trigger onFocus correctly', () => {
-  const callback = jest.fn();
-
-  const wrapper = mount(<SearchInput onFocus={callback} />);
-
-  wrapper.find('input').simulate('focus');
-
-  expect(callback).toHaveBeenCalled();
-  expect(wrapper.find('.search-input').hasClass('search-input--focused'));
-});
-
-test('It should trigger onBlur correctly', () => {
-  const callback = jest.fn();
-
-  const wrapper = mount(<SearchInput onBlur={callback} />);
-
-  wrapper.find('input').simulate('blur');
-
-  expect(callback).toHaveBeenCalled();
-});
-
-test('It should trigger onChange correctly', () => {
-  const callback = jest.fn();
-
-  const wrapper = mount(<SearchInput onChange={callback} />);
-  const event = { target: { name: 'TestName', value: 'new value' } };
-
-  wrapper.find('input').simulate('change', event);
-
-  expect(callback).toHaveBeenCalled();
-  expect(wrapper.find('.search-input__field').props().value).toEqual(
-    'new value'
-  );
+    expect(onChange).toHaveBeenCalled();
+  });
 });
