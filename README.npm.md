@@ -4,7 +4,7 @@
 <p align="center">
 
 ![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/docs/run-status/.github/img/banner.gif)
-<!-- TODO:Update banner url to main branch be we merge -->
+<!-- TODO:Update banner url to main branch before we merge -->
 </p>
 
 <p align="center">
