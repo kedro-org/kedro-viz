@@ -21,41 +21,41 @@ module.exports = {
         outputModule: true,
     },
     resolve: {
-        extensions: ['.js', '.jsx'], // ✅ Allow .jsx resolution
+        extensions: ['.js', '.jsx'], 
     },
     module: {
         rules: [
-        {
-            test: /\.(js|jsx)$/, // ✅ Updated to include .jsx
-            exclude: [/node_modules/, /(?:\.test\.js|\.spec\.js)$/],
-            use: {
-            loader: 'babel-loader',
-            options: {
-                presets: ['@babel/preset-env', '@babel/preset-react'],
+            {
+                test: /\.(js|jsx)$/, 
+                exclude: [/node_modules/, /(?:\.test\.js|\.spec\.js)$/],
+                use: {
+                    loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-env', '@babel/preset-react'],
+                },
+                },
+                sideEffects: false,
             },
+            {
+                test: /\.scss$/,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+                sideEffects: true,
             },
-            sideEffects: false,
-        },
-        {
-            test: /\.scss$/,
-            use: ['style-loader', 'css-loader', 'sass-loader'],
-            sideEffects: true,
-        },
         ],
     },
     optimization: {
         minimize: true,
         minimizer: [
-        new TerserPlugin({
-            terserOptions: {
-            compress: {
-                drop_console: true,
-            },
-            output: {
-                comments: false,
-            },
-            },
-        }),
+            new TerserPlugin({
+                terserOptions: {
+                compress: {
+                    drop_console: true,
+                },
+                output: {
+                    comments: false,
+                },
+                },
+            }),
         ],
     },
-    };
+};
