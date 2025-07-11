@@ -39,7 +39,7 @@ The next step is optional, but useful to check that all is working. Run the full
 kedro run
 ```
 
-This will execute your pipeline and automatically generate run status data that tracks execution performance, timing, and any errors.
+This will execute your pipeline and automatically generate run data that tracks execution performance, timing, and any errors.
 
 To start Kedro-Viz, type the following into your terminal from the project directory:
 

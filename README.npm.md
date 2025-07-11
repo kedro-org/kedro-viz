@@ -130,7 +130,6 @@ When `runData` is provided:
 - The component will automatically display the **Workflow** view with pipeline run information
 - Nodes will show visual indicators (green for success, red for failure)
 - A notification will appear showing pipeline execution results
-- Users can navigate between **Flowchart** and **Workflow** views
 
 To use with NextJS:
 
