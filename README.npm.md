@@ -39,7 +39,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 📊 Rich metadata side panel to display parameters, plots, and more.
 - 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
-- 🔍 Run Status tracking to monitor pipeline execution and debug issues
+- 🔍 Visualise and inspect your kedro run to debug pipeline execution.
 - 🎩 Many more to come
 
 ## Installation
@@ -70,7 +70,7 @@ const MyApp = () => (
 );
 ```
 
-### Visualising Run Status data
+### Visualise and inspect your `kedro run`
 
 You can also pass run status data directly to the React component using the `runData` prop. This allows you to visualise pipeline execution results without requiring a local Kedro project setup:
 
