@@ -20,8 +20,8 @@ This data is automatically collected when you run your pipeline with Kedro and d
 
 ### Prerequisites
 
-- Kedro-Viz must be installed in your environment
-- Your project must be a valid Kedro project
+- Kedro-Viz must be installed in your environment (Kedro-Viz > 12.0.0)
+- Your project must be a valid Kedro project (Kedro > 1.0.0)
 
 ### Create a new project
 
