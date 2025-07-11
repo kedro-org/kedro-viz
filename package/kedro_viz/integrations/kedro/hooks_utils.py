@@ -116,6 +116,7 @@ def write_events_to_file(
     path = project_path / events_dir / events_file
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(events_json, encoding="utf8")
+    logger.info("Pipeline run events written to %s", path)
 
 
 def generate_timestamp() -> str:
