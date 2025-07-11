@@ -40,6 +40,7 @@ const NodesPanel = ({ visible, faded }) => {
     handleNodeListRowClicked,
     handleToggleHoveredFocusMode,
     isSlicingPipelineApplied,
+    isWorkflowView,
     modularPipelinesTree,
     selectedNodes,
     slicedPipeline,
@@ -95,6 +96,7 @@ const NodesPanel = ({ visible, faded }) => {
                       modularPipelinesSearchResult={
                         modularPipelinesSearchResult
                       }
+                      isWorkflowView={isWorkflowView}
                       modularPipelinesTree={modularPipelinesTree}
                       nodeSelected={selectedNodes}
                       onItemChange={handleNodeListRowChanged}

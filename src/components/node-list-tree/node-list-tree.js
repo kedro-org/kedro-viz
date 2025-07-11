@@ -111,6 +111,7 @@ const TreeListProvider = ({
   onToggleNodeSelected,
   slicedPipeline,
   isSlicingPipelineApplied,
+  isWorkflowView,
   nodesDisabledViaModularPipeline,
 }) => {
   // render a leaf node in the modular pipelines tree
@@ -245,7 +246,7 @@ const TreeListProvider = ({
       expanded={expanded}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      onNodeToggle={onItemExpandCollapseToggle}
+      onNodeToggle={isWorkflowView ? null : onItemExpandCollapseToggle} // only allow expanding/collapsing in the default flowchart view
       key="modularPipelinesTree"
     >
       {renderTree(modularPipelinesTree, '__root__')}
