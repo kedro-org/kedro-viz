@@ -72,7 +72,7 @@ const MyApp = () => (
 
 ### Visualise and inspect your `kedro run`
 
-You can also pass run status data directly to the React component using the `runData` prop. This allows you to visualise pipeline execution results without requiring a local Kedro project setup:
+You can also pass pipeline run data directly to the React component using the `runData` prop. This allows you to visualise pipeline execution results without requiring a local Kedro project setup:
 
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
@@ -127,9 +127,9 @@ const MyApp = () => (
 ```
 
 When `runData` is provided:
-- The component will automatically display the **Workflow** view with run status information
+- The component will automatically display the **Workflow** view with pipeline run information
 - Nodes will show visual indicators (green for success, red for failure)
-- A run status notification will appear showing pipeline execution results
+- A notification will appear showing pipeline execution results
 - Users can navigate between **Flowchart** and **Workflow** views
 
 To use with NextJS:
@@ -214,7 +214,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | Name                       | Type                                                                               | Default                                                  | Description                                                                                                                                                   |
 | -------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `data`                     | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | -                                                        | Pipeline data to be displayed on the chart                                                                                                                    |
-| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Run status data to visualise pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
+| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Pipeline run data to visualise pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
 | `onActionCallback`         | function                                                                           | -                                                        | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);` |
 | options.display            |                                                                                    |                                                          |                                                                                                                                                               |
 | `expandPipelinesBtn`       | boolean                                                                            | true                                                     | Show/Hide expand pipelines button                                                                                                                             |
