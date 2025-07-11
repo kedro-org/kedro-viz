@@ -302,7 +302,7 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ### `NotebookVisualizer`
 
-From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not require a full Kedro project to visualise your pipelines, making it useful for pipeline exploration. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
+From Kedro-Viz 11.0.0, you can visualize Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not require a full Kedro project to visualize your pipelines, making it useful for pipeline exploration. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
 
 #### Usage
 
@@ -375,7 +375,7 @@ For more information on how to use Kedro as a React component with all possible 
 
 ## Kedro-Viz in Visual Studio Code Extension
 
-To visualise Kedro project using Kedro-Viz in Visual Studio Code, follow these steps:
+To visualize Kedro project using Kedro-Viz in Visual Studio Code, follow these steps:
 
 1. **Install Kedro Extension**:
 Download Kedro extension from [marketplace](https://marketplace.visualstudio.com/items?itemName=kedro.Kedro) into Visual Studio Code.
