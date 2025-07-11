@@ -27,6 +27,9 @@ To generate run status data, simply execute your pipeline using the standard Ked
 kedro run
 ```
 
+!!! warning
+    Run Status tracking is currently only available for full pipeline runs using `kedro run`. Partial pipeline runs (using `--from-nodes`, `--to-nodes`, `--tags`, `--pipeline`, etc.) are not supported and will not generate run status data.
+
 This will:
 - Execute your pipeline normally
 - Automatically collect execution statistics and timing information
@@ -39,6 +42,8 @@ kedro viz run
 ```
 
 Navigate to the **Workflow** view to see your run status information.
+
+![](./images/pipeline_visualisation.png)
 
 ## Understanding the Workflow view
 
@@ -80,7 +85,7 @@ When a node fails during execution, you'll see red indicators on the failed node
 
 When a required dataset is missing, the pipeline fails early and shows specific dataset error information.
 
-!!! info
+!!! warning
     Currently, Run Status tracking is available for **full pipeline runs only**. Partial pipeline runs (using `--from-nodes`, `--to-nodes`, `--tags`, etc.) are not tracked in the current version.
 
 The following run commands are supported:

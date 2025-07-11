@@ -369,7 +369,10 @@ import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
 const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} runData={runStatusData} options={options} /></div>;
-``` 
+```
+
+!!! info
+    `runData` is our latest feature to see and debug your pipeline status/health, and it's optional.    
 
 For more information on how to use Kedro as a React component with all possible props, see [Kedro-Viz on NPM](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 
