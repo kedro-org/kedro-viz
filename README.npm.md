@@ -3,8 +3,7 @@
 <br />
 <p align="center">
 
-![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.png)
-
+![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.gif)
 </p>
 
 <p align="center">
@@ -39,6 +38,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 📊 Rich metadata side panel to display parameters, plots, and more.
 - 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
+- 🔍 Visual Workflow view to inspect execution, errors, and dataset stats.
 - 🎩 Many more to come
 
 ## Installation
@@ -68,6 +68,67 @@ const MyApp = () => (
   </div>
 );
 ```
+
+### Visualise and inspect your `kedro run`
+
+You can also pass pipeline run data directly to the React component using the `runData` prop. This allows you to visualise pipeline execution results without requiring a local Kedro project setup:
+
+```javascript
+import KedroViz from '@quantumblack/kedro-viz';
+import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
+
+const runStatusData = {
+  "nodes": {
+    "69c523b6": {
+      "status": "success",
+      "duration": 0.02171195892151445,
+      "error": null
+    },
+    "ea604da4": {
+      "status": "success", 
+      "duration": 0.031324208015576005,
+      "error": null
+    }
+  },
+  "datasets": {
+    "aed46479": {
+      "name": "companies",
+      "size": 1810602,
+      "status": "success",
+      "error": null
+    },
+    "7b2c6e04": {
+      "name": "reviews", 
+      "size": 2937144,
+      "status": "success",
+      "error": null
+    }
+  },
+  "pipeline": {
+    "run_id": "6d962877-1fdf-4b9a-b953-3377f476d48e",
+    "start_time": "2025-06-18T12.10.44.342274Z",
+    "end_time": "2025-06-18T12.11.09.584093Z", 
+    "duration": 12.730948126059957,
+    "status": "success",
+    "error": null
+  }
+};
+
+const MyApp = () => (
+  <div style={{height: `100vh`}}>
+    <KedroViz
+      data={json}
+      runData={runStatusData}
+      options={options}
+    />
+  </div>
+);
+```
+
+When `runData` is provided:
+- The component will automatically display the **Workflow** view with pipeline run information
+- Nodes will show visual indicators (green for success, red for failure)
+- A notification will appear showing pipeline execution results
 
 To use with NextJS:
 
@@ -151,6 +212,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | Name                       | Type                                                                               | Default                                                  | Description                                                                                                                                                   |
 | -------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `data`                     | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | -                                                        | Pipeline data to be displayed on the chart                                                                                                                    |
+| `runData`                  | `{ nodes: object, datasets: object, pipeline: object }`                           | -                                                        | Pipeline run data to visualise pipeline execution results. When provided, enables Workflow view with execution status, timing, and error information         |
 | `onActionCallback`         | function                                                                           | -                                                        | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);` |
 | options.display            |                                                                                    |                                                          |                                                                                                                                                               |
 | `expandPipelinesBtn`       | boolean                                                                            | true                                                     | Show/Hide expand pipelines button                                                                                                                             |
@@ -163,10 +225,10 @@ The example below demonstrates how to configure your kedro-viz using different `
 | `sidebar`                  | boolean                                                                            | true                                                     | Show/Hide Sidebar and action toolbar                                                                                                                          |
 | `zoomToolbar`              | boolean                                                                            | true                                                     | Show/Hide zoom-in, zoom-out and zoom reset buttons together                                                                                                   |
 | `filterBtn`              | boolean                                                                            | false                                                     | Show/Hide filter button and sidebar toggle icon                                                                                                   |
+| `orientationBtn`              | boolean                                                                            | true                                                     | Show/Hide orientation button                                                                                                    |
 | options.expandAllPipelines | boolean                                                                            | false                                                    | Expand/Collapse Modular pipelines on first load                                                                                                               |
 | options.behaviour            |                                                                                    |                                                          |                                                                                                                                                               |
-| `reFocus`       | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behavior when clicking on nodes.
- 
+| `reFocus`                  | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behaviour when clicking on nodes |
 | options.nodeType           | `{disabled: {parameters: boolean,task: boolean,data: boolean}}`                    | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options                                                                                                                           |
 | options.tag                | `{enabled: {<tagName>: boolean}}`                                                  | -                                                        | Configuration for tag options                                                                                                                                 |
 | options.theme              | string                                                                             | dark                                                     | select `Kedro-Viz` theme : dark/light                                                                                                                         |
