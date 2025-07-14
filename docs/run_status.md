@@ -1,6 +1,6 @@
-# Visualise pipeline execution with the Kedro-Viz Workflow
+# Visualise pipeline execution with the Workflow view in Kedro-Viz
 
-From Kedro-Viz 12.0.0 onward, the Workflow view lets you visualise your `kedro run` to better understand how your pipeline executed. You can spot which nodes succeeded, failed, or were skipped — making it easier to debug and inspect your workflow.
+Available from Kedro-Viz 12.0.0 onward, the Workflow view helps you visualise and debug your most recent kedro run. You’ll be able to clearly see which nodes succeeded, failed, or were skipped - all in one place.
 
 ## Overview
 
@@ -77,25 +77,25 @@ The following examples show how the Workflow view appears in different pipeline 
 ![Successful pipeline run](./images/run-status-success.gif)
 
 When all nodes execute without errors, you'll see:
-- Green indicators on all nodes showing successful completion
-- A success notification with total execution time
-- Individual node durations displayed over nodes
-- Dataset sizes shown in the node if available 
+- All nodes display green indicators for successful execution
+- A success notification shows the total runtime
+- Each node displays its execution duration
+- Dataset sizes appear on nodes where available  
 
 ### Node execution failure
 ![Node execution failure](./images/run-status-node-failure.gif)
 
 When a node fails during execution, you'll see:
-- Red indicators on the failed node
+- The failed node displays a red indicator
 - An error notification showing which node failed
-- Full error traceback when you click on the failed node
+- Clicking the node reveals the full traceback error for debugging
 - Clear visual display of where the pipeline stopped
 
 ### Dataset missing error
 ![Dataset missing error](./images/run-status-dataset-missing.gif)
 
 When a required dataset is missing, you'll see:
-- The pipeline fails early with specific error information
-- Clear display of which dataset could not be found
+- The pipeline fails early with clear error message
+- The missing dataset is clearly highlighted in the visualisation
 - Helpful error messages to guide you towards resolution
 

@@ -18,7 +18,7 @@ Kedro-Viz features include:
 🎨 Rich metadata side panel to display parameters, plots, etc.     
 📊 Support for all types of [Plotly charts](https://plotly.com/javascript/).   
 ♻️ Autoreload on code change.   
-🔍 Visualise and inspect your kedro run to debug pipeline execution.
+🔍 Visual Workflow view to inspect execution, errors, and dataset stats.
 
 Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">live demo</a> for a preview of Kedro-Viz.
 
