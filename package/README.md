@@ -3,8 +3,7 @@
 <br />
 <p align="center">
 
-![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/docs/run-status/.github/img/banner.gif)
-<!-- TODO:Update banner url to main branch before we merge -->
+![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main//banner.gif)
 </p>
 
 <p align="center">
