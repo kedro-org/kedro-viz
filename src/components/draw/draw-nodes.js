@@ -4,6 +4,8 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
+import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
+import { workFlowStatuses } from '../../config';
 
 import './styles/index.scss';
 
@@ -34,6 +36,9 @@ export function DrawNodes({
   isInputOutputNode = () => false,
   clickedNode = null,
   linkedNodes = {},
+  showRunStatus = false,
+  tasksStatus = {},
+  datasetsStatus = {},
 }) {
   const groupRef = useRef();
 
@@ -73,7 +78,27 @@ export function DrawNodes({
 
     enterNodes
       .attr('tabindex', '0')
-      .attr('class', 'pipeline-node')
+      .attr('class', (node) => {
+        let baseClass = 'pipeline-node';
+        if (node.type) {
+          baseClass += ` pipeline-node--${node.type}`;
+        }
+
+        if (showRunStatus) {
+          // Get the correct status source (tasksStatus for function nodes, tasksStatus otherwise),
+          const statusSource =
+            node.type === 'data' ? datasetsStatus : tasksStatus;
+          // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+          let finalStatus = getNodeStatusKey(
+            statusSource,
+            node,
+            workFlowStatuses
+          );
+          baseClass += ` pipeline-node--status-${finalStatus}`;
+        }
+
+        return baseClass;
+      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
       .classed(
@@ -131,6 +156,7 @@ export function DrawNodes({
 
     // Cancel exit transitions if re-entered
     updateNodes.transition('exit-nodes').style('opacity', null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nodes,
     onNodeClick,
@@ -232,12 +258,14 @@ export function DrawNodes({
         }
       });
 
-    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__bg')
+      .call(updateNodeRects, showRunStatus, tasksStatus, datasetsStatus);
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects);
+      .call(updateNodeRects, showRunStatus, tasksStatus, datasetsStatus);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(

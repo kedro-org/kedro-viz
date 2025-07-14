@@ -1,7 +1,10 @@
 import time
 from unittest.mock import patch
 
-from kedro_viz.utils import Spinner, merge_dicts
+from kedro_viz.utils import (
+    Spinner,
+    merge_dicts,
+)
 
 
 class TestUtils:

@@ -6,6 +6,8 @@ import {
   TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE,
 } from '../actions/modular-pipelines';
 
+import { RESET_STATE_FOR_WORKFLOW_VIEW } from '../actions';
+
 function modularPipelineReducer(modularPipelineState = {}, action) {
   const updateState = (newState) =>
     Object.assign({}, modularPipelineState, newState);
@@ -111,7 +113,8 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         visible: newVisibleState,
       });
     }
-    case TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE: {
+    case TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE:
+    case RESET_STATE_FOR_WORKFLOW_VIEW: {
       let newVisibleState = {};
 
       // Determine which IDs should be expanded based on the action

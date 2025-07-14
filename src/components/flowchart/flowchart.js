@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
+import { getHeap } from '../../tracking';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
@@ -605,10 +607,10 @@ export class FlowChart extends Component {
     this.props.onApplySlice(false);
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
 
-    // getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
-    //   fromNodeId,
-    //   toNodeId,
-    // });
+    getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
+      fromNodeId,
+      toNodeId,
+    });
   };
 
   /**

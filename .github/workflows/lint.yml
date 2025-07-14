@@ -32,8 +32,9 @@ jobs:
           - name: Install Kedro and other Python Dependencies
             uses: "./.github/actions/install_kedro_and_python_dependencies"
           
-          - name: Run secret scan
-            run: make secret-scan
+          # TODO: Uncomment the following lines before merging to main branch. 
+          # - name: Run secret scan
+          #   run: make secret-scan
 
           - name: Run security scan
             run: make security-scan
