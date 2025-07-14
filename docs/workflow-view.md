@@ -1,4 +1,4 @@
-# Visualise pipeline execution with the Workflow view in Kedro-Viz
+# Workflow view
 
 Available from Kedro-Viz 12.0.0 onward, the Workflow view helps you visualise and debug your most recent kedro run. You’ll be able to see which nodes succeeded, failed, or were skipped - all in one place.
 
