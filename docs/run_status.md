@@ -1,6 +1,6 @@
 # Visualise pipeline execution with the Workflow view in Kedro-Viz
 
-Available from Kedro-Viz 12.0.0 onward, the Workflow view helps you visualise and debug your most recent kedro run. You’ll be able to clearly see which nodes succeeded, failed, or were skipped - all in one place.
+Available from Kedro-Viz 12.0.0 onward, the Workflow view helps you visualise and debug your most recent kedro run. You’ll be able to see which nodes succeeded, failed, or were skipped - all in one place.
 
 ## Overview
 
@@ -96,6 +96,6 @@ When a node fails during execution, you'll see:
 
 When a required dataset is missing, you'll see:
 - The pipeline fails early with clear error message
-- The missing dataset is clearly highlighted in the visualisation
+- The missing dataset is highlighted in the visualisation
 - Helpful error messages to guide you towards resolution
 
