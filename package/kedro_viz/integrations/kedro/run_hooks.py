@@ -14,6 +14,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     generate_timestamp,
     hash_node,
     is_default_run,
+    is_sequential_runner,
     write_events,
 )
 
@@ -139,6 +140,13 @@ class PipelineRunStatusHook:
                 "Workflow tracking is disabled during partial pipeline runs (executed using -p, --from-nodes, --to-nodes). `.viz/kedro_pipeline_events.json` will be created only during a full kedro run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
             )
             return
+        
+        if not is_sequential_runner(run_params):
+            logger.warning(
+                "Workflow tracking is disabled for non-sequential runners. `.viz/kedro_pipeline_events.json` will be created only during a sequential run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
+            )
+            return
+
         self._all_nodes = list(pipeline.nodes)
         self._started_nodes.clear()
         self._add_event(
@@ -207,6 +215,10 @@ class PipelineRunStatusHook:
         """Record pipeline completion and flush all events to disk."""
         if not is_default_run(run_params):
             return
+        
+        if not is_sequential_runner(run_params):
+            return
+
         self._add_event(
             {"event": "after_pipeline_run", "timestamp": generate_timestamp()}, True
         )
