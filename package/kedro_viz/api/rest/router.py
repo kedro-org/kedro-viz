@@ -19,6 +19,10 @@ from kedro_viz.api.rest.responses.pipelines import (
     GraphAPIResponse,
     get_pipeline_response,
 )
+from kedro_viz.api.rest.responses.run_events import (
+    RunStatusAPIResponse,
+    get_run_status_response,
+)
 from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
@@ -60,6 +64,53 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 )
 async def get_version():
     return get_version_response()
+
+
+@router.get("/run-status", response_model=RunStatusAPIResponse)
+async def get_last_run_status():
+    """Get run status data for pipeline visualization.
+
+    This endpoint provides access to Kedro pipeline run status in structured format.
+
+    Returns:
+        JSON response containing run status data in structured format
+
+    Example structured format:
+    ```
+    {
+        "nodes": {
+            "node_id": {
+                "status": "success",
+                "duration": 0.123,
+                "error": null
+            }
+        },
+        "datasets": {
+            "dataset_id": {
+                "name": "dataset.name",
+                "size": 1024,
+                "error": null
+            }
+        },
+        "pipeline": {
+            "run_id": "unique-id",
+            "start_time": "2023-05-14T10:15:30Z",
+            "end_time": "2023-05-14T10:20:45Z",
+            "duration": 315.25,
+            "status": "completed"
+            "error": null
+        }
+    }
+    ```
+    """
+    try:
+        return get_run_status_response()
+    except Exception as exc:
+        logger.exception("An exception occurred while getting run status: %s", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Failed to get run status data"},
+        )
 
 
 @router.post("/deploy")
