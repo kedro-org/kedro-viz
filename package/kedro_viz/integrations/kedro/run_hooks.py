@@ -136,7 +136,7 @@ class PipelineRunStatusHook:
         """
         if not is_default_run(run_params):
             logger.warning(
-                "Workflow tracking skipped: `.viz/kedro_pipeline_events.json` not created due to partial run. Use full `kedro run` to enable tracking."
+                "Workflow tracking is disabled during partial pipeline runs (executed using -p, --from-nodes, --to-nodes). `.viz/kedro_pipeline_events.json` will be created only during a full kedro run."
             )
             return
         self._all_nodes = list(pipeline.nodes)
