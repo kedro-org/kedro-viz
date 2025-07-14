@@ -77,6 +77,7 @@ The following examples show how the Workflow view appears in different pipeline 
 ![Successful pipeline run](./images/run-status-success.gif)
 
 When all nodes execute without errors, you'll see:
+
 - All nodes display green indicators for successful execution
 - A success notification shows the total runtime
 - Each node displays its execution duration
@@ -86,6 +87,7 @@ When all nodes execute without errors, you'll see:
 ![Node execution failure](./images/run-status-node-failure.gif)
 
 When a node fails during execution, you'll see:
+
 - The failed node displays a red indicator
 - An error notification showing which node failed
 - Clicking the node reveals the full traceback error for debugging
@@ -95,6 +97,7 @@ When a node fails during execution, you'll see:
 ![Dataset missing error](./images/run-status-dataset-missing.gif)
 
 When a required dataset is missing, you'll see:
+
 - The pipeline fails early with clear error message
 - The missing dataset is highlighted in the visualisation
 - Helpful error messages to guide you towards resolution
