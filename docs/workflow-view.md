@@ -68,7 +68,7 @@ kedro viz run
 Navigate to the **Workflow** view to see your pipeline execution information.
 
 !!! info
-    When you navigate to the **Workflow** view, some interface elements many not be available compared to the **Flowchart** view:
+    When you navigate to the **Workflow** view, some interface elements will not be available compared to the **Flowchart** view:
     
     - The pipeline dropdown will be disabled.
     - Expand and collapse pipeline button will not be available
