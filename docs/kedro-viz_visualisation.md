@@ -58,7 +58,7 @@ You should see the following:
 ![](./images/pipeline_visualisation.png)
 
 !!! tip
-    After running `kedro run`, navigate to the **Workflow** view in Kedro-Viz to see detailed pipeline execution information including execution time, success/failure status for each node, and dataset statistics. This [Workflow view](./run_status.md) helps you track pipeline performance and identify any issues.
+    After running `kedro run`, navigate to the **Workflow** view in Kedro-Viz to see detailed pipeline execution information including execution time, success/failure status for each node, and dataset statistics. This [Workflow view](./workflow-view.md) helps you track pipeline performance and identify any issues.
 
 If a visualisation panel opens up and a pipeline is not visible, refresh the view. If you still don't see the visualisation, the Kedro community can help:
 
