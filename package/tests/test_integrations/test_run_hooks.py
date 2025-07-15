@@ -88,6 +88,19 @@ class TestPipelineRunLifecycle:
         hooks.after_pipeline_run({"pipeline_name": "etl"})
         assert hooks._events == []
 
+    def test_before_pipeline_run_non_sequential_runner_skips(
+        self, hooks, example_pipelines
+    ):
+        """Should not emit event for non-sequential runners."""
+        default_pipeline = example_pipelines["__default__"]
+        hooks.before_pipeline_run({"runner": "ParallelRunner"}, default_pipeline)
+        assert hooks._events == []
+
+    def test_after_pipeline_run_non_sequential_runner_skips(self, hooks):
+        """Should not emit event for non-sequential runners."""
+        hooks.after_pipeline_run({"runner": "ParallelRunner"})
+        assert hooks._events == []
+
 
 class TestDatasetLifecycle:
     def test_dataset_loaded_emits_event(self, hooks, sample_node):
