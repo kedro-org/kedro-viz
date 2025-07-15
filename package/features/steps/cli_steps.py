@@ -89,7 +89,8 @@ def create_project_with_starter(context, starter):
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
     """Run ``pip install -r requirements.txt``."""
-    if context.kedro_version != "latest":
+    # [TODO: Revert to latest once 1.0.0 is out]
+    if context.kedro_version != "1.0.0rc1":
         requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
         # numpy 2.0 breaks with old versions of pandas and this
         # could be removed when the lowest version supported is updated

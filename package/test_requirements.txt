@@ -15,7 +15,6 @@ pytest-asyncio~=0.25
 pytest-mock~=3.14
 pytest-cov~=5.0
 ruff==0.11.2
-sqlalchemy-stubs~=0.4
 trufflehog~=2.2
 httpx~=0.28.1
 pathspec>=0.12.1
