@@ -1,7 +1,7 @@
 name: Run linters on Kedro-Viz
-# Runs secret scan, security scan, GraphQL schema check, 
-# and Python formatters and linters on Kedro-Viz for 
-# different operating systems and Python versions.
+# Runs secret scan, security scan, python formatters 
+# and linters on Kedro-Viz for different operating 
+# systems and Python versions.
 
 on:
   workflow_call:
