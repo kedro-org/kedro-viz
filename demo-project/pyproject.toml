@@ -1,9 +1,76 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "demo-project"
+version = "0.1.0"
+description = "Kedro-Viz Demo Project"
+readme = "README.md"
+requires-python = ">=3.9"
+dynamic = ["dependencies"]
+
+[project.scripts]
+demo-project = "demo_project.__main__:main"
+
+[project.optional-dependencies]
+docs = [
+    "docutils<0.21",
+    "sphinx>=5.3,<7.3",
+    "sphinx_rtd_theme==2.0.0",
+    "nbsphinx==0.8.1",
+    "sphinx-autodoc-typehints==1.20.2",
+    "sphinx_copybutton==0.5.2",
+    "ipykernel>=5.3, <7.0",
+    "Jinja2<3.2.0",
+    "myst-parser>=1.0,<2.1"
+]
+dev = [
+    "pytest-cov~=3.0",
+    "pytest-mock>=1.7.1, <2.0",
+    "pytest~=7.2",
+    "ruff~=0.1.8",
+    "pre-commit~=3.5"
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
 [tool.kedro]
 package_name = "demo_project"
 project_name = "modular-spaceflights"
 kedro_init_version = "1.0.0"
+tools = ["Linting", "Testing", "Custom Logging", "Documentation", "Data Structure"]
+example_pipeline = "True"
+source_dir = "src"
 
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
 --cov src/demo_project -ra"""
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff]
+line-length = 88
+show-fixes = true
+select = [
+    "F",   # Pyflakes
+    "W",   # pycodestyle
+    "E",   # pycodestyle
+    "I",   # isort
+    "UP",  # pyupgrade
+    "PL",  # Pylint
+    "T201", # Print Statement
+]
+ignore = ["E501"]  # Ruff format takes care of line-too-long
