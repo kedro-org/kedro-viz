@@ -93,13 +93,11 @@ class PipelineRunStatusHook:
         self._current_operation: Optional[str] = None
         self._all_nodes: list[KedroNode] = []
         self._started_nodes: set[str] = set()
+        self._should_collect_events: bool = False
 
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
-
-        # We add events only for full/default pipeline as for MVP we only support
-        # full/default pipeline.
-        if len(self._all_nodes) == 0:
+        if not self._should_collect_events:
             return
 
         self._events.append(event)
@@ -133,20 +131,24 @@ class PipelineRunStatusHook:
         Emit start event based on run_params values.
 
         Records the beginning of a pipeline execution
-        only for full/default pipeline.
+        only for full/default pipeline runs with sequential runner.
         """
+        # Determine if we should collect events based on run parameters
         if not is_default_run(run_params):
             logger.warning(
                 "Workflow tracking is disabled during partial pipeline runs (executed using --from-nodes, --to-nodes, --tags, --pipeline, and more). `.viz/kedro_pipeline_events.json` will be created only during a full kedro run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
             )
+            self._should_collect_events = False
             return
 
         if not is_sequential_runner(run_params):
             logger.warning(
                 "Workflow tracking is disabled for non-sequential runners. `.viz/kedro_pipeline_events.json` will be created only during a sequential run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
             )
+            self._should_collect_events = False
             return
 
+        self._should_collect_events = True
         self._all_nodes = list(pipeline.nodes)
         self._started_nodes.clear()
         self._add_event(
@@ -156,11 +158,15 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_dataset_loaded(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is loaded by a node."""
+        if not self._should_collect_events:
+            return
         self._set_event_context(dataset_name, "loading", node)
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any) -> None:
         """Record dataset loading event."""
+        if not self._should_collect_events:
+            return
         self._add_event(
             create_dataset_event(
                 "after_dataset_loaded", dataset_name, data, self._datasets
@@ -171,11 +177,15 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_dataset_saved(self, dataset_name: str, node: KedroNode) -> None:
         """Set context before a dataset is saved by a node."""
+        if not self._should_collect_events:
+            return
         self._set_event_context(dataset_name, "saving", node)
 
     @hook_impl
     def after_dataset_saved(self, dataset_name: str, data: Any) -> None:
         """Record dataset saving event."""
+        if not self._should_collect_events:
+            return
         self._add_event(
             create_dataset_event(
                 "after_dataset_saved", dataset_name, data, self._datasets
@@ -186,6 +196,8 @@ class PipelineRunStatusHook:
     @hook_impl
     def before_node_run(self, node: KedroNode) -> None:
         """Record node execution start time and set current node context."""
+        if not self._should_collect_events:
+            return
         self._node_start[node.name] = perf_counter()
         self._current_node = node
         self._started_nodes.add(node.name)
@@ -193,6 +205,8 @@ class PipelineRunStatusHook:
     @hook_impl
     def after_node_run(self, node: KedroNode) -> None:
         """Record successful node completion with performance metrics."""
+        if not self._should_collect_events:
+            return
         start = self._node_start.get(node.name)
         if start is None:
             duration = 0.0
@@ -213,7 +227,7 @@ class PipelineRunStatusHook:
     @hook_impl
     def after_pipeline_run(self, run_params) -> None:
         """Record pipeline completion and flush all events to disk."""
-        if not is_default_run(run_params) or not is_sequential_runner(run_params):
+        if not self._should_collect_events:
             return
 
         self._add_event(
