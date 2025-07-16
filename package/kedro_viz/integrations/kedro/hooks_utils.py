@@ -188,5 +188,5 @@ def is_sequential_runner(run_params: dict) -> bool:
     if isinstance(runner, str):
         return "SequentialRunner" in runner
 
-    # For non-string cases, return False (not SequentialRunner)
+    # For non-string cases (Custom Runner)
     return False
