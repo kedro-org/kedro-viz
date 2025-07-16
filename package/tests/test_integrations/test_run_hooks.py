@@ -111,6 +111,24 @@ class TestDatasetLifecycle:
 
         assert hooks._events[-1]["event"] == "after_dataset_saved"
 
+    def test_dataset_loaded_skips_when_events_disabled(self, hooks, sample_node):
+        """Test that dataset loaded events are skipped when _should_collect_events is False."""
+        hooks._should_collect_events = False
+
+        hooks.before_dataset_loaded("dataset", sample_node)
+        hooks.after_dataset_loaded("dataset", {"foo": "bar"})
+
+        assert hooks._events == []
+
+    def test_dataset_saved_skips_when_events_disabled(self, hooks, sample_node):
+        """Test that dataset saved events are skipped when _should_collect_events is False."""
+        hooks._should_collect_events = False
+
+        hooks.before_dataset_saved("dataset", sample_node)
+        hooks.after_dataset_saved("dataset", {"foo": "bar"})
+
+        assert hooks._events == []
+
 
 class TestNodeLifecycle:
     def test_successful_node_run_records_duration_and_status(
@@ -144,6 +162,23 @@ class TestNodeLifecycle:
         event = hooks._events[-1]
         assert event["event"] == "after_node_run"
         assert event["duration"] == 0.0
+
+    def test_node_run_skips_when_events_disabled(self, hooks, sample_node):
+        """Test that node run events are skipped when _should_collect_events is False."""
+        hooks._should_collect_events = False
+
+        hooks.before_node_run(sample_node)
+        hooks.after_node_run(sample_node)
+
+        assert hooks._events == []
+
+    def test_after_pipeline_run_skips_when_events_disabled(self, hooks):
+        """Test that after_pipeline_run is skipped when _should_collect_events is False."""
+        hooks._should_collect_events = False
+
+        hooks.after_pipeline_run()
+
+        assert hooks._events == []
 
 
 class TestErrorHandling:
