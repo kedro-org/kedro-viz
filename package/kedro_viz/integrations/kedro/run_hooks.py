@@ -225,7 +225,7 @@ class PipelineRunStatusHook:
             self._current_node = None  # clear node context
 
     @hook_impl
-    def after_pipeline_run(self, run_params) -> None:
+    def after_pipeline_run(self) -> None:
         """Record pipeline completion and flush all events to disk."""
         if not self._should_collect_events:
             return
