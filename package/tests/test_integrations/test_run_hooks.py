@@ -78,15 +78,10 @@ class TestPipelineRunLifecycle:
             self._events.append(event)
 
         monkeypatch.setattr(PipelineRunStatusHook, "_add_event", fake_add_event)
-        hooks.after_pipeline_run({"pipeline_name": None})
+        hooks.after_pipeline_run()
 
         assert hooks._events[-1]["event"] == "after_pipeline_run"
         assert flush_called["flag"] is True
-
-    def test_after_pipeline_run_named_pipeline_skips(self, hooks):
-        """Should not emit event for non-default pipelines."""
-        hooks.after_pipeline_run({"pipeline_name": "etl"})
-        assert hooks._events == []
 
     def test_before_pipeline_run_non_sequential_runner_skips(
         self, hooks, example_pipelines
@@ -96,15 +91,11 @@ class TestPipelineRunLifecycle:
         hooks.before_pipeline_run({"runner": "ParallelRunner"}, default_pipeline)
         assert hooks._events == []
 
-    def test_after_pipeline_run_non_sequential_runner_skips(self, hooks):
-        """Should not emit event for non-sequential runners."""
-        hooks.after_pipeline_run({"runner": "ParallelRunner"})
-        assert hooks._events == []
-
 
 class TestDatasetLifecycle:
     def test_dataset_loaded_emits_event(self, hooks, sample_node):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
 
         hooks.before_dataset_loaded("dataset", sample_node)
         hooks.after_dataset_loaded("dataset", {"foo": "bar"})
@@ -113,6 +104,7 @@ class TestDatasetLifecycle:
 
     def test_dataset_saved_emits_event(self, hooks, sample_node):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
 
         hooks.before_dataset_saved("dataset", sample_node)
         hooks.after_dataset_saved("dataset", {"foo": "bar"})
@@ -125,6 +117,7 @@ class TestNodeLifecycle:
         self, hooks, sample_node, monkeypatch
     ):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
 
         # Fake perf_counter so duration == 1.23
         counter_vals = iter([1.0, 2.23])
@@ -145,6 +138,7 @@ class TestNodeLifecycle:
         self, hooks, sample_node
     ):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
         hooks.after_node_run(sample_node)
 
         event = hooks._events[-1]
@@ -155,6 +149,7 @@ class TestNodeLifecycle:
 class TestErrorHandling:
     def test_on_node_error_emits_event(self, hooks, sample_node):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
         exc = RuntimeError("Error occurred")
         hooks.on_node_error(exc, sample_node)
         assert hooks._events[-1]["event"] == "on_node_error"
@@ -163,6 +158,7 @@ class TestErrorHandling:
         self, hooks, sample_node
     ):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
         hooks._current_dataset = "ds"
         hooks._current_operation = "loading"
         hooks._current_node = sample_node
@@ -179,6 +175,7 @@ class TestErrorHandling:
         self, hooks, sample_node
     ):
         hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = True
         hooks._current_dataset = None
         hooks._current_operation = None
         hooks._current_node = None
