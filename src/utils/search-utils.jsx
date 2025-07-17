@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Create a regular expression to match certain keywords
  * @param  {String} value - The search keyword to highlight

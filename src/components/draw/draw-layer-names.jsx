@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import * as d3 from 'd3';
+import { select } from 'd3-selection';
 import classnames from 'classnames';
 
 import './styles/index.scss';
@@ -18,7 +18,7 @@ export function DrawLayerNames({
     if (!layerNamesRef?.current || !layers.length) {
       return;
     }
-    const svg = d3.select(layerNamesRef.current);
+    const svg = select(layerNamesRef.current);
     const layerPaddingVerticalMode = 20;
     const layerNamePosition =
       orientation === 'vertical'

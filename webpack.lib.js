@@ -1,8 +1,55 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// Bundle and inline web-workers
+const rules = [
+  {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env', '@babel/preset-react'],
+      },
+    },
+  },
+  {
+    test: /\.scss$/,
+    use: [
+      MiniCssExtractPlugin.loader,
+      {
+        loader: 'css-loader',
+        options: { importLoaders: 1 },
+      },
+      'postcss-loader',
+      'sass-loader',
+    ],
+    sideEffects: true,
+  },
+];
+
 module.exports = [
+  // 1. Bundle the main Kedro-Viz lib
+  {
+    mode: 'production',
+    entry: './lib/components/app/index.js',
+    output: {
+      path: path.resolve(__dirname, 'lib'),
+      filename: 'index.js',
+      libraryTarget: 'commonjs2',
+    },
+    module: {
+      rules,
+    },
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: 'styles.min.css',
+      }),
+    ],
+  },
+  // 2. Bundle the web worker
   {
     mode: 'production',
     entry: './lib/utils/worker.js',
@@ -11,51 +58,6 @@ module.exports = [
       globalObject: 'this',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'lib/utils'),
-    },
-  },
-  {
-    mode: 'production',
-    entry: './lib/components/container/container.js',
-    output: {
-      path: path.resolve(__dirname, 'lib/styles'),
-    },
-    plugins: [
-      new MiniCssExtractPlugin({
-        filename: 'styles.min.css',
-      }),
-    ],
-    module: {
-      rules: [
-        {
-          test: /\.(js)$/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env', '@babel/preset-react'],
-            },
-          },
-          exclude: /node_modules/,
-        },
-        {
-          test: /\.scss$/,
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-            },
-            {
-              loader: require.resolve('css-loader'),
-              options: { importLoaders: 3 },
-            },
-            {
-              loader: require.resolve('postcss-loader'),
-            },
-            {
-              loader: require.resolve('sass-loader'),
-            },
-          ],
-          sideEffects: true,
-        },
-      ],
     },
   },
 ];

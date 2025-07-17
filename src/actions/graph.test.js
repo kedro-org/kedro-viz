@@ -25,15 +25,13 @@ describe('graph actions', () => {
     it('sets loading to true immediately', () => {
       const store = createStore(reducer, getMockState(spaceflights));
       expect(store.getState().loading.graph).not.toBe(true);
-      calculateGraph(getGraphInput(getMockState(spaceflights)))(store.dispatch);
+      calculateGraph(getGraphInput(store.getState()))(store.dispatch);
       expect(store.getState().loading.graph).toBe(true);
     });
 
     it('sets loading to false and graph visibility to true after finishing calculation', () => {
       const store = createStore(reducer, getMockState(spaceflights));
-      return calculateGraph(getGraphInput(getMockState(spaceflights)))(
-        store.dispatch
-      ).then(() => {
+      return calculateGraph(getGraphInput(store.getState()))(store.dispatch).then(() => {
         const state = store.getState();
         expect(state.loading.graph).toBe(false);
         expect(state.visible.graph).toBe(true);
@@ -41,36 +39,27 @@ describe('graph actions', () => {
     });
 
     it('calculates a graph', () => {
-      const initialState = { ...getMockState(spaceflights), graph: {} };
-      const store = createStore(reducer, initialState);
-      expect(store.getState().graph).toEqual({});
-      return calculateGraph(getGraphInput(initialState))(store.dispatch).then(
-        () => {
-          expect(store.getState().graph).toEqual(
-            expect.objectContaining({
-              nodes: expect.any(Array),
-              edges: expect.any(Array),
-              size: expect.any(Object),
-            })
-          );
-        }
-      );
+      const store = createStore(reducer, getMockState(spaceflights));
+      return calculateGraph(getGraphInput(store.getState()))(store.dispatch).then(() => {
+        expect(store.getState().graph).toEqual(
+          expect.objectContaining({
+            nodes: expect.any(Array),
+            edges: expect.any(Array),
+            size: expect.any(Object),
+          })
+        );
+      });
     });
 
     it('compares deterministic flowchart of two differently ordered same projects', () => {
       const store1 = createStore(reducer, getMockState(spaceflights));
       const store2 = createStore(reducer, getMockState(spaceflightsReordered));
 
-      return calculateGraph(getGraphInput(getMockState(spaceflights)))(
-        store1.dispatch
-      )
+      return calculateGraph(getGraphInput(store1.getState()))(store1.dispatch)
         .then(() =>
-          calculateGraph(getGraphInput(getMockState(spaceflightsReordered)))(
-            store2.dispatch
-          )
+          calculateGraph(getGraphInput(store2.getState()))(store2.dispatch)
         )
         .then(() => {
-          // Get node coordinates for both graphs
           const graph1Coords = store1.getState().graph.nodes.map((node) => ({
             id: node.id,
             x: node.x,
@@ -83,7 +72,6 @@ describe('graph actions', () => {
             y: node.y,
           }));
 
-          // Verify coordinates consistency between both graphs
           expect(graph1Coords).toEqual(expect.arrayContaining(graph2Coords));
         });
     });

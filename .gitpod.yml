@@ -6,7 +6,7 @@ tasks:
       make sign-off
       npm install
       npm run build
-      cp -R build package/kedro_viz/html
+      cp -R dist package/kedro_viz/html
     command: |
       gp sync-done build_complete
       DANGEROUSLY_DISABLE_HOST_CHECK=true npm run start

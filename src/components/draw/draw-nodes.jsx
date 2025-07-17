@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import * as d3 from 'd3';
+import { select } from 'd3-selection';
 import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
@@ -44,7 +44,7 @@ export function DrawNodes({
 
   // Utility function to get D3 node selection and data join
   const getNodeSelections = (groupRef, nodes) => {
-    const svg = d3.select(groupRef.current);
+    const svg = select(groupRef.current);
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
