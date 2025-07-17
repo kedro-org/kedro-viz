@@ -17,8 +17,29 @@ export default defineConfig({
       },
     },
   },
+  worker: {
+    format: 'es', // Use ES modules for workers
+    plugins: [react()], // Apply the same plugins to workers
+  },
   build: {
     outDir: 'dist',
     manifest: true,
+    rollupOptions: {
+      output: {
+        // Ensure proper asset handling for workers
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.worker.js')) {
+            return 'assets/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
+        chunkFileNames: (chunkInfo) => {
+          if (chunkInfo.name?.includes('worker')) {
+            return 'assets/[name]-[hash].js';
+          }
+          return 'assets/[name]-[hash].js';
+        }
+      }
+    }
   },
 });
