@@ -6,6 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.0.0
+## Major features and improvements
+ - Migrate our current documentation from Sphinx to Mkdocs. (#2422)
+ - New workflow run status. (#2390)
+ - Add new documentation page to introduce workflow feature. (#2436)
+
+## Bug fixes and other changes
+
+
 # Release 11.1.0
 
 ## Major features and improvements
