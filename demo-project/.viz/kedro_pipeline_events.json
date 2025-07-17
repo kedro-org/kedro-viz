@@ -1,7 +1,7 @@
 [
   {
     "event": "before_pipeline_run",
-    "timestamp": "2025-07-07T10.08.09.736030Z"
+    "timestamp": "2025-07-16T13:08:55.968122+00:00"
   },
   {
     "event": "after_dataset_loaded",
@@ -14,7 +14,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_companies",
     "node_id": "69c523b6",
-    "duration": 0.022334959357976913,
+    "duration": 0.010288999998010695,
     "status": "success"
   },
   {
@@ -22,7 +22,7 @@
     "dataset": "ingestion.int_typed_companies",
     "node_id": "f23ad217",
     "status": "Available",
-    "size": 550104
+    "size": 550160
   },
   {
     "event": "after_dataset_loaded",
@@ -42,7 +42,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_reviews",
     "node_id": "ea604da4",
-    "duration": 0.01582745835185051,
+    "duration": 0.0037572919973172247,
     "status": "success"
   },
   {
@@ -50,7 +50,7 @@
     "dataset": "ingestion.int_typed_reviews",
     "node_id": "4f7ffa1b",
     "status": "Available",
-    "size": 1334176
+    "size": 1334294
   },
   {
     "event": "after_dataset_loaded",
@@ -63,7 +63,7 @@
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_shuttles",
     "node_id": "f33b9291",
-    "duration": 0.04704579198732972,
+    "duration": 0.027379540959373116,
     "status": "success"
   },
   {
@@ -71,20 +71,20 @@
     "dataset": "ingestion.int_typed_shuttles@pandas1",
     "node_id": "c0ddbcbf",
     "status": "Available",
-    "size": 1234354
+    "size": 1234504
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "ingestion.int_typed_companies",
     "node_id": "f23ad217",
     "status": "Available",
-    "size": 550104
+    "size": 550160
   },
   {
     "event": "after_node_run",
     "node": "ingestion.company_agg",
     "node_id": "8de402c1",
-    "duration": 0.6272957497276366,
+    "duration": 0.41219008300686255,
     "status": "success"
   },
   {
@@ -99,7 +99,7 @@
     "dataset": "ingestion.int_typed_shuttles@pandas2",
     "node_id": "c0ddbcbf",
     "status": "Available",
-    "size": 1234354
+    "size": 1234504
   },
   {
     "event": "after_dataset_loaded",
@@ -113,13 +113,13 @@
     "dataset": "ingestion.int_typed_reviews",
     "node_id": "4f7ffa1b",
     "status": "Available",
-    "size": 1334176
+    "size": 1334294
   },
   {
     "event": "after_node_run",
     "node": "ingestion.combine_step",
     "node_id": "cb5166f3",
-    "duration": 0.05620208289474249,
+    "duration": 0.02421412500552833,
     "status": "success"
   },
   {
@@ -127,28 +127,28 @@
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_dataset_saved",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
     "status": "Available",
-    "size": 659388
+    "size": 659426
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
     "status": "Available",
-    "size": 659388
+    "size": 659426
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_dataset_loaded",
@@ -159,9 +159,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "feature_engineering.create_derived_features([prm_spine_table;prm_shuttle_company_reviews;params:feature_engineering.feature.derived]) -> [feature_engineering.feat_derived_features]",
+    "node": "feature_engineering.create_derived_features__f9089920",
     "node_id": "04ba733a",
-    "duration": 0.02293304167687893,
+    "duration": 0.007367540965788066,
     "status": "success"
   },
   {
@@ -176,13 +176,13 @@
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
     "status": "Available",
-    "size": 659388
+    "size": 659426
   },
   {
     "event": "after_node_run",
-    "node": "feature_engineering.create_feature_importance([prm_spine_table]) -> [feature_importance_output]",
+    "node": "feature_engineering.create_feature_importance__173f2884",
     "node_id": "7932e672",
-    "duration": 0.005073708016425371,
+    "duration": 0.0006478329887613654,
     "status": "success"
   },
   {
@@ -190,14 +190,14 @@
     "dataset": "feature_importance_output",
     "node_id": "1e3cc50a",
     "status": "Available",
-    "size": 457
+    "size": 460
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_dataset_loaded",
@@ -208,9 +208,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "feature_engineering.create_static_features([prm_shuttle_company_reviews;params:feature_engineering.feature.static]) -> [feature_engineering.feat_static_features]",
+    "node": "feature_engineering.create_static_features__dd7d7ef1",
     "node_id": "e50f81b8",
-    "duration": 0.015844957903027534,
+    "duration": 0.000856707978527993,
     "status": "success"
   },
   {
@@ -225,13 +225,13 @@
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
     "status": "Available",
-    "size": 659388
+    "size": 659426
   },
   {
     "event": "after_node_run",
-    "node": "ingestion.<lambda>([prm_spine_table]) -> [ingestion.prm_spine_table_clone]",
+    "node": "ingestion.<lambda>__2de1c226",
     "node_id": "9a6ef457",
-    "duration": 0.004222833085805178,
+    "duration": 0.0005769999697804451,
     "status": "success"
   },
   {
@@ -246,13 +246,13 @@
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_node_run",
-    "node": "reporting.create_matplotlib_chart([prm_shuttle_company_reviews]) -> [reporting.confusion_matrix]",
+    "node": "reporting.create_matplotlib_chart__15c38707",
     "node_id": "be6b7919",
-    "duration": 0.41512870881706476,
+    "duration": 0.41662337502930313,
     "status": "success"
   },
   {
@@ -260,20 +260,20 @@
     "dataset": "reporting.confusion_matrix",
     "node_id": "3b199c6b",
     "status": "Available",
-    "size": 1312
+    "size": 1632
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_node_run",
-    "node": "reporting.get_top_shuttles_data([prm_shuttle_company_reviews]) -> [reporting.top_shuttle_data]",
+    "node": "reporting.get_top_shuttles_data__3cb3499e",
     "node_id": "44ef9b48",
-    "duration": 0.012014708016067743,
+    "duration": 0.0014465829590335488,
     "status": "success"
   },
   {
@@ -288,13 +288,13 @@
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_node_run",
-    "node": "reporting.make_cancel_policy_bar_chart([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_breakdown]",
+    "node": "reporting.make_cancel_policy_bar_chart__7c6d9304",
     "node_id": "c7646ea1",
-    "duration": 0.01814129063859582,
+    "duration": 0.004329540999606252,
     "status": "success"
   },
   {
@@ -309,13 +309,13 @@
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_node_run",
-    "node": "reporting.make_price_analysis_image([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_grid]",
+    "node": "reporting.make_price_analysis_image__4f97d161",
     "node_id": "3fb71518",
-    "duration": 0.013894582632929087,
+    "duration": 0.0025281659909524024,
     "status": "success"
   },
   {
@@ -323,20 +323,20 @@
     "dataset": "reporting.cancellation_policy_grid",
     "node_id": "8838ca1f",
     "status": "Available",
-    "size": 3116
+    "size": 3049
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
     "status": "Available",
-    "size": 1053909
+    "size": 1054211
   },
   {
     "event": "after_node_run",
-    "node": "reporting.make_price_histogram([prm_shuttle_company_reviews]) -> [reporting.price_histogram]",
+    "node": "reporting.make_price_histogram__e0da8d32",
     "node_id": "40886786",
-    "duration": 0.13869620766490698,
+    "duration": 0.028494291997049004,
     "status": "success"
   },
   {
@@ -344,14 +344,14 @@
     "dataset": "reporting.price_histogram",
     "node_id": "c6992660",
     "status": "Available",
-    "size": 1312
+    "size": 1376
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
     "status": "Available",
-    "size": 659388
+    "size": 659426
   },
   {
     "event": "after_dataset_loaded",
@@ -369,9 +369,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "feature_engineering.joiner([prm_spine_table;feature_engineering.feat_static_features;feature_engineering.feat_derived_features]) -> [model_input_table]",
+    "node": "feature_engineering.joiner__4cc9d815",
     "node_id": "6ea2ec2c",
-    "duration": 0.021267542149871588,
+    "duration": 0.004924999957438558,
     "status": "success"
   },
   {
@@ -379,20 +379,20 @@
     "dataset": "model_input_table",
     "node_id": "23c94afb",
     "status": "Available",
-    "size": 623095
+    "size": 623213
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "feature_importance_output",
     "node_id": "1e3cc50a",
     "status": "Available",
-    "size": 457
+    "size": 460
   },
   {
     "event": "after_node_run",
-    "node": "reporting.create_feature_importance_plot([feature_importance_output]) -> [reporting.feature_importance]",
+    "node": "reporting.create_feature_importance_plot__e7a53e99",
     "node_id": "4adb5c8b",
-    "duration": 0.08247162494808435,
+    "duration": 0.015485541021917015,
     "status": "success"
   },
   {
@@ -400,14 +400,14 @@
     "dataset": "reporting.feature_importance",
     "node_id": "eb7d6d28",
     "status": "Available",
-    "size": 1248
+    "size": 896
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "model_input_table",
     "node_id": "23c94afb",
     "status": "Available",
-    "size": 623095
+    "size": 623213
   },
   {
     "event": "after_dataset_loaded",
@@ -418,9 +418,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "split_data([model_input_table;params:split_options]) -> [X_train;X_test;y_train;y_test]",
+    "node": "split_data__3c1a939c",
     "node_id": "2816ba38",
-    "duration": 0.01808495819568634,
+    "duration": 0.00266866700258106,
     "status": "success"
   },
   {
@@ -474,9 +474,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "train_evaluation.linear_regression.train_model([X_train;y_train;params:train_evaluation.model_options.linear_regression]) -> [train_evaluation.linear_regression.regressor;train_evaluation.linear_regression.experiment_params]",
+    "node": "train_evaluation.linear_regression.train_model__199807b9",
     "node_id": "af9a43c8",
-    "duration": 0.48582154093310237,
+    "duration": 1.2733790830243379,
     "status": "success"
   },
   {
@@ -484,7 +484,7 @@
     "dataset": "train_evaluation.linear_regression.regressor",
     "node_id": "10e51dea",
     "status": "Available",
-    "size": 928
+    "size": 512
   },
   {
     "event": "after_dataset_saved",
@@ -516,9 +516,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "train_evaluation.random_forest.train_model([X_train;y_train;params:train_evaluation.model_options.random_forest]) -> [train_evaluation.random_forest.regressor;train_evaluation.random_forest.experiment_params]",
+    "node": "train_evaluation.random_forest.train_model__86546ff0",
     "node_id": "038647c7",
-    "duration": 10.43090745806694,
+    "duration": 9.429776625009254,
     "status": "success"
   },
   {
@@ -526,7 +526,7 @@
     "dataset": "train_evaluation.random_forest.regressor",
     "node_id": "01675921",
     "status": "Available",
-    "size": 928
+    "size": 512
   },
   {
     "event": "after_dataset_saved",
@@ -540,7 +540,7 @@
     "dataset": "train_evaluation.linear_regression.regressor",
     "node_id": "10e51dea",
     "status": "Available",
-    "size": 928
+    "size": 512
   },
   {
     "event": "after_dataset_loaded",
@@ -558,9 +558,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "train_evaluation.linear_regression.evaluate_model([train_evaluation.linear_regression.regressor;X_test;y_test]) -> [train_evaluation.linear_regression.r2_score]",
+    "node": "train_evaluation.linear_regression.evaluate_model__1c49c35c",
     "node_id": "d2885635",
-    "duration": 0.008980666287243366,
+    "duration": 0.0018285829573869705,
     "status": "success"
   },
   {
@@ -575,7 +575,7 @@
     "dataset": "train_evaluation.random_forest.regressor",
     "node_id": "01675921",
     "status": "Available",
-    "size": 928
+    "size": 512
   },
   {
     "event": "after_dataset_loaded",
@@ -593,9 +593,9 @@
   },
   {
     "event": "after_node_run",
-    "node": "train_evaluation.random_forest.evaluate_model([train_evaluation.random_forest.regressor;X_test;y_test]) -> [train_evaluation.random_forest.r2_score]",
+    "node": "train_evaluation.random_forest.evaluate_model__cefff325",
     "node_id": "bf8530bc",
-    "duration": 0.14047420816496015,
+    "duration": 0.12227929197251797,
     "status": "success"
   },
   {
@@ -607,6 +607,6 @@
   },
   {
     "event": "after_pipeline_run",
-    "timestamp": "2025-07-07T10.08.33.839920Z"
+    "timestamp": "2025-07-16T13:09:13.876251+00:00"
   }
 ]
