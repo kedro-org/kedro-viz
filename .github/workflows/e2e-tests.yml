@@ -30,8 +30,9 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Token Debug
+          env:
+            TOKEN: ${{ secrets.GH_TAGGING_TOKEN }}
           run: |
-            TOKEN="${{ secrets.GH_TAGGING_TOKEN }}"
             echo "🔐 Token length check: ${#TOKEN}"
 
         - name: Clone latest kedro-starters release into package/starters and echo path
