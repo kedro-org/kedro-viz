@@ -189,6 +189,19 @@ class TestErrorHandling:
         hooks.on_node_error(exc, sample_node)
         assert hooks._events[-1]["event"] == "on_node_error"
 
+    def test_on_node_error_does_not_emits_event(self, hooks, sample_node):
+        hooks._all_nodes = [sample_node]
+        hooks._should_collect_events = False
+        exc = RuntimeError("Error occurred")
+        hooks.on_node_error(exc, sample_node)
+        assert len(hooks._events) == 0
+
+    def test_on_pipeline_error_does_not_emits_event(self, hooks):
+        hooks._should_collect_events = False
+        exc = RuntimeError("Error occurred")
+        hooks.on_pipeline_error(exc)
+        assert len(hooks._events) == 0
+
     def test_pipeline_error_uses_dataset_context_when_available(
         self, hooks, sample_node
     ):
@@ -228,10 +241,6 @@ class TestErrorHandling:
 
 
 class TestInternalHelpers:
-    def test_add_event_skips_when_no_nodes(self, hooks):
-        hooks._add_event({"event": "dummy"})
-        assert hooks._events == []
-
     def test_create_dataset_event_includes_size(self, tmp_path):
         fp = tmp_path / "d.txt"
         fp.write_text("abc")

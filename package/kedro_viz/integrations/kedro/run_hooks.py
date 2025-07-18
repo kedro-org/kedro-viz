@@ -97,9 +97,6 @@ class PipelineRunStatusHook:
 
     def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event to the events list and optionally flush to disk."""
-        if not self._should_collect_events:
-            return
-
         self._events.append(event)
         if flush:
             write_events(self._events)
@@ -138,14 +135,12 @@ class PipelineRunStatusHook:
             logger.warning(
                 "Workflow tracking is disabled during partial pipeline runs (executed using --from-nodes, --to-nodes, --tags, --pipeline, and more). `.viz/kedro_pipeline_events.json` will be created only during a full kedro run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
             )
-            self._should_collect_events = False
             return
 
         if not is_sequential_runner(run_params):
             logger.warning(
                 "Workflow tracking is disabled for non-sequential runners. `.viz/kedro_pipeline_events.json` will be created only during a sequential run. See issue https://github.com/kedro-org/kedro-viz/issues/2443 for more details."
             )
-            self._should_collect_events = False
             return
 
         self._should_collect_events = True
@@ -160,6 +155,7 @@ class PipelineRunStatusHook:
         """Set context before a dataset is loaded by a node."""
         if not self._should_collect_events:
             return
+
         self._set_event_context(dataset_name, "loading", node)
 
     @hook_impl
@@ -167,6 +163,7 @@ class PipelineRunStatusHook:
         """Record dataset loading event."""
         if not self._should_collect_events:
             return
+
         self._add_event(
             create_dataset_event(
                 "after_dataset_loaded", dataset_name, data, self._datasets
@@ -179,6 +176,7 @@ class PipelineRunStatusHook:
         """Set context before a dataset is saved by a node."""
         if not self._should_collect_events:
             return
+
         self._set_event_context(dataset_name, "saving", node)
 
     @hook_impl
@@ -186,6 +184,7 @@ class PipelineRunStatusHook:
         """Record dataset saving event."""
         if not self._should_collect_events:
             return
+
         self._add_event(
             create_dataset_event(
                 "after_dataset_saved", dataset_name, data, self._datasets
@@ -198,6 +197,7 @@ class PipelineRunStatusHook:
         """Record node execution start time and set current node context."""
         if not self._should_collect_events:
             return
+
         self._node_start[node.name] = perf_counter()
         self._current_node = node
         self._started_nodes.add(node.name)
@@ -207,6 +207,7 @@ class PipelineRunStatusHook:
         """Record successful node completion with performance metrics."""
         if not self._should_collect_events:
             return
+
         start = self._node_start.get(node.name)
         if start is None:
             duration = 0.0
@@ -237,6 +238,9 @@ class PipelineRunStatusHook:
     @hook_impl
     def on_node_error(self, error: Exception, node: Any) -> None:
         """Record node execution errors with detailed context."""
+        if not self._should_collect_events:
+            return
+
         self._add_event(
             {
                 "event": "on_node_error",
@@ -252,6 +256,8 @@ class PipelineRunStatusHook:
     @hook_impl
     def on_pipeline_error(self, error: Exception) -> None:
         """Emit pipeline errors with last I/O or node context if available."""
+        if not self._should_collect_events:
+            return
 
         event = {
             "event": "on_pipeline_error",

@@ -183,9 +183,7 @@ def is_sequential_runner(run_params: dict) -> bool:
     if runner is None:
         return True
 
-    # If runner is a string, check if it contains "SequentialRunner"
-    if isinstance(runner, str):
-        return "SequentialRunner" in runner
-
-    # For non-string cases (Custom Runner)
-    return False
+    return (
+        isinstance(runner, str)
+        and "kedro.runner.sequential_runner.SequentialRunner object" in runner
+    )
