@@ -29,8 +29,8 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
-        - name: Set GitHub Token for starter repo access
-          run: echo "GITHUB_TOKEN=${{ secrets.GH_E2E_AUTH_TOKEN }}" >> $GITHUB_ENV
+        - name: Clone kedro-starters with PAT
+          run: git clone https://${{ secrets.GH_E2E_AUTH_TOKEN }}@github.com/kedro-org/kedro-starters.git starters
 
         - name: Setup Tests
           uses: "./.github/actions/setup_tests"
