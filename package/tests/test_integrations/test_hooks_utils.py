@@ -14,6 +14,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     get_file_size,
     hash_node,
     is_default_run,
+    is_sequential_runner,
     write_events,
     write_events_to_file,
 )
@@ -137,3 +138,21 @@ class TestRunDefaults:
     )
     def test_is_default_run(self, params, expected):
         assert is_default_run(params) is expected
+
+    @pytest.mark.parametrize(
+        "params, expected",
+        [
+            ({}, True),
+            ({"runner": None}, True),
+            (
+                {"runner": "kedro.runner.sequential_runner.SequentialRunner object"},
+                True,
+            ),
+            ({"runner": "ParallelRunner"}, False),
+            ({"runner": "ThreadRunner"}, False),
+            ({"runner": 123}, False),
+            ({"runner": []}, False),
+        ],
+    )
+    def test_is_sequential_runner(self, params, expected):
+        assert is_sequential_runner(params) is expected
