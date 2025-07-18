@@ -3,15 +3,31 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "demo-project"
-version = "0.1.0"
-description = "Kedro-Viz Demo Project"
-readme = "README.md"
 requires-python = ">=3.9"
-dynamic = ["dependencies"]
+name = "demo-project"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "ipython>=8.10",
+    "kedro-datasets[pandas-csvdataset, pandas-exceldataset, pandas-parquetdataset, plotly-plotlydataset, plotly-jsondataset, matplotlib-matplotlibwriter]>=3.0",
+    "kedro>=0.19",
+    "nbstripout~=0.4",
+    "pytest-cov~=2.5",
+    "pytest-mock>=1.7.1,<2.0",
+    "pytest~=6.2",
+    "scikit-learn~=1.0",
+    "wheel>=0.35,<0.37",
+    "pillow>=9.0",
+    "matplotlib>3.5.0",
+    "pre-commit~=1.17",
+    "ruff==0.7.0",
+    "seaborn>=0.13.0"
+    ]
 
 [project.scripts]
 demo-project = "demo_project.__main__:main"
+
+[project.entry-points."kedro.hooks"]
 
 [project.optional-dependencies]
 docs = [
@@ -29,12 +45,11 @@ dev = [
     "pytest-cov~=3.0",
     "pytest-mock>=1.7.1, <2.0",
     "pytest~=7.2",
-    "ruff~=0.1.8",
-    "pre-commit~=3.5"
+    "ruff~=0.1.8"
 ]
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+version = {attr = "demo_project.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -44,8 +59,8 @@ namespaces = false
 package_name = "demo_project"
 project_name = "modular-spaceflights"
 kedro_init_version = "1.0.0"
-tools = ["Linting", "Testing", "Custom Logging", "Documentation", "Data Structure"]
-example_pipeline = "True"
+tools = "['None']"
+example_pipeline = "False"
 source_dir = "src"
 
 [tool.pytest.ini_options]
