@@ -31,7 +31,7 @@ jobs:
 
         - name: Token Debug
           run: |
-            TOKEN="${{ secrets.GH_E2E_AUTH_TOKEN }}"
+            TOKEN="${{ secrets.GH_TAGGING_TOKEN }}"
             echo "🔐 Token length check: ${#TOKEN}"
 
         - name: Clone latest kedro-starters release into package/starters and echo path
