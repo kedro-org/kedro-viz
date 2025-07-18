@@ -75,9 +75,9 @@ class TestTimestampUtils:
         parsed_ts = datetime.fromisoformat(ts)
 
         # Should have timezone info, and it should be UTC
-        assert (
-            parsed_ts.tzinfo is not None
-        ), "Parsed timestamp should have timezone info"
+        assert parsed_ts.tzinfo is not None, (
+            "Parsed timestamp should have timezone info"
+        )
         assert parsed_ts.tzinfo.utcoffset(parsed_ts) == timezone.utc.utcoffset(
             parsed_ts
         ), f"Timestamp timezone offset is not UTC, got: {parsed_ts.tzinfo}"
@@ -85,9 +85,9 @@ class TestTimestampUtils:
         # Should be close to current UTC time
         now = datetime.now(timezone.utc)
         delta = abs((parsed_ts - now).total_seconds())
-        assert (
-            delta < 5
-        ), f"Timestamp is not within 5 seconds of current UTC time, delta={delta}, ts={ts}, now={now}"
+        assert delta < 5, (
+            f"Timestamp is not within 5 seconds of current UTC time, delta={delta}, ts={ts}, now={now}"
+        )
 
 
 class TestWriteEvents:
