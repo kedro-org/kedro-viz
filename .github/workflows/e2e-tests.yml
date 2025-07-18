@@ -29,6 +29,11 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
+        - name: Token Debug
+          run: |
+            TOKEN="${{ secrets.GH_E2E_AUTH_TOKEN }}"
+            echo "🔐 Token length check: ${#TOKEN}"
+
         - name: Clone latest kedro-starters release into package/starters and echo path
           run: |
             TOKEN="${{ secrets.GH_E2E_AUTH_TOKEN }}"
