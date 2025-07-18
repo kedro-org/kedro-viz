@@ -9,9 +9,9 @@ on:
         type: string
       python-version:
         type: string
-    secrets:
-      GH_E2E_AUTH_TOKEN:
-        required: true
+    # secrets:
+    #   GH_E2E_AUTH_TOKEN:
+    #     required: true
 jobs:
     e2e_tests:
         runs-on: ${{ inputs.os }}
