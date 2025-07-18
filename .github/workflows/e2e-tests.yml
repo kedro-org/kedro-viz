@@ -9,6 +9,9 @@ on:
         type: string
       python-version:
         type: string
+    secrets:
+      GH_E2E_AUTH_TOKEN:
+        required: true
 jobs:
     e2e_tests:
         runs-on: ${{ inputs.os }}
@@ -53,6 +56,16 @@ jobs:
 
             echo "📦 Latest tag: $LATEST_TAG"
 
+            mkdir -p package/starters
+            git clone --depth 1 --branch "$LATEST_TAG" \
+              https://github.com/kedro-org/kedro-starters.git package/starters
+
+            echo "✅ Cloned into: $(pwd)/package/starters"
+            echo "📂 Contents of package/starters:"
+            ls -la package/starters
+
+            echo "📂 Contents of package/starters/spaceflights-pandas:"
+            ls -la package/starters/spaceflights-pandas || echo "❌ spaceflights-pandas folder not found!"
 
         - name: Setup Tests
           uses: "./.github/actions/setup_tests"
