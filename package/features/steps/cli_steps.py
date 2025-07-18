@@ -62,7 +62,6 @@ def create_project_from_config_file(context):
 @given("I have run a non-interactive kedro new with {starter} starter")
 def create_project_with_starter(context, starter):
     """Behave step to run kedro new given the config I previously created."""
-    local_starter_path = Path.cwd() / "starters" / starter
     res = run(
         [
             context.kedro,
