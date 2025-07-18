@@ -29,8 +29,17 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
-        - name: Clone kedro-starters with PAT
-          run: git clone https://${{ secrets.GH_E2E_AUTH_TOKEN }}@github.com/kedro-org/kedro-starters.git starters
+        - name: Clone kedro-starters into package/starters and echo path
+          run: |
+            mkdir -p package/starters
+            git clone https://${{ secrets.GH_E2E_AUTH_TOKEN }}@github.com/kedro-org/kedro-starters.git package/starters
+
+            echo "✅ Cloned into: $(pwd)/package/starters"
+            echo "📂 Contents of package/starters:"
+            ls -la package/starters
+
+            echo "📂 Contents of package/starters/spaceflights-pandas:"
+            ls -la package/starters/spaceflights-pandas || echo "❌ spaceflights-pandas folder not found!"
 
         - name: Setup Tests
           uses: "./.github/actions/setup_tests"
