@@ -68,7 +68,7 @@ def create_project_with_starter(context, starter):
             context.kedro,
             "new",
             "--starter",
-            str(local_starter_path),
+            str(starter),
             "--config",
             str(context.config_file),
         ],

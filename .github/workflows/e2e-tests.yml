@@ -9,73 +9,25 @@ on:
         type: string
       python-version:
         type: string
-    secrets:
-      GH_E2E_AUTH_TOKEN:
-        required: false
-      GH_TAGGING_TOKEN:
-        required: false
 jobs:
     e2e_tests:
         runs-on: ${{ inputs.os }}
 
         # below condition checks if the operating system is Ubuntu, or 
         # if the operating system is Windows and the branch is main/demo
-        # if: >
-        #   inputs.os == 'ubuntu-latest' || 
-        #   (
-        #     (
-        #       github.ref == 'refs/heads/main' || 
-        #       github.ref == 'refs/heads/demo'
-        #     ) && 
-        #     inputs.os == 'windows-latest'
-        #   )
+        if: >
+          inputs.os == 'ubuntu-latest' || 
+          (
+            (
+              github.ref == 'refs/heads/main' || 
+              github.ref == 'refs/heads/demo'
+            ) && 
+            inputs.os == 'windows-latest'
+          )
           
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
-
-        - name: Clone latest kedro-starters release (Linux)
-          if: runner.os != 'Windows'
-          env:
-            GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
-          run: |
-            API_RESPONSE=$(curl -s -L \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer $GH_E2E_AUTH_TOKEN" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              https://api.github.com/repos/kedro-org/kedro-starters/releases/latest)
-
-            LATEST_TAG=$(echo "$API_RESPONSE" | jq -r '.tag_name')
-
-            if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
-              echo "Failed to get latest tag"
-              exit 1
-            fi
-
-            mkdir -p package/starters
-            git clone --depth 1 --branch "$LATEST_TAG" https://github.com/kedro-org/kedro-starters.git package/starters
-
-        - name: Clone latest kedro-starters release (Windows)
-          if: runner.os == 'Windows'
-          env:
-            GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
-          run: |
-            $headers = @{
-              "Accept" = "application/vnd.github+json"
-              "Authorization" = "Bearer $env:GH_E2E_AUTH_TOKEN"
-              "X-GitHub-Api-Version" = "2022-11-28"
-            }
-
-            $response = Invoke-RestMethod -Uri "https://api.github.com/repos/kedro-org/kedro-starters/releases/latest" -Headers $headers
-            $tag = $response.tag_name
-
-            if (-not $tag) {
-              Write-Error "Failed to get latest tag"
-              exit 1
-            }
-
-            mkdir package\starters
-            git clone --depth 1 --branch $tag https://github.com/kedro-org/kedro-starters.git package/starters
 
         - name: Setup Tests
           uses: "./.github/actions/setup_tests"

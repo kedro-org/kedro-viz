@@ -22,7 +22,6 @@ jobs:
     with:
       os: ${{ matrix.os }}
       python-version: ${{ matrix.python-version }}    
-    secrets: inherit
 
   unit_tests:
     strategy:
