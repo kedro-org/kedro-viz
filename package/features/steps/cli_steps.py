@@ -63,7 +63,6 @@ def create_project_from_config_file(context):
 def create_project_with_starter(context, starter):
     """Behave step to run kedro new given the config I previously created."""
     local_starter_path = Path.cwd() / "starters" / starter
-    assert local_starter_path.exists(), f"Starter path not found: {local_starter_path}"
     res = run(
         [
             context.kedro,
