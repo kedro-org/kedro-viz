@@ -33,17 +33,26 @@ jobs:
           run: |
             mkdir -p package/starters
 
-            # Get latest release tag via GitHub API using auth to avoid rate limit
-            LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GH_E2E_AUTH_TOKEN }}" \
-              https://api.github.com/repos/kedro-org/kedro-starters/releases/latest \
-              | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+            echo "🔎 Fetching latest release tag from GitHub API..."
+            API_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GH_E2E_AUTH_TOKEN }}" \
+              https://api.github.com/repos/kedro-org/kedro-starters/releases/latest)
 
-            echo "📦 Latest release tag: $LATEST_TAG"
+            echo "🧾 GitHub API response:"
+            echo "$API_RESPONSE"
 
-            # Clone that specific tag into package/starters
+            # Extract tag using jq
+            LATEST_TAG=$(echo "$API_RESPONSE" | jq -r '.tag_name')
+
+            # Fail if empty or null
+            if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
+              echo "❌ Failed to retrieve latest release tag from GitHub."
+              exit 1
+            fi
+
+            echo "📦 Cloning release tag: $LATEST_TAG"
             git clone --branch "$LATEST_TAG" https://${{ secrets.GH_E2E_AUTH_TOKEN }}@github.com/kedro-org/kedro-starters.git package/starters
 
-            echo "✅ Cloned into: $(pwd)/package/starters"
+            echo "✅ Cloned kedro-starters into: $(pwd)/package/starters"
             echo "📂 Contents of package/starters:"
             ls -la package/starters
 
