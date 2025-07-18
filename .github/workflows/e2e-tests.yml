@@ -31,10 +31,12 @@ jobs:
 
         - name: Clone latest kedro-starters release into package/starters and echo path
           run: |
-            mkdir -p package/starters
+            echo "🔐 Token length check: ${#GH_E2E_AUTH_TOKEN}"
 
-            echo "🔎 Fetching latest release tag from GitHub API..."
-            API_RESPONSE=$(curl -s -H "Authorization: token $GH_E2E_AUTH_TOKEN" \
+            API_RESPONSE=$(curl -s -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_E2E_AUTH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
               https://api.github.com/repos/kedro-org/kedro-starters/releases/latest)
 
             echo "🧾 GitHub API response:"
@@ -43,14 +45,13 @@ jobs:
             LATEST_TAG=$(echo "$API_RESPONSE" | jq -r '.tag_name')
 
             if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" == "null" ]; then
-              echo "❌ Failed to get latest tag"
+              echo "❌ Failed to get tag"
               exit 1
             fi
 
-            git clone --branch "$LATEST_TAG" https://$GH_E2E_AUTH_TOKEN@github.com/kedro-org/kedro-starters.git package/starters
+            echo "📦 Latest tag: $LATEST_TAG"
           env:
             GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
-
 
 
         - name: Setup Tests
