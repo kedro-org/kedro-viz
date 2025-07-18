@@ -34,6 +34,14 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
+        - name: Debug secrets existence
+          run: |
+            echo "GH_TAGGING_TOKEN is ${#GH_TAGGING_TOKEN} characters long"
+            echo "GH_E2E_AUTH_TOKEN is ${#GH_E2E_AUTH_TOKEN} characters long"
+          env:
+            GH_TAGGING_TOKEN: ${{ secrets.GH_TAGGING_TOKEN }}
+            GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
+
         - name: Token Debug
           env:
             GH_TAGGING_TOKEN: ${{ secrets.GH_TAGGING_TOKEN }}
