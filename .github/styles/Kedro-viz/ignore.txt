@@ -27,7 +27,6 @@ APIs
 networkx
 Plotly
 Pylint
-SQLAlchemy
 Astro
 Xebia
 pytest
