@@ -30,6 +30,8 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Clone latest kedro-starters release into package/starters and echo path
+          env:
+            GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
           run: |
             echo "🔐 Token length check: ${#GH_E2E_AUTH_TOKEN}"
 
@@ -50,8 +52,6 @@ jobs:
             fi
 
             echo "📦 Latest tag: $LATEST_TAG"
-          env:
-            GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
 
 
         - name: Setup Tests
