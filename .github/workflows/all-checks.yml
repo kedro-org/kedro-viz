@@ -19,6 +19,9 @@ jobs:
     with:
       os: ${{ matrix.os }}
       python-version: ${{ matrix.python-version }} 
+    secrets:
+      GH_E2E_AUTH_TOKEN: ${{ secrets.GH_E2E_AUTH_TOKEN }}
+      GH_TAGGING_TOKEN: ${{ secrets.GH_TAGGING_TOKEN }}
 
   unit_tests:
     strategy:
