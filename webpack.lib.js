@@ -45,19 +45,8 @@ module.exports = [
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: 'styles.min.css',
+        filename: 'styles/styles.min.css',
       }),
     ],
-  },
-  // 2. Bundle the web worker
-  {
-    mode: 'production',
-    entry: './lib/utils/worker.js',
-    output: {
-      filename: 'worker.js',
-      globalObject: 'this',
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'lib/utils'),
-    },
   },
 ];
