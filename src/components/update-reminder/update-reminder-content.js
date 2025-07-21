@@ -6,7 +6,7 @@ export const updateContent = {
       image: '',
       copy: 'With Kedro-Viz 12.0, We are proud to introduce our latest feature Workflow. It gives you a clear, visual summary of your pipeline run—showing whether it succeeded or failed, which nodes were executed, and exactly where issues occurred. With this insight, you can debug faster and optimize your workflows with confidence.',
       buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/unreleased/workflow-view/',
+        'https://docs.kedro.org/projects/kedro-viz/en/stable/workflow-view/',
       buttonText: 'Read more',
     },
     {
