@@ -1,7 +1,7 @@
 # This is a Databricks asset bundle definition for dab.
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 bundle:
-  name: spaceflights
+  name: demo-project
 
 artifacts:
   default:
@@ -39,7 +39,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-2330458654110161.1.azuredatabricks.net
+      host: ${DATABRICKS_HOST}
 
   # The 'prod' target, used for production deployment.
   prod:
@@ -56,10 +56,9 @@ targets:
     # to make sure we have correctly configured this target.
     mode: production
     workspace:
-      host: https://adb-2330458654110161.1.azuredatabricks.net
+      host: ${DATABRICKS_HOST}
       root_path: /Shared/.bundle/prod/${bundle.name}
     run_as:
-      # This runs as rashida_kanchwala@mckinsey.com in production. Alternatively,
-      # a service principal could be used here using service_principal_name
-      # (see Databricks documentation).
-      user_name: rashida_kanchwala@mckinsey.com
+      # This should use a service principal in production
+      # See Databricks documentation for configuration
+      user_name: ${DATABRICKS_USER_EMAIL}
