@@ -1,65 +1,12 @@
-# This is a Databricks asset bundle definition for dab.
-# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
-bundle:
-  name: spaceflights
 
-artifacts:
-  default:
-    type: whl
-    build: kedro package
-    path: .
+FROM python:3.9
 
-sync:
-  include:
-    - conf/logging.yml
-    - conf/base/*.yml
-    - conf/base/*.gitkeep
-    - data/**/*.csv
-    - data/**/*.gitkeep
-  exclude:
-    - conf/local/**/*
+WORKDIR /code
 
-include:
-  - resources/*.yml
-  - resources/**/*.yml
-  - resources/*.yaml
-  - resources/**/*.yaml
+COPY . /code
 
-targets:
-  # The 'dev' target, used for development purposes.
-  # Whenever a developer deploys using 'local', they get their own copy.
-  dev:
-    sync:
-      include:
-        - conf/dev/*.yml
-        - conf/dev/*.gitkeep
-    # We use 'mode: development' to make sure everything deployed to this target gets a prefix
-    # like '[dev my_user_name]'. Setting this mode also disables any schedules and
-    # automatic triggers for jobs and enables the 'development' mode for Delta Live Tables pipelines.
-    mode: development
-    default: true
-    workspace:
-      host: https://adb-2330458654110161.1.azuredatabricks.net
+RUN pip install --no-cache-dir --upgrade -r /code/src/docker_requirements.txt
 
-  # The 'prod' target, used for production deployment.
-  prod:
-    sync:
-      include:
-        - conf/prod/*.yml
-        - conf/prod/*.gitkeep
-    # For production deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
-    #
-    # By making use of 'mode: production' we enable strict checks
-    # to make sure we have correctly configured this target.
-    mode: production
-    workspace:
-      host: https://adb-2330458654110161.1.azuredatabricks.net
-      root_path: /Shared/.bundle/prod/${bundle.name}
-    run_as:
-      # This runs as rashida_kanchwala@mckinsey.com in production. Alternatively,
-      # a service principal could be used here using service_principal_name
-      # (see Databricks documentation).
-      user_name: rashida_kanchwala@mckinsey.com
+CMD ["kedro", "viz", "run", "--host", "0.0.0.0", "--port", "4141", "--no-browser"]
+
+ENV ADD_SECURITY_HEADERS=true
