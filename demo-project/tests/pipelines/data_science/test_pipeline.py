@@ -3,8 +3,8 @@ import pandas as pd
 import pytest
 from kedro.io import DataCatalog
 from kedro.runner import SequentialRunner
-from spaceflights.pipelines.data_science import create_pipeline as create_ds_pipeline
-from spaceflights.pipelines.data_science.nodes import split_data
+from demo_project.pipelines.modelling import create_pipeline
+from demo_project.pipelines.modelling.nodes import split_data
 
 @pytest.fixture
 def dummy_data():
