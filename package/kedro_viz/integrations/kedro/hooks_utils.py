@@ -165,3 +165,25 @@ def is_default_run(run_params: dict) -> bool:
 
     # True if none of the filtering params are set (i.e. full/default run)
     return not any(filtering_params)
+
+
+def is_sequential_runner(run_params: dict) -> bool:
+    """
+    Check if the run is using SequentialRunner.
+
+    Args:
+        run_params: Dictionary containing pipeline run parameters
+
+    Returns:
+        bool: True if the run is using SequentialRunner, False otherwise
+    """
+    runner = run_params.get("runner")
+
+    # If no runner specified, default is SequentialRunner
+    if runner is None:
+        return True
+
+    return (
+        isinstance(runner, str)
+        and "kedro.runner.sequential_runner.SequentialRunner object" in runner
+    )
