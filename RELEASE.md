@@ -8,8 +8,8 @@ Please follow the established format:
 
 # Release 12.0.0
 ## Major features and improvements
- - Migrate our current documentation from Sphinx to Mkdocs. (#2422)
- - New workflow run status. (#2390)
+ - Introduce 'Workflow' view to visualise pipeline executions. (#2390)
+ - Migrate our current documentation from Sphinx to MkDocs. (#2422)
  - Add new documentation page to introduce workflow feature. (#2436)
 
 ## Bug fixes and other changes
