@@ -29,16 +29,11 @@ class DatasetStatsHook:
 
     @hook_impl
     def after_catalog_created(self, catalog: DataCatalog):
-        """Hooks to be invoked after a data catalog is created.
-
-        Args:
-            catalog: The catalog that was created.
-        """
         try:
             self.datasets = catalog
         except Exception as exc:  # pragma: no cover
             logger.warning("Unable to access datasets in catalog: %s", exc)
-            self.datasets = {}
+            self.datasets = DataCatalog({})
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):

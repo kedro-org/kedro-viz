@@ -120,7 +120,7 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
     try:
         from azure.core.exceptions import ServiceRequestError
     except ImportError:  # pragma: no cover
-        ServiceRequestError = None  # type: ignore
+        ServiceRequestError = None
 
     try:
         deployer = DeployerFactory.create_deployer(
