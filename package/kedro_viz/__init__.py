@@ -19,16 +19,18 @@ if sys.version_info >= (3, 14):
 
 
 # Kedro version check
-try:
-    from kedro import __version__ as kedro_version_str
-    from packaging.version import Version
+try:  # pragma: no cover
+    from kedro import __version__ as kedro_version_str  # pragma: no cover
+    from packaging.version import Version  # pragma: no cover
 
-    KEDRO_VERSION = Version(kedro_version_str)
+    KEDRO_VERSION = Version(kedro_version_str)  # pragma: no cover
 
-    if KEDRO_VERSION < Version("1.0.0"):
-        raise RuntimeError(
+    if KEDRO_VERSION < Version("1.0.0"):  # pragma: no cover
+        raise RuntimeError(  # pragma: no cover
             "Kedro Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0. "
             "Please upgrade Kedro."
         )
-except ImportError as err:
-    raise RuntimeError("Kedro must be installed to use Kedro Viz.") from err
+except ImportError as err:  # pragma: no cover
+    raise RuntimeError(
+        "Kedro must be installed to use Kedro Viz."
+    ) from err  # pragma: no cover
