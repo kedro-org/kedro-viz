@@ -70,22 +70,9 @@ class CatalogRepository:
 
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
-        dataset_obj: Optional["AbstractDataset"] = None
-        try:
-            if hasattr(self._catalog, "get") and callable(self._catalog.get):
-                dataset_obj = self._catalog.get(dataset_name)
-            elif KEDRO_VERSION >= parse("0.18.1"):
-                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[attr-defined]
-            else:  # pragma: no cover
-                dataset_obj = self._catalog._get_dataset(dataset_name)  # type: ignore[attr-defined]
-        except DatasetNotFoundError:  # pragma: no cover
-            pass  # dataset_obj stays None
-
-        if dataset_obj is None:
-            dataset_obj = MemoryDataset()
-
-        return dataset_obj
+    def get_dataset(self, dataset_name: str) -> "AbstractDataset":
+        dataset_obj = self._catalog.get(dataset_name)
+        return dataset_obj or MemoryDataset()
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))

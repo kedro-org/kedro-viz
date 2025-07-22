@@ -5,14 +5,7 @@ from collections import defaultdict
 from typing import Any, Dict, List, Set, Union
 
 from kedro.io import DataCatalog
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io.core import DatasetError
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore
-
+from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 

@@ -5,6 +5,7 @@ from abc import ABC
 from typing import Any, Dict, Optional, Set, Union, cast
 
 from fastapi.encoders import jsonable_encoder
+from kedro.io.core import AbstractDataset, DatasetError
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import (
     BaseModel,
@@ -14,19 +15,6 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io.core import DatasetError
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
