@@ -1,9 +1,7 @@
 """`kedro_viz.launchers.cli.main` is an entry point for Kedro-Viz cli commands."""
 
 import click
-from packaging.version import Version
 
-from kedro_viz.constants import KEDRO_VERSION
 from kedro_viz.launchers.cli.lazy_default_group import LazyDefaultGroup
 
 
@@ -26,7 +24,3 @@ def viz_cli():
 @click.pass_context
 def viz(ctx):
     """Visualise a Kedro pipeline using Kedro viz."""
-    if KEDRO_VERSION < Version("1.0.0"):  # pragma: no cover
-        raise RuntimeError(  # pragma: no cover
-            "Kedro Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0. Please upgrade Kedro."
-        )
