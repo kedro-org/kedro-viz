@@ -24,5 +24,6 @@ if sys.version_info >= (3, 14):
 
 if KEDRO_VERSION < Version("1.0.0"):  # pragma: no cover
     raise RuntimeError(  # pragma: no cover
-        "Kedro Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0. Please upgrade Kedro."
+        """Kedro-Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0.
+            Please either upgrade Kedro to 1.0.0 or higher, or downgrade Kedro-Viz to 11.1.0 or earlier."""
     )
