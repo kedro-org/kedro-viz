@@ -10,13 +10,6 @@ from typing import Any, Union
 import fsspec
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog  # type: ignore
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
-
 from kedro.io.core import get_filepath_str
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -35,23 +28,14 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
+    def after_catalog_created(self, catalog: DataCatalog):
         """Hooks to be invoked after a data catalog is created.
 
         Args:
             catalog: The catalog that was created.
         """
         try:
-            # Check for DataCatalog 2.0 and KedroDataCatalog
-            if hasattr(catalog, "keys") and callable(catalog.keys):
-                # since catalog is made like a dictionary interface
-                self.datasets = catalog
-            # Check DataCatalog 1.0
-            elif hasattr(catalog, "_datasets"):
-                self.datasets = catalog._datasets
-            else:
-                # Support for older Kedro versions
-                self.datasets = catalog._data_sets  # type: ignore
+            self.datasets = catalog
         except Exception as exc:  # pragma: no cover
             logger.warning("Unable to access datasets in catalog: %s", exc)
             self.datasets = {}

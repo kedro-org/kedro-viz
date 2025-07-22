@@ -6,12 +6,6 @@ from typing import Any, Dict, List, Set, Union
 
 from kedro.io import DataCatalog
 
-try:  # pragma: no cover
-    KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog  # type: ignore
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
-
 try:
     # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
@@ -83,7 +77,7 @@ class DataAccessManager:
 
     def resolve_dataset_factory_patterns(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Resolve dataset factory patterns in data catalog by matching
@@ -103,22 +97,19 @@ class DataAccessManager:
         for dataset_name in all_datasets:
             try:
                 if hasattr(catalog, "get") and callable(catalog.get):
-                    # for Kedro >= 1.0
                     catalog.get(dataset_name)
-                else:
-                    catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[union-attr]
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
     def add_catalog(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Add the catalog to the CatalogRepository
 
         Args:
-            catalog: The DataCatalog or KedroDataCatalog instance to add.
+            catalog: The DataCatalog instance to add.
         """
         self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
