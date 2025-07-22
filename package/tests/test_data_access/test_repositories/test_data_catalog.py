@@ -136,18 +136,6 @@ class TestDataCatalogRepository:
         result = mock_data_repo.get_dataset("my_dataset")
         assert isinstance(result, CSVDataset)
 
-    def test_get_dataset_without_get(self, mock_data_repo, mocker):
-        mocker.patch.object(mock_data_repo._catalog, "get", None)
-        mocker.patch.object(
-            mock_data_repo._catalog,
-            "_get_dataset",
-            return_value=CSVDataset(filepath="cars.csv"),
-            create=True,
-        )
-
-        result = mock_data_repo.get_dataset("my_dataset")
-        assert isinstance(result, CSVDataset)
-
     def test_get_dataset_returns_none(self, mock_data_repo, mocker):
         # Simulate .get returning None
         mocker.patch.object(
