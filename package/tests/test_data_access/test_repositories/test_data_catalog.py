@@ -179,7 +179,7 @@ class TestDataCatalogRepositoryExtended:
         # Should return None since no layer is found
         assert repo.get_layer_for_dataset("cars") is None
 
-    def test_layers_mapping_uses_metadata_layer():
+    def test_layers_mapping_uses_metadata_layer(self):
         catalog_config = {
             "my_dataset": {
                 "type": "pandas.CSVDataset",
