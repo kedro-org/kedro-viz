@@ -1,7 +1,6 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
 
 import logging
-from typing import TYPE_CHECKING
 
 from kedro.io.core import AbstractDataset
 

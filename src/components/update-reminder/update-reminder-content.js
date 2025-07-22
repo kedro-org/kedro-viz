@@ -1,10 +1,10 @@
 export const updateContent = {
-  date: '8 July 2025',
+  date: '23 July 2025',
   features: [
     {
-      title: 'Last Version Supporting Kedro 0.19',
+      title: 'Drop support for Kedro 0.x series',
       image: '',
-      copy: 'Kedro-Viz 11.1.0 is compatible with both the Kedro 0.19 series and Kedro 1.0.0. Please note: future versions (starting from 12.0.0) will drop support for Kedro 0.19.',
+      copy: 'Kedro Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0. Please upgrade Kedro.',
       buttonLink: '',
       buttonText: '',
     },
