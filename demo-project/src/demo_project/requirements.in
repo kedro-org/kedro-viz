@@ -16,4 +16,4 @@ pre-commit~=1.17
 ruff==0.7.0
 seaborn>=0.13.0
 notebook>=7.0.0
-kedro[jupyter]~=1.0.0rc3
+kedro[jupyter]~=1.0.0
