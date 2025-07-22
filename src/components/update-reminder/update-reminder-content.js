@@ -18,5 +18,12 @@ export const updateContent = {
       buttonLink: 'https://docs.kedro.org/projects/kedro-viz/',
       buttonText: 'Check it out',
     },
+    {
+      title: 'Drop Support for Kedro 0.x series',
+      image: '',
+      copy: 'Kedro-Viz 12.0.0+ no longer supports Kedro 0.x versions. To use the latest features, please upgrade your project to Kedro 1.0.0 or higher. If you’re using Kedro 0.18.x or 0.19.x, please stick with Kedro-Viz 11.1.0, the last release that supports the 0.x series.',
+      buttonLink: '',
+      buttonText: '',
+    },
   ],
 };

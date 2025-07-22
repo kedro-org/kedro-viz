@@ -8,8 +8,8 @@ Please follow the established format:
 
 # Release 12.0.0
 ## Major features and improvements
- - Drop support for Kedro 0.x series. (#2453)
  - Introduce 'Workflow' view to visualise pipeline executions. (#2390)
+ - Drop support for Kedro 0.x series. (#2453)
  - Migrate our current documentation from Sphinx to MkDocs. (#2422)
  - Add new documentation page to introduce workflow feature. (#2436)
 
