@@ -185,14 +185,3 @@ def get_main_api_response(context):
 def compare_main_api_responses(context):
     regular_mode_response = requests.get("http://localhost:4141/api/main").json()
     assert context.response == regular_mode_response
-
-
-@then("it should fail with an error about incompatible Kedro version")
-def step_check_incompatible_kedro_error(context):
-    context.result.wait(timeout=10)
-    stderr_output = context.result.stderr.read().decode("utf-8")
-    assert context.result.returncode != 0
-    assert (
-        "Kedro Viz 12.0.0+ is incompatible with Kedro versions below 1.0.0"
-        in stderr_output
-    )

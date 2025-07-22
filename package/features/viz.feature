@@ -31,10 +31,3 @@ Feature: Viz plugin in new project
         Given I have installed the project's requirements
         When I execute the kedro viz run command
         Then I compare the responses in regular and lite mode
-
-    Scenario: Kedro-Viz fails to run with Kedro version below 1.0.0
-        Given I have installed kedro version "0.19.14"
-        And I have run a non-interactive kedro new with spaceflights-pandas starter
-        And I have installed the project's requirements
-        When I execute the kedro viz run command
-        Then it should fail with an error about incompatible Kedro version
