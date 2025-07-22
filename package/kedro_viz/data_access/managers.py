@@ -84,8 +84,7 @@ class DataAccessManager:
 
         for dataset_name in all_datasets:
             try:
-                if hasattr(catalog, "get") and callable(catalog.get):
-                    catalog.get(dataset_name)
+                catalog.get(dataset_name)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 

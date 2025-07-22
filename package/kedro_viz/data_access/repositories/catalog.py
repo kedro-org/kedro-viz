@@ -2,7 +2,7 @@
 centralise access to Kedro data catalog."""
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from kedro.io import DataCatalog, DatasetNotFoundError, MemoryDataset
 from kedro.io.core import AbstractDataset
