@@ -1,6 +1,6 @@
 -r requirements.txt
 
-kedro >=1.0.0
+kedro >=1.0.0rc3
 kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, plotly.JSONDataset]>=7.0.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.8
