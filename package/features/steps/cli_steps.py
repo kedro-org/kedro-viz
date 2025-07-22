@@ -29,17 +29,6 @@ def _create_config_file(context, include_example):
         yaml.dump(config, config_file, default_flow_style=False)
 
 
-def _add_package_pin(requirements_path: str, package_name: str, version: str) -> None:
-    """Adds a package pin to the requirements file"""
-    with open(requirements_path, "r") as req_file:
-        requirements = req_file.readlines()
-
-    requirements.append(f"{package_name}=={version}")
-
-    with open(requirements_path, "w") as req_file:
-        req_file.writelines(requirements)
-
-
 @given("I have prepared a config file with example code")
 def create_config_file_with_example(context):
     """Behave step to create a temporary config file
