@@ -6,6 +6,16 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.0.0
+## Major features and improvements
+ - Introduce 'Workflow' view to visualise pipeline executions. (#2390)
+ - Drop support for Kedro 0.x series. (#2453)
+ - Migrate our current documentation from Sphinx to MkDocs. (#2422)
+ - Add new documentation page to introduce workflow feature. (#2436)
+
+## Bug fixes and other changes
+
+
 # Release 11.1.0
 
 ## Major features and improvements
