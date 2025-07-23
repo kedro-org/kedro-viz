@@ -74,20 +74,13 @@ def _load_data_helper(
     Returns:
         A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
-    try:
-        kedro_session = KedroSession.create(
-            project_path=project_path,
-            save_on_close=False,
-            env=env,
-            runtime_params=extra_params,
-        )
-    except TypeError:
-        kedro_session = KedroSession.create(  # type: ignore[call-arg]
-            project_path=project_path,
-            env=env,
-            save_on_close=False,
-            extra_params=extra_params,
-        )
+
+    kedro_session = KedroSession.create(
+        project_path=project_path,
+        save_on_close=False,
+        env=env,
+        runtime_params=extra_params,
+    )
 
     with kedro_session as session:
         # check for --include-hooks option
@@ -98,12 +91,7 @@ def _load_data_helper(
 
         # If user wants lite, we patch AbstractDatasetLite no matter what
         if is_lite:
-            # kedro 0.18.12 onwards
-            if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
-                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
-            else:  # pragma: no cover
-                # older versions
-                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataSet"
+            abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
 
             with patch(abstract_ds_patch_target, AbstractDatasetLite):
                 catalog = context.catalog
