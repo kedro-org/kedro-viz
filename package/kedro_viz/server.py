@@ -5,13 +5,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union, cast
 
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog  # type: ignore
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
-
 from kedro.pipeline import Pipeline
 
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
@@ -25,7 +18,7 @@ DEV_PORT = 4142
 
 def populate_data(
     data_access_manager: DataAccessManager,
-    catalog: Union[DataCatalog, "KedroDataCatalog"],
+    catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     stats_dict: Dict,
 ):
