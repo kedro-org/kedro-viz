@@ -9,15 +9,9 @@ from abc import ABC
 from pathlib import Path
 from typing import ClassVar, Dict, List, Optional, Union, cast
 
+from kedro.io.core import AbstractDataset
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import BaseModel, Field, field_validator, model_validator
-
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 from kedro_viz.models.utils import get_dataset_type
 

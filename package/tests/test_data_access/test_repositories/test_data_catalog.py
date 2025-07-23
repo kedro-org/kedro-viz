@@ -136,18 +136,6 @@ class TestDataCatalogRepository:
         result = mock_data_repo.get_dataset("my_dataset")
         assert isinstance(result, CSVDataset)
 
-    def test_get_dataset_without_get(self, mock_data_repo, mocker):
-        mocker.patch.object(mock_data_repo._catalog, "get", None)
-        mocker.patch.object(
-            mock_data_repo._catalog,
-            "_get_dataset",
-            return_value=CSVDataset(filepath="cars.csv"),
-            create=True,
-        )
-
-        result = mock_data_repo.get_dataset("my_dataset")
-        assert isinstance(result, CSVDataset)
-
     def test_get_dataset_returns_none(self, mock_data_repo, mocker):
         # Simulate .get returning None
         mocker.patch.object(
@@ -179,65 +167,18 @@ class TestDataCatalogRepositoryExtended:
         # Should return None since no layer is found
         assert repo.get_layer_for_dataset("cars") is None
 
-    @pytest.mark.parametrize(
-        "kedro_version_str, expected_layer, add_layers_attr, metadata_layer",
-        [
-            # Simulate old Kedro (< 0.19.0)
-            ("0.18.9", None, True, None),
-            # Simulate Kedro (>= 0.19.0, < 1.0.0)
-            ("0.19.1", "my_layer", False, "my_layer"),
-            # Simulate Kedro (>= 1.0.0)
-            ("1.0.0", "my_layer", False, "my_layer"),
-        ],
-    )
-    def test_layers_mapping_various_versions(
-        self, kedro_version_str, expected_layer, add_layers_attr, metadata_layer, mocker
-    ):
-        mocker.patch(
-            "kedro_viz.data_access.repositories.catalog.KEDRO_VERSION",
-            parse(kedro_version_str),
-        )
-
-        repo = CatalogRepository()
-        if metadata_layer:
-            # For new Kedro: rely on metadata
-            catalog_config = {
-                "my_dataset": {
-                    "type": "pandas.CSVDataset",
-                    "filepath": "my.csv",
-                    "metadata": {"kedro-viz": {"layer": metadata_layer}},
-                }
+    def test_layers_mapping_uses_metadata_layer(self):
+        catalog_config = {
+            "my_dataset": {
+                "type": "pandas.CSVDataset",
+                "filepath": "my.csv",
+                "metadata": {"kedro-viz": {"layer": "my_layer"}},
             }
-            catalog = DataCatalog.from_config(catalog_config)
-        else:
-            # For old Kedro: no metadata
-            catalog = DataCatalog({"my_dataset": MemoryDataset()})
-
-        # Simulating old Kedro
-        if add_layers_attr:
-            catalog.layers = None
-
+        }
+        catalog = DataCatalog.from_config(catalog_config)
+        repo = CatalogRepository()
         repo.set_catalog(catalog)
-
-        if kedro_version_str != "1.0.0":
-            mocker.patch.object(repo._catalog, "keys", None)
-            mocker.patch.object(repo._catalog, "get", None)
-            repo._catalog._data_sets = ["my_dataset"]
-            mocker.patch.object(
-                repo._catalog,
-                "_get_dataset",
-                return_value=AbstractDataset.from_config(
-                    "my_dataset",
-                    config={
-                        "type": "pandas.CSVDataset",
-                        "filepath": "my.csv",
-                        "metadata": {"kedro-viz": {"layer": metadata_layer}},
-                    },
-                ),
-                create=True,
-            )
 
         layers_map = repo.layers_mapping
 
-        # Now "my_dataset" should map to expected_layer
-        assert layers_map["my_dataset"] == expected_layer
+        assert layers_map["my_dataset"] == "my_layer"

@@ -17,7 +17,7 @@ describe('GlobalToolbar', () => {
     const buttons = container.querySelectorAll(
       '.pipeline-icon-toolbar__button'
     );
-    expect(buttons.length).toBe(5);
+    expect(buttons.length).toBe(6);
   });
 
   const functionCalls = [
@@ -32,6 +32,8 @@ describe('GlobalToolbar', () => {
       const props = {
         theme: mockState.spaceflights.theme,
         visible: mockState.spaceflights.visible,
+        runStatusPipelineInfo: {},
+        view: 'flowchart',
         [callback]: mockFn,
       };
 
@@ -62,7 +64,10 @@ describe('GlobalToolbar', () => {
         shareableUrlModal: false,
         sidebar: true,
         slicing: true,
+        traceback: false,
       },
+      view: 'flowchart',
+      runStatusPipelineInfo: {},
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });

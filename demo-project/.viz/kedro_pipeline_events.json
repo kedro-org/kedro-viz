@@ -1,0 +1,612 @@
+[
+  {
+    "event": "before_pipeline_run",
+    "timestamp": "2025-07-16T13:08:55.968122+00:00"
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "companies",
+    "node_id": "aed46479",
+    "status": "Available",
+    "size": 1810602
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.apply_types_to_companies",
+    "node_id": "69c523b6",
+    "duration": 0.010288999998010695,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "ingestion.int_typed_companies",
+    "node_id": "f23ad217",
+    "status": "Available",
+    "size": 550160
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "reviews",
+    "node_id": "7b2c6e04",
+    "status": "Available",
+    "size": 2937144
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:ingestion.typing.reviews.columns_as_floats",
+    "node_id": "b5609df0",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.apply_types_to_reviews",
+    "node_id": "ea604da4",
+    "duration": 0.0037572919973172247,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "ingestion.int_typed_reviews",
+    "node_id": "4f7ffa1b",
+    "status": "Available",
+    "size": 1334294
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "shuttles",
+    "node_id": "f1d596c2",
+    "status": "Available",
+    "size": 4195290
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.apply_types_to_shuttles",
+    "node_id": "f33b9291",
+    "duration": 0.027379540959373116,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "ingestion.int_typed_shuttles@pandas1",
+    "node_id": "c0ddbcbf",
+    "status": "Available",
+    "size": 1234504
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "ingestion.int_typed_companies",
+    "node_id": "f23ad217",
+    "status": "Available",
+    "size": 550160
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.company_agg",
+    "node_id": "8de402c1",
+    "duration": 0.41219008300686255,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "ingestion.prm_agg_companies",
+    "node_id": "8f20d98e",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "ingestion.int_typed_shuttles@pandas2",
+    "node_id": "c0ddbcbf",
+    "status": "Available",
+    "size": 1234504
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "ingestion.prm_agg_companies",
+    "node_id": "8f20d98e",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "ingestion.int_typed_reviews",
+    "node_id": "4f7ffa1b",
+    "status": "Available",
+    "size": 1334294
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.combine_step",
+    "node_id": "cb5166f3",
+    "duration": 0.02421412500552833,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "prm_spine_table",
+    "node_id": "f063cc82",
+    "status": "Available",
+    "size": 659426
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_spine_table",
+    "node_id": "f063cc82",
+    "status": "Available",
+    "size": 659426
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:feature_engineering.feature.derived",
+    "node_id": "abed6a4d",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "feature_engineering.create_derived_features__f9089920",
+    "node_id": "04ba733a",
+    "duration": 0.007367540965788066,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "feature_engineering.feat_derived_features",
+    "node_id": "7c92a703",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_spine_table",
+    "node_id": "f063cc82",
+    "status": "Available",
+    "size": 659426
+  },
+  {
+    "event": "after_node_run",
+    "node": "feature_engineering.create_feature_importance__173f2884",
+    "node_id": "7932e672",
+    "duration": 0.0006478329887613654,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "feature_importance_output",
+    "node_id": "1e3cc50a",
+    "status": "Available",
+    "size": 460
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:feature_engineering.feature.static",
+    "node_id": "a3627e31",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "feature_engineering.create_static_features__dd7d7ef1",
+    "node_id": "e50f81b8",
+    "duration": 0.000856707978527993,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "feature_engineering.feat_static_features",
+    "node_id": "8e4f1015",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_spine_table",
+    "node_id": "f063cc82",
+    "status": "Available",
+    "size": 659426
+  },
+  {
+    "event": "after_node_run",
+    "node": "ingestion.<lambda>__2de1c226",
+    "node_id": "9a6ef457",
+    "duration": 0.0005769999697804451,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "ingestion.prm_spine_table_clone",
+    "node_id": "c08c7708",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.create_matplotlib_chart__15c38707",
+    "node_id": "be6b7919",
+    "duration": 0.41662337502930313,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.confusion_matrix",
+    "node_id": "3b199c6b",
+    "status": "Available",
+    "size": 1632
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.get_top_shuttles_data__3cb3499e",
+    "node_id": "44ef9b48",
+    "duration": 0.0014465829590335488,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.top_shuttle_data",
+    "node_id": "c0be8342",
+    "status": "Available",
+    "size": 4100
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.make_cancel_policy_bar_chart__7c6d9304",
+    "node_id": "c7646ea1",
+    "duration": 0.004329540999606252,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.cancellation_policy_breakdown",
+    "node_id": "d0e9b00f",
+    "status": "Available",
+    "size": 8879
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.make_price_analysis_image__4f97d161",
+    "node_id": "3fb71518",
+    "duration": 0.0025281659909524024,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.cancellation_policy_grid",
+    "node_id": "8838ca1f",
+    "status": "Available",
+    "size": 3049
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_shuttle_company_reviews",
+    "node_id": "9f266f06",
+    "status": "Available",
+    "size": 1054211
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.make_price_histogram__e0da8d32",
+    "node_id": "40886786",
+    "duration": 0.028494291997049004,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.price_histogram",
+    "node_id": "c6992660",
+    "status": "Available",
+    "size": 1376
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "prm_spine_table",
+    "node_id": "f063cc82",
+    "status": "Available",
+    "size": 659426
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "feature_engineering.feat_static_features",
+    "node_id": "8e4f1015",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "feature_engineering.feat_derived_features",
+    "node_id": "7c92a703",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "feature_engineering.joiner__4cc9d815",
+    "node_id": "6ea2ec2c",
+    "duration": 0.004924999957438558,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "model_input_table",
+    "node_id": "23c94afb",
+    "status": "Available",
+    "size": 623213
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "feature_importance_output",
+    "node_id": "1e3cc50a",
+    "status": "Available",
+    "size": 460
+  },
+  {
+    "event": "after_node_run",
+    "node": "reporting.create_feature_importance_plot__e7a53e99",
+    "node_id": "4adb5c8b",
+    "duration": 0.015485541021917015,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "reporting.feature_importance",
+    "node_id": "eb7d6d28",
+    "status": "Available",
+    "size": 896
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "model_input_table",
+    "node_id": "23c94afb",
+    "status": "Available",
+    "size": 623213
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:split_options",
+    "node_id": "22eec376",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "split_data__3c1a939c",
+    "node_id": "2816ba38",
+    "duration": 0.00266866700258106,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "X_train",
+    "node_id": "cae2d1c7",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "X_test",
+    "node_id": "872981f9",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "y_train",
+    "node_id": "9ca016a8",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "y_test",
+    "node_id": "f6d9538c",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "X_train",
+    "node_id": "cae2d1c7",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "y_train",
+    "node_id": "9ca016a8",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:train_evaluation.model_options.linear_regression",
+    "node_id": "98eb115e",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "train_evaluation.linear_regression.train_model__199807b9",
+    "node_id": "af9a43c8",
+    "duration": 1.2733790830243379,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.linear_regression.regressor",
+    "node_id": "10e51dea",
+    "status": "Available",
+    "size": 512
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.linear_regression.experiment_params",
+    "node_id": "b701864d",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "X_train",
+    "node_id": "cae2d1c7",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "y_train",
+    "node_id": "9ca016a8",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "params:train_evaluation.model_options.random_forest",
+    "node_id": "72baf5c6",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "train_evaluation.random_forest.train_model__86546ff0",
+    "node_id": "038647c7",
+    "duration": 9.429776625009254,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.random_forest.regressor",
+    "node_id": "01675921",
+    "status": "Available",
+    "size": 512
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.random_forest.experiment_params",
+    "node_id": "4f79de77",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "train_evaluation.linear_regression.regressor",
+    "node_id": "10e51dea",
+    "status": "Available",
+    "size": 512
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "X_test",
+    "node_id": "872981f9",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "y_test",
+    "node_id": "f6d9538c",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "train_evaluation.linear_regression.evaluate_model__1c49c35c",
+    "node_id": "d2885635",
+    "duration": 0.0018285829573869705,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.linear_regression.r2_score",
+    "node_id": "495a0bbc",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "train_evaluation.random_forest.regressor",
+    "node_id": "01675921",
+    "status": "Available",
+    "size": 512
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "X_test",
+    "node_id": "872981f9",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_dataset_loaded",
+    "dataset": "y_test",
+    "node_id": "f6d9538c",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_node_run",
+    "node": "train_evaluation.random_forest.evaluate_model__cefff325",
+    "node_id": "bf8530bc",
+    "duration": 0.12227929197251797,
+    "status": "success"
+  },
+  {
+    "event": "after_dataset_saved",
+    "dataset": "train_evaluation.random_forest.r2_score",
+    "node_id": "b16095d0",
+    "status": "Available",
+    "size": 0
+  },
+  {
+    "event": "after_pipeline_run",
+    "timestamp": "2025-07-16T13:09:13.876251+00:00"
+  }
+]

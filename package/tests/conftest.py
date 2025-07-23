@@ -399,7 +399,7 @@ def expected_modular_pipeline_tree_for_edge_cases():
 
 @pytest.fixture
 def example_catalog():
-    yield DataCatalog(
+    example_data_catalog = DataCatalog(
         datasets={
             "uk.data_processing.raw_data": pandas.CSVDataset(
                 filepath="raw_data.csv", metadata={"kedro-viz": {"layer": "raw"}}
@@ -414,11 +414,11 @@ def example_catalog():
                 "filepath": "data/01_raw/{dataset_name}#csv.csv",
             },
         },
-        raw_data={
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:uk.data_processing.train_test_split": 0.1,
-        },
     )
+    example_data_catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
+    example_data_catalog["params:uk.data_processing.train_test_split"] = 0.1
+
+    yield example_data_catalog
 
 
 @pytest.fixture
@@ -456,18 +456,19 @@ def example_transcoded_pipelines():
 
 @pytest.fixture
 def example_transcoded_catalog():
-    yield DataCatalog(
+    example_data_catalog = DataCatalog(
         datasets={
             "model_inputs@pandas": pandas.ParquetDataset(
                 filepath="model_inputs.parquet"
             ),
             "model_inputs@pandas2": pandas.CSVDataset(filepath="model_inputs.csv"),
         },
-        raw_data={
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:uk.data_processing.train_test_split": 0.1,
-        },
     )
+
+    example_data_catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
+    example_data_catalog["params:uk.data_processing.train_test_split"] = 0.1
+
+    yield example_data_catalog
 
 
 @pytest.fixture

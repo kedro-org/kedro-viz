@@ -20,6 +20,7 @@ import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
 import CollapsePipelinesIcon from '../icons/collapse-pipelines';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import { VIEW } from '../../config';
 
 /**
  * Main controls for filtering the chart data
@@ -40,6 +41,7 @@ export const FlowchartPrimaryToolbar = ({
   onToggleExpandAllPipelines,
   orientation,
   onToggleOrientation,
+  isFlowchartView,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
@@ -65,7 +67,7 @@ export const FlowchartPrimaryToolbar = ({
           icon={LabelIcon}
           labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
           onClick={() => onToggleTextLabels(!textLabels)}
-          visible={display.labelBtn}
+          visible={isFlowchartView && display.labelBtn}
         />
         <IconButton
           active={visibleLayers}
@@ -105,7 +107,7 @@ export const FlowchartPrimaryToolbar = ({
             expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
           }
           onClick={handleToggleExpandAllPipelines}
-          visible={display.expandPipelinesBtn}
+          visible={isFlowchartView && display.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
@@ -129,6 +131,7 @@ export const mapStateToProps = (state) => ({
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
+  isFlowchartView: state.view === VIEW.FLOWCHART,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

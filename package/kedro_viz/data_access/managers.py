@@ -5,20 +5,7 @@ from collections import defaultdict
 from typing import Any, Dict, List, Set, Union
 
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    KedroDataCatalog: Any
-    from kedro.io import KedroDataCatalog  # type: ignore
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io.core import DatasetError
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore
-
+from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
@@ -83,7 +70,7 @@ class DataAccessManager:
 
     def resolve_dataset_factory_patterns(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Resolve dataset factory patterns in data catalog by matching
@@ -92,33 +79,24 @@ class DataAccessManager:
         """
         all_datasets = set()
         for pipeline in pipelines.values():
-            if hasattr(pipeline, "data_sets"):
-                # Support for Kedro 0.18.x
-                datasets = pipeline.data_sets()
-            else:
-                datasets = pipeline.datasets()
-
+            datasets = pipeline.datasets()
             all_datasets.update(datasets)
 
         for dataset_name in all_datasets:
             try:
-                if hasattr(catalog, "get") and callable(catalog.get):
-                    # for Kedro >= 1.0
-                    catalog.get(dataset_name)
-                else:
-                    catalog._get_dataset(dataset_name, suggest=False)  # type: ignore[union-attr]
+                catalog.get(dataset_name)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
     def add_catalog(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Add the catalog to the CatalogRepository
 
         Args:
-            catalog: The DataCatalog or KedroDataCatalog instance to add.
+            catalog: The DataCatalog instance to add.
         """
         self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)

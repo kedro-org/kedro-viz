@@ -8,6 +8,7 @@ from kedro_viz.api.rest.responses.save_responses import (
     save_api_node_response_to_fs,
     save_api_pipeline_response_to_fs,
     save_api_responses_to_fs,
+    save_api_run_status_response_to_fs,
     write_api_response_to_fs,
 )
 
@@ -33,6 +34,9 @@ class TestSaveAPIResponse:
         mock_api_pipeline_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.save_api_pipeline_response_to_fs"
         )
+        mock_api_run_status_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_run_status_response_to_fs"
+        )
 
         mock_filesystem = mocker.patch("fsspec.filesystem")
         mock_filesystem.return_value.protocol = protocol
@@ -51,6 +55,9 @@ class TestSaveAPIResponse:
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
             f"{file_path}/api/pipelines", mock_filesystem.return_value
+        )
+        mock_api_run_status_response_to_fs.assert_called_once_with(
+            f"{file_path}/api/run-status", mock_filesystem.return_value
         )
 
     def test_save_api_main_response_to_fs(self, mocker):
@@ -142,6 +149,27 @@ class TestSaveAPIResponse:
             for nodeId in nodeIds
         ]
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
+
+    def test_save_api_run_status_response_to_fs(self, mocker):
+        expected_run_status_response = {"nodes": {}, "datasets": {}, "pipeline": {}}
+        run_status_path = "/run-status"
+
+        mock_get_run_status_response = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.get_run_status_response",
+            return_value=expected_run_status_response,
+        )
+        mock_write_api_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
+        )
+
+        remote_fs = Mock()
+
+        save_api_run_status_response_to_fs(run_status_path, remote_fs)
+
+        mock_get_run_status_response.assert_called_once()
+        mock_write_api_response_to_fs.assert_called_once_with(
+            run_status_path, mock_get_run_status_response.return_value, remote_fs
+        )
 
     @pytest.mark.parametrize(
         "file_path, response, encoded_response",

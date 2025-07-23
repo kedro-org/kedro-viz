@@ -8,7 +8,7 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import Button from '../ui/button';
 import './pipeline-warning.scss';
 
-const PipelineWarningContent = ({
+export const PipelineWarningContent = ({
   isVisible,
   title,
   subtitle,

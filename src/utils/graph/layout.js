@@ -7,6 +7,7 @@ import {
   crossingConstraint,
   separationConstraint,
 } from './constraints';
+import { workflowNodeDetailsHeight } from '../../config';
 
 /**
  * Finds positions for the given nodes relative to their edges.
@@ -33,7 +34,11 @@ export const layout = ({
   layerSpaceY,
   iterations,
   orientation,
+  view,
 }) => {
+  // Height of the run status details rectangle in workflow view
+  const extraVerticalGap = view === 'workflow' ? workflowNodeDetailsHeight : 0;
+
   let coordPrimary = 'x';
   let coordSecondary = 'y';
 
@@ -56,6 +61,7 @@ export const layout = ({
     layerSpace: (spaceY + layerSpaceY) * 0.5,
     coordPrimary,
     coordSecondary,
+    extraVerticalGap,
   };
 
   // Constraints to separate nodes into rows and layers
@@ -103,7 +109,10 @@ const createRowConstraints = (edges, layoutConfig) =>
     property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
-    separation: layoutConfig.spaceY,
+    separation:
+      layoutConfig.orientation === 'vertical'
+        ? layoutConfig.spaceY + layoutConfig.extraVerticalGap
+        : layoutConfig.spaceY,
   }));
 
 /**
@@ -234,12 +243,15 @@ const createParallelConstraints = (edges, layoutConfig) =>
   }));
 
 /**
- * Creates horizontal separation constraints for the given rows of nodes.
+ * Creates separation constraints between adjacent nodes within the same layer.
+ * The direction (horizontal or vertical) depends on the primary coordinate,
+ * which is determined by the layout orientation.
  * @param {Array} rows The rows containing nodes
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, layoutConfig) => {
-  const { spaceX, coordPrimary, spreadX, orientation } = layoutConfig;
+  const { spaceX, coordPrimary, spreadX, orientation, extraVerticalGap } =
+    layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
@@ -270,11 +282,10 @@ const createSeparationConstraints = (rows, layoutConfig) => {
       const spread = Math.min(10, degreeA * degreeB * spreadX);
       const space = snap(spread * spaceX, spaceX);
 
-      let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
-
-      if (orientation === 'horizontal') {
-        separation = nodeA.height + nodeB.height;
-      }
+      const separation =
+        orientation === 'horizontal'
+          ? nodeA.height + nodeB.height + extraVerticalGap
+          : nodeA.width * 0.5 + space + nodeB.width * 0.5 + extraVerticalGap;
 
       separationConstraints.push({
         base: separationConstraint,

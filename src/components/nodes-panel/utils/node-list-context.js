@@ -24,6 +24,7 @@ import {
 } from '../../../actions/nodes';
 import { resetSlicePipeline } from '../../../actions/slice';
 import { getnodesDisabledViaModularPipeline } from '../../../selectors/disabled';
+import { VIEW } from '../../../config';
 
 // Custom hook to group useSelector calls
 const useNodeListContextSelector = () => {
@@ -41,6 +42,7 @@ const useNodeListContextSelector = () => {
   const disabledModularPipeline = useSelector(
     (state) => state.modularPipeline.disabled
   );
+  const view = useSelector((state) => state.view);
 
   const onToggleFocusMode = (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
@@ -80,6 +82,7 @@ const useNodeListContextSelector = () => {
     selectedNodes,
     slicedPipeline,
     nodesDisabledViaModularPipeline,
+    view,
     onResetSlicePipeline,
     onToggleFocusMode,
     onToggleHoveredFocusMode,
@@ -105,6 +108,7 @@ export const NodeListContextProvider = ({ children }) => {
     selectedNodes,
     slicedPipeline,
     nodesDisabledViaModularPipeline,
+    view,
     onResetSlicePipeline,
     onToggleFocusMode,
     onToggleHoveredFocusMode,
@@ -217,6 +221,7 @@ export const NodeListContextProvider = ({ children }) => {
         selectedNodes,
         slicedPipeline,
         nodesDisabledViaModularPipeline,
+        isWorkflowView: view === VIEW.WORKFLOW,
         handleModularPipelineToggleExpanded: onToggleModularPipelineExpanded,
         handleNodeListRowClicked,
         handleNodeListRowChanged,

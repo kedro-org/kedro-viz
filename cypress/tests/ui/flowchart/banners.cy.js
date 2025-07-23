@@ -18,7 +18,7 @@ describe('Banners in Kedro-Viz', () => {
 
     // Test Learn more link
     cy.get(".banner a")
-      .should("contains.attr", "href", "https://docs.kedro.org/projects/kedro-viz/en/stable/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies");
+      .should("contains.attr", "href", "https://docs.kedro.org/projects/kedro-viz/en/stable/kedro-viz_visualisation/#visualise-a-kedro-project-without-installing-project-dependencies");
 
     // Close the banner
     cy.get(".banner-close").click()

@@ -39,6 +39,8 @@ The next step is optional, but useful to check that all is working. Run the full
 kedro run
 ```
 
+This will execute your pipeline and automatically generate run data that tracks execution performance, timing, and any errors.
+
 To start Kedro-Viz, type the following into your terminal from the project directory:
 
 ```bash
@@ -54,6 +56,9 @@ The command opens a browser tab to serve the visualisation at `http://127.0.0.1:
 You should see the following:
 
 ![](./images/pipeline_visualisation.png)
+
+!!! tip
+    After running `kedro run`, navigate to the **Workflow** view in Kedro-Viz to see detailed pipeline execution information including execution time, success/failure status for each node, and dataset statistics. This [Workflow view](./workflow-view.md) helps you track pipeline performance and identify any issues.
 
 If a visualisation panel opens up and a pipeline is not visible, refresh the view. If you still don't see the visualisation, the Kedro community can help:
 
@@ -363,8 +368,11 @@ To use Kedro-Viz as a standalone React component (for embedding Kedro-Viz in you
 import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} options={options} /></div>;
-``` 
+const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} runData={runStatusData} options={options} /></div>;
+```
+
+!!! info
+    `runData` is our latest feature to see and debug your pipeline status/health, and it's optional.    
 
 For more information on how to use Kedro as a React component with all possible props, see [Kedro-Viz on NPM](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 

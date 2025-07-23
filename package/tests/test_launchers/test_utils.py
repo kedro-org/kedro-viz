@@ -40,7 +40,7 @@ def test_browser_open(
 @pytest.mark.parametrize(
     "host, port, status_code, expected_result",
     [
-        ("localhost", 8080, 200, True),  # Successful response
+        ("localhost", 8080, 200, True),  # successful response
         ("localhost", 8080, 500, False),  # Non-200 response
         ("localhost", 8080, None, False),  # Connection error
     ],

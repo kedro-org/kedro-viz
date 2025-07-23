@@ -13,6 +13,26 @@ jest.mock('../../utils/hooks/use-generate-pathname', () => ({
   }),
 }));
 
+// Default props factory to reduce duplication
+const createDefaultProps = (overrides = {}) => ({
+  displaySidebar: true,
+  textLabels: true,
+  visible: mockState.spaceflights.visible,
+  display: mockState.spaceflights.display,
+  modularPipelineIDs: ['pipeline1', '__root__'],
+  onToggleSidebar: jest.fn(),
+  onToggleTextLabels: jest.fn(),
+  onToggleExportModal: jest.fn(),
+  onToggleLayers: jest.fn(),
+  onToggleExpandAllPipelines: jest.fn(),
+  orientation: 'horizontal',
+  expandedPipelines: false,
+  disableLayerBtn: false,
+  visibleLayers: true,
+  isFlowchartView: true,
+  ...overrides,
+});
+
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     setup.render(<ConnectedFlowchartPrimaryToolbar />);
@@ -20,10 +40,7 @@ describe('PrimaryToolbar', () => {
   });
 
   it('hides all buttons (except menu) when display prop is false for each of them', () => {
-    const props = {
-      displaySidebar: true,
-      textLabels: true,
-      visible: mockState.spaceflights.visible,
+    const props = createDefaultProps({
       display: {
         labelBtn: false,
         layerBtn: false,
@@ -31,17 +48,7 @@ describe('PrimaryToolbar', () => {
         expandPipelinesBtn: false,
         orientationBtn: false,
       },
-      modularPipelineIDs: ['pipeline1', '__root__'],
-      onToggleSidebar: jest.fn(),
-      onToggleTextLabels: jest.fn(),
-      onToggleExportModal: jest.fn(),
-      onToggleLayers: jest.fn(),
-      onToggleExpandAllPipelines: jest.fn(),
-      orientation: 'horizontal',
-      expandedPipelines: false,
-      disableLayerBtn: false,
-      visibleLayers: true,
-    };
+    });
 
     const { container } = setup.render(<FlowchartPrimaryToolbar {...props} />, {
       withRouter: true,
@@ -52,25 +59,12 @@ describe('PrimaryToolbar', () => {
   });
 
   it('hides one button when display.labelBtn is false', () => {
-    const props = {
-      displaySidebar: true,
-      textLabels: true,
-      visible: mockState.spaceflights.visible,
+    const props = createDefaultProps({
       display: {
         ...mockState.spaceflights.display,
         labelBtn: false,
       },
-      modularPipelineIDs: ['pipeline1', '__root__'],
-      onToggleSidebar: jest.fn(),
-      onToggleTextLabels: jest.fn(),
-      onToggleExportModal: jest.fn(),
-      onToggleLayers: jest.fn(),
-      onToggleExpandAllPipelines: jest.fn(),
-      orientation: 'horizontal',
-      expandedPipelines: false,
-      disableLayerBtn: false,
-      visibleLayers: true,
-    };
+    });
 
     const { container } = setup.render(<FlowchartPrimaryToolbar {...props} />);
     const buttons = container.querySelectorAll(
@@ -91,19 +85,10 @@ describe('PrimaryToolbar', () => {
     'calls %s function on %s button click',
     (selector, callback) => {
       const mockFn = jest.fn();
-      const props = {
-        displaySidebar: true,
-        textLabels: mockState.spaceflights.textLabels,
-        visible: mockState.spaceflights.visible,
-        display: mockState.spaceflights.display,
-        modularPipelineIDs: ['pipeline1', '__root__'],
+      const props = createDefaultProps({
         [callback]: mockFn,
         onToggleExpandPipelines: jest.fn(),
-        orientation: 'horizontal',
-        expandedPipelines: false,
-        disableLayerBtn: false,
-        visibleLayers: true,
-      };
+      });
 
       const { container } = setup.render(
         <FlowchartPrimaryToolbar {...props} />,
@@ -118,12 +103,46 @@ describe('PrimaryToolbar', () => {
     }
   );
 
+  // Test cases for button visibility based on isFlowchartView
+  const buttonVisibilityTests = [
+    {
+      name: 'text labels button',
+      selector: '.pipeline-menu-button--labels',
+      displayProp: 'labelBtn',
+    },
+    {
+      name: 'expand pipelines button',
+      selector: '.pipeline-menu-button--pipeline',
+      displayProp: 'expandPipelinesBtn',
+    },
+  ];
+
+  test.each(buttonVisibilityTests)(
+    'hides $name when isFlowchartView is false',
+    ({ selector, displayProp }) => {
+      const props = createDefaultProps({
+        display: {
+          ...mockState.spaceflights.display,
+          [displayProp]: true,
+        },
+        isFlowchartView: false,
+      });
+
+      const { container } = setup.render(
+        <FlowchartPrimaryToolbar {...props} />
+      );
+      const button = container.querySelector(selector);
+      expect(button).toBeNull();
+    }
+  );
+
   it('maps state to props', () => {
     const expectedResult = {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
       orientation: expect.any(String),
+      isFlowchartView: expect.any(Boolean),
       visible: expect.objectContaining({
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),
@@ -143,49 +162,56 @@ describe('PrimaryToolbar', () => {
   });
 
   describe('mapDispatchToProps', () => {
-    it('onToggleExportModal', () => {
-      const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onToggleExportModal(true);
-      expect(dispatch).toHaveBeenCalledWith({
-        visible: true,
-        type: 'TOGGLE_EXPORT_MODAL',
-      });
-    });
+    const dispatchTests = [
+      {
+        method: 'onToggleExportModal',
+        arg: true,
+        expectedAction: {
+          visible: true,
+          type: 'TOGGLE_EXPORT_MODAL',
+        },
+      },
+      {
+        method: 'onToggleLayers',
+        arg: true,
+        expectedAction: {
+          visible: true,
+          type: 'TOGGLE_LAYERS',
+        },
+      },
+      {
+        method: 'onToggleSidebar',
+        arg: true,
+        expectedAction: {
+          visible: true,
+          type: 'TOGGLE_SIDEBAR',
+        },
+      },
+      {
+        method: 'onToggleTextLabels',
+        arg: true,
+        expectedAction: {
+          textLabels: true,
+          type: 'TOGGLE_TEXT_LABELS',
+        },
+      },
+      {
+        method: 'onToggleExpandAllPipelines',
+        arg: true,
+        expectedAction: {
+          type: 'TOGGLE_EXPAND_ALL_PIPELINES',
+          shouldExpandAllPipelines: true,
+        },
+      },
+    ];
 
-    it('onToggleLayers', () => {
-      const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onToggleLayers(true);
-      expect(dispatch).toHaveBeenCalledWith({
-        visible: true,
-        type: 'TOGGLE_LAYERS',
-      });
-    });
-
-    it('onToggleSidebar', () => {
-      const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onToggleSidebar(true);
-      expect(dispatch).toHaveBeenCalledWith({
-        visible: true,
-        type: 'TOGGLE_SIDEBAR',
-      });
-    });
-
-    it('onToggleTextLabels', () => {
-      const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onToggleTextLabels(true);
-      expect(dispatch).toHaveBeenCalledWith({
-        textLabels: true,
-        type: 'TOGGLE_TEXT_LABELS',
-      });
-    });
-
-    it('onToggleExpandAllPipelines', () => {
-      const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onToggleExpandAllPipelines(true);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: 'TOGGLE_EXPAND_ALL_PIPELINES',
-        shouldExpandAllPipelines: true,
-      });
-    });
+    test.each(dispatchTests)(
+      '$method dispatches correct action',
+      ({ method, arg, expectedAction }) => {
+        const dispatch = jest.fn();
+        mapDispatchToProps(dispatch)[method](arg);
+        expect(dispatch).toHaveBeenCalledWith(expectedAction);
+      }
+    );
   });
 });

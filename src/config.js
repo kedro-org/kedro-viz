@@ -5,6 +5,7 @@ export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageShareableUrl = 'KedroViz-shareable-url';
 export const localStorageFeedbackSeen = 'KedroViz-feedback-seen';
 export const localStorageBannerStatus = 'KedroViz-banners';
+export const localStorageLastRunEndTime = 'KedroViz-workflow-last-run-end-time';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -33,6 +34,10 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
+export const workflowNodeDetailsWidth = 180;
+export const workflowNodeDetailsHeight = 60;
+
+export const workFlowStatuses = ['success', 'failed'];
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
 
@@ -154,12 +159,13 @@ export const inputKeyToStateKeyMap = {
 
 export const PACKAGE_FSSPEC = 'fsspec';
 
-export const KEDRO_VIZ_DOCS_URL = 'https://docs.kedro.org/projects/kedro-viz/';
-export const KEDRO_VIZ_PUBLISH_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}share_kedro_viz.html`;
-export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview_datasets.html#disabling-previews`;
-export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws.html#set-up-endpoint`;
-export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure.html#set-up-endpoint`;
-export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp.html#set-up-endpoint`;
+export const KEDRO_VIZ_DOCS_URL =
+  'https://docs.kedro.org/projects/kedro-viz/en/stable/';
+export const KEDRO_VIZ_PUBLISH_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}share_kedro_viz/`;
+export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview_datasets/#disabling-previews`;
+export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws/#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure/#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp/#set-up-endpoint`;
 
 export const defaultQueryParams = [
   params.types,
@@ -179,10 +185,19 @@ export const BANNER_METADATA = {
     title: 'Lite mode enabled',
     body: 'Some features might be disabled in --lite mode due to missing dependencies. You can find more information about lite mode in our docs.',
     docsLink:
-      'https://docs.kedro.org/projects/kedro-viz/en/stable/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies',
+      'https://docs.kedro.org/projects/kedro-viz/en/stable/kedro-viz_visualisation/#visualise-a-kedro-project-without-installing-project-dependencies',
   },
 };
 
 export const BANNER_KEYS = {
   LITE: 'lite',
+};
+
+export const VIEW = {
+  WORKFLOW: 'workflow',
+  FLOWCHART: 'flowchart',
+};
+
+export const PIPELINE = {
+  DEFAULT: '__default__',
 };

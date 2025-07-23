@@ -192,6 +192,9 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
+  if (typeof window === 'undefined' || !window.location) {
+    return false;
+  }
   const hosts = [
     'localhost',
     '127.0.0.1',
@@ -223,14 +226,20 @@ export const isRunningLocally = () => {
 };
 
 /**
- * Append trailing slash to the pathname for shareable viz
+ * Append trailing slash to the pathname and remove route-specific parts like /workflow
  * @returns {string} Sanitized pathname
  */
 export const sanitizedPathname = () => {
+  if (typeof window === 'undefined' || !window.location) {
+    return '/';
+  }
   const { pathname } = window.location;
-  const pathnameWithTrailingSlash = pathname.endsWith('/')
-    ? pathname
-    : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+
+  // Remove route-specific parts like /workflow from the path
+  const basePath = pathname.replace(/\/(workflow).*$/, '');
+  const pathnameWithTrailingSlash = basePath.endsWith('/')
+    ? basePath
+    : `${basePath}/`; // the `pathname` will have a trailing slash if it didn't initially
 
   return pathnameWithTrailingSlash;
 };

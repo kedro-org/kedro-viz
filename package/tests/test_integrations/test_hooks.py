@@ -178,27 +178,3 @@ def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
     # Call get_file_size and expect it to return the mocked file size
     file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
     assert file_size == 456
-
-
-def test_after_catalog_created_datasets_fallback(
-    example_dataset_stats_hook_obj, mocker
-):
-    class MockCatalog:
-        def __init__(self):
-            self._datasets = {"test_dataset": "test_data"}
-
-    mock_catalog = MockCatalog()
-    example_dataset_stats_hook_obj.after_catalog_created(mock_catalog)
-    assert example_dataset_stats_hook_obj.datasets == {"test_dataset": "test_data"}
-
-
-def test_after_catalog_created_data_sets_fallback(
-    example_dataset_stats_hook_obj, mocker
-):
-    class MockCatalog:
-        def __init__(self):
-            self._data_sets = {"test_dataset": "test_data"}
-
-    mock_catalog = MockCatalog()
-    example_dataset_stats_hook_obj.after_catalog_created(mock_catalog)
-    assert example_dataset_stats_hook_obj.datasets == {"test_dataset": "test_data"}

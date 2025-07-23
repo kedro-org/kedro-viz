@@ -7,6 +7,7 @@ import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
+import WorkflowWrapper from '../workflow-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -40,6 +41,18 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     checkKedroVizVersion();
   }, []);
 
+  const allKedroVizRoutes = (
+    <Switch>
+      <Route exact path={sanitizedPathname()}>
+        <FlowChartWrapper />
+        <FeatureHints />
+      </Route>
+      <Route path={`${sanitizedPathname()}workflow`}>
+        <WorkflowWrapper />
+      </Route>
+    </Switch>
+  );
+
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -60,15 +73,10 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
             {version && (
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
-            <Switch>
-              <Route exact path={sanitizedPathname()}>
-                <FlowChartWrapper />
-                <FeatureHints />
-              </Route>
-            </Switch>
+            {allKedroVizRoutes}
           </>
         ) : (
-          <FlowChartWrapper />
+          allKedroVizRoutes
         )}
       </Router>
     </div>
@@ -80,4 +88,4 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(Wrapper);
+export default connect(mapStateToProps, null)(Wrapper);

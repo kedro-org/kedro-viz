@@ -405,8 +405,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-    const nodeElement = container.querySelector('.pipeline-node__bg');
-    const nodeY = parseFloat(nodeElement?.getAttribute('y'));
     const indicators = container.querySelectorAll(
       '.pipeline-node__parameter-indicator--visible'
     );
