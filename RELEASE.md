@@ -6,7 +6,14 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Unreleased
+
+## Bug fixes and other changes
+ - Render boolean values in table previews. (#2458)
+
+
 # Release 12.0.0
+
 ## Major features and improvements
  - Introduce 'Workflow' view to visualise pipeline executions. (#2390)
  - Drop support for Kedro 0.x series. (#2453)
