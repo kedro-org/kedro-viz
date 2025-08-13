@@ -46,6 +46,7 @@ import {
 import { formatTimestamp } from './workflow-utils/format';
 import Tooltip from '../ui/tooltip';
 import PipelineLoading from '../pipeline-loading/pipeline-loading';
+import PipelineWarning from '../pipeline-warning';
 
 import {
   DrawNodes,
@@ -764,6 +765,7 @@ export class Workflow extends Component {
             />
           </div>
           <PipelineLoading loading={loading} sidebarVisibl={sidebarVisible} />
+          <PipelineWarning />
         </div>
         {displayExportBtn && <ExportModal />}
         <MetadataModal />

@@ -2,7 +2,7 @@
 
 <p align="center">
 
- <img src="https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.gif" alt="Kedro-Viz Pipeline Visualisation">
+ <img src="https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.gif?v=1" alt="Kedro-Viz Pipeline Visualisation">
 </p>
 
 Kedro-Viz is an interactive development tool for visualising data science pipelines built with [Kedro](https://github.com/kedro-org/kedro).

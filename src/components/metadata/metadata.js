@@ -365,19 +365,17 @@ const MetaData = ({
               )}
               {hasTablePreview && (
                 <>
-                  {!isWorkflowView && (
-                    <div className="pipeline-metadata__preview">
-                      <div className="scrollable-container">
-                        <PreviewTable
-                          data={metadata?.preview}
-                          size="small"
-                          onClick={onExpandMetaDataClick}
-                        />
-                      </div>
-                      <div className="pipeline-metadata__preview-shadow-box-right" />
-                      <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={metadata?.preview}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
                     </div>
-                  )}
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
                   <button
                     className="pipeline-metadata__link"
                     onClick={onExpandMetaDataClick}
