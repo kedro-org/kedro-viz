@@ -1,11 +1,15 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
 import logging
-
-from fastapi import APIRouter
+import subprocess
+from fastapi import APIRouter, Body
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
-from kedro_viz.api.rest.requests import DeployerConfiguration
+from kedro_viz.api.rest.requests import (
+    DeployerConfiguration,
+    KedroCommandRequest,
+)
 from kedro_viz.api.rest.responses.base import APINotFoundResponse
 from kedro_viz.api.rest.responses.metadata import (
     MetadataAPIResponse,
@@ -150,6 +154,36 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
     except Exception as exc:  # pragma: no cover
         logger.exception("Deploying Kedro Viz failed: %s ", exc)
         return JSONResponse(status_code=500, content={"message": f"{exc}"})
+
+
+@router.post("/run-kedro-command")
+async def run_kedro_command(request: KedroCommandRequest = Body(...)):
+    """
+    Run a Kedro command provided as a string in a subprocess and return the output.
+    Example request body: {"command": "kedro run --pipeline=my_pipeline"}
+    """
+    try:
+        # Split the command string safely
+        import shlex
+
+        cmd = shlex.split(request.command)
+        result = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
+        return JSONResponse(
+            status_code=200,
+            content={
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "returncode": result.returncode,
+            },
+        )
+    except Exception as exc:
+        logger.exception("Failed to run Kedro command: %s", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(exc)},
+        )
 
 
 @router.get(

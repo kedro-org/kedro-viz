@@ -10,3 +10,7 @@ class DeployerConfiguration(BaseModel):
     is_all_previews_enabled: bool = False
     endpoint: str
     bucket_name: str
+
+
+class KedroCommandRequest(BaseModel):
+    command: str
