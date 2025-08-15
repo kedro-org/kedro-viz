@@ -38,6 +38,7 @@ docs = [
    "mkdocstrings>=0.29.1",
    "mkdocstrings-python>=0.29.1",
    "linkchecker>=10.2.1",
+   "mkdocs-llmstxt" # Required to generate the llm.txt file
 ]
 aws = ["s3fs>=2021.4"]
 azure = ["adlfs>=2021.4"]
