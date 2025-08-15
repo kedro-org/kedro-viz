@@ -53,6 +53,48 @@ plugins:
   - search
   - autorefs
   - mermaid2
+  - llmstxt:
+      markdown_description: |
+        Kedro-Viz is an interactive development tool for visualising data science pipelines built with Kedro.
+
+        Kedro-Viz features include:
+        - Complete visualisation of a Kedro project and its pipelines.
+        - Support for light & dark themes out of the box.
+        - Scalable to big pipelines with hundreds of nodes.
+        - Highly interactive, filterable and searchable.
+        - Focus mode for modular pipeline visualisation.
+        - Rich metadata side panel to display parameters, plots, etc.
+        - Support for all types of Plotly charts.
+        - Autoreload on code change.
+        - Visual Workflow view to inspect execution, errors, and dataset stats.
+
+        Current version: 12.0.0
+        Last updated: 2025
+
+      full_output: llms-full.txt
+
+      sections:
+        Getting Started:
+          - index.md: Overview
+          - kedro-viz_visualisation.md: How to visualise a Kedro project
+          - preview_datasets.md: Preview datasets overview
+          - slice_a_pipeline.md: Slice a pipeline
+        Sharing Kedro-Viz:
+          - share_kedro_viz.md: Publish and share Kedro-Viz
+          - platform_agnostic_sharing_with_kedro_viz.md: Platform-agnostic sharing with Kedro-Viz
+          - publish_and_share_kedro_viz_on_aws.md: Publish and share on AWS
+          - publish_and_share_kedro_viz_on_azure.md: Publish and share on Azure
+          - publish_and_share_kedro_viz_on_gcp.md: Publish and share on GCP
+        Dataset Previews:
+          - preview_matplotlib_datasets.md: Preview Matplotlib charts in Kedro-Viz
+          - preview_plotly_datasets.md: Preview Plotly charts in Kedro-Viz
+          - preview_pandas_datasets.md: Preview tabular data in Kedro-Viz
+          - preview_custom_datasets.md: Extend preview to custom datasets
+        Advanced Features:
+          - workflow-view.md: Visualise pipeline execution with the Workflow view
+          - migrate_experiment_tracking.md: Migration from Kedro-Viz native experiment tracking to kedro-mlflow
+          - cli-docs.md: Kedro-Viz CLI reference
+
   - mkdocstrings:
       handlers:
         python:
