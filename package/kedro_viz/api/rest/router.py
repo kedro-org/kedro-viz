@@ -160,13 +160,14 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
 async def run_kedro_command(request: KedroCommandRequest = Body(...)):
     """
     Run a Kedro command provided as a string in a subprocess and return the output.
-    Example request body: {"command": "kedro run --pipeline=my_pipeline"}
+    Example request body: {"command": "run --pipeline=my_pipeline"}
     """
     try:
         # Split the command string safely
         import shlex
 
-        cmd = shlex.split(request.command)
+        # Allow only kedro commands to be executed
+        cmd = ["kedro"] + shlex.split(request.command)
         result = subprocess.run(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
