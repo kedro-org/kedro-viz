@@ -77,8 +77,6 @@ plugins:
         Getting Started:
           - index.md: Overview
           - kedro-viz_visualisation.md: How to visualise a Kedro project
-          - preview_datasets.md: Preview datasets overview
-          - slice_a_pipeline.md: Slice a pipeline
         Sharing Kedro-Viz:
           - share_kedro_viz.md: Publish and share Kedro-Viz
           - platform_agnostic_sharing_with_kedro_viz.md: Platform-agnostic sharing with Kedro-Viz
@@ -86,11 +84,13 @@ plugins:
           - publish_and_share_kedro_viz_on_azure.md: Publish and share on Azure
           - publish_and_share_kedro_viz_on_gcp.md: Publish and share on GCP
         Dataset Previews:
+          - preview_datasets.md: Preview datasets overview
           - preview_matplotlib_datasets.md: Preview Matplotlib charts in Kedro-Viz
           - preview_plotly_datasets.md: Preview Plotly charts in Kedro-Viz
           - preview_pandas_datasets.md: Preview tabular data in Kedro-Viz
           - preview_custom_datasets.md: Extend preview to custom datasets
         Advanced Features:
+          - slice_a_pipeline.md: Slice a pipeline
           - workflow-view.md: Visualise pipeline execution with the Workflow view
           - migrate_experiment_tracking.md: Migration from Kedro-Viz native experiment tracking to kedro-mlflow
           - cli-docs.md: Kedro-Viz CLI reference
