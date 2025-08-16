@@ -1,14 +1,15 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
+import uuid
+import threading
 import logging
 import subprocess
-from fastapi import APIRouter, Body
+from datetime import datetime
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 
 from kedro_viz.api.rest.requests import (
     DeployerConfiguration,
-    KedroCommandRequest,
 )
 from kedro_viz.api.rest.responses.base import APINotFoundResponse
 from kedro_viz.api.rest.responses.metadata import (
@@ -156,35 +157,142 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
         return JSONResponse(status_code=500, content={"message": f"{exc}"})
 
 
+kedro_jobs = {}
+_kedro_jobs_lock = threading.Lock()
+
+
+def _stream_reader(pipe, job_id, key):
+    try:
+        # iter(..., "") yields lines until EOF; returns "" at EOF (not None)
+        for line in iter(pipe.readline, ""):
+            if not line:
+                break
+            with _kedro_jobs_lock:
+                # ensure key exists and is a string
+                kedro_jobs[job_id][key] += line
+    finally:
+        try:
+            pipe.close()
+        except Exception:
+            pass
+
+
+def run_kedro_subprocess(job_id, cmd):
+    logger.info("Running Kedro command: %s", cmd)
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        # bufsize=1,
+        # cwd=os.getcwd(),
+        # creationflags=subprocess.DETACHED_PROCESS
+    )
+    logger.info("Started Kedro command with PID: %s", process.pid)
+
+    # store pid & running status
+    with _kedro_jobs_lock:
+        kedro_jobs[job_id]["pid"] = process.pid
+        kedro_jobs[job_id]["status"] = "running"
+
+    # start reader threads to update kedro_jobs while the process runs
+    t_out = threading.Thread(
+        target=_stream_reader, args=(process.stdout, job_id, "stdout"), daemon=True
+    )
+    t_err = threading.Thread(
+        target=_stream_reader, args=(process.stderr, job_id, "stderr"), daemon=True
+    )
+    t_out.start()
+    t_err.start()
+
+    # wait for the process to finish
+    # (this runs inside the background task, not blocking main request)
+    returncode = process.wait()
+
+    # join reader threads briefly to collect remaining output
+    t_out.join(timeout=1)
+    t_err.join(timeout=1)
+
+    # final collect (communicate to ensure no left-over data)
+    try:
+        rem_out, rem_err = process.communicate(timeout=0.1)
+    except Exception:
+        rem_out, rem_err = "", ""
+
+    with _kedro_jobs_lock:
+        if rem_out:
+            kedro_jobs[job_id]["stdout"] += rem_out
+        if rem_err:
+            kedro_jobs[job_id]["stderr"] += rem_err
+        kedro_jobs[job_id]["returncode"] = returncode
+        kedro_jobs[job_id]["status"] = "finished" if returncode == 0 else "error"
+        kedro_jobs[job_id]["end_time"] = datetime.now()
+        if kedro_jobs[job_id]["start_time"]:
+            kedro_jobs[job_id]["duration"] = (
+                kedro_jobs[job_id]["end_time"] - kedro_jobs[job_id]["start_time"]
+            ).total_seconds()
+
+    logger.info("Kedro job %s finished with return code %d", job_id, returncode)
+
+
 @router.post("/run-kedro-command")
-async def run_kedro_command(request: KedroCommandRequest = Body(...)):
+async def run_kedro_command(command: str, background_tasks: BackgroundTasks):
     """
     Run a Kedro command provided as a string in a subprocess and return the output.
     Example request body: {"command": "run --pipeline=my_pipeline"}
     """
-    try:
-        # Split the command string safely
-        import shlex
+    # Split the command string safely
+    import shlex
 
-        # Allow only kedro commands to be executed
-        cmd = ["kedro"] + shlex.split(request.command)
-        result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
+    job_id = str(uuid.uuid4())
+
+    # Allow only kedro commands to be executed
+    cmd = ["kedro"] + shlex.split(command)
+
+    # Initialize job status
+    kedro_jobs[job_id] = {
+        "status": "initialize",
+        "start_time": datetime.now(),
+        "duration": None,
+        "end_time": None,
+        "stdout": "",
+        "stderr": "",
+        "returncode": None,
+    }
+    background_tasks.add_task(run_kedro_subprocess, job_id, cmd)
+    return JSONResponse(
+        status_code=202,
+        content={"job_id": job_id, "status": "initialize"},
+    )
+
+
+@router.get("/kedro-command-status")
+async def get_kedro_command_status(job_id: str):
+    """
+    Get the status of a previously run Kedro command.
+    """
+    job = kedro_jobs.get(job_id)
+    if not job:
         return JSONResponse(
-            status_code=200,
-            content={
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode,
-            },
+            status_code=404,
+            content={"message": "Job not found"},
         )
-    except Exception as exc:
-        logger.exception("Failed to run Kedro command: %s", exc)
-        return JSONResponse(
-            status_code=500,
-            content={"error": str(exc)},
-        )
+    return JSONResponse(
+        status_code=200,
+        content={
+            "start_time": job["start_time"].strftime("%Y-%m-%d %H:%M:%S"),
+            "duration": job["duration"],
+            "end_time": (
+                job["end_time"].strftime("%Y-%m-%d %H:%M:%S")
+                if job["end_time"]
+                else None
+            ),
+            "status": job["status"],
+            "stdout": job["stdout"],
+            "stderr": job["stderr"],
+            "returncode": job["returncode"],
+        },
+    )
 
 
 @router.get(
