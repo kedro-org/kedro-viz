@@ -4,7 +4,7 @@
   /* Base padding ensures space for global toolbar */
   padding: 24px 24px 24px calc(#{variables.$global-toolbar-width} + 24px);
   box-sizing: border-box;
-  transition: padding-left 200ms ease;
+  transition: padding-left 200ms ease, padding-right 200ms ease;
   font-family: var(--font-family, Inter, Arial, sans-serif);
   color: var(--text, #e6eef6);
 }
@@ -73,13 +73,49 @@
   font-weight: 700;
 }
 
+/* Two-column top area: maintain ratio via fr units with sensible minimums */
 .runner-manager__main {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(240px, 3fr) minmax(360px, 7fr);
   gap: 24px;
+  transition: grid-template-columns 200ms ease;
+}
+
+/* Editor spans full width on a new row */
+.runner-manager__editor {
+  grid-column: 1 / -1;
+  background: var(--panel-bg, #0f1720);
+  padding: 16px;
+  border-radius: 6px;
+}
+
+/* When metadata panel is visible, increase the page right padding
+   so the grid area shrinks uniformly and column ratio is preserved */
+.runner-manager--metadata-open {
+  padding-right: calc(24px + #{variables.$metadata-sidebar-width-open});
+}
+
+/* Remove previous per-panel right padding adjustments if any */
+
+/* .runner-manager--metadata-open .runner-manager__editor,
+   .runner-manager--metadata-open .runner-manager__jobs-panel,
+   .runner-manager--metadata-open .runner-manager__control-panel { padding-right: 0; } */
+
+/* Stack everything on narrow screens */
+@media (width <= 1100px) {
+  .runner-manager__main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .runner-manager--metadata-open {
+    padding-right: 24px; /* treat metadata as overlay on small screens */
+  }
 }
 
 .runner-manager__control-panel {
-  width: 360px;
+  /* Allow grid to resize this panel proportionally; avoid fixed width */
+  min-width: 0;
   background: var(--panel-bg, #0f1720);
   padding: 16px;
   border-radius: 6px;
@@ -141,7 +177,15 @@
 }
 
 .runner-manager__jobs-panel {
-  flex: 1;
+  /* Allow grid item to shrink within the available space */
+  min-width: 0;
+  background: var(--panel-bg, #0f1720);
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.runner-manager__jobs-panel .jobs-list {
+  margin-top: 12px;
 }
 
 .jobs-list {
@@ -218,4 +262,140 @@
   .runner-manager--sidebar-open {
     padding-left: 16px;
   }
+}
+
+.runner-data-panel {
+  margin-top: 16px;
+  border-top: 1px solid #1b2a33;
+  padding-top: 12px;
+}
+
+.runner-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.runner-tab {
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid #2b3943;
+  cursor: pointer;
+}
+
+.runner-tab--active {
+  background: linear-gradient(90deg, #0ea5a9, #06b6d4);
+  color: #051018;
+  border: none;
+}
+
+.runner-filter-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #23303a;
+  background: #071017;
+  color: inherit;
+  margin-bottom: 8px;
+}
+
+.param-list,
+.dataset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.param-item,
+.dataset-item {
+  border: 1px solid #15232a;
+  background: var(--panel-bg, #071017);
+  border-radius: 6px;
+}
+
+.param-item__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.param-item__expand {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid #2b3943;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.param-item__meta {
+  flex: 1;
+}
+
+.param-item__key {
+  font-weight: 600;
+}
+
+.param-item__value {
+  font-size: 12px;
+  color: var(--muted, #9aa6b2);
+}
+
+.param-item__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.param-item__body {
+  padding: 8px 10px 10px 34px;
+}
+
+.param-item__preview {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.dataset-item {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.dataset-item:hover {
+  background: #0a1219;
+}
+
+.dataset-item__name {
+  font-weight: 600;
+}
+
+.dataset-item__type {
+  font-size: 12px;
+  color: var(--muted, #9aa6b2);
+}
+
+/* Right-side metadata editor tweaks */
+.runner-yaml-editor {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  font-size: 13px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #23303a;
+  background: #0a1219;
+  color: inherit;
+}
+
+.runner-yaml-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
