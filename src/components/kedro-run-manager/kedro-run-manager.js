@@ -7,18 +7,6 @@ import './kedro-run-manager.scss';
  * No functional wiring — purely presentational scaffolding you can hook up later.
  */
 class KedroRunManager extends Component {
-  componentDidMount() {
-    // Force light theme for this page by toggling the main app container class.
-    const appRoot = document.querySelector('.kedro-pipeline');
-    if (appRoot) {
-      // remember previous theme classes so we can restore on unmount
-      this._prevWasDark = appRoot.classList.contains('kui-theme--dark');
-      this._prevWasLight = appRoot.classList.contains('kui-theme--light');
-      appRoot.classList.remove('kui-theme--dark');
-      appRoot.classList.add('kui-theme--light');
-    }
-  }
-
   componentWillUnmount() {
     const appRoot = document.querySelector('.kedro-pipeline');
     if (appRoot) {
