@@ -80,6 +80,7 @@ def create_api_app_from_project(
 
     @app.get("/")
     @app.get("/workflow")
+    @app.get("/kedro-run")
     async def index():
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()

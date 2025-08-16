@@ -1,0 +1,193 @@
+@use '../../styles/variables' as variables;
+
+.kedro-run-manager {
+  /* Use the project's global toolbar width as the left baseline, then add
+     a dynamic index width (CSS variable) so layout can be controlled at runtime.
+  */
+  padding: 24px 24px 24px calc(#{variables.$global-toolbar-width} + 24px);
+  box-sizing: border-box;
+  transition: padding-left 200ms ease;
+  font-family: var(--font-family, Inter, Arial, sans-serif);
+  color: var(--text, #e6eef6);
+}
+
+.kedro-run-manager__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.kedro-run-manager__title h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.kedro-run-manager__subtitle {
+  margin: 0;
+  color: var(--muted, #9aa6b2);
+}
+
+.kedro-run-manager__overview {
+  display: flex;
+  gap: 12px;
+}
+
+.overview-item {
+  text-align: right;
+}
+
+.overview-item__label {
+  font-size: 12px;
+  color: var(--muted, #9aa6b2);
+}
+
+.overview-item__value {
+  font-weight: 700;
+}
+
+.kedro-run-manager__main {
+  display: flex;
+  gap: 24px;
+}
+
+.kedro-run-manager__control-panel {
+  width: 360px;
+  background: var(--panel-bg, #0f1720);
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.control-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.control-row__label {
+  font-size: 12px;
+  color: var(--muted, #9aa6b2);
+}
+
+.control-row__input {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #23303a;
+  background: #071017;
+  color: inherit;
+}
+
+.kedro-run-manager__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid #2b3943;
+  color: inherit;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: linear-gradient(90deg, #0ea5a9, #06b6d4);
+  border: none;
+  color: #051018;
+}
+
+.btn--danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn--muted {
+  opacity: 0.7;
+}
+
+.kedro-run-manager__jobs-panel {
+  flex: 1;
+}
+
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-card {
+  background: var(--panel-bg, #071017);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #15232a;
+}
+
+.job-card__meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.job-card__id {
+  font-weight: 700;
+}
+
+.job-card__status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.job-card__status--running {
+  background: #0f5132;
+  color: #bff5d8;
+}
+
+.job-card__status--error {
+  background: #4c1f1f;
+  color: #ffd6d6;
+}
+
+.job-card__stdout {
+  background: #071015;
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.job-card__controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.kedro-run-manager__footer {
+  margin-top: 16px;
+  color: var(--muted, #9aa6b2);
+}
+
+/* Responsive adjustments for the reserved index space. On smaller screens reduce or remove the reserved space. */
+@media (width <= 900px) {
+  .kedro-run-manager {
+    --index-width: 200px;
+  }
+}
+
+@media (width <= 600px) {
+  .kedro-run-manager {
+    /* On very small screens the index is hidden and we keep a small gutter instead */
+    --index-width: 0px;
+
+    padding-left: 16px;
+  }
+}
