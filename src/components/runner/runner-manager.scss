@@ -1,9 +1,7 @@
 @use '../../styles/variables' as variables;
 
-.kedro-run-manager {
-  /* Use the project's global toolbar width as the left baseline, then add
-     a dynamic index width (CSS variable) so layout can be controlled at runtime.
-  */
+.runner-manager {
+  /* Base padding ensures space for global toolbar */
   padding: 24px 24px 24px calc(#{variables.$global-toolbar-width} + 24px);
   box-sizing: border-box;
   transition: padding-left 200ms ease;
@@ -11,24 +9,53 @@
   color: var(--text, #e6eef6);
 }
 
-.kedro-run-manager__header {
+/* When the shared pipeline sidebar is rendered, reserve the closed sidebar width */
+.runner-manager--with-sidebar {
+  padding-left: calc(
+    #{variables.$global-toolbar-width} + #{variables.$sidebar-width-closed} +
+      24px
+  );
+}
+
+/* When the sidebar is open, reserve the full open width */
+.runner-manager--sidebar-open {
+  padding-left: calc(
+    #{variables.$global-toolbar-width} + #{variables.$sidebar-width-open} + 24px
+  );
+}
+
+/* If global toolbar is hidden, remove its offset */
+.runner-manager--no-global-toolbar {
+  padding-left: 24px;
+}
+
+/* If global toolbar is hidden but sidebar is present/open, offset by sidebar only */
+.runner-manager--no-global-toolbar.runner-manager--with-sidebar {
+  padding-left: calc(#{variables.$sidebar-width-closed} + 24px);
+}
+
+.runner-manager--no-global-toolbar.runner-manager--sidebar-open {
+  padding-left: calc(#{variables.$sidebar-width-open} + 24px);
+}
+
+.runner-manager__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 18px;
 }
 
-.kedro-run-manager__title h2 {
+.runner-manager__title h2 {
   margin: 0 0 4px;
   font-size: 20px;
 }
 
-.kedro-run-manager__subtitle {
+.runner-manager__subtitle {
   margin: 0;
   color: var(--muted, #9aa6b2);
 }
 
-.kedro-run-manager__overview {
+.runner-manager__overview {
   display: flex;
   gap: 12px;
 }
@@ -46,12 +73,12 @@
   font-weight: 700;
 }
 
-.kedro-run-manager__main {
+.runner-manager__main {
   display: flex;
   gap: 24px;
 }
 
-.kedro-run-manager__control-panel {
+.runner-manager__control-panel {
   width: 360px;
   background: var(--panel-bg, #0f1720);
   padding: 16px;
@@ -83,7 +110,7 @@
   color: inherit;
 }
 
-.kedro-run-manager__actions {
+.runner-manager__actions {
   display: flex;
   gap: 8px;
   margin-top: 8px;
@@ -113,7 +140,7 @@
   opacity: 0.7;
 }
 
-.kedro-run-manager__jobs-panel {
+.runner-manager__jobs-panel {
   flex: 1;
 }
 
@@ -171,23 +198,24 @@
   margin-top: 8px;
 }
 
-.kedro-run-manager__footer {
+.runner-manager__footer {
   margin-top: 16px;
   color: var(--muted, #9aa6b2);
 }
 
-/* Responsive adjustments for the reserved index space. On smaller screens reduce or remove the reserved space. */
+/* Responsive adjustments: when the sidebar is hidden by layout breakpoints, fall back to small padding */
 @media (width <= 900px) {
-  .kedro-run-manager {
-    --index-width: 200px;
+  .runner-manager,
+  .runner-manager--with-sidebar,
+  .runner-manager--sidebar-open {
+    padding-left: 24px;
   }
 }
 
 @media (width <= 600px) {
-  .kedro-run-manager {
-    /* On very small screens the index is hidden and we keep a small gutter instead */
-    --index-width: 0px;
-
+  .runner-manager,
+  .runner-manager--with-sidebar,
+  .runner-manager--sidebar-open {
     padding-left: 16px;
   }
 }

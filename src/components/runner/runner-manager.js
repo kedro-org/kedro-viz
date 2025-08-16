@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import './kedro-run-manager.scss';
+import { connect } from 'react-redux';
+import Sidebar from '../sidebar';
+import './runner-manager.scss';
 
 /**
  * KedroRunManager
@@ -21,16 +23,28 @@ class KedroRunManager extends Component {
   }
 
   render() {
+    const { displaySidebar, sidebarVisible, displayGlobalNavigation } =
+      this.props;
+
+    const wrapperClassNames = [
+      'runner-manager',
+      displaySidebar ? 'runner-manager--with-sidebar' : null,
+      displaySidebar && sidebarVisible ? 'runner-manager--sidebar-open' : null,
+      !displayGlobalNavigation ? 'runner-manager--no-global-toolbar' : null,
+    ]
+      .filter(Boolean)
+      .join(' ');
+
     return (
-      <div className="kedro-run-manager">
-        <header className="kedro-run-manager__header">
-          <div className="kedro-run-manager__title">
+      <div className="runner-manager">
+        <header className="runner-manager__header">
+          <div className="runner-manager__title">
             <h2>Runner</h2>
-            <p className="kedro-run-manager__subtitle">
+            <p className="runner-manager__subtitle">
               Start, monitor and inspect pipeline runs
             </p>
           </div>
-          <div className="kedro-run-manager__overview">
+          <div className="runner-manager__overview">
             <div className="overview-item">
               <div className="overview-item__label">Active jobs</div>
               <div className="overview-item__value">0</div>
@@ -42,25 +56,25 @@ class KedroRunManager extends Component {
           </div>
         </header>
 
-        <main className="kedro-run-manager__main">
-          <section className="kedro-run-manager__control-panel">
+        <main className="runner-manager__main">
+          <section className="runner-manager__control-panel">
             <h3 className="section-title">Run command</h3>
             <div className="control-row">
               <label className="control-row__label">Command</label>
               <input className="control-row__input" defaultValue="kedro run" />
             </div>
-            <div className="kedro-run-manager__actions">
+            <div className="runner-manager__actions">
               <button className="btn btn--primary">Start run</button>
             </div>
 
-            <div className="kedro-run-manager__hints">
+            <div className="runner-manager__hints">
               <small>
                 Pro tip: use <code>kedro run -n</code> to run a single node.
               </small>
             </div>
           </section>
 
-          <section className="kedro-run-manager__jobs-panel">
+          <section className="runner-manager__jobs-panel">
             <h3 className="section-title">Jobs</h3>
 
             <div className="jobs-list">
@@ -91,7 +105,7 @@ class KedroRunManager extends Component {
           </section>
         </main>
 
-        <footer className="kedro-run-manager__footer">
+        <footer className="runner-manager__footer">
           <small>
             UI draft — not wired to backend. Connect `/api/run-kedro-command`
             and status polling to make it live.
@@ -102,4 +116,10 @@ class KedroRunManager extends Component {
   }
 }
 
-export default KedroRunManager;
+const mapStateToProps = (state) => ({
+  displaySidebar: state.display.sidebar,
+  sidebarVisible: state.visible.sidebar,
+  displayGlobalNavigation: state.display.globalNavigation,
+});
+
+export default connect(mapStateToProps)(KedroRunManager);

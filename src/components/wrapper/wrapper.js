@@ -8,7 +8,7 @@ import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import WorkflowWrapper from '../workflow-wrapper';
-import KedroRunManager from '../kedro-run-manager/kedro-run-manager';
+import KedroRunManager from '../runner/runner-manager';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -51,7 +51,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
       <Route path={`${sanitizedPathname()}workflow`}>
         <WorkflowWrapper />
       </Route>
-      <Route path={`${sanitizedPathname()}kedro-run`}>
+      <Route path={`${sanitizedPathname()}runner`}>
         <KedroRunManager />
       </Route>
     </Switch>

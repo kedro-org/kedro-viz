@@ -236,7 +236,7 @@ export const sanitizedPathname = () => {
   const { pathname } = window.location;
 
   // Remove route-specific parts like /workflow from the path
-  const basePath = pathname.replace(/\/(workflow).*$/, '');
+  const basePath = pathname.replace(/\/(workflow|runner).*$/, '');
   const pathnameWithTrailingSlash = basePath.endsWith('/')
     ? basePath
     : `${basePath}/`; // the `pathname` will have a trailing slash if it didn't initially

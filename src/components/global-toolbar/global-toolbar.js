@@ -87,11 +87,11 @@ export const GlobalToolbar = ({
             <span className="run-status-dot"></span>
           )}
         </NavLink>
-        <NavLink exact to={{ pathname: `${sanitizedPathname()}kedro-run` }}>
+        <NavLink exact to={{ pathname: `${sanitizedPathname()}runner` }}>
           <IconButton
             ariaLabel="Open Runner manager"
-            dataTest="global-toolbar-kedro-run-btn"
-            className="pipeline-menu-button--kedro-run pipeline-menu-button--large pipeline-menu-button--link"
+            dataTest="global-toolbar-runner-btn"
+            className="pipeline-menu-button--runner pipeline-menu-button--large pipeline-menu-button--link"
             disabled={false}
             icon={WorkflowIcon}
             labelText="Runner"
