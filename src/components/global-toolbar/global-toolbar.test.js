@@ -17,7 +17,7 @@ describe('GlobalToolbar', () => {
     const buttons = container.querySelectorAll(
       '.pipeline-icon-toolbar__button'
     );
-    expect(buttons.length).toBe(6);
+    expect(buttons.length).toBe(7); // Changed from 6 to 7. Button added for Runner
   });
 
   const functionCalls = [
