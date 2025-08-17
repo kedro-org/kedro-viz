@@ -426,21 +426,26 @@ class KedroRunManager extends Component {
           <main className="runner-manager__main">
             <section className="runner-manager__control-panel">
               <h3 className="section-title">Run command</h3>
-              <div className="control-row">
-                <label className="control-row__label">Command</label>
-                <input
-                  className="control-row__input"
-                  defaultValue="kedro run"
-                />
+              <div className="runner-manager__control-body">
+                <div className="control-row">
+                  <label className="control-row__label">Command</label>
+                  <input
+                    className="control-row__input"
+                    defaultValue="kedro run"
+                  />
+                </div>
+                {/* Additional controls/configuration can go here */}
               </div>
-              <div className="runner-manager__actions">
-                <button className="btn btn--primary">Start run</button>
-              </div>
+              <div className="runner-manager__control-footer">
+                <div className="runner-manager__actions">
+                  <button className="btn btn--primary">Start run</button>
+                </div>
 
-              <div className="runner-manager__hints">
-                <small>
-                  Pro tip: use <code>kedro run -n</code> to run a single node.
-                </small>
+                <div className="runner-manager__hints">
+                  <small>
+                    Pro tip: use <code>kedro run -n</code> to run a single node.
+                  </small>
+                </div>
               </div>
             </section>
 

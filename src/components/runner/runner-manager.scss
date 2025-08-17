@@ -119,6 +119,28 @@
   background: var(--panel-bg, #0f1720);
   padding: 16px;
   border-radius: 6px;
+  display: flex; /* enable footer pinning */
+  flex-direction: column; /* stack body and footer */
+}
+
+/* Scrollable body so footer can stay pinned at the bottom */
+.runner-manager__control-body {
+  flex: 1 1 auto;
+  min-height: 0; /* required for proper overflow behavior in flex containers */
+  overflow: auto;
+}
+
+/* Footer pinned to bottom, with slight elevation and sticky behavior if body scrolls */
+.runner-manager__control-footer {
+  margin-top: auto; /* push to bottom if content shorter than container */
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(15 23 32 / 0%),
+    rgb(15 23 32 / 100%) 24px
+  );
+  padding-top: 12px;
 }
 
 .section-title {
