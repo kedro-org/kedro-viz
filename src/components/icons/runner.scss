@@ -1,0 +1,31 @@
+.pipeline-runner-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  color: currentcolor;
+}
+
+/* Spinner ring animation when running */
+.runner-icon__spinner {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: runner-spin 1.2s linear infinite;
+  opacity: 0.7;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .runner-icon__spinner {
+    animation: none;
+  }
+}
+
+@keyframes runner-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

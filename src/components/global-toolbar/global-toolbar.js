@@ -15,6 +15,7 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
+import RunnerIcon from '../icons/runner';
 import { VIEW } from '../../config';
 import './global-toolbar.scss';
 import { getPipelineRunData } from '../../selectors/run-status';
@@ -93,7 +94,7 @@ export const GlobalToolbar = ({
             dataTest="global-toolbar-runner-btn"
             className="pipeline-menu-button--runner pipeline-menu-button--large pipeline-menu-button--link"
             disabled={false}
-            icon={WorkflowIcon}
+            icon={RunnerIcon}
             labelText="Runner"
           />
         </NavLink>

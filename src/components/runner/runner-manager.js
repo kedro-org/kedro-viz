@@ -402,7 +402,7 @@ class KedroRunManager extends Component {
 
     return (
       <>
-        {displaySidebar && <Sidebar disableMinimap disableFilterButton />}
+        {displaySidebar && <Sidebar disableMinimap />}
         <div className={wrapperClassNames}>
           <header className="runner-manager__header">
             <div className="runner-manager__title">
