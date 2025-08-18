@@ -6,7 +6,37 @@
   box-sizing: border-box;
   transition: padding-left 200ms ease, padding-right 200ms ease;
   font-family: var(--font-family, Inter, Arial, sans-serif);
-  color: var(--text, #e6eef6);
+  color: var(--runner-text);
+
+  /* Runner theme tokens aligned to global theme variables */
+  --runner-text: var(--color-text);
+  --runner-muted: var(--color-text-faded);
+  --runner-panel-bg: var(--color-bg-3);
+  --runner-subpanel-bg: var(--color-bg-5);
+  --runner-stdout-bg: var(--color-bg-5);
+  --runner-border-strong: var(--color-border-line);
+  --runner-border: var(--color-border-line);
+  --runner-button-border: var(--color-border-line);
+  --runner-hover-bg: var(--color-bg-5);
+  --runner-footer-gradient: linear-gradient(
+    180deg,
+    transparent,
+    var(--runner-panel-bg) 24px
+  );
+
+  /* Brand/status tokens: keep local until global brand tokens exist */
+  --runner-primary-gradient: linear-gradient(
+    90deg,
+    #{variables.$blue-300},
+    #{variables.$blue-0}
+  );
+  --runner-primary-on: #{variables.$black-900};
+  --runner-danger-bg: #{variables.$red-0};
+  --runner-on-danger: #{variables.$white-0};
+  --runner-chip-running-bg: #{variables.$green-900};
+  --runner-chip-running-text: #{variables.$white-0};
+  --runner-chip-error-bg: #{variables.$red-100};
+  --runner-chip-error-text: #{variables.$white-0};
 
   /* Constrain to viewport so inner panels can scroll instead of the page */
   height: 100vh;
@@ -14,6 +44,8 @@
   display: flex;
   flex-direction: column;
 }
+
+/* No explicit light override block needed; global --color-* tokens switch with theme */
 
 /* When the shared pipeline sidebar is rendered, reserve the closed sidebar width */
 .runner-manager--with-sidebar {
@@ -58,7 +90,7 @@
 
 .runner-manager__subtitle {
   margin: 0;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 .runner-manager__overview {
@@ -72,7 +104,7 @@
 
 .overview-item__label {
   font-size: 12px;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 .overview-item__value {
@@ -96,7 +128,7 @@
 /* Editor spans full width on a new row */
 .runner-manager__editor {
   /* Lives in the left column, below control panel */
-  background: var(--panel-bg, #0f1720);
+  background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
   min-height: 0;
@@ -145,7 +177,7 @@
 .runner-manager__control-panel {
   /* Allow grid to resize this panel proportionally; avoid fixed width */
   min-width: 0;
-  background: var(--panel-bg, #0f1720);
+  background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
 
@@ -172,11 +204,7 @@
   margin-top: auto; /* push to bottom if content shorter than container */
   position: sticky;
   bottom: 0;
-  background: linear-gradient(
-    180deg,
-    rgb(15 23 32 / 0%),
-    rgb(15 23 32 / 100%) 24px
-  );
+  background: var(--runner-footer-gradient);
   padding-top: 12px;
 }
 
@@ -194,14 +222,14 @@
 
 .control-row__label {
   font-size: 12px;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 .control-row__input {
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #23303a;
-  background: #071017;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-subpanel-bg);
   color: inherit;
 }
 
@@ -215,20 +243,20 @@
   padding: 8px 12px;
   border-radius: 4px;
   background: transparent;
-  border: 1px solid #2b3943;
+  border: 1px solid var(--runner-button-border);
   color: inherit;
   cursor: pointer;
 }
 
 .btn--primary {
-  background: linear-gradient(90deg, #0ea5a9, #06b6d4);
+  background: var(--runner-primary-gradient);
   border: none;
-  color: #051018;
+  color: var(--runner-primary-on);
 }
 
 .btn--danger {
-  background: #ef4444;
-  color: white;
+  background: var(--runner-danger-bg);
+  color: var(--runner-on-danger);
 }
 
 .btn--muted {
@@ -238,7 +266,7 @@
 .runner-manager__jobs-panel {
   /* Right column should occupy full grid height across both rows */
   min-width: 0;
-  background: var(--panel-bg, #0f1720);
+  background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
   grid-row: 1 / span 2;
@@ -271,10 +299,10 @@
 }
 
 .job-card {
-  background: var(--panel-bg, #071017);
+  background: var(--runner-subpanel-bg);
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #15232a;
+  border: 1px solid var(--runner-border-strong);
 }
 
 .job-card__meta {
@@ -295,17 +323,17 @@
 }
 
 .job-card__status--running {
-  background: #0f5132;
-  color: #bff5d8;
+  background: var(--runner-chip-running-bg);
+  color: var(--runner-chip-running-text);
 }
 
 .job-card__status--error {
-  background: #4c1f1f;
-  color: #ffd6d6;
+  background: var(--runner-chip-error-bg);
+  color: var(--runner-chip-error-text);
 }
 
 .job-card__stdout {
-  background: #071015;
+  background: var(--runner-stdout-bg);
   padding: 8px;
   border-radius: 4px;
   max-height: 200px;
@@ -320,7 +348,7 @@
 
 .runner-manager__footer {
   margin-top: 16px;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 /* Responsive adjustments: when the sidebar is hidden by layout breakpoints, fall back to small padding */
@@ -342,7 +370,7 @@
 
 .runner-data-panel {
   margin-top: 16px;
-  border-top: 1px solid #1b2a33;
+  border-top: 1px solid var(--runner-border-strong);
   padding-top: 12px;
 
   /* Allow the inner panel/list to size and scroll */
@@ -381,13 +409,13 @@
   border-radius: 4px;
   background: transparent;
   color: inherit;
-  border: 1px solid #2b3943;
+  border: 1px solid var(--runner-button-border);
   cursor: pointer;
 }
 
 .runner-tab--active {
-  background: linear-gradient(90deg, #0ea5a9, #06b6d4);
-  color: #051018;
+  background: var(--runner-primary-gradient);
+  color: var(--runner-primary-on);
   border: none;
 }
 
@@ -395,8 +423,8 @@
   width: 100%;
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #23303a;
-  background: #071017;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-subpanel-bg);
   color: inherit;
   margin-bottom: 8px;
 }
@@ -413,8 +441,8 @@
 
 .param-item,
 .dataset-item {
-  border: 1px solid #15232a;
-  background: var(--panel-bg, #071017);
+  border: 1px solid var(--runner-border-strong);
+  background: var(--runner-subpanel-bg);
   border-radius: 6px;
 }
 
@@ -429,7 +457,7 @@
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  border: 1px solid #2b3943;
+  border: 1px solid var(--runner-button-border);
   background: transparent;
   color: inherit;
   cursor: pointer;
@@ -445,7 +473,7 @@
 
 .param-item__value {
   font-size: 12px;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 /* Make param items behave like dataset items: clickable with hover */
@@ -456,7 +484,7 @@
 
 .param-item:hover,
 .param-item:focus-visible {
-  background: #0a1219;
+  background: var(--runner-hover-bg);
   outline: none;
 }
 
@@ -480,7 +508,7 @@
 }
 
 .dataset-item:hover {
-  background: #0a1219;
+  background: var(--runner-hover-bg);
 }
 
 .dataset-item__name {
@@ -489,7 +517,7 @@
 
 .dataset-item__type {
   font-size: 12px;
-  color: var(--muted, #9aa6b2);
+  color: var(--runner-muted);
 }
 
 /* Right-side metadata editor tweaks */
@@ -501,8 +529,8 @@
   font-size: 13px;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #23303a;
-  background: #0a1219;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-hover-bg);
   color: inherit;
 }
 
