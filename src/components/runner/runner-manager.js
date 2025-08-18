@@ -5,8 +5,10 @@ import Sidebar from '../sidebar';
 import '../metadata/styles/metadata.scss';
 import MetaDataStats from '../metadata/metadata-stats';
 import { getVisibleNodes } from '../../selectors/nodes';
+import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { sanitizedPathname } from '../../utils';
+import { PIPELINE } from '../../config';
 
 /**
  * KedroRunManager
@@ -66,6 +68,51 @@ class KedroRunManager extends Component {
     // fetch(`${apiBase}/datasets`).then((r) => r.json()).then((datasets) => this.setState({ serverDatasets: datasets }));
     // 3) Seed jobs list and/or start polling (or open a WebSocket) for job updates
     // this._jobsPoll = setInterval(() => fetch(`${apiBase}/runs`).then((r) => r.json()).then((jobs) => this.setState({ jobs })), 3000);
+    // Seed the command input with flags from current pipeline/tags
+    this._updateCommandFromSelections();
+  }
+
+  componentDidUpdate(prevProps) {
+    // If pipeline or tag selection changes, update the command input to reflect it
+    if (
+      prevProps.activePipeline !== this.props.activePipeline ||
+      prevProps.selectedTags?.join(',') !== this.props.selectedTags?.join(',')
+    ) {
+      this._updateCommandFromSelections();
+    }
+  }
+
+  _computeCommand() {
+    const base = 'kedro run';
+    const { activePipeline, selectedTags } = this.props;
+    const parts = [base];
+    if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
+      parts.push('-p', this._quoteArg(activePipeline));
+    }
+    if (selectedTags && selectedTags.length) {
+      parts.push('-t', selectedTags.join(','));
+    }
+    return parts.join(' ');
+  }
+
+  // Quote an argument if it contains spaces or non-safe characters
+  _quoteArg(value) {
+    if (typeof value !== 'string') {
+      return String(value);
+    }
+    // Safe characters for unquoted args: letters, digits, dot, underscore, hyphen
+    const isSafe = /^[A-Za-z0-9._-]+$/.test(value);
+    return isSafe ? value : `"${value}"`;
+  }
+
+  _updateCommandFromSelections() {
+    const next = this._computeCommand();
+    if (this.commandInputRef?.current) {
+      // Only update if different from what is currently shown
+      if (this.commandInputRef.current.value !== next) {
+        this.commandInputRef.current.value = next;
+      }
+    }
   }
 
   // --- Helpers for filtering/lists ---
@@ -665,6 +712,11 @@ const mapStateToProps = (state) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   // Visible datasets from the current graph; we only need data nodes
   datasets: getVisibleNodes(state).filter((node) => node.type === 'data'),
+  activePipeline: state.pipeline.active,
+  // Only include enabled tags that are present in the active pipeline; use raw IDs
+  selectedTags: getTagData(state)
+    .filter((tag) => tag.enabled)
+    .map((tag) => tag.id),
 });
 
 export default connect(mapStateToProps)(KedroRunManager);
