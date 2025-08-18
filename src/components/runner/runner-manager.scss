@@ -448,6 +448,18 @@
   color: var(--muted, #9aa6b2);
 }
 
+/* Make param items behave like dataset items: clickable with hover */
+.param-item {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.param-item:hover,
+.param-item:focus-visible {
+  background: #0a1219;
+  outline: none;
+}
+
 .param-item__actions {
   display: flex;
   gap: 6px;

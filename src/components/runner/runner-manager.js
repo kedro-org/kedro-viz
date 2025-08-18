@@ -394,15 +394,20 @@ class KedroRunManager extends Component {
         >
           <ul className="param-list">
             {items.map(([key, value]) => (
-              <li key={key} className="param-item">
+              <li
+                key={key}
+                className="param-item"
+                role="button"
+                tabIndex={0}
+                onClick={() => this.openParamEditor(key)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.openParamEditor(key);
+                  }
+                }}
+              >
                 <div className="param-item__head">
-                  <button
-                    className="param-item__expand"
-                    onClick={() => this.toggleParamExpanded(key)}
-                    aria-expanded={!!expandedParams[key]}
-                  >
-                    {expandedParams[key] ? '▾' : '▸'}
-                  </button>
                   <div className="param-item__meta">
                     <div className="param-item__key">{key}</div>
                     <div className="param-item__value">
@@ -411,22 +416,7 @@ class KedroRunManager extends Component {
                         : String(value)}
                     </div>
                   </div>
-                  <div className="param-item__actions">
-                    <button
-                      className="btn"
-                      onClick={() => this.openParamEditor(key)}
-                    >
-                      Edit
-                    </button>
-                  </div>
                 </div>
-                {expandedParams[key] && (
-                  <div className="param-item__body">
-                    <pre className="param-item__preview">
-                      {this.toYamlString(value)}
-                    </pre>
-                  </div>
-                )}
               </li>
             ))}
             {items.length === 0 && (
