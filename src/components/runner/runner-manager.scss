@@ -7,6 +7,12 @@
   transition: padding-left 200ms ease, padding-right 200ms ease;
   font-family: var(--font-family, Inter, Arial, sans-serif);
   color: var(--text, #e6eef6);
+
+  /* Constrain to viewport so inner panels can scroll instead of the page */
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* When the shared pipeline sidebar is rendered, reserve the closed sidebar width */
@@ -75,18 +81,30 @@
 
 /* Two-column top area: maintain ratio via fr units with sensible minimums */
 .runner-manager__main {
+  /* Occupy remaining height under header/footer */
+  flex: 1 1 auto;
+  min-height: 0; /* allow children to size/scroll */
   display: grid;
   grid-template-columns: minmax(240px, 3fr) minmax(360px, 7fr);
+
+  /* Two rows: fixed control height + flexible editor height in left column */
+  grid-template-rows: var(--runner-control-height, 240px) 1fr;
   gap: 24px;
   transition: grid-template-columns 200ms ease;
 }
 
 /* Editor spans full width on a new row */
 .runner-manager__editor {
-  grid-column: 1 / -1;
+  /* Lives in the left column, below control panel */
   background: var(--panel-bg, #0f1720);
   padding: 16px;
   border-radius: 6px;
+  min-height: 0;
+  overflow: auto; /* scroll editor area if content grows */
+
+  /* Explicit placement: left column, second row */
+  grid-column: 1;
+  grid-row: 2;
 }
 
 /* When metadata panel is visible, increase the page right padding
@@ -111,6 +129,13 @@
   .runner-manager--metadata-open {
     padding-right: 24px; /* treat metadata as overlay on small screens */
   }
+
+  /* On small screens, .runner-manager__main is flex; allow the jobs panel
+     to take remaining space and be the scroll container */
+  .runner-manager__jobs-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
 }
 
 .runner-manager__control-panel {
@@ -119,8 +144,16 @@
   background: var(--panel-bg, #0f1720);
   padding: 16px;
   border-radius: 6px;
+
+  /* Fixed height control panel; body inside can scroll, footer pinned */
+  height: var(--runner-control-height, 240px);
+  overflow: hidden; /* contain internal scroll in control body */
   display: flex; /* enable footer pinning */
   flex-direction: column; /* stack body and footer */
+
+  /* Explicit placement: left column, first row */
+  grid-column: 1;
+  grid-row: 1;
 }
 
 /* Scrollable body so footer can stay pinned at the bottom */
@@ -199,11 +232,24 @@
 }
 
 .runner-manager__jobs-panel {
-  /* Allow grid item to shrink within the available space */
+  /* Right column should occupy full grid height across both rows */
   min-width: 0;
   background: var(--panel-bg, #0f1720);
   padding: 16px;
   border-radius: 6px;
+  grid-row: 1 / span 2;
+
+  /* Make inner list scroll while header stays visible */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  /* Explicit placement: right column covering both rows */
+  grid-column: 2;
+  max-height: 100%;
+
+  /* Allow the entire panel to scroll when content exceeds available height */
+  overflow: auto;
 }
 
 .runner-manager__jobs-panel .jobs-list {
@@ -214,6 +260,10 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  /* Let content define height so the panel (parent) becomes the scroll container */
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .job-card {
