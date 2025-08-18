@@ -387,49 +387,55 @@ class KedroRunManager extends Component {
           />
           {/* API: Add sync button to refetch parameters */}
         </div>
-        <ul className="param-list">
-          {items.map(([key, value]) => (
-            <li key={key} className="param-item">
-              <div className="param-item__head">
-                <button
-                  className="param-item__expand"
-                  onClick={() => this.toggleParamExpanded(key)}
-                  aria-expanded={!!expandedParams[key]}
-                >
-                  {expandedParams[key] ? '▾' : '▸'}
-                </button>
-                <div className="param-item__meta">
-                  <div className="param-item__key">{key}</div>
-                  <div className="param-item__value">
-                    {typeof value === 'object'
-                      ? JSON.stringify(value)
-                      : String(value)}
+        <div
+          className="runner-panel__list"
+          role="region"
+          aria-label="Parameters list"
+        >
+          <ul className="param-list">
+            {items.map(([key, value]) => (
+              <li key={key} className="param-item">
+                <div className="param-item__head">
+                  <button
+                    className="param-item__expand"
+                    onClick={() => this.toggleParamExpanded(key)}
+                    aria-expanded={!!expandedParams[key]}
+                  >
+                    {expandedParams[key] ? '▾' : '▸'}
+                  </button>
+                  <div className="param-item__meta">
+                    <div className="param-item__key">{key}</div>
+                    <div className="param-item__value">
+                      {typeof value === 'object'
+                        ? JSON.stringify(value)
+                        : String(value)}
+                    </div>
+                  </div>
+                  <div className="param-item__actions">
+                    <button
+                      className="btn"
+                      onClick={() => this.openParamEditor(key)}
+                    >
+                      Edit
+                    </button>
                   </div>
                 </div>
-                <div className="param-item__actions">
-                  <button
-                    className="btn"
-                    onClick={() => this.openParamEditor(key)}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-              {expandedParams[key] && (
-                <div className="param-item__body">
-                  <pre className="param-item__preview">
-                    {this.toYamlString(value)}
-                  </pre>
-                </div>
-              )}
-            </li>
-          ))}
-          {items.length === 0 && (
-            <li className="param-item param-item--empty">
-              No parameters match your filter.
-            </li>
-          )}
-        </ul>
+                {expandedParams[key] && (
+                  <div className="param-item__body">
+                    <pre className="param-item__preview">
+                      {this.toYamlString(value)}
+                    </pre>
+                  </div>
+                )}
+              </li>
+            ))}
+            {items.length === 0 && (
+              <li className="param-item param-item--empty">
+                No parameters match your filter.
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
     );
   }
@@ -447,25 +453,31 @@ class KedroRunManager extends Component {
           />
           {/* API: Add sync button to refetch dataset metadata */}
         </div>
-        <ul className="dataset-list">
-          {datasets.map((dataset) => (
-            <li
-              key={dataset.id}
-              className="dataset-item"
-              onClick={() => this.openDatasetDetails(dataset)}
-            >
-              <div className="dataset-item__name">{dataset.name}</div>
-              <div className="dataset-item__type">
-                {dataset.datasetType || dataset.type}
-              </div>
-            </li>
-          ))}
-          {datasets.length === 0 && (
-            <li className="dataset-item dataset-item--empty">
-              No datasets match your filter.
-            </li>
-          )}
-        </ul>
+        <div
+          className="runner-panel__list"
+          role="region"
+          aria-label="Datasets list"
+        >
+          <ul className="dataset-list">
+            {datasets.map((dataset) => (
+              <li
+                key={dataset.id}
+                className="dataset-item"
+                onClick={() => this.openDatasetDetails(dataset)}
+              >
+                <div className="dataset-item__name">{dataset.name}</div>
+                <div className="dataset-item__type">
+                  {dataset.datasetType || dataset.type}
+                </div>
+              </li>
+            ))}
+            {datasets.length === 0 && (
+              <li className="dataset-item dataset-item--empty">
+                No datasets match your filter.
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
     );
   }

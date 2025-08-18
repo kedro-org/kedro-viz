@@ -100,7 +100,11 @@
   padding: 16px;
   border-radius: 6px;
   min-height: 0;
-  overflow: auto; /* scroll editor area if content grows */
+
+  /* Keep the editor fixed; let inner list region handle scrolling */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   /* Explicit placement: left column, second row */
   grid-column: 1;
@@ -340,12 +344,36 @@
   margin-top: 16px;
   border-top: 1px solid #1b2a33;
   padding-top: 12px;
+
+  /* Allow the inner panel/list to size and scroll */
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .runner-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+/* Editor inner panel: toolbar fixed, list scrolls */
+.runner-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.runner-panel__toolbar {
+  flex: 0 0 auto;
+}
+
+.runner-panel__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 
 .runner-tab {
