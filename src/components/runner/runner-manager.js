@@ -6,6 +6,7 @@ import '../metadata/styles/metadata.scss';
 import MetaDataStats from '../metadata/metadata-stats';
 import { getVisibleNodes } from '../../selectors/nodes';
 import './runner-manager.scss';
+import { sanitizedPathname } from '../../utils';
 
 /**
  * KedroRunManager
@@ -36,7 +37,11 @@ class KedroRunManager extends Component {
       selectedParamKey: null,
       yamlText: '',
       selectedDataset: null,
+      // Client-side jobs list (placeholder until API is wired)
+      jobs: [],
     };
+    // Simple ref to read the run command value when starting a run
+    this.commandInputRef = React.createRef();
   }
 
   componentWillUnmount() {
@@ -50,6 +55,17 @@ class KedroRunManager extends Component {
         appRoot.classList.add('kui-theme--light');
       }
     }
+  }
+
+  componentDidMount() {
+    // API wiring (example): Load initial data when page mounts
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // 1) Fetch parameters to populate the Parameters tab
+    // fetch(`${apiBase}/parameters`).then((r) => r.json()).then((params) => this.setState({ params }));
+    // 2) Optionally fetch dataset catalog (if you prefer server truth over graph-derived list)
+    // fetch(`${apiBase}/datasets`).then((r) => r.json()).then((datasets) => this.setState({ serverDatasets: datasets }));
+    // 3) Seed jobs list and/or start polling (or open a WebSocket) for job updates
+    // this._jobsPoll = setInterval(() => fetch(`${apiBase}/runs`).then((r) => r.json()).then((jobs) => this.setState({ jobs })), 3000);
   }
 
   // --- Helpers for filtering/lists ---
@@ -104,10 +120,18 @@ class KedroRunManager extends Component {
 
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
-    // API: PUT `${basePath}/api/runner/parameters/${selectedParamKey}` with YAML body
-    // fetch(url, { method: 'PUT', headers: { 'Content-Type': 'text/yaml' }, body: yamlText })
-    //   .then(() => ...)
-    //   .catch(() => ...);
+    // API wiring: Update parameter value on server
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // fetch(`${apiBase}/parameters/${encodeURIComponent(selectedParamKey)}`, {
+    //   method: 'PUT',
+    //   headers: { 'Content-Type': 'text/yaml' },
+    //   body: yamlText,
+    // })
+    //   .then((res) => {
+    //     if (!res.ok) throw new Error('Failed to save parameter');
+    //     // Optionally refetch parameters here to refresh the list
+    //   })
+    //   .catch((err) => console.error('Save param failed', err));
     // For now, just keep the panel open.
     // Optionally, you could update local params after parsing the YAML.
     console.log('[Runner] Save parameter YAML', selectedParamKey, yamlText);
@@ -141,12 +165,74 @@ class KedroRunManager extends Component {
   // --- Dataset interactions ---
   openDatasetDetails = (dataset) => {
     // API: Optionally fetch more metadata here if needed
-    // GET `${basePath}/api/runner/datasets/${dataset.id}`
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // fetch(`${apiBase}/datasets/${encodeURIComponent(dataset.id)}`).then((r) => r.json()).then((full) => this.setState({ selectedDataset: full }));
     this.setState({
       showMetadata: true,
       metadataMode: 'dataset',
       selectedDataset: dataset,
     });
+  };
+
+  onStartRun = () => {
+    // Read the command string from the input
+    const command = this.commandInputRef.current
+      ? this.commandInputRef.current.value
+      : 'kedro run';
+    console.log('[Runner] Start run clicked', command);
+    // API wiring: start a new run
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // fetch(`${apiBase}/runs`, {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ command }),
+    // })
+    //   .then((r) => r.json())
+    //   .then((job) => {
+    //     // Add job immediately and begin polling/log streaming for it
+    //     this.setState((s) => ({ jobs: [job, ...(s.jobs || [])] }));
+    //   })
+    //   .catch((err) => console.error('Failed to start run', err));
+
+    // Local placeholder: create a client-side job entry with a generated ID
+    const jobId = `job-${Date.now()}`;
+    const newJob = {
+      jobId,
+      status: 'running',
+      startedAt: Date.now(),
+      command,
+      logs: '[INFO] Starting Kedro...\n[INFO] Loading pipeline...\n[INFO] Running node: preprocess',
+    };
+    this.setState((prev) => ({ jobs: [newJob, ...(prev.jobs || [])] }));
+  };
+
+  onViewLogs = (jobId) => {
+    console.log('[Runner] View logs for', jobId);
+    // API wiring: load full logs for a given job (optionally with pagination)
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // fetch(`${apiBase}/runs/${encodeURIComponent(jobId)}/logs?offset=0&limit=1000`)
+    //   .then((r) => r.text())
+    //   .then((text) => {/* show in a modal/panel */})
+    //   .catch((err) => console.error('Load logs failed', err));
+  };
+
+  onTerminateJob = (jobId) => {
+    console.log('[Runner] Terminate job', jobId);
+    // API wiring: request termination for a running job
+    // const apiBase = `${sanitizedPathname()}api/runner`;
+    // fetch(`${apiBase}/runs/${encodeURIComponent(jobId)}`, { method: 'DELETE' })
+    //   .then((res) => {
+    //     if (!res.ok) throw new Error('Terminate failed');
+    //     // Optionally update job status immediately
+    //   })
+    //   .catch((err) => console.error('Terminate failed', err));
+
+    // Local placeholder: mark job as terminated
+    this.setState((prev) => ({
+      jobs: (prev.jobs || []).map((j) =>
+        j.jobId === jobId ? { ...j, status: 'terminated' } : j
+      ),
+    }));
   };
 
   closeMetadata = () => {
@@ -414,7 +500,13 @@ class KedroRunManager extends Component {
             <div className="runner-manager__overview">
               <div className="overview-item">
                 <div className="overview-item__label">Active jobs</div>
-                <div className="overview-item__value">0</div>
+                <div className="overview-item__value">
+                  {
+                    (this.state.jobs || []).filter(
+                      (j) => j.status === 'running'
+                    ).length
+                  }
+                </div>
               </div>
               <div className="overview-item">
                 <div className="overview-item__label">Last run</div>
@@ -431,6 +523,7 @@ class KedroRunManager extends Component {
                   <label className="control-row__label">Command</label>
                   <input
                     className="control-row__input"
+                    ref={this.commandInputRef}
                     defaultValue="kedro run"
                   />
                 </div>
@@ -438,7 +531,12 @@ class KedroRunManager extends Component {
               </div>
               <div className="runner-manager__control-footer">
                 <div className="runner-manager__actions">
-                  <button className="btn btn--primary">Start run</button>
+                  <button
+                    className="btn btn--primary"
+                    onClick={this.onStartRun}
+                  >
+                    Start run
+                  </button>
                 </div>
 
                 <div className="runner-manager__hints">
@@ -451,31 +549,59 @@ class KedroRunManager extends Component {
 
             <section className="runner-manager__jobs-panel">
               <h3 className="section-title">Jobs</h3>
-
               <div className="jobs-list">
-                <article className="job-card">
-                  <div className="job-card__meta">
-                    <div className="job-card__id">job-0001</div>
-                    <div className="job-card__status job-card__status--running">
-                      running
+                {(this.state.jobs || []).length === 0 && (
+                  <div className="job-card">
+                    <div className="job-card__meta">
+                      <div className="job-card__id">No jobs</div>
                     </div>
-                    <div className="job-card__time">started 00:01:23 ago</div>
-                  </div>
-
-                  <div className="job-card__body">
-                    <div className="job-card__stdout">
-                      <pre>{`[INFO] Starting Kedro...
-[INFO] Loading pipeline...
-[INFO] Running node: preprocess`}</pre>
-                    </div>
-                    <div className="job-card__controls">
-                      <button className="btn">View full logs</button>
-                      <button className="btn btn--danger">Terminate</button>
+                    <div className="job-card__body">
+                      <div className="job-card__stdout">
+                        <pre>Click "Start run" to create a job.</pre>
+                      </div>
                     </div>
                   </div>
-                </article>
+                )}
 
-                {/* Placeholder for more jobs */}
+                {(this.state.jobs || []).map((job) => (
+                  <article key={job.jobId} className="job-card">
+                    <div className="job-card__meta">
+                      <div className="job-card__id">{job.jobId}</div>
+                      <div
+                        className={`job-card__status ${
+                          job.status === 'running'
+                            ? 'job-card__status--running'
+                            : 'job-card__status--error'
+                        }`}
+                      >
+                        {job.status}
+                      </div>
+                      <div className="job-card__time">
+                        started {new Date(job.startedAt).toLocaleTimeString()}
+                      </div>
+                    </div>
+
+                    <div className="job-card__body">
+                      <div className="job-card__stdout">
+                        <pre>{job.logs}</pre>
+                      </div>
+                      <div className="job-card__controls">
+                        <button
+                          className="btn"
+                          onClick={() => this.onViewLogs(job.jobId)}
+                        >
+                          View full logs
+                        </button>
+                        <button
+                          className="btn btn--danger"
+                          onClick={() => this.onTerminateJob(job.jobId)}
+                        >
+                          Terminate
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
               </div>
             </section>
 
