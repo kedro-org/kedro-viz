@@ -481,11 +481,7 @@
 }
 
 .runner-data-panel {
-  margin-top: 16px;
   border-top: 1px solid var(--runner-border-strong);
-  padding-top: 12px;
-
-  /* Allow the inner panel/list to size and scroll */
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -929,7 +925,6 @@
   display: flex;
   gap: 6px;
   align-items: center;
-  padding: 6px 10px;
 }
 
 /* Muted tabs by default, only active is bright */
