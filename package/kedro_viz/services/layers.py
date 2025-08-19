@@ -129,6 +129,6 @@ def sort_layers(
             "Please check your pipeline configuration to ensure layers follow a proper hierarchy. "
             "Layer dependencies found: %s",
             str(e),
-            dict(layer_dependencies)
+            dict(layer_dependencies),
         )
         return []
