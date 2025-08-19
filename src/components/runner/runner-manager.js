@@ -6,6 +6,7 @@ import '../metadata/styles/metadata.scss';
 import MetaDataStats from '../metadata/metadata-stats';
 import NodeIcon from '../icons/node-icon';
 import JSONObject from '../json-object';
+import MetaData from '../metadata/metadata';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
@@ -18,7 +19,7 @@ import {
 import { PIPELINE } from '../../config';
 import FlowChart from '../flowchart';
 import WatchListDialog from './watch-list-dialog';
-import { toggleNodeClicked } from '../../actions/nodes';
+import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 
 // Key for persisting runner jobs across page changes
 const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
@@ -210,6 +211,10 @@ class KedroRunManager extends Component {
     );
     if (paramNode) {
       this._lastSid = sid;
+      // Trigger lazy load like flowchart so metadata exists
+      if (this.props.dispatch) {
+        this.props.dispatch(loadNodeData(sid));
+      }
       this.openParamEditor(sid);
       return;
     }
@@ -218,6 +223,9 @@ class KedroRunManager extends Component {
     );
     if (datasetNode) {
       this._lastSid = sid;
+      if (this.props.dispatch) {
+        this.props.dispatch(loadNodeData(sid));
+      }
       this.openDatasetDetails(datasetNode);
       return;
     }
@@ -853,7 +861,9 @@ class KedroRunManager extends Component {
 
   // Update URL to reflect selected node id (sid) for shareable/back-nav parity
   setSidInUrl = (nodeId) => {
-    if (!nodeId) {return;}
+    if (!nodeId) {
+      return;
+    }
     try {
       const current = new URL(window.location.href);
       // Preserve existing params, only update sid and clear sn
@@ -881,101 +891,9 @@ class KedroRunManager extends Component {
       return null;
     }
 
+    // For parameters, use the shared MetaData component; any dataset-specific panel remains below
     if (metadataMode === 'param') {
-      const selectedKey = this.state.selectedParamKey;
-      const paramNode = (this.props.paramNodes || []).find(
-        (node) => node.id === selectedKey
-      );
-      const displayName = paramNode?.name || selectedKey;
-      // Derive a live preview value from the YAML text; fallback to stored param
-      let previewValue =
-        (this.state.params && this.state.params[selectedKey]) !== undefined
-          ? this.state.params[selectedKey]
-          : (this.props.nodeParameters || {})[selectedKey];
-      try {
-        if (typeof this.state.yamlText === 'string') {
-          const parsed = this.parseYamlishValue(this.state.yamlText);
-          if (parsed !== undefined && parsed !== null) {
-            previewValue = parsed;
-          }
-        }
-      } catch (e) {
-        // ignore parse errors; fallback remains
-      }
-      return (
-        <div
-          className="pipeline-metadata kedro pipeline-metadata--visible"
-          role="dialog"
-          aria-label="Parameter editor"
-        >
-          <div className="pipeline-metadata__header-toolbox">
-            <div className="pipeline-metadata__header">
-              <NodeIcon className="pipeline-metadata__icon" icon="parameters" />
-              <h2 className="pipeline-metadata__title">{displayName}</h2>
-            </div>
-            <button
-              className="pipeline-metadata__close-button"
-              onClick={this.closeMetadata}
-              aria-label="Close"
-            >
-              ×
-            </button>
-          </div>
-          <div className="pipeline-metadata__list">
-            <dl className="pipeline-metadata__properties">
-              <dt className="pipeline-metadata__label">Name:</dt>
-              <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value">{displayName}</span>
-              </dd>
-              <dt className="pipeline-metadata__label">Key:</dt>
-              <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value">{selectedKey}</span>
-              </dd>
-              <dt className="pipeline-metadata__label">Value:</dt>
-              <dd className="pipeline-metadata__row">
-                {previewValue && typeof previewValue === 'object' ? (
-                  <div className="pipeline-metadata__preview-json">
-                    <div className="scrollable-container">
-                      <JSONObject
-                        value={previewValue}
-                        theme={this.props.theme}
-                        style={{ background: 'transparent', fontSize: '14px' }}
-                        collapsed={3}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <span className="pipeline-metadata__value">
-                    {String(previewValue)}
-                  </span>
-                )}
-              </dd>
-              <dt className="pipeline-metadata__label">YAML:</dt>
-              <dd className="pipeline-metadata__row">
-                <textarea
-                  className="runner-yaml-editor"
-                  value={yamlText}
-                  onChange={(e) => this.setState({ yamlText: e.target.value })}
-                  spellCheck={false}
-                  rows={16}
-                />
-                <div className="runner-yaml-actions">
-                  <button
-                    className="btn btn--primary"
-                    onClick={this.saveParamYaml}
-                  >
-                    Save
-                  </button>
-                  <button className="btn" onClick={this.resetParamYaml}>
-                    Reset
-                  </button>
-                </div>
-                {/* API: Save -> PUT to parameters endpoint; Reset -> refetch original value */}
-              </dd>
-            </dl>
-          </div>
-        </div>
-      );
+      return <MetaData />;
     }
 
     if (metadataMode === 'dataset' && selectedDataset) {
@@ -1239,9 +1157,15 @@ class KedroRunManager extends Component {
     if (item.kind === 'param') {
       // Reflect selection in URL like flowchart does
       this.setSidInUrl(item.id);
+      if (this.props.dispatch) {
+        this.props.dispatch(loadNodeData(item.id));
+      }
       this.openParamEditor(item.id);
     } else if (item.kind === 'dataset') {
       this.setSidInUrl(item.id);
+      if (this.props.dispatch) {
+        this.props.dispatch(loadNodeData(item.id));
+      }
       const dataset = (this.props.datasets || []).find(
         (datasetItem) => datasetItem.id === item.id
       );
@@ -1256,6 +1180,11 @@ class KedroRunManager extends Component {
       (this.state.params && this.state.params[paramKey]) !== undefined
         ? this.state.params[paramKey]
         : (this.props.nodeParameters || {})[paramKey];
+    // Dispatch node click to populate Redux metadata like flowchart/workflow
+    if (this.props.dispatch) {
+      // Ensure metadata is loaded if needed, then set clicked
+      this.props.dispatch(loadNodeData(paramKey));
+    }
     this.setState({
       showMetadata: true,
       metadataMode: 'param',
