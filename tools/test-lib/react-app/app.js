@@ -4,12 +4,10 @@ import VizComponent from './viz-component';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import spaceflights from '@quantumblack/kedro-viz/lib/utils/data/spaceflights.mock.json';
 import demo from '@quantumblack/kedro-viz/lib/utils/data/demo.mock.json';
-import getRandomData from '@quantumblack/kedro-viz/lib/utils/random-data';
 
 export const dataSources = {
   spaceflights: () => spaceflights,
   demo: () => demo,
-  random: () => getRandomData(),
 };
 
 const Radio = ({ current, value, onChange }) => (
@@ -25,7 +23,7 @@ const Radio = ({ current, value, onChange }) => (
   </label>
 );
 
-const App = ({ initialData = 'random' }) => {
+const App = ({ initialData = 'demo' }) => {
   const [dataKey, updateDataKey] = useState(initialData);
   const onChange = (e) => updateDataKey(e.target.value);
 
