@@ -225,6 +225,13 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
         "node_3": {"node_1"},
     }
     assert not sort_layers(nodes, node_dependencies)
-    mocked_warning.assert_called_once_with(
-        "Layers visualisation is disabled as circular dependency detected among layers."
+    mocked_warning.assert_called_once()
+    # Check that the warning was called with the expected message format
+    call_args = mocked_warning.call_args[0]
+    expected_message = (
+        "Layers visualisation is disabled as circular dependency detected among layers. "
+        "Circular dependency detected: %s. "
+        "Please check the `layer` configuration in your catalog for the datasets to avoid circular references. "
+        "Layer dependencies found: %s"
     )
+    assert call_args[0] == expected_message
