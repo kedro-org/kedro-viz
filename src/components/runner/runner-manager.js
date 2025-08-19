@@ -8,6 +8,11 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { sanitizedPathname } from '../../utils';
+import {
+  startKedroCommand,
+  getKedroCommandStatus,
+  cancelKedroCommand,
+} from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
 import FlowChart from '../flowchart';
 import WatchListDialog from './watch-list-dialog';
@@ -59,6 +64,8 @@ class KedroRunManager extends Component {
 
     // Ref for the command input field
     this.commandInputRef = React.createRef();
+    // Map of jobId -> intervalId for polling
+    this.jobPollers = {};
   }
 
   componentDidMount() {
@@ -74,6 +81,18 @@ class KedroRunManager extends Component {
     if (pipelineChanged || tagsChanged) {
       this.updateCommandFromProps(this.props);
     }
+  }
+
+  componentWillUnmount() {
+    // Clear any active pollers
+    Object.values(this.jobPollers || {}).forEach((timerId) => {
+      try {
+        clearInterval(timerId);
+      } catch (e) {
+        // noop
+      }
+    });
+    this.jobPollers = {};
   }
 
   quoteIfNeeded = (text) => {
@@ -106,6 +125,83 @@ class KedroRunManager extends Component {
       if (this.commandInputRef.current.value !== cmd) {
         this.commandInputRef.current.value = cmd;
       }
+    }
+  };
+
+  // --- API helpers ---
+  getApiBase = () => `${sanitizedPathname()}api`;
+
+  addOrUpdateJob = (partial) => {
+    // partial: {jobId, ...fields}
+    if (!partial || !partial.jobId) {
+      return;
+    }
+    this.setState((prev) => {
+      const list = [...(prev.jobs || [])];
+      const idx = list.findIndex((j) => j.jobId === partial.jobId);
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...partial };
+      } else {
+        list.unshift({
+          jobId: partial.jobId,
+          status: partial.status || 'initialize',
+          startedAt: partial.startedAt || Date.now(),
+          command:
+            partial.command ||
+            (this.commandInputRef.current &&
+              this.commandInputRef.current.value) ||
+            'kedro run',
+          logs: partial.logs || '',
+        });
+      }
+      return { jobs: list };
+    });
+  };
+
+  startJobPolling = (jobId) => {
+    if (!jobId) {
+      return;
+    }
+    // Avoid duplicate pollers
+    if (this.jobPollers[jobId]) {
+      clearInterval(this.jobPollers[jobId]);
+    }
+    this.jobPollers[jobId] = setInterval(() => {
+      this.fetchJobStatus(jobId);
+    }, 1000);
+  };
+
+  stopJobPolling = (jobId) => {
+    const timerId = this.jobPollers[jobId];
+    if (timerId) {
+      clearInterval(timerId);
+      delete this.jobPollers[jobId];
+    }
+  };
+
+  fetchJobStatus = async (jobId) => {
+    try {
+      const { status, stdout, stderr, returncode } =
+        await getKedroCommandStatus(jobId);
+      const update = { jobId, status };
+      if (typeof stdout === 'string' || typeof stderr === 'string') {
+        update.logs = `${stdout || ''}${
+          stderr ? `\n[stderr]:\n${stderr}` : ''
+        }`;
+      }
+      this.addOrUpdateJob(update);
+      const isTerminalStatus = ['finished', 'terminated', 'error'].includes(
+        status
+      );
+      const hasFinalReturnCode = typeof returncode === 'number';
+      if (isTerminalStatus || hasFinalReturnCode) {
+        this.stopJobPolling(jobId);
+      }
+    } catch (err) {
+      this.addOrUpdateJob({ jobId, status: 'error' });
+      this.stopJobPolling(jobId);
+      // eslint-disable-next-line no-console
+      console.error('Failed to fetch job status', err);
     }
   };
 
@@ -167,31 +263,26 @@ class KedroRunManager extends Component {
     const command = this.commandInputRef.current
       ? this.commandInputRef.current.value
       : 'kedro run';
+    // eslint-disable-next-line no-console
     console.log('[Runner] Start run clicked', command);
-    // API wiring: start a new run
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // fetch(`${apiBase}/runs`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ command }),
-    // })
-    //   .then((r) => r.json())
-    //   .then((job) => {
-    //     // Add job immediately and begin polling/log streaming for it
-    //     this.setState((s) => ({ jobs: [job, ...(s.jobs || [])] }));
-    //   })
-    //   .catch((err) => console.error('Failed to start run', err));
-
-    // Local placeholder: create a client-side job entry with a generated ID
-    const jobId = `job-${Date.now()}`;
-    const newJob = {
-      jobId,
-      status: 'running',
-      startedAt: Date.now(),
-      command,
-      logs: '[INFO] Starting Kedro...\n[INFO] Loading pipeline...\n[INFO] Running node: preprocess',
-    };
-    this.setState((prev) => ({ jobs: [newJob, ...(prev.jobs || [])] }));
+    startKedroCommand(command)
+      .then(({ jobId, status }) => {
+        if (!jobId) {
+          throw new Error('No job_id returned');
+        }
+        this.addOrUpdateJob({
+          jobId,
+          status,
+          startedAt: Date.now(),
+          command,
+          logs: '',
+        });
+        this.startJobPolling(jobId);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to start run', err);
+      });
   };
 
   onViewLogs = (jobId) => {
@@ -205,22 +296,17 @@ class KedroRunManager extends Component {
   };
 
   onTerminateJob = (jobId) => {
+    // eslint-disable-next-line no-console
     console.log('[Runner] Terminate job', jobId);
-    // API wiring: request termination for a running job
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // fetch(`${apiBase}/runs/${encodeURIComponent(jobId)}`, { method: 'DELETE' })
-    //   .then((res) => {
-    //     if (!res.ok) throw new Error('Terminate failed');
-    //     // Optionally update job status immediately
-    //   })
-    //   .catch((err) => console.error('Terminate failed', err));
-
-    // Local placeholder: mark job as terminated
-    this.setState((prev) => ({
-      jobs: (prev.jobs || []).map((j) =>
-        j.jobId === jobId ? { ...j, status: 'terminated' } : j
-      ),
-    }));
+    cancelKedroCommand(jobId)
+      .then(() => {
+        this.stopJobPolling(jobId);
+        this.addOrUpdateJob({ jobId, status: 'terminated' });
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Terminate failed', err);
+      });
   };
 
   closeMetadata = () => {
