@@ -67,6 +67,10 @@ class KedroRunManager extends Component {
       expandedLogs: {}, // jobId -> boolean (default true)
       isLogsModalOpen: false,
       logsModalJobId: null,
+      // Parameter override state
+      paramOriginals: {},
+      paramEdits: {},
+      isParamsModalOpen: false,
     };
 
     // Ref for the command input field
@@ -80,6 +84,14 @@ class KedroRunManager extends Component {
   componentDidMount() {
     // Rehydrate any persisted jobs and resume polling where needed
     this.hydrateJobsFromStorage();
+    // Store original params snapshot for diffing
+    try {
+      this.setState({
+        paramOriginals: JSON.parse(JSON.stringify(this.state.params || {})),
+      });
+    } catch (e) {
+      this.setState({ paramOriginals: { ...(this.state.params || {}) } });
+    }
     this.updateCommandFromProps(this.props);
   }
 
@@ -131,7 +143,13 @@ class KedroRunManager extends Component {
   };
 
   updateCommandFromProps = (props) => {
-    const cmd = this.buildRunCommand(props);
+    const baseCmd = this.buildRunCommand(props);
+    const paramsOverride = this.getParamsOverrideString
+      ? this.getParamsOverrideString()
+      : '';
+    const cmd = paramsOverride
+      ? `${baseCmd} --params ${this.quoteIfNeeded(paramsOverride)}`
+      : baseCmd;
     if (this.commandInputRef && this.commandInputRef.current) {
       if (this.commandInputRef.current.value !== cmd) {
         this.commandInputRef.current.value = cmd;
@@ -298,18 +316,14 @@ class KedroRunManager extends Component {
 
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
-    // API wiring: Update parameter value on server
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // fetch(`${apiBase}/parameters/${encodeURIComponent(selectedParamKey)}`, {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'text/yaml' },
-    //   body: yamlText,
-    // })
-    //   .then((res) => {
-    //     if (!res.ok) throw new Error('Failed to save parameter');
-    //   })
-    //   .catch((err) => console.error('Save param failed', err));
-    console.log('[Runner] Save parameter YAML', selectedParamKey, yamlText);
+    const parsed = this.parseYamlishValue(yamlText);
+    this.setState(
+      (prev) => ({
+        paramEdits: { ...(prev.paramEdits || {}), [selectedParamKey]: parsed },
+        params: { ...(prev.params || {}), [selectedParamKey]: parsed },
+      }),
+      () => this.updateCommandFromProps(this.props)
+    );
   };
 
   resetParamYaml = () => {
@@ -336,6 +350,159 @@ class KedroRunManager extends Component {
       return String(obj);
     }
   }
+
+  // Lightweight YAML-ish parser to JS values
+  parseYamlishValue(text) {
+    if (text == null) {
+      return '';
+    }
+    const str = String(text).trim();
+    if (!str) {
+      return '';
+    }
+    try {
+      if (str.startsWith('{') || str.startsWith('[')) {
+        return JSON.parse(str);
+      }
+      if (
+        (str.startsWith('"') && str.endsWith('"')) ||
+        (str.startsWith("'") && str.endsWith("'"))
+      ) {
+        return JSON.parse(str.replace(/^'/, '"').replace(/'$/, '"'));
+      }
+    } catch (e) {
+      /* ignore */
+    }
+    if (/^-?\d+(\.\d+)?$/.test(str)) {
+      return Number(str);
+    }
+    if (/^(true|false)$/i.test(str)) {
+      return /^true$/i.test(str);
+    }
+    if (/^null$/i.test(str)) {
+      return null;
+    }
+    const lines = str
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (lines.every((line) => line.includes(':') && !line.startsWith('-'))) {
+      const obj = {};
+      lines.forEach((line) => {
+        const idx = line.indexOf(':');
+        const k = line.slice(0, idx).trim();
+        const vraw = line.slice(idx + 1).trim();
+        obj[k] = this.parseYamlishValue(vraw);
+      });
+      return obj;
+    }
+    return str;
+  }
+
+  // CLI-safe value formatting
+  formatParamValueForCli = (value) => {
+    if (
+      value === null ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+    ) {
+      return String(value);
+    }
+    if (typeof value === 'string') {
+      const needsQuotes = /[\s,]/.test(value);
+      const escaped = value.replace(/"/g, '\\"');
+      return needsQuotes ? `"${escaped}"` : escaped;
+    }
+    return JSON.stringify(value);
+  };
+
+  collectParamDiffs = (orig, edited, prefix) => {
+    const pairs = [];
+    if (typeof orig === 'undefined') {
+      if (typeof edited === 'undefined') {
+        return pairs;
+      }
+      if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
+        Object.keys(edited).forEach((k) => {
+          const val = edited[k];
+          const keyPath = `${prefix}.${k}`;
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            pairs.push(...this.collectParamDiffs(undefined, val, keyPath));
+          } else {
+            pairs.push(`${keyPath}=${this.formatParamValueForCli(val)}`);
+          }
+        });
+      } else {
+        pairs.push(`${prefix}=${this.formatParamValueForCli(edited)}`);
+      }
+      return pairs;
+    }
+    if (
+      orig &&
+      typeof orig === 'object' &&
+      !Array.isArray(orig) &&
+      edited &&
+      typeof edited === 'object' &&
+      !Array.isArray(edited)
+    ) {
+      const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
+      keys.forEach((k) => {
+        const origVal = orig[k];
+        const editedVal = edited[k];
+        if (typeof editedVal === 'undefined') {
+          return; // ignore deletions for now
+        }
+        const keyPath = `${prefix}.${k}`;
+        if (
+          origVal &&
+          typeof origVal === 'object' &&
+          !Array.isArray(origVal) &&
+          editedVal &&
+          typeof editedVal === 'object' &&
+          !Array.isArray(editedVal)
+        ) {
+          pairs.push(...this.collectParamDiffs(origVal, editedVal, keyPath));
+        } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
+          pairs.push(`${keyPath}=${this.formatParamValueForCli(editedVal)}`);
+        }
+      });
+      return pairs;
+    }
+    if (JSON.stringify(orig) !== JSON.stringify(edited)) {
+      pairs.push(`${prefix}=${this.formatParamValueForCli(edited)}`);
+    }
+    return pairs;
+  };
+
+  getParamChangesPairs = () => {
+    const { watchList, paramEdits, paramOriginals } = this.state;
+    if (!watchList || !watchList.length) {
+      return [];
+    }
+    const pairs = [];
+    (watchList.filter((wlItem) => wlItem.kind === 'param') || []).forEach(
+      (wlItem) => {
+        const key = wlItem.id;
+        if (!Object.prototype.hasOwnProperty.call(paramEdits || {}, key)) {
+          return;
+        }
+        const edited = (paramEdits || {})[key];
+        const orig = Object.prototype.hasOwnProperty.call(
+          paramOriginals || {},
+          key
+        )
+          ? (paramOriginals || {})[key]
+          : (this.state.params || {})[key];
+        pairs.push(...this.collectParamDiffs(orig, edited, key));
+      }
+    );
+    return pairs;
+  };
+
+  getParamsOverrideString = () => {
+    const pairs = this.getParamChangesPairs();
+    return pairs.join(',');
+  };
 
   // --- Dataset interactions ---
   openDatasetDetails = (dataset) => {
@@ -743,6 +910,16 @@ class KedroRunManager extends Component {
     }
   };
 
+  openParamEditor = (paramKey) => {
+    const value = (this.state.params || {})[paramKey];
+    this.setState({
+      showMetadata: true,
+      metadataMode: 'param',
+      selectedParamKey: paramKey,
+      yamlText: this.toYamlString(value),
+    });
+  };
+
   // Handle flowchart node clicks inside the watch modal to toggle selection
   handleFlowchartNodeClick = (nodeId) => {
     // Find if clicked node is a dataset or parameter
@@ -1012,6 +1189,12 @@ class KedroRunManager extends Component {
                   >
                     Start run
                   </button>
+                  <button
+                    className="btn"
+                    onClick={() => this.setState({ isParamsModalOpen: true })}
+                  >
+                    Show param changes
+                  </button>
                 </div>
 
                 <div className="runner-manager__hints">
@@ -1121,6 +1304,42 @@ class KedroRunManager extends Component {
 
           {this.renderMetadataPanel()}
           {this.renderWatchModal()}
+          {this.state.isParamsModalOpen && (
+            <div
+              className="runner-logs-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Parameter changes dialog"
+            >
+              <div className="runner-logs-modal__content">
+                <div className="runner-logs-modal__header">
+                  <h3 className="runner-logs-modal__title">
+                    Parameter changes
+                  </h3>
+                  <button
+                    className="runner-logs-modal__close"
+                    aria-label="Close"
+                    onClick={() => this.setState({ isParamsModalOpen: false })}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="runner-logs-modal__body">
+                  <pre>
+                    {this.getParamsOverrideString() || 'No parameter changes.'}
+                  </pre>
+                </div>
+                <div className="runner-logs-modal__footer">
+                  <button
+                    className="btn"
+                    onClick={() => this.setState({ isParamsModalOpen: false })}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {this.state.isLogsModalOpen && (
             <div
               className="runner-logs-modal"
