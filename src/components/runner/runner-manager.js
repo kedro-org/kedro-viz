@@ -63,12 +63,18 @@ class KedroRunManager extends Component {
       // Drag state and custom order flags for watch list
       draggingWatch: null, // { kind, id }
       customOrder: { param: false, dataset: false },
+      // Logs UI state
+      expandedLogs: {}, // jobId -> boolean (default true)
+      isLogsModalOpen: false,
+      logsModalJobId: null,
     };
 
     // Ref for the command input field
     this.commandInputRef = React.createRef();
     // Map of jobId -> intervalId for polling
     this.jobPollers = {};
+    // Jobs panel ref to compute available height for expanded logs
+    this.jobsPanelRef = React.createRef();
   }
 
   componentDidMount() {
@@ -248,9 +254,13 @@ class KedroRunManager extends Component {
   loadJobsFromStorage = () => {
     try {
       const raw = window.localStorage.getItem(RUNNER_JOBS_STORAGE_KEY);
-      if (!raw) {return [];}
+      if (!raw) {
+        return [];
+      }
       const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) {return [];}
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
       return parsed.map((j) => ({
         jobId: j.jobId,
         status: j.status || 'unknown',
@@ -266,7 +276,9 @@ class KedroRunManager extends Component {
 
   hydrateJobsFromStorage = () => {
     const jobs = this.loadJobsFromStorage();
-    if (!jobs.length) {return;}
+    if (!jobs.length) {
+      return;
+    }
     this.setState({ jobs });
     // Resume polling for jobs that appear to be in-flight
     jobs.forEach((job) => {
@@ -372,6 +384,23 @@ class KedroRunManager extends Component {
     //   .then((r) => r.text())
     //   .then((text) => {/* show in a modal/panel */})
     //   .catch((err) => console.error('Load logs failed', err));
+  };
+
+  // Toggle expand/collapse for job logs
+  toggleLogExpanded = (jobId) => {
+    this.setState((prev) => {
+      const next = { ...(prev.expandedLogs || {}) };
+      next[jobId] = !next[jobId];
+      return { expandedLogs: next };
+    });
+  };
+
+  openLogsModal = (jobId) => {
+    this.setState({ isLogsModalOpen: true, logsModalJobId: jobId });
+  };
+
+  closeLogsModal = () => {
+    this.setState({ isLogsModalOpen: false, logsModalJobId: null });
   };
 
   onTerminateJob = (jobId) => {
@@ -993,7 +1022,10 @@ class KedroRunManager extends Component {
               </div>
             </section>
 
-            <section className="runner-manager__jobs-panel">
+            <section
+              className="runner-manager__jobs-panel"
+              ref={this.jobsPanelRef}
+            >
               <h3 className="section-title">Jobs</h3>
               <div className="jobs-list">
                 {(this.state.jobs || []).length === 0 && (
@@ -1009,45 +1041,65 @@ class KedroRunManager extends Component {
                   </div>
                 )}
 
-                {(this.state.jobs || []).map((job) => (
-                  <article key={job.jobId} className="job-card">
-                    <div className="job-card__meta">
-                      <div className="job-card__id">{job.jobId}</div>
-                      <div
-                        className={`job-card__status ${
-                          job.status === 'running'
-                            ? 'job-card__status--running'
-                            : 'job-card__status--error'
-                        }`}
-                      >
-                        {job.status}
+                {(this.state.jobs || []).map((job) => {
+                  const isExpanded = (this.state.expandedLogs || {})[job.jobId];
+                  const expanded =
+                    typeof isExpanded === 'boolean' ? isExpanded : true; // default on
+                  const panelHeight =
+                    this.jobsPanelRef?.current?.clientHeight || 0;
+                  const expandedMax = Math.max(
+                    200,
+                    Math.floor(panelHeight * 0.7)
+                  );
+                  const stdoutStyle = {
+                    maxHeight: `${expanded ? expandedMax : 200}px`,
+                  };
+                  return (
+                    <article key={job.jobId} className="job-card">
+                      <div className="job-card__meta">
+                        <div className="job-card__id">{job.jobId}</div>
+                        <div
+                          className={`job-card__status ${
+                            job.status === 'running'
+                              ? 'job-card__status--running'
+                              : 'job-card__status--error'
+                          }`}
+                        >
+                          {job.status}
+                        </div>
+                        <div className="job-card__time">
+                          started {new Date(job.startedAt).toLocaleTimeString()}
+                        </div>
                       </div>
-                      <div className="job-card__time">
-                        started {new Date(job.startedAt).toLocaleTimeString()}
-                      </div>
-                    </div>
 
-                    <div className="job-card__body">
-                      <div className="job-card__stdout">
-                        <pre>{job.logs}</pre>
+                      <div className="job-card__body">
+                        <div className="job-card__stdout" style={stdoutStyle}>
+                          <pre>{job.logs}</pre>
+                        </div>
+                        <div className="job-card__controls">
+                          <button
+                            className="btn"
+                            onClick={() => this.toggleLogExpanded(job.jobId)}
+                          >
+                            {expanded ? 'Collapse logs' : 'Expand logs'}
+                          </button>
+                          <button
+                            className="btn"
+                            onClick={() => this.openLogsModal(job.jobId)}
+                          >
+                            View full logs
+                          </button>
+                          <button
+                            className="btn btn--danger"
+                            onClick={() => this.onTerminateJob(job.jobId)}
+                          >
+                            Terminate
+                          </button>
+                        </div>
                       </div>
-                      <div className="job-card__controls">
-                        <button
-                          className="btn"
-                          onClick={() => this.onViewLogs(job.jobId)}
-                        >
-                          View full logs
-                        </button>
-                        <button
-                          className="btn btn--danger"
-                          onClick={() => this.onTerminateJob(job.jobId)}
-                        >
-                          Terminate
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </section>
 
@@ -1069,6 +1121,39 @@ class KedroRunManager extends Component {
 
           {this.renderMetadataPanel()}
           {this.renderWatchModal()}
+          {this.state.isLogsModalOpen && (
+            <div
+              className="runner-logs-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Job logs dialog"
+            >
+              <div className="runner-logs-modal__content">
+                <div className="runner-logs-modal__header">
+                  <h3 className="runner-logs-modal__title">Job logs</h3>
+                  <button
+                    className="runner-logs-modal__close"
+                    aria-label="Close"
+                    onClick={this.closeLogsModal}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="runner-logs-modal__body">
+                  <pre>
+                    {(this.state.jobs || []).find(
+                      (j) => j.jobId === this.state.logsModalJobId
+                    )?.logs || ''}
+                  </pre>
+                </div>
+                <div className="runner-logs-modal__footer">
+                  <button className="btn" onClick={this.closeLogsModal}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </>
     );

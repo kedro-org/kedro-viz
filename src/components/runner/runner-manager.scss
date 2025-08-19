@@ -347,7 +347,7 @@
   background: var(--runner-stdout-bg);
   padding: 8px;
   border-radius: 4px;
-  max-height: 200px;
+  max-height: 200px; /* collapsed default; overridden inline when expanded */
   overflow: auto;
 }
 
@@ -360,6 +360,62 @@
 .runner-manager__footer {
   margin-top: 16px;
   color: var(--runner-muted);
+}
+
+/* Simple modal for full logs */
+.runner-logs-modal {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.runner-logs-modal__content {
+  background: var(--runner-panel-bg);
+  color: var(--runner-text);
+  border: 1px solid var(--runner-border-strong);
+  border-radius: 8px;
+  width: min(900px, 90vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.runner-logs-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--runner-border);
+}
+
+.runner-logs-modal__title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.runner-logs-modal__close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.runner-logs-modal__body {
+  padding: 12px 16px;
+  overflow: auto;
+}
+
+.runner-logs-modal__footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--runner-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 /* Responsive adjustments: when the sidebar is hidden by layout breakpoints, fall back to small padding */
