@@ -215,9 +215,31 @@ class KedroRunManager extends Component {
 
   fetchJobStatus = async (jobId) => {
     try {
-      const { status, stdout, stderr, returncode } =
-        await getKedroCommandStatus(jobId);
-      const update = { jobId, status, returncode };
+      const {
+        status,
+        stdout,
+        stderr,
+        returncode,
+        startTime,
+        endTime,
+        duration,
+        cmd,
+      } = await getKedroCommandStatus(jobId);
+      const update = {
+        jobId,
+        status,
+        returncode,
+        command: cmd,
+      };
+      if (startTime instanceof Date && !Number.isNaN(startTime.getTime())) {
+        update.startedAt = startTime.getTime();
+      }
+      if (endTime instanceof Date && !Number.isNaN(endTime.getTime())) {
+        update.endTime = endTime.getTime();
+      }
+      if (typeof duration !== 'undefined') {
+        update.duration = duration;
+      }
       if (typeof stdout === 'string' || typeof stderr === 'string') {
         update.logs = `${stdout || ''}${
           stderr ? `\n[stderr]:\n${stderr}` : ''
@@ -254,6 +276,12 @@ class KedroRunManager extends Component {
     if (typeof job.returncode === 'number') {
       stored.returncode = job.returncode;
     }
+    if (typeof job.endTime === 'number') {
+      stored.endTime = job.endTime;
+    }
+    if (typeof job.duration !== 'undefined') {
+      stored.duration = job.duration;
+    }
     return stored;
   };
 
@@ -286,6 +314,8 @@ class KedroRunManager extends Component {
         command: j.command || 'kedro run',
         logs: typeof j.logs === 'string' ? j.logs : '',
         returncode: typeof j.returncode === 'number' ? j.returncode : undefined,
+        endTime: typeof j.endTime === 'number' ? j.endTime : undefined,
+        duration: typeof j.duration !== 'undefined' ? j.duration : undefined,
       }));
     } catch (e) {
       return [];
@@ -568,6 +598,53 @@ class KedroRunManager extends Component {
 
   closeLogsModal = () => {
     this.setState({ isLogsModalOpen: false, logsModalJobId: null });
+  };
+
+  // Explicitly set expansion state for a job
+  setLogExpanded = (jobId, value) => {
+    this.setState((prev) => ({
+      expandedLogs: { ...(prev.expandedLogs || {}), [jobId]: !!value },
+    }));
+  };
+
+  // Clear all jobs with confirmation
+  openClearJobsConfirm = () => {
+    this.setState({ isClearJobsModalOpen: true });
+  };
+
+  closeClearJobsConfirm = () => {
+    this.setState({ isClearJobsModalOpen: false });
+  };
+
+  clearAllJobs = () => {
+    const jobs = this.state.jobs || [];
+    jobs.forEach((j) => this.stopJobPolling(j.jobId));
+    this.setState({ jobs: [] }, () => {
+      this.saveJobsToStorage([]);
+    });
+    this.closeClearJobsConfirm();
+  };
+
+  // Per-job clear with confirmation
+  openClearJobConfirm = (jobId) => {
+    this.setState({ isClearJobModalOpen: true, clearJobModalJobId: jobId });
+  };
+
+  closeClearJobConfirm = () => {
+    this.setState({ isClearJobModalOpen: false, clearJobModalJobId: null });
+  };
+
+  clearJob = (jobId) => {
+    const id = jobId || this.state.clearJobModalJobId;
+    if (!id) {
+      return;
+    }
+    this.stopJobPolling(id);
+    this.setState(
+      (prev) => ({ jobs: (prev.jobs || []).filter((j) => j.jobId !== id) }),
+      () => this.saveJobsToStorage(this.state.jobs)
+    );
+    this.closeClearJobConfirm();
   };
 
   onTerminateJob = (jobId) => {
@@ -868,7 +945,10 @@ class KedroRunManager extends Component {
     const items = Object.keys(selectedToAdd).map((key) => {
       const [kind, id] = key.split(':');
       if (kind === 'param') {
-        return { kind, id, name: id };
+        const node = (this.props.paramNodes || []).find(
+          (paramNode) => paramNode.id === id
+        );
+        return { kind, id, name: node?.name || id };
       }
       const dataset = (this.props.datasets || []).find((d) => d.id === id);
       return { kind, id, name: dataset?.name || id };
@@ -1007,21 +1087,6 @@ class KedroRunManager extends Component {
     return (
       <div className="runner-panel runner-panel--watchlist">
         <div className="runner-panel__toolbar">
-          <div className="watchlist-actions">
-            <button
-              className="btn btn--secondary"
-              onClick={this.openWatchModal}
-            >
-              Add to watch list
-            </button>
-            <button
-              className="btn btn--danger"
-              onClick={this.clearWatchList}
-              disabled={!watchList.length}
-            >
-              Clear list
-            </button>
-          </div>
           <div className="runner-panel__tabs">
             <button
               className={`runner-tab ${
@@ -1169,7 +1234,12 @@ class KedroRunManager extends Component {
 
           <main className="runner-manager__main">
             <section className="runner-manager__control-panel">
-              <h3 className="section-title">Run command</h3>
+              <div className="control-panel__header">
+                <h3 className="section-title">Run command</h3>
+                <button className="btn btn--primary" onClick={this.onStartRun}>
+                  Start run
+                </button>
+              </div>
               <div className="runner-manager__control-body">
                 <div className="control-row">
                   <label className="control-row__label">Command</label>
@@ -1183,18 +1253,14 @@ class KedroRunManager extends Component {
               </div>
               <div className="runner-manager__control-footer">
                 <div className="runner-manager__actions">
-                  <button
-                    className="btn btn--primary"
-                    onClick={this.onStartRun}
-                  >
-                    Start run
-                  </button>
-                  <button
-                    className="btn"
-                    onClick={() => this.setState({ isParamsModalOpen: true })}
-                  >
-                    Show param changes
-                  </button>
+                  {this.getParamsOverrideString() && (
+                    <button
+                      className="btn"
+                      onClick={() => this.setState({ isParamsModalOpen: true })}
+                    >
+                      Show param changes
+                    </button>
+                  )}
                 </div>
 
                 <div className="runner-manager__hints">
@@ -1209,7 +1275,16 @@ class KedroRunManager extends Component {
               className="runner-manager__jobs-panel"
               ref={this.jobsPanelRef}
             >
-              <h3 className="section-title">Jobs</h3>
+              <div className="jobs-panel__header">
+                <h3 className="section-title">Jobs</h3>
+                <button
+                  className="btn btn--secondary"
+                  onClick={this.openClearJobsConfirm}
+                  disabled={(this.state.jobs || []).length === 0}
+                >
+                  Clear jobs
+                </button>
+              </div>
               <div className="jobs-list">
                 {(this.state.jobs || []).length === 0 && (
                   <div className="job-card">
@@ -1232,40 +1307,56 @@ class KedroRunManager extends Component {
                     this.jobsPanelRef?.current?.clientHeight || 0;
                   const expandedMax = Math.max(
                     200,
-                    Math.floor(panelHeight * 0.7)
+                    Math.floor(panelHeight * 0.8)
                   );
                   const stdoutStyle = {
-                    maxHeight: `${expanded ? expandedMax : 200}px`,
+                    display: expanded ? 'block' : 'none',
+                    maxHeight: `${expanded ? expandedMax : 0}px`,
                   };
+                  const status = job.status;
+                  const statusClass =
+                    status === 'error' || status === 'terminated'
+                      ? 'job-card__status--error'
+                      : status === 'finished'
+                      ? 'job-card__status--finished'
+                      : 'job-card__status--pending';
+                  const canTerminate = ![
+                    'finished',
+                    'error',
+                    'terminated',
+                  ].includes(status);
+                  const cardClass = `job-card ${
+                    canTerminate ? 'job-card--can-terminate' : ''
+                  }`;
                   return (
-                    <article key={job.jobId} className="job-card">
+                    <article key={job.jobId} className={cardClass}>
                       <div className="job-card__meta">
-                        <div className="job-card__id">{job.jobId}</div>
-                        <div
-                          className={`job-card__status ${
-                            job.status === 'running'
-                              ? 'job-card__status--running'
-                              : 'job-card__status--error'
-                          }`}
-                        >
-                          {job.status}
+                        <div className={`job-card__status ${statusClass}`}>
+                          {status}
                         </div>
                         <div className="job-card__time">
                           started {new Date(job.startedAt).toLocaleTimeString()}
                         </div>
-                      </div>
-
-                      <div className="job-card__body">
-                        <div className="job-card__stdout" style={stdoutStyle}>
-                          <pre>{job.logs}</pre>
-                        </div>
-                        <div className="job-card__controls">
-                          <button
-                            className="btn"
-                            onClick={() => this.toggleLogExpanded(job.jobId)}
-                          >
-                            {expanded ? 'Collapse logs' : 'Expand logs'}
-                          </button>
+                        {/* Header actions on the right */}
+                        <div
+                          className="job-card__actions"
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            display: 'flex',
+                            gap: '8px',
+                          }}
+                        >
+                          {canTerminate && (
+                            <button
+                              className="btn btn--danger"
+                              onClick={() => this.onTerminateJob(job.jobId)}
+                              title="Terminate job"
+                            >
+                              Terminate
+                            </button>
+                          )}
                           <button
                             className="btn"
                             onClick={() => this.openLogsModal(job.jobId)}
@@ -1273,11 +1364,60 @@ class KedroRunManager extends Component {
                             View full logs
                           </button>
                           <button
-                            className="btn btn--danger"
-                            onClick={() => this.onTerminateJob(job.jobId)}
+                            className="btn"
+                            onClick={() => this.openClearJobConfirm(job.jobId)}
+                            title="Remove this job from the list"
                           >
-                            Terminate
+                            Remove
                           </button>
+                        </div>
+                      </div>
+
+                      <div className="job-card__body">
+                        <div className="job-card__controls job-card__controls--top">
+                          <div className="job-card__toggle pipeline-toggle">
+                            <input
+                              id={`pipeline-toggle-input-${job.jobId}`}
+                              className="pipeline-toggle-input"
+                              type="checkbox"
+                              checked={expanded}
+                              onChange={(e) =>
+                                this.setLogExpanded(job.jobId, e.target.checked)
+                              }
+                            />
+                            <label
+                              className={`pipeline-toggle-label ${
+                                expanded ? 'pipeline-toggle-label--checked' : ''
+                              }`}
+                              htmlFor={`pipeline-toggle-input-${job.jobId}`}
+                            >
+                              {expanded ? 'Collapse logs' : 'Expand logs'}
+                            </label>
+                          </div>
+                        </div>
+                        <div className="job-card__details">
+                          <div className="job-card__row">
+                            <strong>Job:</strong> {job.jobId}
+                          </div>
+                          <div className="job-card__row">
+                            <strong>Command:</strong> {job.command}
+                          </div>
+                          <div className="job-card__row">
+                            <strong>Duration:</strong>{' '}
+                            {typeof job.duration !== 'undefined'
+                              ? job.duration
+                              : '—'}
+                            {job.endTime && (
+                              <>
+                                {' '}
+                                · ended{' '}
+                                {new Date(job.endTime).toLocaleTimeString()}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div className="job-card__stdout" style={stdoutStyle}>
+                          <pre>{job.logs}</pre>
                         </div>
                       </div>
                     </article>
@@ -1288,7 +1428,24 @@ class KedroRunManager extends Component {
 
             {/* Editor replaced with Watch List */}
             <section className="runner-manager__editor">
-              <h3 className="section-title">Watch list</h3>
+              <div className="editor__header">
+                <h3 className="section-title">Watch list</h3>
+                <div className="editor__actions">
+                  <button
+                    className="btn btn--secondary"
+                    onClick={this.openWatchModal}
+                  >
+                    Add
+                  </button>
+                  <button
+                    className="btn btn--secondary"
+                    onClick={this.clearWatchList}
+                    disabled={!(this.state.watchList || []).length}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
               <div className="runner-data-panel">
                 {this.renderWatchListPanel()}
               </div>
@@ -1304,6 +1461,44 @@ class KedroRunManager extends Component {
 
           {this.renderMetadataPanel()}
           {this.renderWatchModal()}
+          {this.state.isClearJobsModalOpen && (
+            <div
+              className="runner-logs-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Clear jobs confirmation"
+            >
+              <div className="runner-logs-modal__content">
+                <div className="runner-logs-modal__header">
+                  <h3 className="runner-logs-modal__title">Clear all jobs</h3>
+                  <button
+                    className="runner-logs-modal__close"
+                    aria-label="Close"
+                    onClick={this.closeClearJobsConfirm}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="runner-logs-modal__body">
+                  <p>
+                    Are you sure you want to clear the jobs list? This will
+                    remove all jobs from the panel.
+                  </p>
+                </div>
+                <div className="runner-logs-modal__footer">
+                  <button className="btn" onClick={this.closeClearJobsConfirm}>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn--danger"
+                    onClick={this.clearAllJobs}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {this.state.isParamsModalOpen && (
             <div
               className="runner-logs-modal"
@@ -1335,6 +1530,44 @@ class KedroRunManager extends Component {
                     onClick={() => this.setState({ isParamsModalOpen: false })}
                   >
                     Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {this.state.isClearJobModalOpen && (
+            <div
+              className="runner-logs-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Clear job confirmation"
+            >
+              <div className="runner-logs-modal__content">
+                <div className="runner-logs-modal__header">
+                  <h3 className="runner-logs-modal__title">Remove job</h3>
+                  <button
+                    className="runner-logs-modal__close"
+                    aria-label="Close"
+                    onClick={this.closeClearJobConfirm}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="runner-logs-modal__body">
+                  <p>
+                    Remove this job from the list? This won’t affect any running
+                    process.
+                  </p>
+                </div>
+                <div className="runner-logs-modal__footer">
+                  <button className="btn" onClick={this.closeClearJobConfirm}>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn--danger"
+                    onClick={() => this.clearJob()}
+                  >
+                    Remove
                   </button>
                 </div>
               </div>

@@ -37,6 +37,10 @@
   --runner-chip-running-text: #{variables.$white-0};
   --runner-chip-error-bg: #{variables.$red-100};
   --runner-chip-error-text: #{variables.$white-0};
+  --runner-chip-finished-bg: #{variables.$green-300};
+  --runner-chip-finished-text: #{variables.$black-900};
+  --runner-chip-pending-bg: #{variables.$yellow-300};
+  --runner-chip-pending-text: #{variables.$black-900};
 
   /* Constrain to viewport so inner panels can scroll instead of the page */
   height: 100vh;
@@ -299,6 +303,12 @@
   margin-top: 12px;
 }
 
+.jobs-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .jobs-list {
   display: flex;
   flex-direction: column;
@@ -314,6 +324,7 @@
   padding: 12px;
   border-radius: 6px;
   border: 1px solid var(--runner-border-strong);
+  position: relative;
 }
 
 .job-card__meta {
@@ -343,6 +354,16 @@
   color: var(--runner-chip-error-text);
 }
 
+.job-card__status--finished {
+  background: var(--runner-chip-finished-bg);
+  color: var(--runner-chip-finished-text);
+}
+
+.job-card__status--pending {
+  background: var(--runner-chip-pending-bg);
+  color: var(--runner-chip-pending-text);
+}
+
 .job-card__stdout {
   background: var(--runner-stdout-bg);
   padding: 8px;
@@ -356,6 +377,30 @@
   gap: 8px;
   margin-top: 8px;
 }
+
+.job-card__controls--top {
+  align-items: center;
+  gap: 12px;
+}
+
+/* Reduce margin above the collapse/expand toggle specifically */
+.job-card__toggle.pipeline-toggle {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.job-card__controls--bottom {
+  justify-content: flex-start; /* bottom-left */
+}
+
+.job-card__details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+/* Removed .job-card__terminate (button now lives in header actions) */
 
 .runner-manager__footer {
   margin-top: 16px;
@@ -463,6 +508,9 @@
 
 .runner-panel__toolbar {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Watch list styles */
@@ -841,6 +889,27 @@
   overflow: auto;
 }
 
+/* Subtle scrollbars across runner page */
+.runner-manager *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.runner-manager *::-webkit-scrollbar-track {
+  background: var(--runner-panel-bg);
+}
+
+.runner-manager *::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--runner-border) 60%, transparent);
+  border-radius: 6px;
+}
+
+.runner-manager * {
+  scrollbar-color: color-mix(in srgb, var(--runner-border) 60%, transparent)
+    var(--runner-panel-bg);
+  scrollbar-width: thin;
+}
+
 .runner-tab {
   padding: 6px 10px;
   border-radius: 4px;
@@ -861,6 +930,15 @@
   gap: 6px;
   align-items: center;
   padding: 6px 10px;
+}
+
+/* Muted tabs by default, only active is bright */
+.runner-panel__tabs .runner-tab {
+  opacity: 0.7;
+}
+
+.runner-panel__tabs .runner-tab.runner-tab--active {
+  opacity: 1;
 }
 
 .watchlist-item__preview {
@@ -993,4 +1071,19 @@
   display: flex;
   gap: 8px;
   margin-top: 8px;
+}
+
+/* Added header rows for control panel and watch list */
+.control-panel__header,
+.editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.editor__actions {
+  display: flex;
+  gap: 8px;
 }
