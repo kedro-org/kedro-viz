@@ -9,6 +9,9 @@ import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { sanitizedPathname } from '../../utils';
 import { PIPELINE } from '../../config';
+import FlowChart from '../flowchart';
+import WatchListDialog from './watch-list-dialog';
+import { toggleNodeClicked } from '../../actions/nodes';
 
 /**
  * KedroRunManager
@@ -41,129 +44,22 @@ class KedroRunManager extends Component {
       selectedDataset: null,
       // Client-side jobs list (placeholder until API is wired)
       jobs: [],
+      // Watch list state
+      watchList: [],
+      isWatchModalOpen: false,
+      selectedToAdd: {}, // key `${kind}:${id}` -> true
+      tempModalSelections: {}, // id -> { kind, name }
+      watchSearch: '',
+      // Watch list panel tab: 'parameters' | 'datasets'
+      watchTab: 'parameters',
+      // Drag state and custom order flags for watch list
+      draggingWatch: null, // { kind, id }
+      customOrder: { param: false, dataset: false },
     };
-    // Simple ref to read the run command value when starting a run
+
+    // Ref for the command input field
     this.commandInputRef = React.createRef();
   }
-
-  componentWillUnmount() {
-    const appRoot = document.querySelector('.kedro-pipeline');
-    if (appRoot) {
-      appRoot.classList.remove('kui-theme--light');
-      if (this._prevWasDark) {
-        appRoot.classList.add('kui-theme--dark');
-      }
-      if (this._prevWasLight) {
-        appRoot.classList.add('kui-theme--light');
-      }
-    }
-  }
-
-  componentDidMount() {
-    // API wiring (example): Load initial data when page mounts
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // 1) Fetch parameters to populate the Parameters tab
-    // fetch(`${apiBase}/parameters`).then((r) => r.json()).then((params) => this.setState({ params }));
-    // 2) Optionally fetch dataset catalog (if you prefer server truth over graph-derived list)
-    // fetch(`${apiBase}/datasets`).then((r) => r.json()).then((datasets) => this.setState({ serverDatasets: datasets }));
-    // 3) Seed jobs list and/or start polling (or open a WebSocket) for job updates
-    // this._jobsPoll = setInterval(() => fetch(`${apiBase}/runs`).then((r) => r.json()).then((jobs) => this.setState({ jobs })), 3000);
-    // Seed the command input with flags from current pipeline/tags
-    this._updateCommandFromSelections();
-  }
-
-  componentDidUpdate(prevProps) {
-    // If pipeline or tag selection changes, update the command input to reflect it
-    if (
-      prevProps.activePipeline !== this.props.activePipeline ||
-      prevProps.selectedTags?.join(',') !== this.props.selectedTags?.join(',')
-    ) {
-      this._updateCommandFromSelections();
-    }
-  }
-
-  _computeCommand() {
-    const base = 'kedro run';
-    const { activePipeline, selectedTags } = this.props;
-    const parts = [base];
-    if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
-      parts.push('-p', this._quoteArg(activePipeline));
-    }
-    if (selectedTags && selectedTags.length) {
-      parts.push('-t', selectedTags.join(','));
-    }
-    return parts.join(' ');
-  }
-
-  // Quote an argument if it contains spaces or non-safe characters
-  _quoteArg(value) {
-    if (typeof value !== 'string') {
-      return String(value);
-    }
-    // Safe characters for unquoted args: letters, digits, dot, underscore, hyphen
-    const isSafe = /^[A-Za-z0-9._-]+$/.test(value);
-    return isSafe ? value : `"${value}"`;
-  }
-
-  _updateCommandFromSelections() {
-    const next = this._computeCommand();
-    if (this.commandInputRef?.current) {
-      // Only update if different from what is currently shown
-      if (this.commandInputRef.current.value !== next) {
-        this.commandInputRef.current.value = next;
-      }
-    }
-  }
-
-  // --- Helpers for filtering/lists ---
-  getFilteredParams() {
-    const { params, filterText } = this.state;
-    const query = filterText.trim().toLowerCase();
-    const entries = Object.entries(params || {});
-    if (!query) {
-      return entries;
-    }
-    return entries.filter(([key, value]) =>
-      `${key} ${JSON.stringify(value)}`.toLowerCase().includes(query)
-    );
-  }
-
-  getFilteredDatasets() {
-    const { datasets } = this.props;
-    const { filterText } = this.state;
-    const query = filterText.trim().toLowerCase();
-    const list = datasets || [];
-    if (!query) {
-      return list;
-    }
-    return list.filter((dataset) =>
-      `${dataset.name} ${dataset.fullName} ${dataset.type}`
-        .toLowerCase()
-        .includes(query)
-    );
-  }
-
-  // --- Parameter interactions ---
-  toggleParamExpanded = (key) => {
-    this.setState((prevState) => ({
-      expandedParams: {
-        ...prevState.expandedParams,
-        [key]: !prevState.expandedParams[key],
-      },
-    }));
-  };
-
-  openParamEditor = (key) => {
-    const value = this.state.params?.[key];
-    // Naive YAML-ish seed. Replace with real YAML from API if available.
-    const yaml = this.toYamlString(value);
-    this.setState({
-      showMetadata: true,
-      metadataMode: 'param',
-      selectedParamKey: key,
-      yamlText: yaml,
-    });
-  };
 
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
@@ -176,11 +72,8 @@ class KedroRunManager extends Component {
     // })
     //   .then((res) => {
     //     if (!res.ok) throw new Error('Failed to save parameter');
-    //     // Optionally refetch parameters here to refresh the list
     //   })
     //   .catch((err) => console.error('Save param failed', err));
-    // For now, just keep the panel open.
-    // Optionally, you could update local params after parsing the YAML.
     console.log('[Runner] Save parameter YAML', selectedParamKey, yamlText);
   };
 
@@ -420,102 +313,393 @@ class KedroRunManager extends Component {
   }
 
   renderParametersTab() {
-    const items = this.getFilteredParams();
-    const { expandedParams } = this.state;
+    // Deprecated: replaced by Watch List UI
+    return null;
+  }
 
+  renderDatasetsTab() {
+    // Deprecated: replaced by Watch List UI
+    return null;
+  }
+
+  // --- Watch list actions ---
+  openWatchModal = () => {
+    // Preselect previously selected items (existing watch list)
+    const selected = {};
+    const tempSelections = {};
+    (this.state.watchList || []).forEach((item) => {
+      selected[`${item.kind}:${item.id}`] = true;
+      tempSelections[item.id] = {
+        kind: item.kind,
+        id: item.id,
+        name: item.name || item.id,
+      };
+    });
+    this.setState({
+      isWatchModalOpen: true,
+      selectedToAdd: selected,
+      tempModalSelections: tempSelections,
+      watchSearch: '',
+    });
+  };
+
+  closeWatchModal = () => {
+    this.setState({ isWatchModalOpen: false, tempModalSelections: {} });
+  };
+
+  toggleSelectToAdd = (kind, id) => {
+    const key = `${kind}:${id}`;
+    this.setState((prev) => {
+      const next = { ...(prev.selectedToAdd || {}) };
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = true;
+      }
+      return { selectedToAdd: next };
+    });
+  };
+
+  // Toggle from search results
+  handleSearchToggle = (kind, id, name) => {
+    this.toggleSelectToAdd(kind, id);
+    this.setState((prev) => {
+      const next = { ...(prev.tempModalSelections || {}) };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = { kind, id, name: name || id };
+      }
+      return { tempModalSelections: next };
+    });
+  };
+
+  handleSearchChange = (e) => {
+    this.setState({ watchSearch: e.target.value });
+  };
+
+  getSearchResults() {
+    const query = (this.state.watchSearch || '').trim().toLowerCase();
+    const makeMatch = (text) =>
+      text && String(text).toLowerCase().includes(query);
+    const paramResults = (this.props.paramNodes || [])
+      .map((node) => ({
+        kind: 'param',
+        id: node.id,
+        name: node.name || node.id,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+    const datasetResults = (this.props.datasets || [])
+      .map((d) => ({ kind: 'dataset', id: d.id, name: d.name || d.id }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+    return { paramResults, datasetResults };
+  }
+
+  // --- Drag-and-drop reordering for watch list ---
+  startDragWatch = (kind, id) => {
+    this.setState({ draggingWatch: { kind, id } });
+  };
+
+  allowDropWatch = (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+  };
+
+  dropWatch = (targetKind, targetId) => {
+    const { draggingWatch } = this.state;
+    if (
+      !draggingWatch ||
+      draggingWatch.kind !== targetKind ||
+      draggingWatch.id === targetId
+    ) {
+      this.setState({ draggingWatch: null });
+      return;
+    }
+    this.setState((prev) => {
+      const list = [...(prev.watchList || [])];
+      const kind = targetKind;
+      // Extract the sequence of items of this kind in their current order
+      const kindItems = list.filter((item) => item.kind === kind);
+      const fromIndex = kindItems.findIndex(
+        (item) => item.id === draggingWatch.id
+      );
+      const toIndex = kindItems.findIndex((item) => item.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) {
+        return { draggingWatch: null };
+      }
+      const reordered = [...kindItems];
+      const [moved] = reordered.splice(fromIndex, 1);
+      reordered.splice(toIndex, 0, moved);
+      // Rebuild the full list: replace items of this kind in encounter order with reordered
+      let i = 0;
+      const nextList = list.map((item) =>
+        item.kind === kind ? reordered[i++] : item
+      );
+      return {
+        watchList: nextList,
+        draggingWatch: null,
+        customOrder: { ...(prev.customOrder || {}), [kind]: true },
+      };
+    });
+  };
+
+  confirmAddSelected = () => {
+    const { selectedToAdd } = this.state;
+    if (!selectedToAdd || !Object.keys(selectedToAdd).length) {
+      this.closeWatchModal();
+      return;
+    }
+    const items = Object.keys(selectedToAdd).map((key) => {
+      const [kind, id] = key.split(':');
+      if (kind === 'param') {
+        return { kind, id, name: id };
+      }
+      const dataset = (this.props.datasets || []).find((d) => d.id === id);
+      return { kind, id, name: dataset?.name || id };
+    });
+    this.setState((prev) => {
+      const existingKeys = new Set(
+        (prev.watchList || []).map((item) => `${item.kind}:${item.id}`)
+      );
+      const merged = [
+        ...(prev.watchList || []),
+        ...items.filter((item) => !existingKeys.has(`${item.kind}:${item.id}`)),
+      ];
+      return { watchList: merged, isWatchModalOpen: false, selectedToAdd: {} };
+    });
+  };
+
+  clearWatchList = () => {
+    this.setState({ watchList: [] });
+  };
+
+  removeFromWatchList = (kind, id) => {
+    this.setState((prev) => ({
+      watchList: (prev.watchList || []).filter(
+        (item) => !(item.kind === kind && item.id === id)
+      ),
+    }));
+  };
+
+  onWatchItemClick = (item) => {
+    if (item.kind === 'param') {
+      this.openParamEditor(item.id);
+    } else if (item.kind === 'dataset') {
+      const dataset = (this.props.datasets || []).find(
+        (datasetItem) => datasetItem.id === item.id
+      );
+      if (dataset) {
+        this.openDatasetDetails(dataset);
+      }
+    }
+  };
+
+  // Handle flowchart node clicks inside the watch modal to toggle selection
+  handleFlowchartNodeClick = (nodeId) => {
+    // Find if clicked node is a dataset or parameter
+    const isParam = (this.props.paramNodes || []).some(
+      (paramNode) => paramNode.id === nodeId
+    );
+    const datasetItem = (this.props.datasets || []).find(
+      (d) => d.id === nodeId
+    );
+    if (isParam) {
+      this.toggleSelectToAdd('param', nodeId);
+    } else if (datasetItem) {
+      this.toggleSelectToAdd('dataset', datasetItem.id);
+    }
+    // Also toggle clicked highlight on the flowchart (single highlight)
+    if (this.props.dispatch) {
+      this.props.dispatch(toggleNodeClicked(nodeId));
+    }
+  };
+
+  // Handle double-click to select and highlight green and stage into temp list
+  handleFlowchartNodeDoubleClick = (node) => {
+    const nodeId = node?.id;
+    if (!nodeId) {
+      return;
+    }
+    const isParam = (this.props.paramNodes || []).some(
+      (paramNode) => paramNode.id === nodeId
+    );
+    let entry;
+    if (isParam) {
+      entry = { kind: 'param', id: nodeId, name: node.name || nodeId };
+      this.toggleSelectToAdd('param', nodeId);
+    } else {
+      const datasetItem = (this.props.datasets || []).find(
+        (d) => d.id === nodeId
+      );
+      if (!datasetItem) {
+        return;
+      }
+      entry = {
+        kind: 'dataset',
+        id: datasetItem.id,
+        name: datasetItem.name || datasetItem.id,
+      };
+      this.toggleSelectToAdd('dataset', datasetItem.id);
+    }
+    this.setState((prev) => {
+      const next = { ...(prev.tempModalSelections || {}) };
+      if (next[nodeId]) {
+        delete next[nodeId];
+      } else {
+        next[nodeId] = entry;
+      }
+      return { tempModalSelections: next };
+    });
+  };
+
+  renderWatchListPanel() {
+    const { watchList, watchTab, customOrder } = this.state;
+    const parameterItems = (watchList || []).filter(
+      (watchItem) => watchItem.kind === 'param'
+    );
+    const datasetItems = (watchList || []).filter(
+      (watchItem) => watchItem.kind === 'dataset'
+    );
+    let itemsToShow = watchTab === 'parameters' ? parameterItems : datasetItems;
+    const kindKey = watchTab === 'parameters' ? 'param' : 'dataset';
+    if (!customOrder[kindKey]) {
+      itemsToShow = [...itemsToShow].sort((a, b) =>
+        (a.name || a.id).localeCompare(b.name || b.id, undefined, {
+          sensitivity: 'base',
+        })
+      );
+    }
+    const getParamPreview = (key) => {
+      const value = this.state.params ? this.state.params[key] : undefined;
+      if (typeof value === 'undefined') {
+        return '—';
+      }
+      const text = this.toYamlString(value) || '';
+      const firstLine = String(text).split(/\r?\n/)[0];
+      return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
+    };
     return (
-      <div className="runner-panel runner-panel--parameters">
+      <div className="runner-panel runner-panel--watchlist">
         <div className="runner-panel__toolbar">
-          <input
-            className="runner-filter-input"
-            placeholder="Filter parameters..."
-            value={this.state.filterText}
-            onChange={(e) => this.setState({ filterText: e.target.value })}
-          />
-          {/* API: Add sync button to refetch parameters */}
+          <div className="watchlist-actions">
+            <button
+              className="btn btn--secondary"
+              onClick={this.openWatchModal}
+            >
+              Add to watch list
+            </button>
+            <button
+              className="btn btn--danger"
+              onClick={this.clearWatchList}
+              disabled={!watchList.length}
+            >
+              Clear list
+            </button>
+          </div>
+          <div className="runner-panel__tabs">
+            <button
+              className={`runner-tab ${
+                watchTab === 'parameters' ? 'runner-tab--active' : ''
+              }`}
+              onClick={() => this.setState({ watchTab: 'parameters' })}
+            >
+              Parameters ({parameterItems.length})
+            </button>
+            <button
+              className={`runner-tab ${
+                watchTab === 'datasets' ? 'runner-tab--active' : ''
+              }`}
+              onClick={() => this.setState({ watchTab: 'datasets' })}
+            >
+              Datasets ({datasetItems.length})
+            </button>
+          </div>
         </div>
         <div
           className="runner-panel__list"
           role="region"
-          aria-label="Parameters list"
+          aria-label="Watch list"
         >
-          <ul className="param-list">
-            {items.map(([key, value]) => (
+          {!watchList.length && (
+            <div className="watchlist-empty">No items in your watch list.</div>
+          )}
+          <ul className="watchlist-list">
+            {itemsToShow.map((item) => (
               <li
-                key={key}
-                className="param-item"
-                role="button"
-                tabIndex={0}
-                onClick={() => this.openParamEditor(key)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.openParamEditor(key);
-                  }
-                }}
+                key={`${item.kind}:${item.id}`}
+                className="watchlist-item"
+                draggable
+                onDragStart={() => this.startDragWatch(item.kind, item.id)}
+                onDragOver={this.allowDropWatch}
+                onDrop={() => this.dropWatch(item.kind, item.id)}
               >
-                <div className="param-item__head">
-                  <div className="param-item__meta">
-                    <div className="param-item__key">{key}</div>
-                    <div className="param-item__value">
-                      {typeof value === 'object'
-                        ? JSON.stringify(value)
-                        : String(value)}
-                    </div>
-                  </div>
-                </div>
+                <button
+                  className="watchlist-item__main"
+                  onClick={() => this.onWatchItemClick(item)}
+                >
+                  <span className="watchlist-item__name">{item.name}</span>
+                  {watchTab === 'parameters' && (
+                    <span className="watchlist-item__preview">
+                      {getParamPreview(item.id)}
+                    </span>
+                  )}
+                </button>
+                <button
+                  className="watchlist-item__remove"
+                  aria-label="Remove from watch list"
+                  onClick={() => this.removeFromWatchList(item.kind, item.id)}
+                >
+                  ×
+                </button>
               </li>
             ))}
-            {items.length === 0 && (
-              <li className="param-item param-item--empty">
-                No parameters match your filter.
-              </li>
-            )}
           </ul>
         </div>
       </div>
     );
   }
 
-  renderDatasetsTab() {
-    const datasets = this.getFilteredDatasets();
+  renderWatchModal() {
+    const {
+      isWatchModalOpen,
+      tempModalSelections,
+      watchSearch,
+      selectedToAdd,
+    } = this.state;
+    const { paramResults, datasetResults } = this.getSearchResults();
+    const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
+      (acc, id) => {
+        acc[id] = true;
+        return acc;
+      },
+      {}
+    );
+    const canConfirm =
+      !!Object.keys(selectedToAdd || {}).length ||
+      !!Object.keys(tempModalSelections || {}).length;
+
     return (
-      <div className="runner-panel runner-panel--datasets">
-        <div className="runner-panel__toolbar">
-          <input
-            className="runner-filter-input"
-            placeholder="Filter datasets..."
-            value={this.state.filterText}
-            onChange={(e) => this.setState({ filterText: e.target.value })}
-          />
-          {/* API: Add sync button to refetch dataset metadata */}
-        </div>
-        <div
-          className="runner-panel__list"
-          role="region"
-          aria-label="Datasets list"
-        >
-          <ul className="dataset-list">
-            {datasets.map((dataset) => (
-              <li
-                key={dataset.id}
-                className="dataset-item"
-                onClick={() => this.openDatasetDetails(dataset)}
-              >
-                <div className="dataset-item__name">{dataset.name}</div>
-                <div className="dataset-item__type">
-                  {dataset.datasetType || dataset.type}
-                </div>
-              </li>
-            ))}
-            {datasets.length === 0 && (
-              <li className="dataset-item dataset-item--empty">
-                No datasets match your filter.
-              </li>
-            )}
-          </ul>
-        </div>
-      </div>
+      <WatchListDialog
+        isOpen={isWatchModalOpen}
+        onClose={this.closeWatchModal}
+        onConfirm={this.confirmAddSelected}
+        onFlowchartNodeClick={this.handleFlowchartNodeClick}
+        onFlowchartNodeDoubleClick={this.handleFlowchartNodeDoubleClick}
+        tempSelectedMap={tempSelectedMap}
+        stagedItems={tempModalSelections}
+        watchSearch={watchSearch}
+        onWatchSearchChange={(value) => this.setState({ watchSearch: value })}
+        paramResults={paramResults}
+        datasetResults={datasetResults}
+        canConfirm={canConfirm}
+      />
     );
   }
 
@@ -654,40 +838,11 @@ class KedroRunManager extends Component {
               </div>
             </section>
 
-            {/* Editor moved to the bottom, spans full width */}
+            {/* Editor replaced with Watch List */}
             <section className="runner-manager__editor">
-              <h3 className="section-title">Editor</h3>
+              <h3 className="section-title">Watch list</h3>
               <div className="runner-data-panel">
-                <div className="runner-tabs" role="tablist">
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === 'parameters'}
-                    className={`runner-tab ${
-                      activeTab === 'parameters' ? 'runner-tab--active' : ''
-                    }`}
-                    onClick={() =>
-                      this.setState({ activeTab: 'parameters', filterText: '' })
-                    }
-                  >
-                    Parameters
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={activeTab === 'datasets'}
-                    className={`runner-tab ${
-                      activeTab === 'datasets' ? 'runner-tab--active' : ''
-                    }`}
-                    onClick={() =>
-                      this.setState({ activeTab: 'datasets', filterText: '' })
-                    }
-                  >
-                    Datasets
-                  </button>
-                </div>
-
-                {activeTab === 'parameters'
-                  ? this.renderParametersTab()
-                  : this.renderDatasetsTab()}
+                {this.renderWatchListPanel()}
               </div>
             </section>
           </main>
@@ -700,6 +855,7 @@ class KedroRunManager extends Component {
           </footer>
 
           {this.renderMetadataPanel()}
+          {this.renderWatchModal()}
         </div>
       </>
     );
@@ -712,6 +868,10 @@ const mapStateToProps = (state) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   // Visible datasets from the current graph; we only need data nodes
   datasets: getVisibleNodes(state).filter((node) => node.type === 'data'),
+  // Also expose parameter nodes for selection in the watch modal
+  paramNodes: getVisibleNodes(state).filter(
+    (node) => node.type === 'parameters'
+  ),
   activePipeline: state.pipeline.active,
   // Only include enabled tags that are present in the active pipeline; use raw IDs
   selectedTags: getTagData(state)

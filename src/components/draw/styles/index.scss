@@ -3,3 +3,9 @@
 @use './layers';
 @use './node';
 @use './variables';
+
+/* Temporary selection highlight (watch-modal) */
+.pipeline-node--temp-selected .pipeline-node__bg {
+  stroke: #1db954; /* green outline */
+  stroke-width: 3px;
+}

@@ -24,6 +24,7 @@ export function DrawNodes({
   focusMode = null,
   orientation = 'vertical',
   onNodeClick,
+  onNodeDoubleClick,
   onNodeMouseOver,
   onNodeMouseOut,
   onNodeFocus,
@@ -39,6 +40,7 @@ export function DrawNodes({
   showRunStatus = false,
   tasksStatus = {},
   datasetsStatus = {},
+  tempSelectedMap = {},
 }) {
   const groupRef = useRef();
 
@@ -108,6 +110,7 @@ export function DrawNodes({
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
       .on('click', onNodeClick)
+      .on('dblclick', onNodeDoubleClick)
       .on('mouseover', onNodeMouseOver)
       .on('mouseout', onNodeMouseOut)
       .on('focus', onNodeFocus || onNodeMouseOver)
@@ -180,6 +183,9 @@ export function DrawNodes({
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
+      .classed('pipeline-node--temp-selected', (node) =>
+        Boolean(tempSelectedMap[node.id])
+      )
       .classed(
         'pipeline-node--sliced-pipeline',
         (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
@@ -236,6 +242,7 @@ export function DrawNodes({
     slicedPipelineRange,
     slicedPipelineFromTo,
     isInputOutputNode,
+    tempSelectedMap,
   ]);
 
   // --- Animate node position and update rects on layout/orientation change ---

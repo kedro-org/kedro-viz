@@ -93,6 +93,7 @@ export class FlowChart extends Component {
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
+    this.handleNodeDoubleClick = this.handleNodeDoubleClick.bind(this);
 
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
@@ -514,6 +515,13 @@ export class FlowChart extends Component {
     event.stopPropagation();
   };
 
+  // Forward double-click to parent for custom selection behaviour
+  handleNodeDoubleClick = (event, node) => {
+    if (this.props.onNodeDoubleClick) {
+      this.props.onNodeDoubleClick(node);
+    }
+  };
+
   resetSlicedPipeline = () => {
     this.props.onResetSlicePipeline();
     this.updateSlicedPipelineState(null, null, []);
@@ -861,6 +869,7 @@ export class FlowChart extends Component {
             nodes={nodes}
             nodeActive={nodeActive}
             nodeSelected={nodeSelected}
+            tempSelectedMap={this.props.tempSelectedMap || {}}
             nodeTypeDisabled={nodeTypeDisabled}
             hoveredParameters={hoveredParameters}
             hoveredFocusMode={hoveredFocusMode}
@@ -869,6 +878,7 @@ export class FlowChart extends Component {
             focusMode={focusMode}
             orientation={orientation}
             onNodeClick={this.handleNodeClick}
+            onNodeDoubleClick={this.handleNodeDoubleClick}
             onNodeMouseOver={this.handleNodeMouseOver}
             onNodeMouseOut={this.handleNodeMouseOut}
             onNodeFocus={this.handleNodeMouseOver}

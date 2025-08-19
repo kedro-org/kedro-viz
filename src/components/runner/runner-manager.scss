@@ -263,6 +263,17 @@
   opacity: 0.7;
 }
 
+/* Subtle secondary button for actions like "Add to watch list" */
+.btn--secondary {
+  background: var(--runner-subpanel-bg);
+  border-color: var(--runner-button-border);
+  color: inherit;
+}
+
+.btn--secondary:hover {
+  background: var(--runner-hover-bg);
+}
+
 .runner-manager__jobs-panel {
   /* Right column should occupy full grid height across both rows */
   min-width: 0;
@@ -398,6 +409,376 @@
   flex: 0 0 auto;
 }
 
+/* Watch list styles */
+.runner-panel--watchlist .watchlist-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.watchlist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watchlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.watchlist-item__main {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.watchlist-item__badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--runner-border);
+}
+
+.watchlist-item__badge--param {
+  background: var(--runner-stdout-bg);
+}
+
+.watchlist-item__badge--dataset {
+  background: var(--runner-stdout-bg);
+}
+
+.watchlist-item__remove {
+  background: transparent;
+  border: 1px solid var(--runner-border);
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+/* Watch modal */
+.watchmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.watchmodal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 50%);
+}
+
+.watchmodal__content {
+  position: absolute;
+  inset: 10% 12% auto;
+  background: var(--runner-panel-bg);
+  border: 1px solid var(--runner-border-strong);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+
+  /* Ensure inner content (flowchart, etc.) is visually contained */
+  overflow: hidden;
+}
+
+.watchmodal__header,
+.watchmodal__footer {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--runner-border);
+}
+
+.watchmodal__footer {
+  border-top: 1px solid var(--runner-border);
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.watchmodal__body {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* flowchart | selector */
+  grid-template-rows: 1fr; /* selector manages its own internal rows */
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 0;
+  flex: 1 1 auto; /* fill between header and footer */
+}
+
+.watchmodal__flowcol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Flowchart container inside the modal: constrain size and contain overflow */
+.watchmodal__flowchart {
+  position: relative; /* anchor absolutely-positioned layer list */
+  height: 60vh; /* scale with viewport while fitting inside modal max-height */
+  min-height: 360px; /* provide a sensible minimum */
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  overflow: hidden; /* contain zoom/pan content */
+}
+
+.watchmodal__flow-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--runner-muted);
+}
+
+.watchmodal__footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Make the embedded flowchart fill the container */
+.watchmodal__flowchart .pipeline-flowchart {
+  position: relative; /* make layer-name list position relative to this box */
+  width: 100%;
+  height: 100%;
+}
+
+.watchmodal__flowchart .pipeline-flowchart__graph {
+  width: 100%;
+  height: 100%;
+}
+
+/* Pin layer labels to the left edge of the modal column, not the app sidebar */
+.watchmodal__flowchart .pipeline-flowchart__layer-names {
+  left: 0;
+  transform: translateX(
+    8px
+  ) !important; /* override JS-applied transform that offsets by sidebar width */
+}
+
+/* Right-side staged list (legacy class removed) */
+
+.watchmodal__selector {
+  display: grid;
+  grid-template-rows: auto 1fr; /* search on top, results fill */
+  gap: 12px;
+  min-height: 0; /* allow nested results to size/scroll */
+}
+
+.watchmodal__search {
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Make the search input span the whole container */
+.watchmodal__search-input {
+  width: 100%;
+  background: transparent;
+}
+
+.watchmodal__header {
+  display: flex;
+  align-items: center;
+}
+
+.watchmodal__close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+}
+
+.watchmodal__results {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* parameters | datasets */
+  gap: 12px;
+  min-height: 0; /* ensure columns can stretch */
+}
+
+.watchmodal__results-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow child to manage overflow */
+}
+
+.watchmodal__results-title {
+  margin: 8px 0 6px;
+}
+
+.watchmodal__results-list {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0; /* grow to fill column height */
+  min-height: 0; /* enable proper overflow */
+  overflow: auto;
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--runner-subpanel-bg);
+}
+
+.watchmodal__result-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--runner-panel-bg);
+}
+
+.watchmodal__result-item--selected {
+  background: color-mix(in srgb, #1db954 18%, var(--runner-panel-bg));
+  border-color: #1db954;
+}
+
+.watchmodal__staged {
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+}
+
+.watchmodal__pending {
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.watchmodal__pending-label {
+  display: block;
+  font-size: 12px;
+  color: var(--runner-muted);
+  margin-bottom: 6px;
+}
+
+.watchmodal__pending-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-panel-bg);
+  color: inherit;
+}
+
+.watchmodal__staged-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.watchmodal__staged-title {
+  margin: 0 0 6px;
+}
+
+.watchmodal__staged-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watchmodal__staged-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--runner-panel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.watchmodal__staged-empty {
+  color: var(--runner-muted);
+}
+
+/* Badge reuse */
+
+.watchmodal__badge--param,
+.watchmodal__badge--dataset {
+  background: var(--runner-stdout-bg);
+}
+
+.watchmodal__flowchart-placeholder {
+  height: 100%;
+  min-height: 320px;
+  background: var(--runner-subpanel-bg);
+  border: 2px dashed var(--runner-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--runner-muted);
+}
+
+.watchmodal__picker h4 {
+  margin: 0 0 8px;
+}
+
+.watchmodal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.watchmodal__tile {
+  background: var(--runner-subpanel-bg);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.watchmodal__tile--selected {
+  border-color: #{variables.$blue-300};
+}
+
+.watchmodal__badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--runner-border);
+  border-radius: 10px;
+}
+
+.watchmodal__name {
+  display: block;
+  margin-top: 6px;
+}
+
 .runner-panel__list {
   flex: 1 1 auto;
   min-height: 0;
@@ -417,6 +798,24 @@
   background: var(--runner-primary-gradient);
   color: var(--runner-primary-on);
   border: none;
+}
+
+.runner-panel__tabs {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px;
+}
+
+.watchlist-item__preview {
+  font-size: 12px;
+  color: var(--runner-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  max-width: 60%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .runner-filter-input {
