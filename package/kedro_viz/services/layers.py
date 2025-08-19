@@ -126,7 +126,7 @@ def sort_layers(
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected among layers. "
             "Circular dependency detected: %s. "
-            "Please check your pipeline configuration to ensure layers follow a proper hierarchy. "
+            "Please check the `layer` configuration in your catalog for the datasets to avoid circular references. "
             "Layer dependencies found: %s",
             str(e),
             dict(layer_dependencies),
