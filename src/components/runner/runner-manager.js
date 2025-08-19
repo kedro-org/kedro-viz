@@ -18,6 +18,9 @@ import FlowChart from '../flowchart';
 import WatchListDialog from './watch-list-dialog';
 import { toggleNodeClicked } from '../../actions/nodes';
 
+// Key for persisting runner jobs across page changes
+const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
+
 /**
  * KedroRunManager
  * A visual draft page for starting and monitoring Kedro runs.
@@ -69,6 +72,8 @@ class KedroRunManager extends Component {
   }
 
   componentDidMount() {
+    // Rehydrate any persisted jobs and resume polling where needed
+    this.hydrateJobsFromStorage();
     this.updateCommandFromProps(this.props);
   }
 
@@ -136,26 +141,31 @@ class KedroRunManager extends Component {
     if (!partial || !partial.jobId) {
       return;
     }
-    this.setState((prev) => {
-      const list = [...(prev.jobs || [])];
-      const idx = list.findIndex((j) => j.jobId === partial.jobId);
-      if (idx >= 0) {
-        list[idx] = { ...list[idx], ...partial };
-      } else {
-        list.unshift({
-          jobId: partial.jobId,
-          status: partial.status || 'initialize',
-          startedAt: partial.startedAt || Date.now(),
-          command:
-            partial.command ||
-            (this.commandInputRef.current &&
-              this.commandInputRef.current.value) ||
-            'kedro run',
-          logs: partial.logs || '',
-        });
+    this.setState(
+      (prev) => {
+        const list = [...(prev.jobs || [])];
+        const idx = list.findIndex((j) => j.jobId === partial.jobId);
+        if (idx >= 0) {
+          list[idx] = { ...list[idx], ...partial };
+        } else {
+          list.unshift({
+            jobId: partial.jobId,
+            status: partial.status || 'initialize',
+            startedAt: partial.startedAt || Date.now(),
+            command:
+              partial.command ||
+              (this.commandInputRef.current &&
+                this.commandInputRef.current.value) ||
+              'kedro run',
+            logs: partial.logs || '',
+          });
+        }
+        return { jobs: list };
+      },
+      () => {
+        this.saveJobsToStorage(this.state.jobs);
       }
-      return { jobs: list };
-    });
+    );
   };
 
   startJobPolling = (jobId) => {
@@ -183,7 +193,7 @@ class KedroRunManager extends Component {
     try {
       const { status, stdout, stderr, returncode } =
         await getKedroCommandStatus(jobId);
-      const update = { jobId, status };
+      const update = { jobId, status, returncode };
       if (typeof stdout === 'string' || typeof stderr === 'string') {
         update.logs = `${stdout || ''}${
           stderr ? `\n[stderr]:\n${stderr}` : ''
@@ -203,6 +213,75 @@ class KedroRunManager extends Component {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch job status', err);
     }
+  };
+
+  // --- Persistence helpers ---
+  sanitizeJobForStorage = (job) => {
+    const maxLogLength = 50000; // limit stored logs size
+    const safeLogs =
+      typeof job.logs === 'string' ? job.logs.slice(-maxLogLength) : '';
+    const stored = {
+      jobId: job.jobId,
+      status: job.status,
+      startedAt: job.startedAt || Date.now(),
+      command: job.command || 'kedro run',
+      logs: safeLogs,
+    };
+    if (typeof job.returncode === 'number') {
+      stored.returncode = job.returncode;
+    }
+    return stored;
+  };
+
+  saveJobsToStorage = (jobs) => {
+    try {
+      const payload = (jobs || []).map(this.sanitizeJobForStorage);
+      window.localStorage.setItem(
+        RUNNER_JOBS_STORAGE_KEY,
+        JSON.stringify(payload)
+      );
+    } catch (e) {
+      // ignore storage errors (quota/privacy mode)
+    }
+  };
+
+  loadJobsFromStorage = () => {
+    try {
+      const raw = window.localStorage.getItem(RUNNER_JOBS_STORAGE_KEY);
+      if (!raw) {return [];}
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {return [];}
+      return parsed.map((j) => ({
+        jobId: j.jobId,
+        status: j.status || 'unknown',
+        startedAt: j.startedAt || Date.now(),
+        command: j.command || 'kedro run',
+        logs: typeof j.logs === 'string' ? j.logs : '',
+        returncode: typeof j.returncode === 'number' ? j.returncode : undefined,
+      }));
+    } catch (e) {
+      return [];
+    }
+  };
+
+  hydrateJobsFromStorage = () => {
+    const jobs = this.loadJobsFromStorage();
+    if (!jobs.length) {return;}
+    this.setState({ jobs });
+    // Resume polling for jobs that appear to be in-flight
+    jobs.forEach((job) => {
+      const isTerminal = ['finished', 'terminated', 'error'].includes(
+        job.status
+      );
+      const hasFinalReturnCode = typeof job.returncode === 'number';
+      if (
+        (job.status === 'initialize' || job.status === 'running') &&
+        !isTerminal &&
+        !hasFinalReturnCode
+      ) {
+        this.startJobPolling(job.jobId);
+      }
+    });
   };
 
   saveParamYaml = () => {
