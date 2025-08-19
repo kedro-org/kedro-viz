@@ -61,6 +61,54 @@ class KedroRunManager extends Component {
     this.commandInputRef = React.createRef();
   }
 
+  componentDidMount() {
+    this.updateCommandFromProps(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    const pipelineChanged =
+      prevProps.activePipeline !== this.props.activePipeline;
+    const prevTags = (prevProps.selectedTags || []).slice().sort().join(',');
+    const nextTags = (this.props.selectedTags || []).slice().sort().join(',');
+    const tagsChanged = prevTags !== nextTags;
+    if (pipelineChanged || tagsChanged) {
+      this.updateCommandFromProps(this.props);
+    }
+  }
+
+  quoteIfNeeded = (text) => {
+    if (!text) {
+      return '';
+    }
+    const str = String(text);
+    return str.includes(' ') ? `"${str.replace(/"/g, '\\"')}"` : str;
+  };
+
+  buildRunCommand = (props) => {
+    const activePipeline = props.activePipeline;
+    const selectedTags = props.selectedTags || [];
+    const parts = ['kedro run'];
+    if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
+      parts.push('-p');
+      parts.push(this.quoteIfNeeded(activePipeline));
+    }
+    if (selectedTags.length) {
+      const tagArg = selectedTags.join(',');
+      parts.push('-t');
+      parts.push(tagArg);
+    }
+    return parts.join(' ');
+  };
+
+  updateCommandFromProps = (props) => {
+    const cmd = this.buildRunCommand(props);
+    if (this.commandInputRef && this.commandInputRef.current) {
+      if (this.commandInputRef.current.value !== cmd) {
+        this.commandInputRef.current.value = cmd;
+      }
+    }
+  };
+
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
     // API wiring: Update parameter value on server
