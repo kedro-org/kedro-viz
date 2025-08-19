@@ -4,6 +4,7 @@ import Sidebar from '../sidebar';
 // Reuse existing metadata panel styles
 import '../metadata/styles/metadata.scss';
 import MetaDataStats from '../metadata/metadata-stats';
+import NodeIcon from '../icons/node-icon';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
@@ -79,6 +80,10 @@ class KedroRunManager extends Component {
     this.jobPollers = {};
     // Jobs panel ref to compute available height for expanded logs
     this.jobsPanelRef = React.createRef();
+    // Jobs panel body ref to compute available height below sticky header
+    this.jobsPanelBodyRef = React.createRef();
+    // Refs to log containers per job for auto-scrolling
+    this.logRefs = {};
   }
 
   componentDidMount() {
@@ -95,7 +100,7 @@ class KedroRunManager extends Component {
     this.updateCommandFromProps(this.props);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const pipelineChanged =
       prevProps.activePipeline !== this.props.activePipeline;
     const prevTags = (prevProps.selectedTags || []).slice().sort().join(',');
@@ -103,6 +108,41 @@ class KedroRunManager extends Component {
     const tagsChanged = prevTags !== nextTags;
     if (pipelineChanged || tagsChanged) {
       this.updateCommandFromProps(this.props);
+    }
+
+    // Auto-scroll logs to bottom when content updates or when expanded toggles on
+    try {
+      const prevJobs = (prevState && prevState.jobs) || [];
+      const currJobs = this.state.jobs || [];
+      const prevExpanded = (prevState && prevState.expandedLogs) || {};
+      const currExpanded = this.state.expandedLogs || {};
+
+      const prevMap = new Map(prevJobs.map((j) => [j.jobId, j]));
+      currJobs.forEach((job) => {
+        const prevJob = prevMap.get(job.jobId);
+        const prevLogs = prevJob ? prevJob.logs : '';
+        const logsChanged = prevJob ? prevLogs !== job.logs : !!job.logs;
+        const wasExpanded =
+          typeof prevExpanded[job.jobId] === 'boolean'
+            ? prevExpanded[job.jobId]
+            : true; // default on
+        const isExpanded =
+          typeof currExpanded[job.jobId] === 'boolean'
+            ? currExpanded[job.jobId]
+            : true; // default on
+        const expandedBecameTrue = !wasExpanded && isExpanded;
+        if ((logsChanged && isExpanded) || expandedBecameTrue) {
+          const el = this.logRefs && this.logRefs[job.jobId];
+          if (el && el.scrollTo) {
+            // Smooth scroll could be jarring on frequent updates; use instant
+            el.scrollTop = el.scrollHeight;
+          } else if (el) {
+            el.scrollTop = el.scrollHeight;
+          }
+        }
+      });
+    } catch (e) {
+      // no-op: best-effort scrolling only
     }
   }
 
@@ -685,6 +725,11 @@ class KedroRunManager extends Component {
     }
 
     if (metadataMode === 'param') {
+      const selectedKey = this.state.selectedParamKey;
+      const paramNode = (this.props.paramNodes || []).find(
+        (node) => node.id === selectedKey
+      );
+      const displayName = paramNode?.name || selectedKey;
       return (
         <div
           className="pipeline-metadata kedro pipeline-metadata--visible"
@@ -693,7 +738,8 @@ class KedroRunManager extends Component {
         >
           <div className="pipeline-metadata__header-toolbox">
             <div className="pipeline-metadata__header">
-              <h2 className="pipeline-metadata__title">Edit parameter</h2>
+              <NodeIcon className="pipeline-metadata__icon" icon="parameters" />
+              <h2 className="pipeline-metadata__title">{displayName}</h2>
             </div>
             <button
               className="pipeline-metadata__close-button"
@@ -705,11 +751,13 @@ class KedroRunManager extends Component {
           </div>
           <div className="pipeline-metadata__list">
             <dl className="pipeline-metadata__properties">
+              <dt className="pipeline-metadata__label">Name:</dt>
+              <dd className="pipeline-metadata__row">
+                <span className="pipeline-metadata__value">{displayName}</span>
+              </dd>
               <dt className="pipeline-metadata__label">Key:</dt>
               <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value">
-                  {selectedParamKey}
-                </span>
+                <span className="pipeline-metadata__value">{selectedKey}</span>
               </dd>
               <dt className="pipeline-metadata__label">YAML:</dt>
               <dd className="pipeline-metadata__row">
@@ -1285,144 +1333,166 @@ class KedroRunManager extends Component {
                   Clear jobs
                 </button>
               </div>
-              <div className="jobs-list">
-                {(this.state.jobs || []).length === 0 && (
-                  <div className="job-card">
-                    <div className="job-card__meta">
-                      <div className="job-card__id">No jobs</div>
-                    </div>
-                    <div className="job-card__body">
-                      <div className="job-card__stdout">
-                        <pre>Click "Start run" to create a job.</pre>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {(this.state.jobs || []).map((job) => {
-                  const isExpanded = (this.state.expandedLogs || {})[job.jobId];
-                  const expanded =
-                    typeof isExpanded === 'boolean' ? isExpanded : true; // default on
-                  const panelHeight =
-                    this.jobsPanelRef?.current?.clientHeight || 0;
-                  const expandedMax = Math.max(
-                    200,
-                    Math.floor(panelHeight * 0.8)
-                  );
-                  const stdoutStyle = {
-                    display: expanded ? 'block' : 'none',
-                    maxHeight: `${expanded ? expandedMax : 0}px`,
-                  };
-                  const status = job.status;
-                  const statusClass =
-                    status === 'error' || status === 'terminated'
-                      ? 'job-card__status--error'
-                      : status === 'finished'
-                      ? 'job-card__status--finished'
-                      : 'job-card__status--pending';
-                  const canTerminate = ![
-                    'finished',
-                    'error',
-                    'terminated',
-                  ].includes(status);
-                  const cardClass = `job-card ${
-                    canTerminate ? 'job-card--can-terminate' : ''
-                  }`;
-                  return (
-                    <article key={job.jobId} className={cardClass}>
+              <div className="jobs-panel__body" ref={this.jobsPanelBodyRef}>
+                <div className="jobs-list">
+                  {(this.state.jobs || []).length === 0 && (
+                    <div className="job-card">
                       <div className="job-card__meta">
-                        <div className={`job-card__status ${statusClass}`}>
-                          {status}
-                        </div>
-                        <div className="job-card__time">
-                          started {new Date(job.startedAt).toLocaleTimeString()}
-                        </div>
-                        {/* Header actions on the right */}
-                        <div
-                          className="job-card__actions"
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            display: 'flex',
-                            gap: '8px',
-                          }}
-                        >
-                          {canTerminate && (
-                            <button
-                              className="btn btn--danger"
-                              onClick={() => this.onTerminateJob(job.jobId)}
-                              title="Terminate job"
-                            >
-                              Terminate
-                            </button>
-                          )}
-                          <button
-                            className="btn"
-                            onClick={() => this.openLogsModal(job.jobId)}
-                          >
-                            View full logs
-                          </button>
-                          <button
-                            className="btn"
-                            onClick={() => this.openClearJobConfirm(job.jobId)}
-                            title="Remove this job from the list"
-                          >
-                            Remove
-                          </button>
-                        </div>
+                        <div className="job-card__id">No jobs</div>
                       </div>
-
                       <div className="job-card__body">
-                        <div className="job-card__controls job-card__controls--top">
-                          <div className="job-card__toggle pipeline-toggle">
-                            <input
-                              id={`pipeline-toggle-input-${job.jobId}`}
-                              className="pipeline-toggle-input"
-                              type="checkbox"
-                              checked={expanded}
-                              onChange={(e) =>
-                                this.setLogExpanded(job.jobId, e.target.checked)
-                              }
-                            />
-                            <label
-                              className={`pipeline-toggle-label ${
-                                expanded ? 'pipeline-toggle-label--checked' : ''
-                              }`}
-                              htmlFor={`pipeline-toggle-input-${job.jobId}`}
-                            >
-                              {expanded ? 'Collapse logs' : 'Expand logs'}
-                            </label>
-                          </div>
-                        </div>
-                        <div className="job-card__details">
-                          <div className="job-card__row">
-                            <strong>Job:</strong> {job.jobId}
-                          </div>
-                          <div className="job-card__row">
-                            <strong>Command:</strong> {job.command}
-                          </div>
-                          <div className="job-card__row">
-                            <strong>Duration:</strong>{' '}
-                            {typeof job.duration !== 'undefined'
-                              ? job.duration
-                              : '—'}
-                            {job.endTime && (
-                              <>
-                                {' '}
-                                · ended{' '}
-                                {new Date(job.endTime).toLocaleTimeString()}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        <div className="job-card__stdout" style={stdoutStyle}>
-                          <pre>{job.logs}</pre>
+                        <div className="job-card__stdout">
+                          <pre>Click "Start run" to create a job.</pre>
                         </div>
                       </div>
-                    </article>
-                  );
-                })}
+                    </div>
+                  )}
+
+                  {(this.state.jobs || []).map((job) => {
+                    const isExpanded = (this.state.expandedLogs || {})[
+                      job.jobId
+                    ];
+                    const expanded =
+                      typeof isExpanded === 'boolean' ? isExpanded : true; // default on
+                    const stdoutStyle = {
+                      display: expanded ? 'block' : 'none',
+                      // When expanded, show up to 70% of the viewport height, and never exceed viewport
+                      maxHeight: expanded ? '70vh' : '0px',
+                      overflow: 'auto',
+                    };
+                    // Constrain card to available body height (accounts for sticky header)
+                    const bodyHeight =
+                      this.jobsPanelBodyRef?.current?.clientHeight || 0;
+                    const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
+                    const status = job.status;
+                    const statusClass =
+                      status === 'error' || status === 'terminated'
+                        ? 'job-card__status--error'
+                        : status === 'finished'
+                        ? 'job-card__status--finished'
+                        : 'job-card__status--pending';
+                    const canTerminate = ![
+                      'finished',
+                      'error',
+                      'terminated',
+                    ].includes(status);
+                    const cardClass = `job-card ${
+                      canTerminate ? 'job-card--can-terminate' : ''
+                    }`;
+                    return (
+                      <article
+                        key={job.jobId}
+                        className={cardClass}
+                        style={cardMax ? { maxHeight: `${cardMax}px` } : null}
+                      >
+                        <div className="job-card__meta">
+                          <div className={`job-card__status ${statusClass}`}>
+                            {status}
+                          </div>
+                          <div className="job-card__time">
+                            started{' '}
+                            {new Date(job.startedAt).toLocaleTimeString()}
+                          </div>
+                          {/* Header actions on the right */}
+                          <div
+                            className="job-card__actions"
+                            style={{
+                              position: 'absolute',
+                              top: '8px',
+                              right: '8px',
+                              display: 'flex',
+                              gap: '8px',
+                            }}
+                          >
+                            {canTerminate && (
+                              <button
+                                className="btn btn--danger"
+                                onClick={() => this.onTerminateJob(job.jobId)}
+                                title="Terminate job"
+                              >
+                                Terminate
+                              </button>
+                            )}
+                            <button
+                              className="btn"
+                              onClick={() => this.openLogsModal(job.jobId)}
+                            >
+                              View full logs
+                            </button>
+                            <button
+                              className="btn"
+                              onClick={() =>
+                                this.openClearJobConfirm(job.jobId)
+                              }
+                              title="Remove this job from the list"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="job-card__body">
+                          <div className="job-card__controls job-card__controls--top">
+                            <div className="job-card__toggle pipeline-toggle">
+                              <input
+                                id={`pipeline-toggle-input-${job.jobId}`}
+                                className="pipeline-toggle-input"
+                                type="checkbox"
+                                checked={expanded}
+                                onChange={(e) =>
+                                  this.setLogExpanded(
+                                    job.jobId,
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              <label
+                                className={`pipeline-toggle-label ${
+                                  expanded
+                                    ? 'pipeline-toggle-label--checked'
+                                    : ''
+                                }`}
+                                htmlFor={`pipeline-toggle-input-${job.jobId}`}
+                              >
+                                {expanded ? 'Collapse logs' : 'Expand logs'}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="job-card__details">
+                            <div className="job-card__row">
+                              <strong>Job:</strong> {job.jobId}
+                            </div>
+                            <div className="job-card__row">
+                              <strong>Command:</strong> {job.command}
+                            </div>
+                            <div className="job-card__row">
+                              <strong>Duration:</strong>{' '}
+                              {typeof job.duration !== 'undefined'
+                                ? job.duration
+                                : '—'}
+                              {job.endTime && (
+                                <>
+                                  {' '}
+                                  · ended{' '}
+                                  {new Date(job.endTime).toLocaleTimeString()}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div
+                            className="job-card__stdout"
+                            style={stdoutStyle}
+                            ref={(el) => {
+                              this.logRefs[job.jobId] = el;
+                            }}
+                          >
+                            <pre>{job.logs}</pre>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
