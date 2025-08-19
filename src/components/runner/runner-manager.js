@@ -535,7 +535,10 @@ class KedroRunManager extends Component {
 
   resetParamYaml = () => {
     const { selectedParamKey } = this.state;
-    const value = this.state.params?.[selectedParamKey];
+    const value =
+      (this.state.params && this.state.params[selectedParamKey]) !== undefined
+        ? this.state.params[selectedParamKey]
+        : (this.props.nodeParameters || {})[selectedParamKey];
     this.setState({ yamlText: this.toYamlString(value) });
   };
 
@@ -848,6 +851,23 @@ class KedroRunManager extends Component {
     });
   };
 
+  // Update URL to reflect selected node id (sid) for shareable/back-nav parity
+  setSidInUrl = (nodeId) => {
+    if (!nodeId) {return;}
+    try {
+      const current = new URL(window.location.href);
+      // Preserve existing params, only update sid and clear sn
+      current.searchParams.set('sid', nodeId);
+      current.searchParams.delete('sn');
+      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
+      window.history.pushState({}, '', nextUrl);
+      // Avoid reprocessing immediately if a popstate happens
+      this._lastSid = nodeId;
+    } catch (e) {
+      // noop
+    }
+  };
+
   renderMetadataPanel() {
     const {
       metadataMode,
@@ -868,7 +888,10 @@ class KedroRunManager extends Component {
       );
       const displayName = paramNode?.name || selectedKey;
       // Derive a live preview value from the YAML text; fallback to stored param
-      let previewValue = (this.state.params || {})[selectedKey];
+      let previewValue =
+        (this.state.params && this.state.params[selectedKey]) !== undefined
+          ? this.state.params[selectedKey]
+          : (this.props.nodeParameters || {})[selectedKey];
       try {
         if (typeof this.state.yamlText === 'string') {
           const parsed = this.parseYamlishValue(this.state.yamlText);
@@ -915,6 +938,7 @@ class KedroRunManager extends Component {
                     <div className="scrollable-container">
                       <JSONObject
                         value={previewValue}
+                        theme={this.props.theme}
                         style={{ background: 'transparent', fontSize: '14px' }}
                         collapsed={3}
                       />
@@ -1213,8 +1237,11 @@ class KedroRunManager extends Component {
 
   onWatchItemClick = (item) => {
     if (item.kind === 'param') {
+      // Reflect selection in URL like flowchart does
+      this.setSidInUrl(item.id);
       this.openParamEditor(item.id);
     } else if (item.kind === 'dataset') {
+      this.setSidInUrl(item.id);
       const dataset = (this.props.datasets || []).find(
         (datasetItem) => datasetItem.id === item.id
       );
@@ -1225,7 +1252,10 @@ class KedroRunManager extends Component {
   };
 
   openParamEditor = (paramKey) => {
-    const value = (this.state.params || {})[paramKey];
+    const value =
+      (this.state.params && this.state.params[paramKey]) !== undefined
+        ? this.state.params[paramKey]
+        : (this.props.nodeParameters || {})[paramKey];
     this.setState({
       showMetadata: true,
       metadataMode: 'param',
@@ -1310,7 +1340,10 @@ class KedroRunManager extends Component {
       );
     }
     const getParamPreview = (key) => {
-      const value = this.state.params ? this.state.params[key] : undefined;
+      const value =
+        (this.state.params && this.state.params[key]) !== undefined
+          ? this.state.params[key]
+          : (this.props.nodeParameters || {})[key];
       if (typeof value === 'undefined') {
         return '—';
       }
@@ -1872,12 +1905,15 @@ const mapStateToProps = (state) => ({
   displaySidebar: state.display.sidebar,
   sidebarVisible: state.visible.sidebar,
   displayGlobalNavigation: state.display.globalNavigation,
+  theme: state.theme,
   // Visible datasets from the current graph; we only need data nodes
   datasets: getVisibleNodes(state).filter((node) => node.type === 'data'),
   // Also expose parameter nodes for selection in the watch modal
   paramNodes: getVisibleNodes(state).filter(
     (node) => node.type === 'parameters'
   ),
+  // Provide parameters map used by the flowchart metadata panel
+  nodeParameters: state.node?.parameters || {},
   activePipeline: state.pipeline.active,
   // Only include enabled tags that are present in the active pipeline; use raw IDs
   selectedTags: getTagData(state)
