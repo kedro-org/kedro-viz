@@ -5,9 +5,3 @@ if (typeof window.URL.createObjectURL === 'undefined') {
 }
 
 global.fetch = require('node-fetch');
-
-jest.mock('@quantumblack/kedro-viz/lib/utils/worker.js', () => ({
-  __esModule: true,
-  graph: {},
-  preventWorkerQueues: () => () => null,
-}));
