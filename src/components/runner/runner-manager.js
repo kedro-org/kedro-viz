@@ -5,6 +5,7 @@ import Sidebar from '../sidebar';
 import '../metadata/styles/metadata.scss';
 import MetaDataStats from '../metadata/metadata-stats';
 import NodeIcon from '../icons/node-icon';
+import JSONObject from '../json-object';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
@@ -21,6 +22,10 @@ import { toggleNodeClicked } from '../../actions/nodes';
 
 // Key for persisting runner jobs across page changes
 const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
+// Keys for persisting Watch list and custom order
+const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
+const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
+  'kedro_viz_runner_watch_custom_order';
 
 /**
  * KedroRunManager
@@ -84,11 +89,16 @@ class KedroRunManager extends Component {
     this.jobsPanelBodyRef = React.createRef();
     // Refs to log containers per job for auto-scrolling
     this.logRefs = {};
+
+    // Track last applied selected id from URL to avoid redundant work
+    this._lastSid = null;
   }
 
   componentDidMount() {
     // Rehydrate any persisted jobs and resume polling where needed
     this.hydrateJobsFromStorage();
+    // Rehydrate persisted watch list and custom order
+    this.hydrateWatchFromStorage();
     // Store original params snapshot for diffing
     try {
       this.setState({
@@ -98,6 +108,11 @@ class KedroRunManager extends Component {
       this.setState({ paramOriginals: { ...(this.state.params || {}) } });
     }
     this.updateCommandFromProps(this.props);
+
+    // Sync metadata panel with `sid` from the URL, like the flowchart page
+    this.syncMetadataFromSid();
+    // Listen for browser navigation changes to keep in sync
+    window.addEventListener('popstate', this.syncMetadataFromSid);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -108,6 +123,14 @@ class KedroRunManager extends Component {
     const tagsChanged = prevTags !== nextTags;
     if (pipelineChanged || tagsChanged) {
       this.updateCommandFromProps(this.props);
+    }
+
+    // If graph nodes change, attempt to (re)sync metadata for current sid
+    if (
+      prevProps.paramNodes !== this.props.paramNodes ||
+      prevProps.datasets !== this.props.datasets
+    ) {
+      this.syncMetadataFromSid(/*force*/ false);
     }
 
     // Auto-scroll logs to bottom when content updates or when expanded toggles on
@@ -156,7 +179,50 @@ class KedroRunManager extends Component {
       }
     });
     this.jobPollers = {};
+
+    // Remove URL listener
+    try {
+      window.removeEventListener('popstate', this.syncMetadataFromSid);
+    } catch (e) {
+      // noop
+    }
   }
+
+  // --- URL selected-id (sid) sync helpers ---
+  getSidFromUrl = () => {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      // Prefer short key used by flowchart; fall back to legacy if present
+      return params.get('sid') || params.get('selected_id') || '';
+    } catch (e) {
+      return '';
+    }
+  };
+
+  syncMetadataFromSid = () => {
+    const sid = this.getSidFromUrl();
+    if (!sid || sid === this._lastSid) {
+      return;
+    }
+    // Find a matching parameter or dataset node
+    const paramNode = (this.props.paramNodes || []).find(
+      (node) => node.id === sid
+    );
+    if (paramNode) {
+      this._lastSid = sid;
+      this.openParamEditor(sid);
+      return;
+    }
+    const datasetNode = (this.props.datasets || []).find(
+      (node) => node.id === sid
+    );
+    if (datasetNode) {
+      this._lastSid = sid;
+      this.openDatasetDetails(datasetNode);
+      return;
+    }
+    // If sid no longer matches anything, don't change the current panel
+  };
 
   quoteIfNeeded = (text) => {
     if (!text) {
@@ -382,6 +448,77 @@ class KedroRunManager extends Component {
         this.startJobPolling(job.jobId);
       }
     });
+  };
+
+  // --- Watch list persistence ---
+  loadWatchFromStorage = () => {
+    let watchList = [];
+    let customOrder = { param: false, dataset: false };
+    try {
+      const wlRaw = window.localStorage.getItem(RUNNER_WATCHLIST_STORAGE_KEY);
+      if (wlRaw) {
+        const parsed = JSON.parse(wlRaw);
+        if (Array.isArray(parsed)) {
+          watchList = parsed.filter(
+            (item) =>
+              item &&
+              typeof item.kind === 'string' &&
+              typeof item.id === 'string'
+          );
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    try {
+      const coRaw = window.localStorage.getItem(
+        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY
+      );
+      if (coRaw) {
+        const parsed = JSON.parse(coRaw);
+        if (parsed && typeof parsed === 'object') {
+          customOrder = {
+            param: !!parsed.param,
+            dataset: !!parsed.dataset,
+          };
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    return { watchList, customOrder };
+  };
+
+  saveWatchToStorage = (watchList, customOrder) => {
+    try {
+      const watchListArray = Array.isArray(watchList)
+        ? watchList
+        : this.state.watchList;
+      const customOrderObj = customOrder || this.state.customOrder || {};
+      window.localStorage.setItem(
+        RUNNER_WATCHLIST_STORAGE_KEY,
+        JSON.stringify(watchListArray || [])
+      );
+      window.localStorage.setItem(
+        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY,
+        JSON.stringify({
+          param: !!customOrderObj.param,
+          dataset: !!customOrderObj.dataset,
+        })
+      );
+    } catch (e) {
+      // ignore storage errors
+    }
+  };
+
+  hydrateWatchFromStorage = () => {
+    const { watchList, customOrder } = this.loadWatchFromStorage();
+    if ((watchList || []).length) {
+      this.setState({ watchList });
+    }
+    if (customOrder) {
+      this.setState({ customOrder });
+    }
   };
 
   saveParamYaml = () => {
@@ -730,6 +867,18 @@ class KedroRunManager extends Component {
         (node) => node.id === selectedKey
       );
       const displayName = paramNode?.name || selectedKey;
+      // Derive a live preview value from the YAML text; fallback to stored param
+      let previewValue = (this.state.params || {})[selectedKey];
+      try {
+        if (typeof this.state.yamlText === 'string') {
+          const parsed = this.parseYamlishValue(this.state.yamlText);
+          if (parsed !== undefined && parsed !== null) {
+            previewValue = parsed;
+          }
+        }
+      } catch (e) {
+        // ignore parse errors; fallback remains
+      }
       return (
         <div
           className="pipeline-metadata kedro pipeline-metadata--visible"
@@ -758,6 +907,24 @@ class KedroRunManager extends Component {
               <dt className="pipeline-metadata__label">Key:</dt>
               <dd className="pipeline-metadata__row">
                 <span className="pipeline-metadata__value">{selectedKey}</span>
+              </dd>
+              <dt className="pipeline-metadata__label">Value:</dt>
+              <dd className="pipeline-metadata__row">
+                {previewValue && typeof previewValue === 'object' ? (
+                  <div className="pipeline-metadata__preview-json">
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={previewValue}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <span className="pipeline-metadata__value">
+                    {String(previewValue)}
+                  </span>
+                )}
               </dd>
               <dt className="pipeline-metadata__label">YAML:</dt>
               <dd className="pipeline-metadata__row">
@@ -956,32 +1123,39 @@ class KedroRunManager extends Component {
       this.setState({ draggingWatch: null });
       return;
     }
-    this.setState((prev) => {
-      const list = [...(prev.watchList || [])];
-      const kind = targetKind;
-      // Extract the sequence of items of this kind in their current order
-      const kindItems = list.filter((item) => item.kind === kind);
-      const fromIndex = kindItems.findIndex(
-        (item) => item.id === draggingWatch.id
-      );
-      const toIndex = kindItems.findIndex((item) => item.id === targetId);
-      if (fromIndex === -1 || toIndex === -1) {
-        return { draggingWatch: null };
-      }
-      const reordered = [...kindItems];
-      const [moved] = reordered.splice(fromIndex, 1);
-      reordered.splice(toIndex, 0, moved);
-      // Rebuild the full list: replace items of this kind in encounter order with reordered
-      let i = 0;
-      const nextList = list.map((item) =>
-        item.kind === kind ? reordered[i++] : item
-      );
-      return {
-        watchList: nextList,
-        draggingWatch: null,
-        customOrder: { ...(prev.customOrder || {}), [kind]: true },
-      };
-    });
+    this.setState(
+      (prev) => {
+        const list = [...(prev.watchList || [])];
+        const kind = targetKind;
+        // Extract the sequence of items of this kind in their current order
+        const kindItems = list.filter((item) => item.kind === kind);
+        const fromIndex = kindItems.findIndex(
+          (item) => item.id === draggingWatch.id
+        );
+        const toIndex = kindItems.findIndex((item) => item.id === targetId);
+        if (fromIndex === -1 || toIndex === -1) {
+          return { draggingWatch: null };
+        }
+        const reordered = [...kindItems];
+        const [moved] = reordered.splice(fromIndex, 1);
+        reordered.splice(toIndex, 0, moved);
+        // Rebuild the full list: replace items of this kind in encounter order with reordered
+        let i = 0;
+        const nextList = list.map((item) =>
+          item.kind === kind ? reordered[i++] : item
+        );
+        const nextCustom = {
+          ...(prev.customOrder || {}),
+          [kind]: true,
+        };
+        return {
+          watchList: nextList,
+          draggingWatch: null,
+          customOrder: nextCustom,
+        };
+      },
+      () => this.saveWatchToStorage()
+    );
   };
 
   confirmAddSelected = () => {
@@ -1001,28 +1175,40 @@ class KedroRunManager extends Component {
       const dataset = (this.props.datasets || []).find((d) => d.id === id);
       return { kind, id, name: dataset?.name || id };
     });
-    this.setState((prev) => {
-      const existingKeys = new Set(
-        (prev.watchList || []).map((item) => `${item.kind}:${item.id}`)
-      );
-      const merged = [
-        ...(prev.watchList || []),
-        ...items.filter((item) => !existingKeys.has(`${item.kind}:${item.id}`)),
-      ];
-      return { watchList: merged, isWatchModalOpen: false, selectedToAdd: {} };
-    });
+    this.setState(
+      (prev) => {
+        const existingKeys = new Set(
+          (prev.watchList || []).map((item) => `${item.kind}:${item.id}`)
+        );
+        const merged = [
+          ...(prev.watchList || []),
+          ...items.filter(
+            (item) => !existingKeys.has(`${item.kind}:${item.id}`)
+          ),
+        ];
+        return {
+          watchList: merged,
+          isWatchModalOpen: false,
+          selectedToAdd: {},
+        };
+      },
+      () => this.saveWatchToStorage()
+    );
   };
 
   clearWatchList = () => {
-    this.setState({ watchList: [] });
+    this.setState({ watchList: [] }, () => this.saveWatchToStorage());
   };
 
   removeFromWatchList = (kind, id) => {
-    this.setState((prev) => ({
-      watchList: (prev.watchList || []).filter(
-        (item) => !(item.kind === kind && item.id === id)
-      ),
-    }));
+    this.setState(
+      (prev) => ({
+        watchList: (prev.watchList || []).filter(
+          (item) => !(item.kind === kind && item.id === id)
+        ),
+      }),
+      () => this.saveWatchToStorage()
+    );
   };
 
   onWatchItemClick = (item) => {
