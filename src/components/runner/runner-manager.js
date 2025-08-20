@@ -7,6 +7,7 @@ import MetaDataStats from '../metadata/metadata-stats';
 import NodeIcon from '../icons/node-icon';
 import JSONObject from '../json-object';
 import MetaData from '../metadata/metadata';
+import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
@@ -81,6 +82,8 @@ class KedroRunManager extends Component {
       isParamsModalOpen: false,
       // Aesthetic-only editor embedded at the bottom of MetaData
       metaEditText: '',
+      // Store edits keyed by watched parameter id -> edited value
+      editedParameters: {},
     };
 
     // Ref for the command input field
@@ -114,9 +117,17 @@ class KedroRunManager extends Component {
   };
 
   onMetaEditSave = () => {
-    // Aesthetic only: no-op
-    // eslint-disable-next-line no-console
-    console.log('[Runner] Save clicked for MetaData extra editor');
+    const { selectedParamKey, metaEditText } = this.state;
+    if (!selectedParamKey) {
+      return;
+    }
+    const parsed = this.parseYamlishValue(metaEditText);
+    this.setState((prev) => ({
+      editedParameters: {
+        ...(prev.editedParameters || {}),
+        [selectedParamKey]: parsed,
+      },
+    }));
   };
 
   componentDidMount() {
@@ -214,6 +225,33 @@ class KedroRunManager extends Component {
       });
     } catch (e) {
       // no-op: best-effort scrolling only
+    }
+
+    // If the watch list changes, refresh metadata for any parameter items
+    if (prevState.watchList !== this.state.watchList) {
+      this.refreshWatchParamsMetadata();
+      // Keep editedParameters in sync with current watch list keys
+      const watchKeys = new Set(
+        (this.state.watchList || [])
+          .filter((i) => i.kind === 'param')
+          .map((i) => i.id)
+      );
+      if (this.state.editedParameters) {
+        const pruned = Object.keys(this.state.editedParameters).reduce(
+          (acc, key) => {
+            if (watchKeys.has(key)) {
+              acc[key] = this.state.editedParameters[key];
+            }
+            return acc;
+          },
+          {}
+        );
+        if (
+          JSON.stringify(pruned) !== JSON.stringify(this.state.editedParameters)
+        ) {
+          this.setState({ editedParameters: pruned });
+        }
+      }
     }
   }
 
@@ -585,6 +623,10 @@ class KedroRunManager extends Component {
       (prev) => ({
         paramEdits: { ...(prev.paramEdits || {}), [selectedParamKey]: parsed },
         params: { ...(prev.params || {}), [selectedParamKey]: parsed },
+        editedParameters: {
+          ...(prev.editedParameters || {}),
+          [selectedParamKey]: parsed,
+        },
       }),
       () => this.updateCommandFromProps(this.props)
     );
@@ -596,119 +638,33 @@ class KedroRunManager extends Component {
     this.setState({ yamlText: this.toYamlString(value) });
   };
 
-  // YAML stringifier for display-only purposes (no anchors/refs, basic scalars)
+  // YAML stringifier using the 'yaml' package
   toYamlString(value) {
     try {
-      const dump = (val, indent = '') => {
-        const nextIndent = `${indent} `;
-        if (val === null || val === undefined) {
-          return 'null';
-        }
-        const valueType = typeof val;
-        if (valueType === 'number' || valueType === 'boolean') {
-          return String(val);
-        }
-        if (valueType === 'string') {
-          // Quote strings to be safe for YAML
-          return JSON.stringify(val);
-        }
-        if (Array.isArray(val)) {
-          if (!val.length) {
-            return '[]';
-          }
-          return val
-            .map((item) => {
-              const rendered = dump(item, nextIndent);
-              if (rendered.includes('\n')) {
-                // Multi-line item: place on new line and indent subsequent
-                const indented = rendered
-                  .split('\n')
-                  .map((line, i) => (i === 0 ? line : `${nextIndent}${line}`))
-                  .join('\n');
-                return `${indent}- ${indented}`;
-              }
-              return `${indent}- ${rendered}`;
-            })
-            .join('\n');
-        }
-        if (valueType === 'object') {
-          const keys = Object.keys(val);
-          if (!keys.length) {
-            return '{}';
-          }
-          return keys
-            .map((k) => {
-              const valueForKey = val[k];
-              const rendered = dump(valueForKey, nextIndent);
-              if (
-                typeof valueForKey === 'object' &&
-                valueForKey !== null &&
-                rendered.includes('\n')
-              ) {
-                return `${indent}${k}:\n${rendered
-                  .split('\n')
-                  .map((line) => `${nextIndent}${line}`)
-                  .join('\n')}`;
-              }
-              return `${indent}${k}: ${rendered}`;
-            })
-            .join('\n');
-        }
-        // Fallback
-        return JSON.stringify(val);
-      };
-      return dump(value, '');
+      return yamlStringify(value, { indent: 2, lineWidth: 0 });
     } catch (error) {
       return String(value);
     }
   }
 
-  // Lightweight YAML-ish parser to JS values
+  // YAML parser using the 'yaml' package (with safe fallbacks)
   parseYamlishValue(text) {
     if (text == null) {
       return '';
     }
-    const str = String(text).trim();
-    if (!str) {
+    const str = String(text);
+    if (!str.trim()) {
       return '';
     }
     try {
-      if (str.startsWith('{') || str.startsWith('[')) {
+      return yamlParse(str);
+    } catch (error) {
+      try {
         return JSON.parse(str);
+      } catch (error2) {
+        return str;
       }
-      if (
-        (str.startsWith('"') && str.endsWith('"')) ||
-        (str.startsWith("'") && str.endsWith("'"))
-      ) {
-        return JSON.parse(str.replace(/^'/, '"').replace(/'$/, '"'));
-      }
-    } catch (e) {
-      /* ignore */
     }
-    if (/^-?\d+(\.\d+)?$/.test(str)) {
-      return Number(str);
-    }
-    if (/^(true|false)$/i.test(str)) {
-      return /^true$/i.test(str);
-    }
-    if (/^null$/i.test(str)) {
-      return null;
-    }
-    const lines = str
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-    if (lines.every((line) => line.includes(':') && !line.startsWith('-'))) {
-      const obj = {};
-      lines.forEach((line) => {
-        const idx = line.indexOf(':');
-        const k = line.slice(0, idx).trim();
-        const vraw = line.slice(idx + 1).trim();
-        obj[k] = this.parseYamlishValue(vraw);
-      });
-      return obj;
-    }
-    return str;
   }
 
   // Resolve parameter value from metadata first, then Redux map, then local state
@@ -1233,8 +1189,29 @@ class KedroRunManager extends Component {
           selectedToAdd: {},
         };
       },
-      () => this.saveWatchToStorage()
+      () => {
+        this.saveWatchToStorage();
+        this.refreshWatchParamsMetadata();
+      }
     );
+  };
+
+  // Refresh metadata for all parameter nodes currently in the watch list
+  refreshWatchParamsMetadata = () => {
+    const list = this.state.watchList || [];
+    if (!list.length || !this.props.dispatch) {
+      return;
+    }
+    const paramIds = list
+      .filter((item) => item.kind === 'param')
+      .map((i) => i.id);
+    paramIds.forEach((id) => {
+      try {
+        this.props.dispatch(loadNodeData(id));
+      } catch (e) {
+        // ignore dispatch errors
+      }
+    });
   };
 
   clearWatchList = () => {
@@ -1369,10 +1346,7 @@ class KedroRunManager extends Component {
       );
     }
     const getParamPreview = (key) => {
-      const value =
-        (this.state.params && this.state.params[key]) !== undefined
-          ? this.state.params[key]
-          : (this.props.nodeParameters || {})[key];
+      const value = this.getParamValue(key);
       if (typeof value === 'undefined') {
         return '—';
       }
