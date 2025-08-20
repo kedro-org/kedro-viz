@@ -232,6 +232,5 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
         "Layers visualisation is disabled as circular dependency detected among layers. "
         "Circular dependency detected: %s. "
         "Please check the `layer` configuration in your catalog for the datasets to avoid circular references. "
-        "Layer dependencies found: %s"
     )
     assert call_args[0] == expected_message
