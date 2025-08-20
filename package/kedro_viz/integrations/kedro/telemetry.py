@@ -20,7 +20,9 @@ def get_heap_app_id(project_path: Path) -> Optional[str]:
     if not _IS_TELEMETRY_INSTALLED:  # pragma: no cover
         return None
 
-    if _check_for_telemetry_consent(project_path):
+    if _check_for_telemetry_consent(
+        project_path
+    ) is None or _check_for_telemetry_consent(project_path):
         return _get_heap_app_id()
     return None
 
