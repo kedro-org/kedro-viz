@@ -147,17 +147,29 @@
   grid-row: 2;
 }
 
-/* When metadata panel is visible, increase the page right padding
-   so the grid area shrinks uniformly and column ratio is preserved */
-.runner-manager--metadata-open {
-  padding-right: calc(24px + #{variables.$metadata-sidebar-width-open});
+/* Themed textarea for the MetaData extra editor block */
+.runner-meta-editor {
+  width: 100%;
+  min-height: 140px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--runner-border);
+  background: var(--color-bg-1);
+  color: var(--color-text);
+  font-family: var(
+    --font-family-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace
+  );
+  font-size: 12px;
+  resize: vertical;
 }
-
-/* Remove previous per-panel right padding adjustments if any */
-
-/* .runner-manager--metadata-open .runner-manager__editor,
-   .runner-manager--metadata-open .runner-manager__jobs-panel,
-   .runner-manager--metadata-open .runner-manager__control-panel { padding-right: 0; } */
 
 /* Stack everything on narrow screens */
 @media (width <= 1100px) {
@@ -583,9 +595,9 @@
   cursor: pointer;
   display: flex;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .watchlist-item__badge {
@@ -985,7 +997,8 @@
   color: var(--runner-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
-  max-width: 60%;
+  max-width: 100%;
+  display: block;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

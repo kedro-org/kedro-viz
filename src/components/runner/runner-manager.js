@@ -20,6 +20,8 @@ import { PIPELINE } from '../../config';
 import FlowChart from '../flowchart';
 import WatchListDialog from './watch-list-dialog';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
+// Sample YAML for the Runner metadata extra editor (aesthetic only)
+const RUNNER_PARAM_SAMPLE_YAML = `# Example parameters\nmodel:\n  learning_rate: 0.01\n  dropout: 0.1\netl:\n  batch_size: 128`;
 
 // Key for persisting runner jobs across page changes
 const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
@@ -78,6 +80,8 @@ class KedroRunManager extends Component {
       paramOriginals: {},
       paramEdits: {},
       isParamsModalOpen: false,
+      // Aesthetic-only editor embedded at the bottom of MetaData
+      metaEditText: RUNNER_PARAM_SAMPLE_YAML,
     };
 
     // Ref for the command input field
@@ -94,6 +98,21 @@ class KedroRunManager extends Component {
     // Track last applied selected id from URL to avoid redundant work
     this._lastSid = null;
   }
+
+  // --- Runner-only aesthetic editor (inside MetaData extra slot) ---
+  onMetaEditChange = (e) => {
+    this.setState({ metaEditText: e.target.value });
+  };
+
+  onMetaEditReset = () => {
+    this.setState({ metaEditText: RUNNER_PARAM_SAMPLE_YAML });
+  };
+
+  onMetaEditSave = () => {
+    // Aesthetic only: no-op
+    // eslint-disable-next-line no-console
+    console.log('[Runner] Save clicked for MetaData extra editor');
+  };
 
   componentDidMount() {
     // Rehydrate any persisted jobs and resume polling where needed
@@ -893,63 +912,35 @@ class KedroRunManager extends Component {
 
     // For parameters, use the shared MetaData component; any dataset-specific panel remains below
     if (metadataMode === 'param') {
-      return <MetaData />;
-    }
-
-    if (metadataMode === 'dataset' && selectedDataset) {
-      const { name, fullName, type, icon, filepath, stats, datasetType } =
-        selectedDataset;
-      return (
-        <div
-          className="pipeline-metadata kedro pipeline-metadata--visible"
-          role="dialog"
-          aria-label="Dataset details"
-        >
-          <div className="pipeline-metadata__header-toolbox">
-            <div className="pipeline-metadata__header">
-              <h2 className="pipeline-metadata__title">{name}</h2>
-            </div>
-            <button
-              className="pipeline-metadata__close-button"
-              onClick={this.closeMetadata}
-              aria-label="Close"
-            >
-              ×
+      const extra = (
+        <div style={{ margin: '0 36px 24px' }}>
+          <h3
+            className="pipeline-metadata__title pipeline-metadata__title--small"
+            style={{ margin: '0 0 8px' }}
+          >
+            Edit parameters
+          </h3>
+          <textarea
+            className="runner-meta-editor"
+            value={this.state.metaEditText}
+            onChange={this.onMetaEditChange}
+            spellCheck={false}
+          />
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            <button className="btn btn--primary" onClick={this.onMetaEditSave}>
+              Save
             </button>
-          </div>
-          <div className="pipeline-metadata__list">
-            <dl className="pipeline-metadata__properties">
-              <dt className="pipeline-metadata__label">Type:</dt>
-              <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value">dataset</span>
-              </dd>
-              <dt className="pipeline-metadata__label">Dataset Type:</dt>
-              <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value pipeline-metadata__value--kind-type">
-                  {datasetType || type}
-                </span>
-              </dd>
-              <dt className="pipeline-metadata__label">File Path:</dt>
-              <dd className="pipeline-metadata__row">
-                <span className="pipeline-metadata__value pipeline-metadata__value--kind-path">
-                  {filepath || 'N/A'}
-                </span>
-              </dd>
-              {stats && (
-                <>
-                  <span
-                    className="pipeline-metadata__label"
-                    data-label="Dataset statistics:"
-                  >
-                    Dataset statistics:
-                  </span>
-                  <MetaDataStats stats={stats} />
-                </>
-              )}
-            </dl>
+            <button className="btn" onClick={this.onMetaEditReset}>
+              Reset
+            </button>
           </div>
         </div>
       );
+      return <MetaData extraComponent={extra} />;
+    }
+
+    if (metadataMode === 'dataset' && selectedDataset) {
+      return <MetaData />;
     }
 
     return null;

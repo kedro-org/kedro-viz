@@ -46,6 +46,8 @@ const MetaData = ({
   getDatasetError,
   getNodeError,
   view,
+  // Optional: allow callers (like Runner) to inject a generic component/slot
+  extraComponent,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
 
@@ -413,6 +415,9 @@ const MetaData = ({
                 </>
               )}
             </div>
+            {extraComponent ? (
+              <div className="pipeline-metadata__extra">{extraComponent}</div>
+            ) : null}
           </>
         )}
       </div>
