@@ -192,7 +192,7 @@ class KedroRunManager extends Component {
             currMeta !== prevMeta &&
             currMeta.id === this.state.selectedParamKey
           ) {
-            const val = this.getParamValue(this.state.selectedParamKey);
+            const val = this.getEditedParamValue(this.state.selectedParamKey);
             const text = this.toYamlString(val) || '';
             if (
               this.state.metaEditText !== text ||
@@ -669,35 +669,40 @@ class KedroRunManager extends Component {
 
   // Resolve parameter value from metadata first, then Redux map, then local state
   getParamValue = (paramKey) => {
-    const meta = this.props.clickedNodeMetaData;
-    if (
-      meta &&
-      meta.id === paramKey &&
-      Object.prototype.hasOwnProperty.call(meta, 'parameters') &&
-      typeof meta.parameters !== 'undefined'
-    ) {
-      const metaParam = meta.parameters;
-      // When metadata shows parameters as a dict keyed by name, resolve the actual value.
-      if (
-        metaParam &&
-        typeof metaParam === 'object' &&
-        !Array.isArray(metaParam)
-      ) {
-        // A parameter node and the dict has a single entry, return that value
-        const keys = Object.keys(metaParam);
-        if (meta.type === 'parameters' && keys.length === 1) {
-          return metaParam[keys[0]];
-        }
-        // Fall through: could be a task node dict; don't return the whole object here
-      }
-      return metaParam;
-    }
-    const reduxMap = this.props.nodeParameters || {};
+    const reduxMap = (this.props && this.props.nodeParameters) || {};
     if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
-      return reduxMap[paramKey];
+      const val = reduxMap[paramKey];
+      // Unwrap containers or maps
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        // Prefer explicit property if present
+        if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
+          return val[paramKey];
+        }
+        const keys = Object.keys(val);
+        if (keys.length === 1) {
+          return val[keys[0]];
+        }
+      }
+      // Some sources may return the key name itself; fallback to local map
+      if (typeof val === 'string' && val === paramKey) {
+        const localParams = this.state.params || {};
+        if (Object.prototype.hasOwnProperty.call(localParams, paramKey)) {
+          return localParams[paramKey];
+        }
+      }
+      return val;
     }
     const local = this.state.params || {};
     return local[paramKey];
+  };
+
+  // Prefer existing editedParameters entry, fallback to resolved value
+  getEditedParamValue = (paramKey) => {
+    const edited = this.state.editedParameters || {};
+    if (Object.prototype.hasOwnProperty.call(edited, paramKey)) {
+      return edited[paramKey];
+    }
+    return this.getParamValue(paramKey);
   };
 
   // CLI-safe value formatting
@@ -1254,20 +1259,29 @@ class KedroRunManager extends Component {
   };
 
   openParamEditor = (paramKey) => {
-    const value = this.getParamValue(paramKey);
+    const existing = this.state.editedParameters || {};
+    const value = Object.prototype.hasOwnProperty.call(existing, paramKey)
+      ? existing[paramKey]
+      : this.getParamValue(paramKey);
     // Dispatch node click to populate Redux metadata like flowchart/workflow
     if (this.props.dispatch) {
       // Ensure metadata is loaded if needed, then set clicked
       this.props.dispatch(loadNodeData(paramKey));
       this.props.dispatch(toggleNodeClicked(paramKey));
     }
-    this.setState({
+    this.setState((prev) => ({
       showMetadata: true,
       metadataMode: 'param',
       selectedParamKey: paramKey,
       yamlText: this.toYamlString(value),
       metaEditText: this.toYamlString(value) || '',
-    });
+      editedParameters: Object.prototype.hasOwnProperty.call(
+        prev.editedParameters || {},
+        paramKey
+      )
+        ? prev.editedParameters
+        : { ...(prev.editedParameters || {}), [paramKey]: value },
+    }));
   };
 
   // Handle flowchart node clicks inside the watch modal to toggle selection
@@ -1346,7 +1360,7 @@ class KedroRunManager extends Component {
       );
     }
     const getParamPreview = (key) => {
-      const value = this.getParamValue(key);
+      const value = this.getEditedParamValue(key);
       if (typeof value === 'undefined') {
         return '—';
       }
