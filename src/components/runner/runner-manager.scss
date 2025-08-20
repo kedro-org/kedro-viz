@@ -450,6 +450,29 @@
 .runner-manager__footer {
   margin-top: 16px;
   color: var(--runner-muted);
+
+  /* Legend at the bottom of the watch list */
+  .watchlist-legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--runner-muted-text, var(--color-text-alt));
+    font-size: 12px;
+  }
+
+  .watchlist-legend__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 2px solid var(--parameter-accent);
+    background: transparent;
+    display: inline-block;
+  }
+
+  .watchlist-legend__text {
+    line-height: 1;
+  }
 }
 
 /* Simple modal for full logs */
@@ -586,6 +609,10 @@
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   padding: 8px;
+}
+
+.watchlist-item.watchlist-item--edited {
+  border: 2px solid var(--parameter-accent);
 }
 
 .watchlist-item__main {

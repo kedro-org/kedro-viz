@@ -84,6 +84,12 @@ class KedroRunManager extends Component {
       metaEditText: '',
       // Store edits keyed by watched parameter id -> edited value
       editedParameters: {},
+      // Map of strictly changed params in the watch list
+      strictlyChanged: {},
+      // Toast notification
+      toastMessage: '',
+      toastVisible: false,
+      changesDialogSelectedKey: null,
     };
 
     // Ref for the command input field
@@ -99,6 +105,8 @@ class KedroRunManager extends Component {
 
     // Track last applied selected id from URL to avoid redundant work
     this._lastSid = null;
+    // Timer for toast auto-hide
+    this._toastTimer = null;
   }
 
   // --- Runner-only aesthetic editor (inside MetaData extra slot) ---
@@ -112,8 +120,44 @@ class KedroRunManager extends Component {
       this.setState({ metaEditText: '' });
       return;
     }
-    const value = this.getParamValue(selectedParamKey);
-    this.setState({ metaEditText: this.toYamlString(value) });
+    // Determine default/original value: use captured baseline if available, else resolve current metadata value
+    const originals = this.state.paramOriginals || {};
+    const defaultVal = Object.prototype.hasOwnProperty.call(
+      originals,
+      selectedParamKey
+    )
+      ? originals[selectedParamKey]
+      : this.getParamValue(selectedParamKey);
+    const yamlDefault = this.toYamlString(defaultVal);
+    this.setState(
+      (prev) => {
+        const nextParams = { ...(prev.params || {}) };
+        nextParams[selectedParamKey] = defaultVal;
+        const nextParamEdits = { ...(prev.paramEdits || {}) };
+        if (
+          Object.prototype.hasOwnProperty.call(nextParamEdits, selectedParamKey)
+        ) {
+          delete nextParamEdits[selectedParamKey];
+        }
+        const nextEdited = { ...(prev.editedParameters || {}) };
+        if (
+          Object.prototype.hasOwnProperty.call(nextEdited, selectedParamKey)
+        ) {
+          delete nextEdited[selectedParamKey];
+        }
+        return {
+          params: nextParams,
+          paramEdits: nextParamEdits,
+          editedParameters: nextEdited,
+          yamlText: yamlDefault,
+          metaEditText: yamlDefault,
+        };
+      },
+      () => {
+        this.updateCommandFromProps(this.props);
+        this.showToast('Parameter reset');
+      }
+    );
   };
 
   onMetaEditSave = () => {
@@ -121,13 +165,72 @@ class KedroRunManager extends Component {
     if (!selectedParamKey) {
       return;
     }
+    // Capture original baseline if missing before applying the edit
+    this.ensureOriginalsFor(selectedParamKey);
     const parsed = this.parseYamlishValue(metaEditText);
-    this.setState((prev) => ({
-      editedParameters: {
-        ...(prev.editedParameters || {}),
-        [selectedParamKey]: parsed,
-      },
-    }));
+    this.setState(
+      (prev) => ({
+        editedParameters: {
+          ...(prev.editedParameters || {}),
+          [selectedParamKey]: parsed,
+        },
+      }),
+      () => this.showToast('Parameter updated')
+    );
+  };
+
+  // --- Toast helpers ---
+  showToast = (message, duration = 2000) => {
+    try {
+      if (this._toastTimer) {
+        clearTimeout(this._toastTimer);
+        this._toastTimer = null;
+      }
+    } catch (e) {
+      // noop
+    }
+    this.setState({ toastMessage: String(message || ''), toastVisible: true });
+    this._toastTimer = setTimeout(() => {
+      this.hideToast();
+    }, Math.max(0, duration));
+  };
+
+  hideToast = () => {
+    try {
+      if (this._toastTimer) {
+        clearTimeout(this._toastTimer);
+        this._toastTimer = null;
+      }
+    } catch (e) {
+      // noop
+    }
+    this.setState({ toastVisible: false });
+  };
+
+  // Ensure we have baseline originals captured for one or more param keys
+  ensureOriginalsFor = (keys) => {
+    if (!keys) {
+      return;
+    }
+    const arr = Array.isArray(keys) ? keys : [keys];
+    const existing = this.state.paramOriginals || {};
+    const additions = {};
+    arr.forEach((key) => {
+      if (!key) {
+        return;
+      }
+      if (!Object.prototype.hasOwnProperty.call(existing, key)) {
+        const resolved = this.getParamValue(key);
+        if (typeof resolved !== 'undefined') {
+          additions[key] = resolved;
+        }
+      }
+    });
+    if (Object.keys(additions).length) {
+      this.setState((prev) => ({
+        paramOriginals: { ...(prev.paramOriginals || {}), ...additions },
+      }));
+    }
   };
 
   componentDidMount() {
@@ -144,6 +247,8 @@ class KedroRunManager extends Component {
       this.setState({ paramOriginals: { ...(this.state.params || {}) } });
     }
     this.updateCommandFromProps(this.props);
+    // Initial compute of strictly changed items
+    this.updateStrictlyChanged();
 
     // Sync metadata panel with `sid` from the URL, like the flowchart page
     this.syncMetadataFromSid();
@@ -230,6 +335,15 @@ class KedroRunManager extends Component {
     // If the watch list changes, refresh metadata for any parameter items
     if (prevState.watchList !== this.state.watchList) {
       this.refreshWatchParamsMetadata();
+      // Snapshot originals for any newly added watched params
+      try {
+        const paramKeys = (this.state.watchList || [])
+          .filter((i) => i.kind === 'param')
+          .map((i) => i.id);
+        this.ensureOriginalsFor(paramKeys);
+      } catch (e) {
+        // noop
+      }
       // Keep editedParameters in sync with current watch list keys
       const watchKeys = new Set(
         (this.state.watchList || [])
@@ -252,8 +366,64 @@ class KedroRunManager extends Component {
           this.setState({ editedParameters: pruned });
         }
       }
+      // Recompute strictly-changed map when watch list updates
+      this.updateStrictlyChanged();
+    }
+
+    // Recompute when edited values or params change
+    if (
+      prevState.editedParameters !== this.state.editedParameters ||
+      prevState.params !== this.state.params
+    ) {
+      this.updateStrictlyChanged();
+    }
+
+    // Capture originals when metadata parameters map updates (lazy load from Redux)
+    if (prevProps.nodeParameters !== this.props.nodeParameters) {
+      try {
+        const keys = (this.state.watchList || [])
+          .filter((i) => i.kind === 'param')
+          .map((i) => i.id);
+        this.ensureOriginalsFor(keys);
+      } catch (e) {
+        // noop
+      }
     }
   }
+
+  // Build a map of param keys in watch list that differ from originals
+  computeStrictlyChanged = () => {
+    const result = {};
+    const watchParamKeys = (this.state.watchList || [])
+      .filter((i) => i.kind === 'param')
+      .map((i) => i.id);
+    if (!watchParamKeys.length) {
+      return result;
+    }
+    const originals = this.state.paramOriginals || {};
+    watchParamKeys.forEach((key) => {
+      const orig = Object.prototype.hasOwnProperty.call(originals, key)
+        ? originals[key]
+        : this.getParamValue(key);
+      const current = this.getEditedParamValue(key);
+      if (JSON.stringify(orig) !== JSON.stringify(current)) {
+        result[key] = true;
+      }
+    });
+    return result;
+  };
+
+  updateStrictlyChanged = () => {
+    try {
+      const next = this.computeStrictlyChanged();
+      const prev = this.state.strictlyChanged || {};
+      if (JSON.stringify(next) !== JSON.stringify(prev)) {
+        this.setState({ strictlyChanged: next });
+      }
+    } catch (e) {
+      // noop
+    }
+  };
 
   componentWillUnmount() {
     // Clear any active pollers
@@ -609,7 +779,16 @@ class KedroRunManager extends Component {
   hydrateWatchFromStorage = () => {
     const { watchList, customOrder } = this.loadWatchFromStorage();
     if ((watchList || []).length) {
-      this.setState({ watchList });
+      this.setState({ watchList }, () => {
+        try {
+          const keys = (this.state.watchList || [])
+            .filter((i) => i.kind === 'param')
+            .map((i) => i.id);
+          this.ensureOriginalsFor(keys);
+        } catch (e) {
+          // noop
+        }
+      });
     }
     if (customOrder) {
       this.setState({ customOrder });
@@ -618,6 +797,10 @@ class KedroRunManager extends Component {
 
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
+    // Capture original baseline if missing before applying the edit
+    if (selectedParamKey) {
+      this.ensureOriginalsFor(selectedParamKey);
+    }
     const parsed = this.parseYamlishValue(yamlText);
     this.setState(
       (prev) => ({
@@ -628,7 +811,10 @@ class KedroRunManager extends Component {
           [selectedParamKey]: parsed,
         },
       }),
-      () => this.updateCommandFromProps(this.props)
+      () => {
+        this.updateCommandFromProps(this.props);
+        this.showToast('Parameter updated');
+      }
     );
   };
 
@@ -669,6 +855,22 @@ class KedroRunManager extends Component {
 
   // Resolve parameter value from metadata first, then Redux map, then local state
   getParamValue = (paramKey) => {
+    // Prefer clicked node metadata (authoritative for the selected node)
+    try {
+      const meta = this.props && this.props.clickedNodeMetaData;
+      if (
+        meta &&
+        meta.parameters &&
+        Object.prototype.hasOwnProperty.call(meta.parameters, paramKey)
+      ) {
+        const metaVal = meta.parameters[paramKey];
+        if (typeof metaVal !== 'undefined') {
+          return metaVal;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
     const reduxMap = (this.props && this.props.nodeParameters) || {};
     if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
       const val = reduxMap[paramKey];
@@ -947,6 +1149,28 @@ class KedroRunManager extends Component {
     });
   };
 
+  // Open the control-panel Parameter Changes dialog with initial selection
+  openParamsDialog = () => {
+    try {
+      const paramItems = (this.state.watchList || []).filter(
+        (i) => i.kind === 'param'
+      );
+      const keys = paramItems.map((i) => i.id);
+      // snapshot originals for any missing keys
+      this.ensureOriginalsFor(keys);
+      const changedKeys = Object.keys(this.state.strictlyChanged || {}).filter(
+        (k) => keys.includes(k)
+      );
+      const initial = changedKeys[0] || keys[0] || null;
+      this.setState({
+        isParamsModalOpen: true,
+        paramsDialogSelectedKey: initial,
+      });
+    } catch (e) {
+      this.setState({ isParamsModalOpen: true });
+    }
+  };
+
   // Update URL to reflect selected node id (sid) for shareable/back-nav parity
   setSidInUrl = (nodeId) => {
     if (!nodeId) {
@@ -1197,6 +1421,14 @@ class KedroRunManager extends Component {
       () => {
         this.saveWatchToStorage();
         this.refreshWatchParamsMetadata();
+        try {
+          const keys = (this.state.watchList || [])
+            .filter((i) => i.kind === 'param')
+            .map((i) => i.id);
+          this.ensureOriginalsFor(keys);
+        } catch (e) {
+          // noop
+        }
       }
     );
   };
@@ -1220,7 +1452,18 @@ class KedroRunManager extends Component {
   };
 
   clearWatchList = () => {
-    this.setState({ watchList: [] }, () => this.saveWatchToStorage());
+    this.setState(
+      {
+        watchList: [],
+        editedParameters: {},
+        paramEdits: {},
+        strictlyChanged: {},
+      },
+      () => {
+        this.saveWatchToStorage();
+        this.updateCommandFromProps(this.props);
+      }
+    );
   };
 
   removeFromWatchList = (kind, id) => {
@@ -1259,6 +1502,8 @@ class KedroRunManager extends Component {
   };
 
   openParamEditor = (paramKey) => {
+    // Capture original if missing
+    this.ensureOriginalsFor(paramKey);
     const existing = this.state.editedParameters || {};
     const value = Object.prototype.hasOwnProperty.call(existing, paramKey)
       ? existing[paramKey]
@@ -1368,6 +1613,9 @@ class KedroRunManager extends Component {
       const firstLine = String(text).split(/\r?\n/)[0];
       return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
     };
+    const hasParamChanges =
+      watchTab === 'parameters' &&
+      Object.keys(this.state.strictlyChanged || {}).length > 0;
     return (
       <div className="runner-panel runner-panel--watchlist">
         <div className="runner-panel__toolbar">
@@ -1402,7 +1650,12 @@ class KedroRunManager extends Component {
             {itemsToShow.map((item) => (
               <li
                 key={`${item.kind}:${item.id}`}
-                className="watchlist-item"
+                className={`watchlist-item ${
+                  item.kind === 'param' &&
+                  (this.state.strictlyChanged || {})[item.id]
+                    ? 'watchlist-item--edited'
+                    : ''
+                }`}
                 draggable
                 onDragStart={() => this.startDragWatch(item.kind, item.id)}
                 onDragOver={this.allowDropWatch}
@@ -1486,6 +1739,8 @@ class KedroRunManager extends Component {
       .join(' ');
 
     const { activeTab } = this.state;
+    const hasParamChanges =
+      Object.keys(this.state.strictlyChanged || {}).length > 0;
 
     return (
       <>
@@ -1533,19 +1788,51 @@ class KedroRunManager extends Component {
                     defaultValue="kedro run"
                   />
                 </div>
-                {/* Additional controls/configuration can go here */}
-              </div>
-              <div className="runner-manager__control-footer">
-                <div className="runner-manager__actions">
-                  {this.getParamsOverrideString() && (
-                    <button
-                      className="btn"
-                      onClick={() => this.setState({ isParamsModalOpen: true })}
-                    >
+                <div
+                  className="control-row"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <label className="control-row__label">Pipeline</label>
+                    <div className="control-row__value">
+                      {this.props.activePipeline || PIPELINE.DEFAULT}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <label className="control-row__label">Tags</label>
+                    <div className="control-row__value">
+                      {(this.props.selectedTags || []).length
+                        ? (this.props.selectedTags || []).join(', ')
+                        : '—'}
+                    </div>
+                  </div>
+                </div>
+                {hasParamChanges && (
+                  <div className="control-row">
+                    <button className="btn" onClick={this.openParamsDialog}>
                       Show param changes
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
+              <div className="runner-manager__control-footer">
+                <div className="runner-manager__actions" />
 
                 <div className="runner-manager__hints">
                   <small>
@@ -1767,6 +2054,28 @@ class KedroRunManager extends Component {
 
           {this.renderMetadataPanel()}
           {this.renderWatchModal()}
+          {this.state.toastVisible && (
+            <div
+              className="runner-toast"
+              role="status"
+              aria-live="polite"
+              style={{
+                position: 'fixed',
+                right: '16px',
+                bottom: '16px',
+                background: 'var(--color-bg-alt)',
+                color: 'var(--color-text-alt)',
+                padding: '10px 12px',
+                borderRadius: '6px',
+                boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+                zIndex: 9999,
+                maxWidth: '50vw',
+              }}
+              onClick={this.hideToast}
+            >
+              {this.state.toastMessage || 'Saved'}
+            </div>
+          )}
           {this.state.isClearJobsModalOpen && (
             <div
               className="runner-logs-modal"
@@ -1826,9 +2135,121 @@ class KedroRunManager extends Component {
                   </button>
                 </div>
                 <div className="runner-logs-modal__body">
-                  <pre>
-                    {this.getParamsOverrideString() || 'No parameter changes.'}
-                  </pre>
+                  {(() => {
+                    const paramItems = (this.state.watchList || []).filter(
+                      (i) => i.kind === 'param'
+                    );
+                    if (!paramItems.length) {
+                      return <div>No parameters in the watch list.</div>;
+                    }
+                    const selectedKey =
+                      this.state.paramsDialogSelectedKey || paramItems[0].id;
+                    const onSelect = (e) =>
+                      this.setState({
+                        paramsDialogSelectedKey: e.target.value,
+                      });
+                    const originals = this.state.paramOriginals || {};
+                    const orig = Object.prototype.hasOwnProperty.call(
+                      originals,
+                      selectedKey
+                    )
+                      ? originals[selectedKey]
+                      : this.getParamValue(selectedKey);
+                    const curr = this.getEditedParamValue(selectedKey);
+                    const equal = JSON.stringify(orig) === JSON.stringify(curr);
+                    const cliPlaceholder = `--params "${selectedKey}=<edited-value>"`;
+                    return (
+                      <div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'center',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          <label htmlFor="param-changes-select">
+                            Parameter:
+                          </label>
+                          <select
+                            id="param-changes-select"
+                            value={selectedKey}
+                            onChange={onSelect}
+                            style={{ maxWidth: '100%' }}
+                          >
+                            {paramItems.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                {item.name || item.id}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div
+                          style={{ fontFamily: 'monospace', fontSize: '12px' }}
+                        >
+                          Key: {selectedKey}
+                        </div>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: '12px',
+                            marginTop: '8px',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{ fontWeight: 600, marginBottom: '4px' }}
+                            >
+                              Original
+                            </div>
+                            <pre
+                              style={{
+                                whiteSpace: 'pre-wrap',
+                                background: 'var(--color-bg)',
+                                color: 'var(--color-text)',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                maxHeight: '40vh',
+                                overflow: 'auto',
+                              }}
+                            >
+                              {this.toYamlString(orig) || ''}
+                            </pre>
+                          </div>
+                          <div>
+                            <div
+                              style={{ fontWeight: 600, marginBottom: '4px' }}
+                            >
+                              Current
+                            </div>
+                            <pre
+                              style={{
+                                whiteSpace: 'pre-wrap',
+                                background: 'var(--color-bg)',
+                                color: 'var(--color-text)',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                maxHeight: '40vh',
+                                overflow: 'auto',
+                              }}
+                            >
+                              {this.toYamlString(curr) || ''}
+                            </pre>
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '8px', fontSize: '12px' }}>
+                          Different: {equal ? 'No' : 'Yes'}
+                        </div>
+                        <div style={{ marginTop: '8px' }}>
+                          <div style={{ fontWeight: 600, marginBottom: '4px' }}>
+                            CLI placeholder
+                          </div>
+                          <code>{cliPlaceholder}</code>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="runner-logs-modal__footer">
                   <button
