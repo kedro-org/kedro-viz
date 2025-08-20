@@ -20,8 +20,7 @@ import { PIPELINE } from '../../config';
 import FlowChart from '../flowchart';
 import WatchListDialog from './watch-list-dialog';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
-// Sample YAML for the Runner metadata extra editor (aesthetic only)
-const RUNNER_PARAM_SAMPLE_YAML = `# Example parameters\nmodel:\n  learning_rate: 0.01\n  dropout: 0.1\netl:\n  batch_size: 128`;
+import { getClickedNodeMetaData } from '../../selectors/metadata';
 
 // Key for persisting runner jobs across page changes
 const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
@@ -81,7 +80,7 @@ class KedroRunManager extends Component {
       paramEdits: {},
       isParamsModalOpen: false,
       // Aesthetic-only editor embedded at the bottom of MetaData
-      metaEditText: RUNNER_PARAM_SAMPLE_YAML,
+      metaEditText: '',
     };
 
     // Ref for the command input field
@@ -105,7 +104,13 @@ class KedroRunManager extends Component {
   };
 
   onMetaEditReset = () => {
-    this.setState({ metaEditText: RUNNER_PARAM_SAMPLE_YAML });
+    const { selectedParamKey } = this.state;
+    if (!selectedParamKey) {
+      this.setState({ metaEditText: '' });
+      return;
+    }
+    const value = this.getParamValue(selectedParamKey);
+    this.setState({ metaEditText: this.toYamlString(value) });
   };
 
   onMetaEditSave = () => {
@@ -163,6 +168,29 @@ class KedroRunManager extends Component {
       const prevMap = new Map(prevJobs.map((j) => [j.jobId, j]));
       currJobs.forEach((job) => {
         const prevJob = prevMap.get(job.jobId);
+
+        // Sync parameter editor once clicked metadata is available/updated
+        if (
+          this.state.metadataMode === 'param' &&
+          this.state.selectedParamKey
+        ) {
+          const prevMeta = prevProps.clickedNodeMetaData;
+          const currMeta = this.props.clickedNodeMetaData;
+          if (
+            currMeta &&
+            currMeta !== prevMeta &&
+            currMeta.id === this.state.selectedParamKey
+          ) {
+            const val = this.getParamValue(this.state.selectedParamKey);
+            const text = this.toYamlString(val) || '';
+            if (
+              this.state.metaEditText !== text ||
+              this.state.yamlText !== text
+            ) {
+              this.setState({ metaEditText: text, yamlText: text });
+            }
+          }
+        }
         const prevLogs = prevJob ? prevJob.logs : '';
         const logsChanged = prevJob ? prevLogs !== job.logs : !!job.logs;
         const wasExpanded =
@@ -233,6 +261,7 @@ class KedroRunManager extends Component {
       // Trigger lazy load like flowchart so metadata exists
       if (this.props.dispatch) {
         this.props.dispatch(loadNodeData(sid));
+        this.props.dispatch(toggleNodeClicked(sid));
       }
       this.openParamEditor(sid);
       return;
@@ -244,6 +273,7 @@ class KedroRunManager extends Component {
       this._lastSid = sid;
       if (this.props.dispatch) {
         this.props.dispatch(loadNodeData(sid));
+        this.props.dispatch(toggleNodeClicked(sid));
       }
       this.openDatasetDetails(datasetNode);
       return;
@@ -562,29 +592,74 @@ class KedroRunManager extends Component {
 
   resetParamYaml = () => {
     const { selectedParamKey } = this.state;
-    const value =
-      (this.state.params && this.state.params[selectedParamKey]) !== undefined
-        ? this.state.params[selectedParamKey]
-        : (this.props.nodeParameters || {})[selectedParamKey];
+    const value = this.getParamValue(selectedParamKey);
     this.setState({ yamlText: this.toYamlString(value) });
   };
 
-  // Very lightweight YAML-ish stringifier for display-only purposes
-  toYamlString(obj) {
+  // YAML stringifier for display-only purposes (no anchors/refs, basic scalars)
+  toYamlString(value) {
     try {
-      if (obj && typeof obj === 'object') {
-        return Object.entries(obj)
-          .map(
-            ([key, value]) =>
-              `${key}: ${
-                typeof value === 'object' ? JSON.stringify(value) : value
-              }`
-          )
-          .join('\n');
-      }
-      return String(obj);
+      const dump = (val, indent = '') => {
+        const nextIndent = `${indent} `;
+        if (val === null || val === undefined) {
+          return 'null';
+        }
+        const valueType = typeof val;
+        if (valueType === 'number' || valueType === 'boolean') {
+          return String(val);
+        }
+        if (valueType === 'string') {
+          // Quote strings to be safe for YAML
+          return JSON.stringify(val);
+        }
+        if (Array.isArray(val)) {
+          if (!val.length) {
+            return '[]';
+          }
+          return val
+            .map((item) => {
+              const rendered = dump(item, nextIndent);
+              if (rendered.includes('\n')) {
+                // Multi-line item: place on new line and indent subsequent
+                const indented = rendered
+                  .split('\n')
+                  .map((line, i) => (i === 0 ? line : `${nextIndent}${line}`))
+                  .join('\n');
+                return `${indent}- ${indented}`;
+              }
+              return `${indent}- ${rendered}`;
+            })
+            .join('\n');
+        }
+        if (valueType === 'object') {
+          const keys = Object.keys(val);
+          if (!keys.length) {
+            return '{}';
+          }
+          return keys
+            .map((k) => {
+              const valueForKey = val[k];
+              const rendered = dump(valueForKey, nextIndent);
+              if (
+                typeof valueForKey === 'object' &&
+                valueForKey !== null &&
+                rendered.includes('\n')
+              ) {
+                return `${indent}${k}:\n${rendered
+                  .split('\n')
+                  .map((line) => `${nextIndent}${line}`)
+                  .join('\n')}`;
+              }
+              return `${indent}${k}: ${rendered}`;
+            })
+            .join('\n');
+        }
+        // Fallback
+        return JSON.stringify(val);
+      };
+      return dump(value, '');
     } catch (error) {
-      return String(obj);
+      return String(value);
     }
   }
 
@@ -635,6 +710,39 @@ class KedroRunManager extends Component {
     }
     return str;
   }
+
+  // Resolve parameter value from metadata first, then Redux map, then local state
+  getParamValue = (paramKey) => {
+    const meta = this.props.clickedNodeMetaData;
+    if (
+      meta &&
+      meta.id === paramKey &&
+      Object.prototype.hasOwnProperty.call(meta, 'parameters') &&
+      typeof meta.parameters !== 'undefined'
+    ) {
+      const metaParam = meta.parameters;
+      // When metadata shows parameters as a dict keyed by name, resolve the actual value.
+      if (
+        metaParam &&
+        typeof metaParam === 'object' &&
+        !Array.isArray(metaParam)
+      ) {
+        // A parameter node and the dict has a single entry, return that value
+        const keys = Object.keys(metaParam);
+        if (meta.type === 'parameters' && keys.length === 1) {
+          return metaParam[keys[0]];
+        }
+        // Fall through: could be a task node dict; don't return the whole object here
+      }
+      return metaParam;
+    }
+    const reduxMap = this.props.nodeParameters || {};
+    if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
+      return reduxMap[paramKey];
+    }
+    const local = this.state.params || {};
+    return local[paramKey];
+  };
 
   // CLI-safe value formatting
   formatParamValueForCli = (value) => {
@@ -1150,12 +1258,14 @@ class KedroRunManager extends Component {
       this.setSidInUrl(item.id);
       if (this.props.dispatch) {
         this.props.dispatch(loadNodeData(item.id));
+        this.props.dispatch(toggleNodeClicked(item.id));
       }
       this.openParamEditor(item.id);
     } else if (item.kind === 'dataset') {
       this.setSidInUrl(item.id);
       if (this.props.dispatch) {
         this.props.dispatch(loadNodeData(item.id));
+        this.props.dispatch(toggleNodeClicked(item.id));
       }
       const dataset = (this.props.datasets || []).find(
         (datasetItem) => datasetItem.id === item.id
@@ -1167,20 +1277,19 @@ class KedroRunManager extends Component {
   };
 
   openParamEditor = (paramKey) => {
-    const value =
-      (this.state.params && this.state.params[paramKey]) !== undefined
-        ? this.state.params[paramKey]
-        : (this.props.nodeParameters || {})[paramKey];
+    const value = this.getParamValue(paramKey);
     // Dispatch node click to populate Redux metadata like flowchart/workflow
     if (this.props.dispatch) {
       // Ensure metadata is loaded if needed, then set clicked
       this.props.dispatch(loadNodeData(paramKey));
+      this.props.dispatch(toggleNodeClicked(paramKey));
     }
     this.setState({
       showMetadata: true,
       metadataMode: 'param',
       selectedParamKey: paramKey,
       yamlText: this.toYamlString(value),
+      metaEditText: this.toYamlString(value) || '',
     });
   };
 
@@ -1834,6 +1943,8 @@ const mapStateToProps = (state) => ({
   ),
   // Provide parameters map used by the flowchart metadata panel
   nodeParameters: state.node?.parameters || {},
+  // Clicked node metadata to mirror flowchart/workflow param sourcing
+  clickedNodeMetaData: getClickedNodeMetaData(state),
   activePipeline: state.pipeline.active,
   // Only include enabled tags that are present in the active pipeline; use raw IDs
   selectedTags: getTagData(state)
