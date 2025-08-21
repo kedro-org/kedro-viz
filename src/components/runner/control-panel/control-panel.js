@@ -208,7 +208,7 @@ const ControlPanel = ({
                 padding: '6px 8px',
               }}
             >
-              <CopyIcon className="pipeline-icon" />
+              Copy
             </button>
           </div>
         </div>
