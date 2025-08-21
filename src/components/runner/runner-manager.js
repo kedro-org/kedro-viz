@@ -38,80 +38,58 @@ const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
 class KedroRunManager extends Component {
   constructor(props) {
     super(props);
+    // Refs and timers
+    this.commandInputRef = React.createRef();
+    this.jobsPanelRef = React.createRef();
+    this.jobsPanelBodyRef = React.createRef();
+    this.logRefs = {};
+    this.jobPollers = {};
+
+    // Initial state
     this.state = {
       jobs: [],
       expandedLogs: {},
-      isLogsModalOpen: false,
-      logsModalJobId: null,
-      isClearJobsModalOpen: false,
-      isClearJobModalOpen: false,
-      clearJobModalJobId: null,
-
-      // Watch list state
+      // Watch list
       watchList: [],
-      watchTab: 'parameters',
       customOrder: { param: false, dataset: false },
-      draggingWatch: null,
-
-      // Add-to-watch modal state
       isWatchModalOpen: false,
       selectedToAdd: {},
       tempModalSelections: {},
       watchSearch: '',
-
-      // Parameters state
-      paramOriginals: {},
-      editedParameters: {},
-      paramEdits: {},
-      params: {},
-      paramsArgString: '',
-      strictlyChanged: {},
-
-      // Metadata panel state
+      watchTab: 'parameters',
+      // Metadata/editor panels
       showMetadata: false,
-      metadataMode: null, // 'param' | 'dataset'
+      metadataMode: null,
       selectedParamKey: null,
       selectedDataset: null,
       yamlText: '',
       metaEditText: '',
-
-      // Parameter changes dialog (rendered by ControlPanel)
       isParamsModalOpen: false,
       paramsDialogSelectedKey: null,
-
+      // Params data
+      params: {},
+      paramEdits: {},
+      editedParameters: {},
+      paramOriginals: {},
+      strictlyChanged: {},
+      paramsArgString: '',
+      // Modals for jobs/logs
+      isClearJobsModalOpen: false,
+      isClearJobModalOpen: false,
+      clearJobModalJobId: null,
+      isLogsModalOpen: false,
+      logsModalJobId: null,
       // Toast
       toastVisible: false,
       toastMessage: '',
     };
-    this.commandInputRef = React.createRef();
-    this.jobsPanelRef = React.createRef();
-    this.jobsPanelBodyRef = React.createRef();
-    this.jobPollers = {};
-    this.logRefs = {};
   }
 
-  onMetaEditChange = (e) => {
-    this.setState({ metaEditText: e.target.value });
-  };
-
-  onMetaEditSave = () => {
-    // Copy from the aesthetic editor into yamlText, then save via UPDATE helper
-    this.setState(
-      (prev) => ({ yamlText: prev.metaEditText || '' }),
-      () => this.saveParamYaml()
-    );
-  };
-
-  onMetaEditReset = () => {
-    this.resetParamYaml();
-  };
-
-  // --- Toast helpers ---
+  // Lightweight toast helper
   showToast = (message, duration = 2000) => {
     try {
       if (this._toastTimer) {
         clearTimeout(this._toastTimer);
-        this._toastTimer = null;
       }
     } catch (e) {
       // noop
@@ -132,6 +110,22 @@ class KedroRunManager extends Component {
       // noop
     }
     this.setState({ toastVisible: false });
+  };
+
+  // Metadata editor handlers
+  onMetaEditChange = (e) => {
+    this.setState({ metaEditText: e.target.value });
+  };
+
+  onMetaEditSave = () => {
+    this.setState(
+      (prev) => ({ yamlText: prev.metaEditText || '' }),
+      () => this.saveParamYaml()
+    );
+  };
+
+  onMetaEditReset = () => {
+    this.resetParamYaml();
   };
 
   // Ensure we have baseline originals captured for one or more param keys
@@ -358,11 +352,11 @@ class KedroRunManager extends Component {
     // Recompute CLI params string when originals baseline changes
     if (prevState.paramOriginals !== this.state.paramOriginals) {
       this.updateParamsArgString();
-      this.saveParamsToStorage();
+      this.saveParamsToStorageDebounced();
     }
     // Persist when edits change
     if (prevState.paramEdits !== this.state.paramEdits) {
-      this.saveParamsToStorage();
+      this.saveParamsToStorageDebounced();
     }
   }
 
@@ -784,6 +778,18 @@ class KedroRunManager extends Component {
     }
   };
 
+  // Debounced persistence helpers to avoid excessive writes
+  saveWatchToStorageDebounced = (watchList, customOrder, wait = 200) => {
+    try {
+      if (this._saveWatchTimer) {
+        clearTimeout(this._saveWatchTimer);
+      }
+    } catch (e) {}
+    this._saveWatchTimer = setTimeout(() => {
+      this.saveWatchToStorage(watchList, customOrder);
+    }, Math.max(0, wait));
+  };
+
   hydrateWatchFromStorage = () => {
     const { watchList, customOrder } = this.loadWatchFromStorage();
     if ((watchList || []).length) {
@@ -819,6 +825,17 @@ class KedroRunManager extends Component {
     } catch (e) {
       // ignore
     }
+  };
+
+  saveParamsToStorageDebounced = (wait = 200) => {
+    try {
+      if (this._saveParamsTimer) {
+        clearTimeout(this._saveParamsTimer);
+      }
+    } catch (e) {}
+    this._saveParamsTimer = setTimeout(() => {
+      this.saveParamsToStorage();
+    }, Math.max(0, wait));
   };
 
   loadParamsFromStorage = () => {
@@ -1572,7 +1589,7 @@ class KedroRunManager extends Component {
           customOrder: nextCustom,
         };
       },
-      () => this.saveWatchToStorage()
+      () => this.saveWatchToStorageDebounced()
     );
   };
 
@@ -1595,7 +1612,7 @@ class KedroRunManager extends Component {
     this.setState(
       (prev) => ({ watchList: [...(prev.watchList || []), item] }),
       () => {
-        this.saveWatchToStorage();
+        this.saveWatchToStorageDebounced();
         // Ensure originals are captured first, then reset edited to original
         this.ensureOriginalsFor(paramKey);
         this.resetParamKey(paramKey);
@@ -1641,7 +1658,7 @@ class KedroRunManager extends Component {
       () => {
         this.updateStrictlyChanged();
         this.updateParamsArgString();
-        this.saveParamsToStorage();
+        this.saveParamsToStorageDebounced();
       }
     );
     return orig;
@@ -1677,9 +1694,9 @@ class KedroRunManager extends Component {
         };
       },
       () => {
-        this.saveWatchToStorage();
+        this.saveWatchToStorageDebounced();
         this.updateParamsArgString();
-        this.saveParamsToStorage();
+        this.saveParamsToStorageDebounced();
       }
     );
   };
@@ -1702,90 +1719,85 @@ class KedroRunManager extends Component {
         this.updateStrictlyChanged();
         this.updateParamsArgString();
         this.updateCommandFromProps(this.props);
-        this.saveParamsToStorage();
+        this.saveParamsToStorageDebounced();
       }
     );
   };
 
   confirmAddSelected = () => {
     const { selectedToAdd } = this.state;
-    // Build next desired set from staged map
     const stagedKeys = new Set(Object.keys(selectedToAdd || {}));
     const prevList = this.state.watchList || [];
-    const prevParamKeys = new Set(
-      prevList.filter((i) => i.kind === 'param').map((i) => i.id)
-    );
-    const nextParamKeys = new Set(
-      Array.from(stagedKeys)
-        .map((k) => k.split(':'))
-        .filter(([kind]) => kind === 'param')
-        .map(([, id]) => id)
-    );
-    // Compute adds and removes for params
-    const toAdd = Array.from(nextParamKeys).filter(
-      (k) => !prevParamKeys.has(k)
-    );
-    const toRemove = Array.from(prevParamKeys).filter(
-      (k) => !nextParamKeys.has(k)
-    );
+    const prevParams = prevList.filter((i) => i.kind === 'param');
+    const prevDatasets = prevList.filter((i) => i.kind === 'dataset');
 
-    // Apply param changes
-    toAdd.forEach((k) => this.addParamToWatchList(k));
-    toRemove.forEach((k) => this.removeParamFromWatchList(k));
+    const nextParamIds = Array.from(stagedKeys)
+      .map((k) => k.split(':'))
+      .filter(([kind]) => kind === 'param')
+      .map(([, id]) => id);
+    const nextDatasetIds = Array.from(stagedKeys)
+      .map((k) => k.split(':'))
+      .filter(([kind]) => kind === 'dataset')
+      .map(([, id]) => id);
+    const nextParamIdSet = new Set(nextParamIds);
+    const nextDatasetIdSet = new Set(nextDatasetIds);
 
-    // Compute dataset updates similarly
-    const prevDatasetKeys = new Set(
-      prevList.filter((i) => i.kind === 'dataset').map((i) => i.id)
+    // Preserve order of kept items, append new ones
+    const keptParamItems = prevParams.filter((paramItem) =>
+      nextParamIdSet.has(paramItem.id)
     );
-    const nextDatasetKeys = new Set(
-      Array.from(stagedKeys)
-        .map((k) => k.split(':'))
-        .filter(([kind]) => kind === 'dataset')
-        .map(([, id]) => id)
-    );
-    const dsToAdd = Array.from(nextDatasetKeys).filter(
-      (k) => !prevDatasetKeys.has(k)
-    );
-    const dsToRemove = Array.from(prevDatasetKeys).filter(
-      (k) => !nextDatasetKeys.has(k)
-    );
+    const addedParamItems = nextParamIds
+      .filter((id) => !prevParams.some((paramItem) => paramItem.id === id))
+      .map((id) => {
+        const node = (this.props.paramNodes || []).find(
+          (paramNode) => paramNode.id === id
+        );
+        return { kind: 'param', id, name: node?.name || id };
+      });
+    const nextParamItems = [...keptParamItems, ...addedParamItems];
 
-    // Apply dataset changes (no param state impact)
-    if (dsToAdd.length || dsToRemove.length) {
-      this.setState(
-        (prev) => {
-          const keepDatasets = (prev.watchList || []).filter(
-            (i) => i.kind !== 'dataset'
-          );
-          const added = dsToAdd.map((id) => {
-            const d = (this.props.datasets || []).find((x) => x.id === id);
-            return { kind: 'dataset', id, name: d?.name || id };
-          });
-          const next = [
-            ...keepDatasets,
-            ...Array.from(nextDatasetKeys).map((id) => {
-              const d = (this.props.datasets || []).find((x) => x.id === id);
-              return { kind: 'dataset', id, name: d?.name || id };
-            }),
-          ];
-          return { watchList: next };
-        },
-        () => {
-          this.saveWatchToStorage();
+    const keptDatasetItems = prevDatasets.filter((d) =>
+      nextDatasetIdSet.has(d.id)
+    );
+    const addedDatasetItems = nextDatasetIds
+      .filter((id) => !prevDatasets.some((d) => d.id === id))
+      .map((id) => {
+        const dataset = (this.props.datasets || []).find((x) => x.id === id);
+        return { kind: 'dataset', id, name: dataset?.name || id };
+      });
+    const nextDatasetItems = [...keptDatasetItems, ...addedDatasetItems];
+
+    const nextWatchList = [...nextParamItems, ...nextDatasetItems];
+
+    // Build next editedParameters: prune removed keys and seed for new ones
+    const prevEdited = this.state.editedParameters || {};
+    const nextEdited = Object.keys(prevEdited).reduce((acc, key) => {
+      if (nextParamIdSet.has(key)) {
+        acc[key] = prevEdited[key];
+      }
+      return acc;
+    }, {});
+    nextParamIds.forEach((id) => {
+      if (!Object.prototype.hasOwnProperty.call(nextEdited, id)) {
+        const val = this.getParamValue(id);
+        if (typeof val !== 'undefined') {
+          nextEdited[id] = val;
         }
-      );
-    }
+      }
+    });
 
-    // Close modal and clear staged selection
     this.setState(
-      { isWatchModalOpen: false, selectedToAdd: {}, tempModalSelections: {} },
+      {
+        watchList: nextWatchList,
+        isWatchModalOpen: false,
+        selectedToAdd: {},
+        tempModalSelections: {},
+        editedParameters: nextEdited,
+      },
       () => {
-        // Ensure originals and metadata for final param set
+        this.saveWatchToStorageDebounced();
         try {
-          const keys = (this.state.watchList || [])
-            .filter((i) => i.kind === 'param')
-            .map((i) => i.id);
-          this.ensureOriginalsFor(keys);
+          this.ensureOriginalsFor(nextParamIds);
           this.refreshWatchParamsMetadata();
         } catch (e) {}
         this.updateStrictlyChanged();
@@ -1823,7 +1835,7 @@ class KedroRunManager extends Component {
         watchList: (prev.watchList || []).filter((i) => i.kind !== 'dataset'),
       }),
       () => {
-        this.saveWatchToStorage();
+        this.saveWatchToStorageDebounced();
         this.updateCommandFromProps(this.props);
       }
     );
@@ -1842,7 +1854,7 @@ class KedroRunManager extends Component {
         ),
       }),
       () => {
-        this.saveWatchToStorage();
+        this.saveWatchToStorageDebounced();
       }
     );
   };
