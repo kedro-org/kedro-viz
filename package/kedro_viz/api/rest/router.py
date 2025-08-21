@@ -270,7 +270,7 @@ async def run_kedro_command(command: str, background_tasks: BackgroundTasks):
     )
 
 
-@router.get("/kedro-command-status")
+@router.get("/kedro-command-status/{job_id}")
 async def get_kedro_command_status(job_id: str):
     """
     Get the status of a previously run Kedro command.
