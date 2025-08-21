@@ -28,6 +28,9 @@ const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
   'kedro_viz_runner_watch_custom_order';
+// Keys for persisting parameter edits and originals
+const RUNNER_PARAM_EDITS_STORAGE_KEY = 'kedro_viz_runner_param_edits';
+const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
 
 /**
  * KedroRunManager
@@ -192,6 +195,9 @@ class KedroRunManager extends Component {
     // Initial compute of strictly changed items
     this.updateStrictlyChanged();
 
+    // Hydrate any persisted parameter edits/originals
+    this.hydrateParamsFromStorage();
+
     // Sync metadata panel with `sid` from the URL, like the flowchart page
     this.syncMetadataFromSid();
     // Listen for browser navigation changes to keep in sync
@@ -339,6 +345,11 @@ class KedroRunManager extends Component {
     // Recompute CLI params string when originals baseline changes
     if (prevState.paramOriginals !== this.state.paramOriginals) {
       this.updateParamsArgString();
+      this.saveParamsToStorage();
+    }
+    // Persist when edits change
+    if (prevState.paramEdits !== this.state.paramEdits) {
+      this.saveParamsToStorage();
     }
   }
 
@@ -779,6 +790,62 @@ class KedroRunManager extends Component {
     }
   };
 
+  // --- Parameter persistence ---
+  saveParamsToStorage = () => {
+    try {
+      const edits = this.state.paramEdits || {};
+      const originals = this.state.paramOriginals || {};
+      window.localStorage.setItem(
+        RUNNER_PARAM_EDITS_STORAGE_KEY,
+        JSON.stringify(edits)
+      );
+      window.localStorage.setItem(
+        RUNNER_PARAM_ORIGINALS_STORAGE_KEY,
+        JSON.stringify(originals)
+      );
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  loadParamsFromStorage = () => {
+    try {
+      const editsRaw = window.localStorage.getItem(
+        RUNNER_PARAM_EDITS_STORAGE_KEY
+      );
+      const originalsRaw = window.localStorage.getItem(
+        RUNNER_PARAM_ORIGINALS_STORAGE_KEY
+      );
+      const edits = editsRaw ? JSON.parse(editsRaw) : {};
+      const originals = originalsRaw ? JSON.parse(originalsRaw) : {};
+      return { edits, originals };
+    } catch (e) {
+      return { edits: {}, originals: {} };
+    }
+  };
+
+  hydrateParamsFromStorage = () => {
+    const { edits, originals } = this.loadParamsFromStorage();
+    const hasEdits = edits && Object.keys(edits).length > 0;
+    const hasOriginals = originals && Object.keys(originals).length > 0;
+    if (!hasEdits && !hasOriginals) {
+      return;
+    }
+    this.setState(
+      (prev) => ({
+        paramEdits: hasEdits ? edits : prev.paramEdits,
+        editedParameters: hasEdits ? edits : prev.editedParameters,
+        params: hasEdits ? { ...(prev.params || {}), ...edits } : prev.params,
+        paramOriginals: hasOriginals ? originals : prev.paramOriginals,
+      }),
+      () => {
+        this.updateStrictlyChanged();
+        this.updateParamsArgString();
+        this.updateCommandFromProps(this.props);
+      }
+    );
+  };
+
   saveParamYaml = () => {
     const { selectedParamKey, yamlText } = this.state;
     // Capture original baseline if missing before applying the edit
@@ -798,6 +865,7 @@ class KedroRunManager extends Component {
       () => {
         this.updateParamsArgString();
         this.updateCommandFromProps(this.props);
+        this.saveParamsToStorage();
         this.showToast('Parameter updated');
       }
     );
@@ -842,6 +910,7 @@ class KedroRunManager extends Component {
         this.updateStrictlyChanged();
         this.updateParamsArgString();
         this.updateCommandFromProps(this.props);
+        this.saveParamsToStorage();
         this.showToast('Reset to original');
       }
     );
