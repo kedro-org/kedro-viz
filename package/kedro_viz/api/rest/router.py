@@ -177,6 +177,11 @@ def _stream_reader(pipe, job_id, key):
             pass
 
 
+def quote_if_needed(text:str) -> str:
+    if " " in text:
+        return f'"{text}"'
+    return text
+
 def run_kedro_subprocess(job_id, cmd):
     logger.info("Running Kedro command: %s", cmd)
     process = subprocess.Popen(
@@ -184,9 +189,6 @@ def run_kedro_subprocess(job_id, cmd):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        # bufsize=1,
-        # cwd=os.getcwd(),
-        # creationflags=subprocess.DETACHED_PROCESS
     )
     logger.info("Started Kedro command with PID: %s", process.pid)
 
@@ -246,13 +248,15 @@ async def run_kedro_command(command: str, background_tasks: BackgroundTasks):
 
     job_id = str(uuid.uuid4())
 
-    # Allow only kedro commands to be executed
-    cmd = ["kedro"] + shlex.split(command)
+    cmd = shlex.split(command)
+    if not cmd[0] == "kedro":
+        cmd = ["kedro"] + cmd
 
     # Initialize job status
     kedro_jobs[job_id] = {
         "status": "initialize",
         "start_time": datetime.now(),
+        "cmd": " ".join([quote_if_needed(c) for c in cmd]),
         "duration": None,
         "end_time": None,
         "stdout": "",
