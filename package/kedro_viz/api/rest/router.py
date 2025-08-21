@@ -285,6 +285,7 @@ async def get_kedro_command_status(job_id: str):
         status_code=200,
         content={
             "start_time": job["start_time"].strftime("%Y-%m-%d %H:%M:%S"),
+            "cmd": job["cmd"],
             "duration": job["duration"],
             "end_time": (
                 job["end_time"].strftime("%Y-%m-%d %H:%M:%S")
