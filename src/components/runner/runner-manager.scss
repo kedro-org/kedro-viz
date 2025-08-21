@@ -12,6 +12,7 @@
   --runner-text: var(--color-text);
   --runner-muted: var(--color-text-faded);
   --runner-panel-bg: var(--color-bg-3);
+  --runner-subpanel-header-bg: var(--color-bg-4);
   --runner-subpanel-bg: var(--color-bg-5);
   --runner-stdout-bg: var(--color-bg-5);
   --runner-border-strong: var(--color-border-line);
@@ -123,8 +124,8 @@
   display: grid;
   grid-template-columns: minmax(240px, 3fr) minmax(360px, 7fr);
 
-  /* Two rows: fixed control height + flexible editor height in left column */
-  grid-template-rows: var(--runner-control-height, 240px) 1fr;
+  /* Control panel grows to fit content; capped below. Watch list fills rest */
+  grid-template-rows: auto 1fr;
   gap: 24px;
   transition: grid-template-columns 200ms ease;
 }
@@ -196,9 +197,7 @@
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
-
-  /* Fixed height control panel; body inside can scroll, footer pinned */
-  height: var(--runner-control-height, 240px);
+  max-height: 50vh; /* never exceed half of the viewport */
   overflow: hidden; /* contain internal scroll in control body */
   display: flex; /* enable footer pinning */
   flex-direction: column; /* stack body and footer */
@@ -213,6 +212,84 @@
   flex: 1 1 auto;
   min-height: 0; /* required for proper overflow behavior in flex containers */
   overflow: auto;
+}
+
+/* Compact single-line argument list */
+.arglist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr; /* stack on smaller areas */
+  gap: 6px;
+  font-size: 12px;
+}
+
+.arglist__item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arglist__label {
+  color: var(--runner-muted);
+}
+
+.arglist__flag {
+  font-family: var(
+    --font-family-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace
+  );
+  color: var(--runner-muted);
+}
+
+.arglist__sep {
+  color: var(--runner-muted);
+}
+
+.arglist__value {
+  display: inline-flex;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.muted {
+  color: var(--runner-muted);
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  font-size: 11px;
+  line-height: 1.2;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.control-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-link, #3b82f6);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 /* Footer pinned to bottom, with slight elevation and sticky behavior if body scrolls */
@@ -527,6 +604,13 @@
 .runner-logs-modal__body pre {
   font-size: 14px;
   line-height: 1.5;
+}
+
+/* Ensure the Parameter changes select uses the theme text color */
+.runner-logs-modal #param-changes-select {
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid transparent;
 }
 
 .runner-logs-modal__footer {

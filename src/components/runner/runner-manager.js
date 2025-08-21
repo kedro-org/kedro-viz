@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import Sidebar from '../sidebar';
 // Reuse existing metadata panel styles
 import '../metadata/styles/metadata.scss';
-import MetaDataStats from '../metadata/metadata-stats';
-import NodeIcon from '../icons/node-icon';
-import JSONObject from '../json-object';
+// Removed unused imports (MetaDataStats, NodeIcon, JSONObject)
 import MetaData from '../metadata/metadata';
+import CopyIcon from '../icons/copy';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
@@ -18,7 +17,7 @@ import {
   cancelKedroCommand,
 } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
-import FlowChart from '../flowchart';
+// Removed unused import (FlowChart)
 import WatchListDialog from './watch-list-dialog';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
@@ -35,15 +34,15 @@ const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
  * A visual draft page for starting and monitoring Kedro runs.
  * No functional wiring — purely presentational scaffolding you can hook up later.
  */
+
 class KedroRunManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
       // UI state for Data & Parameters panel
-      activeTab: 'parameters', // 'parameters' | 'datasets'
+      activeTab: 'parameters',
       filterText: '',
       // Simple mock of parameters dictionary. Replace via API on mount.
-      // API: GET `${basePath}/api/runner/parameters` -> setState({ params: response })
       params: {
         'model.learning_rate': 0.001,
         'model.dropout': 0.2,
@@ -52,10 +51,10 @@ class KedroRunManager extends Component {
         'report.title': 'Weekly KPIs',
         'thresholds.alert': { precision: 0.8, recall: 0.7 },
       },
-      expandedParams: {}, // key -> boolean
+      expandedParams: {},
       // Right-side metadata panel state
       showMetadata: false,
-      metadataMode: null, // 'param' | 'dataset'
+      metadataMode: null,
       selectedParamKey: null,
       yamlText: '',
       selectedDataset: null,
@@ -64,16 +63,15 @@ class KedroRunManager extends Component {
       // Watch list state
       watchList: [],
       isWatchModalOpen: false,
-      selectedToAdd: {}, // key `${kind}:${id}` -> true
-      tempModalSelections: {}, // id -> { kind, name }
+      selectedToAdd: {},
+      tempModalSelections: {},
       watchSearch: '',
-      // Watch list panel tab: 'parameters' | 'datasets'
       watchTab: 'parameters',
       // Drag state and custom order flags for watch list
-      draggingWatch: null, // { kind, id }
+      draggingWatch: null,
       customOrder: { param: false, dataset: false },
       // Logs UI state
-      expandedLogs: {}, // jobId -> boolean (default true)
+      expandedLogs: {},
       isLogsModalOpen: false,
       logsModalJobId: null,
       // Parameter override state
@@ -86,26 +84,22 @@ class KedroRunManager extends Component {
       editedParameters: {},
       // Map of strictly changed params in the watch list
       strictlyChanged: {},
+      // Concatenated CLI-ready param arguments string
+      paramsArgString: '',
       // Toast notification
       toastMessage: '',
       toastVisible: false,
-      changesDialogSelectedKey: null,
+      // Selection for the Parameter changes dialog
+      paramsDialogSelectedKey: null,
     };
 
-    // Ref for the command input field
+    // Refs and trackers
     this.commandInputRef = React.createRef();
-    // Map of jobId -> intervalId for polling
     this.jobPollers = {};
-    // Jobs panel ref to compute available height for expanded logs
     this.jobsPanelRef = React.createRef();
-    // Jobs panel body ref to compute available height below sticky header
     this.jobsPanelBodyRef = React.createRef();
-    // Refs to log containers per job for auto-scrolling
     this.logRefs = {};
-
-    // Track last applied selected id from URL to avoid redundant work
     this._lastSid = null;
-    // Timer for toast auto-hide
     this._toastTimer = null;
   }
 
@@ -114,69 +108,16 @@ class KedroRunManager extends Component {
     this.setState({ metaEditText: e.target.value });
   };
 
-  onMetaEditReset = () => {
-    const { selectedParamKey } = this.state;
-    if (!selectedParamKey) {
-      this.setState({ metaEditText: '' });
-      return;
-    }
-    // Determine default/original value: use captured baseline if available, else resolve current metadata value
-    const originals = this.state.paramOriginals || {};
-    const defaultVal = Object.prototype.hasOwnProperty.call(
-      originals,
-      selectedParamKey
-    )
-      ? originals[selectedParamKey]
-      : this.getParamValue(selectedParamKey);
-    const yamlDefault = this.toYamlString(defaultVal);
+  onMetaEditSave = () => {
+    // Copy from the aesthetic editor into yamlText, then save
     this.setState(
-      (prev) => {
-        const nextParams = { ...(prev.params || {}) };
-        nextParams[selectedParamKey] = defaultVal;
-        const nextParamEdits = { ...(prev.paramEdits || {}) };
-        if (
-          Object.prototype.hasOwnProperty.call(nextParamEdits, selectedParamKey)
-        ) {
-          delete nextParamEdits[selectedParamKey];
-        }
-        const nextEdited = { ...(prev.editedParameters || {}) };
-        if (
-          Object.prototype.hasOwnProperty.call(nextEdited, selectedParamKey)
-        ) {
-          delete nextEdited[selectedParamKey];
-        }
-        return {
-          params: nextParams,
-          paramEdits: nextParamEdits,
-          editedParameters: nextEdited,
-          yamlText: yamlDefault,
-          metaEditText: yamlDefault,
-        };
-      },
-      () => {
-        this.updateCommandFromProps(this.props);
-        this.showToast('Parameter reset');
-      }
+      (prev) => ({ yamlText: prev.metaEditText || '' }),
+      () => this.saveParamYaml()
     );
   };
 
-  onMetaEditSave = () => {
-    const { selectedParamKey, metaEditText } = this.state;
-    if (!selectedParamKey) {
-      return;
-    }
-    // Capture original baseline if missing before applying the edit
-    this.ensureOriginalsFor(selectedParamKey);
-    const parsed = this.parseYamlishValue(metaEditText);
-    this.setState(
-      (prev) => ({
-        editedParameters: {
-          ...(prev.editedParameters || {}),
-          [selectedParamKey]: parsed,
-        },
-      }),
-      () => this.showToast('Parameter updated')
-    );
+  onMetaEditReset = () => {
+    this.resetParamYaml();
   };
 
   // --- Toast helpers ---
@@ -247,6 +188,7 @@ class KedroRunManager extends Component {
       this.setState({ paramOriginals: { ...(this.state.params || {}) } });
     }
     this.updateCommandFromProps(this.props);
+    this.updateParamsArgString();
     // Initial compute of strictly changed items
     this.updateStrictlyChanged();
 
@@ -368,6 +310,8 @@ class KedroRunManager extends Component {
       }
       // Recompute strictly-changed map when watch list updates
       this.updateStrictlyChanged();
+      // Recompute CLI params string
+      this.updateParamsArgString();
     }
 
     // Recompute when edited values or params change
@@ -376,6 +320,7 @@ class KedroRunManager extends Component {
       prevState.params !== this.state.params
     ) {
       this.updateStrictlyChanged();
+      this.updateParamsArgString();
     }
 
     // Capture originals when metadata parameters map updates (lazy load from Redux)
@@ -388,6 +333,12 @@ class KedroRunManager extends Component {
       } catch (e) {
         // noop
       }
+      this.updateParamsArgString();
+    }
+
+    // Recompute CLI params string when originals baseline changes
+    if (prevState.paramOriginals !== this.state.paramOriginals) {
+      this.updateParamsArgString();
     }
   }
 
@@ -515,9 +466,10 @@ class KedroRunManager extends Component {
 
   updateCommandFromProps = (props) => {
     const baseCmd = this.buildRunCommand(props);
-    const paramsOverride = this.getParamsOverrideString
-      ? this.getParamsOverrideString()
-      : '';
+    // Prefer precomputed params string; fall back to existing helper if present
+    const paramsOverride =
+      (this.state && this.state.paramsArgString) ||
+      (this.getParamsOverrideString ? this.getParamsOverrideString() : '');
     const cmd = paramsOverride
       ? `${baseCmd} --params ${this.quoteIfNeeded(paramsOverride)}`
       : baseCmd;
@@ -525,6 +477,38 @@ class KedroRunManager extends Component {
       if (this.commandInputRef.current.value !== cmd) {
         this.commandInputRef.current.value = cmd;
       }
+    }
+  };
+
+  getCurrentCommandString = () => {
+    const baseCmd = this.buildRunCommand(this.props);
+    const paramsOverride =
+      (this.state && this.state.paramsArgString) ||
+      (this.getParamsOverrideString ? this.getParamsOverrideString() : '');
+    return paramsOverride
+      ? `${baseCmd} --params ${this.quoteIfNeeded(paramsOverride)}`
+      : baseCmd;
+  };
+
+  copyCommandToClipboard = async () => {
+    try {
+      const text =
+        this.commandInputRef?.current?.value || this.getCurrentCommandString();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const input = this.commandInputRef?.current;
+        if (input) {
+          input.focus();
+          input.select();
+          document.execCommand('copy');
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }
+      this.showToast('Copied command to clipboard successfully');
+    } catch (e) {
+      this.showToast('Copy failed');
     }
   };
 
@@ -812,6 +796,7 @@ class KedroRunManager extends Component {
         },
       }),
       () => {
+        this.updateParamsArgString();
         this.updateCommandFromProps(this.props);
         this.showToast('Parameter updated');
       }
@@ -821,7 +806,10 @@ class KedroRunManager extends Component {
   resetParamYaml = () => {
     const { selectedParamKey } = this.state;
     const value = this.getParamValue(selectedParamKey);
-    this.setState({ yamlText: this.toYamlString(value) });
+    this.setState({ yamlText: this.toYamlString(value) }, () => {
+      this.updateParamsArgString();
+      this.updateCommandFromProps(this.props);
+    });
   };
 
   // YAML stringifier using the 'yaml' package
@@ -907,6 +895,84 @@ class KedroRunManager extends Component {
     return this.getParamValue(paramKey);
   };
 
+  // Build pairs for edited params vs originals, restricted to watched param items
+  getEditedParamChangesPairs = () => {
+    const { watchList, paramOriginals } = this.state;
+    if (!watchList || !watchList.length) {
+      return [];
+    }
+    const pairs = [];
+    (watchList.filter((wlItem) => wlItem.kind === 'param') || []).forEach(
+      (wlItem) => {
+        const key = wlItem.id;
+        const prefixName = this.normalizeParamPrefix(wlItem.name || wlItem.id);
+        const originals = paramOriginals || {};
+        const orig = Object.prototype.hasOwnProperty.call(originals, key)
+          ? originals[key]
+          : this.getParamValue(key);
+        const curr = this.getEditedParamValue(key);
+        pairs.push(...this.collectParamDiffs(orig, curr, prefixName));
+      }
+    );
+    return pairs;
+  };
+
+  // Compute and store the concatenated CLI params string, then refresh the command text
+  updateParamsArgString = () => {
+    try {
+      const pairs = this.getEditedParamChangesPairs();
+      const nextStr = pairs.join(',');
+      if (nextStr !== (this.state.paramsArgString || '')) {
+        this.setState({ paramsArgString: nextStr }, () =>
+          this.updateCommandFromProps(this.props)
+        );
+      }
+    } catch (e) {
+      // noop
+    }
+  };
+
+  // Build a minimal diff object of changed keys only; for non-objects, return the edited value if different
+  buildDiffObject = (orig, edited) => {
+    const isObj = (val) =>
+      val && typeof val === 'object' && !Array.isArray(val);
+    const equal = (a, b) => {
+      try {
+        return JSON.stringify(a) === JSON.stringify(b);
+      } catch (e) {
+        return a === b;
+      }
+    };
+    if (isObj(orig) && isObj(edited)) {
+      const diff = {};
+      const keys = new Set([
+        ...Object.keys(orig || {}),
+        ...Object.keys(edited || {}),
+      ]);
+      keys.forEach((key) => {
+        const origVal = orig[key];
+        const editedVal = edited[key];
+        if (isObj(origVal) && isObj(editedVal)) {
+          const child = this.buildDiffObject(origVal, editedVal);
+          if (
+            child &&
+            (typeof child !== 'object' || Object.keys(child).length)
+          ) {
+            diff[key] = child;
+          }
+        } else if (
+          !equal(origVal, editedVal) &&
+          typeof editedVal !== 'undefined'
+        ) {
+          diff[key] = editedVal;
+        }
+      });
+      return diff;
+    }
+    // For arrays or primitives, if changed, return the edited value; otherwise undefined
+    return equal(orig, edited) ? undefined : edited;
+  };
+
   // CLI-safe value formatting
   formatParamValueForCli = (value) => {
     if (
@@ -922,6 +988,18 @@ class KedroRunManager extends Component {
       return needsQuotes ? `"${escaped}"` : escaped;
     }
     return JSON.stringify(value);
+  };
+
+  // Normalize parameter key prefix for CLI output (strip leading 'params:')
+  normalizeParamPrefix = (text) => {
+    if (!text) {
+      return '';
+    }
+    try {
+      return String(text).replace(/^params:/, '');
+    } catch (e) {
+      return text;
+    }
   };
 
   collectParamDiffs = (orig, edited, prefix) => {
@@ -991,6 +1069,7 @@ class KedroRunManager extends Component {
     (watchList.filter((wlItem) => wlItem.kind === 'param') || []).forEach(
       (wlItem) => {
         const key = wlItem.id;
+        const prefixName = this.normalizeParamPrefix(wlItem.name || wlItem.id);
         if (!Object.prototype.hasOwnProperty.call(paramEdits || {}, key)) {
           return;
         }
@@ -1001,7 +1080,7 @@ class KedroRunManager extends Component {
         )
           ? (paramOriginals || {})[key]
           : (this.state.params || {})[key];
-        pairs.push(...this.collectParamDiffs(orig, edited, key));
+        pairs.push(...this.collectParamDiffs(orig, edited, prefixName));
       }
     );
     return pairs;
@@ -1009,6 +1088,25 @@ class KedroRunManager extends Component {
 
   getParamsOverrideString = () => {
     const pairs = this.getParamChangesPairs();
+    return pairs.join(',');
+  };
+
+  // Build a CLI-style parameter argument string for a single parameter key
+  // Input:
+  // - parameterKey: string identifier for the parameter group (e.g. 'random_forest')
+  // - originalParams: original parameter object/value
+  // - editedParams: edited parameter object/value
+  // Behavior:
+  // - Computes minimal diff between original and edited
+  // - Flattens nested keys using dot notation under the parameterKey
+  // - Produces comma-separated key=value pairs using edited values
+  // Example output: "random_forest.kwargs.n_estimators=110"
+  buildParamArgString = (parameterKey, originalParams, editedParams) => {
+    if (!parameterKey || typeof parameterKey !== 'string') {
+      return '';
+    }
+    const prefix = this.normalizeParamPrefix(parameterKey);
+    const pairs = this.collectParamDiffs(originalParams, editedParams, prefix);
     return pairs.join(',');
   };
 
@@ -1021,6 +1119,28 @@ class KedroRunManager extends Component {
       showMetadata: true,
       metadataMode: 'dataset',
       selectedDataset: dataset,
+    });
+  };
+
+  // Render YAML lines with per-line highlight based on differences vs otherText
+  renderHighlightedYamlLines = (text, otherText) => {
+    const a = String(text == null ? '' : text).split(/\r?\n/);
+    const b = String(otherText == null ? '' : otherText).split(/\r?\n/);
+    const max = Math.max(a.length, b.length);
+    const highlightStyle = {
+      background: 'var(--runner-hover-bg)',
+      borderLeft: '2px solid var(--parameter-accent)',
+      paddingLeft: '6px',
+      marginLeft: '-6px',
+    };
+    return Array.from({ length: max }).map((_, i) => {
+      const line = a[i] ?? '';
+      const changed = (a[i] ?? '') !== (b[i] ?? '');
+      return (
+        <div key={i} style={changed ? highlightStyle : undefined}>
+          {line || ' '}
+        </div>
+      );
     });
   };
 
@@ -1191,13 +1311,7 @@ class KedroRunManager extends Component {
   };
 
   renderMetadataPanel() {
-    const {
-      metadataMode,
-      showMetadata,
-      selectedParamKey,
-      yamlText,
-      selectedDataset,
-    } = this.state;
+    const { metadataMode, showMetadata, selectedDataset } = this.state;
 
     if (!showMetadata) {
       return null;
@@ -1613,9 +1727,7 @@ class KedroRunManager extends Component {
       const firstLine = String(text).split(/\r?\n/)[0];
       return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
     };
-    const hasParamChanges =
-      watchTab === 'parameters' &&
-      Object.keys(this.state.strictlyChanged || {}).length > 0;
+    // hasParamChanges computed in control panel only
     return (
       <div className="runner-panel runner-panel--watchlist">
         <div className="runner-panel__toolbar">
@@ -1738,7 +1850,6 @@ class KedroRunManager extends Component {
       .filter(Boolean)
       .join(' ');
 
-    const { activeTab } = this.state;
     const hasParamChanges =
       Object.keys(this.state.strictlyChanged || {}).length > 0;
 
@@ -1782,54 +1893,91 @@ class KedroRunManager extends Component {
               <div className="runner-manager__control-body">
                 <div className="control-row">
                   <label className="control-row__label">Command</label>
-                  <input
-                    className="control-row__input"
-                    ref={this.commandInputRef}
-                    defaultValue="kedro run"
-                  />
+                  {(() => {
+                    const currentCommand = this.getCurrentCommandString();
+                    return (
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '8px',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <input
+                          className="control-row__input"
+                          ref={this.commandInputRef}
+                          defaultValue="kedro run"
+                          title={currentCommand}
+                          style={{ flex: '1 1 auto', minWidth: 0 }}
+                        />
+                        <button
+                          className="btn"
+                          onClick={this.copyCommandToClipboard}
+                          title="Copy full command"
+                          aria-label="Copy full command"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '6px 8px',
+                          }}
+                        >
+                          <CopyIcon className="icon" />
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
-                <div
-                  className="control-row"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '16px',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <label className="control-row__label">Pipeline</label>
-                    <div className="control-row__value">
-                      {this.props.activePipeline || PIPELINE.DEFAULT}
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <label className="control-row__label">Tags</label>
-                    <div className="control-row__value">
-                      {(this.props.selectedTags || []).length
-                        ? (this.props.selectedTags || []).join(', ')
-                        : '—'}
-                    </div>
-                  </div>
+                <div className="control-row">
+                  <ul className="arglist" aria-label="Run arguments overview">
+                    {/* Pipeline always has a concrete value */}
+                    <li className="arglist__item">
+                      <span className="arglist__label">Pipeline</span>
+                      <span className="arglist__flag">(-p)</span>
+                      <span className="arglist__sep">:</span>
+                      <span className="arglist__value">
+                        {this.props.activePipeline || PIPELINE.DEFAULT}
+                      </span>
+                    </li>
+                    {/* Tags only when selected */}
+                    {(this.props.selectedTags || []).length > 0 && (
+                      <li className="arglist__item">
+                        <span className="arglist__label">Tags</span>
+                        <span className="arglist__flag">(-t)</span>
+                        <span className="arglist__sep">:</span>
+                        <span className="arglist__value">
+                          {(this.props.selectedTags || []).map((tag) => (
+                            <span key={tag} className="chip" title={tag}>
+                              {tag}
+                            </span>
+                          ))}
+                        </span>
+                      </li>
+                    )}
+                    {/* Parameters only when there are changes */}
+                    {hasParamChanges && (
+                      <li className="arglist__item">
+                        <span className="arglist__label">Parameters</span>
+                        <span className="arglist__flag">(--params)</span>
+                        <span className="arglist__sep">:</span>
+                        <span className="arglist__value">
+                          <button
+                            type="button"
+                            className="control-link"
+                            onClick={this.openParamsDialog}
+                          >
+                            View changes (
+                            {
+                              Object.keys(this.state.strictlyChanged || {})
+                                .length
+                            }
+                            )
+                          </button>
+                        </span>
+                      </li>
+                    )}
+                  </ul>
                 </div>
-                {hasParamChanges && (
-                  <div className="control-row">
-                    <button className="btn" onClick={this.openParamsDialog}>
-                      Show param changes
-                    </button>
-                  </div>
-                )}
               </div>
               <div className="runner-manager__control-footer">
                 <div className="runner-manager__actions" />
@@ -1875,8 +2023,15 @@ class KedroRunManager extends Component {
                     const isExpanded = (this.state.expandedLogs || {})[
                       job.jobId
                     ];
+                    const isTerminal = [
+                      'finished',
+                      'error',
+                      'terminated',
+                    ].includes(job.status);
                     const expanded =
-                      typeof isExpanded === 'boolean' ? isExpanded : true; // default on
+                      typeof isExpanded === 'boolean'
+                        ? isExpanded
+                        : !isTerminal; // expand by default for non-terminal jobs
                     const stdoutStyle = {
                       display: expanded ? 'block' : 'none',
                       // When expanded, show up to 70% of the viewport height, and never exceed viewport
@@ -2156,96 +2311,145 @@ class KedroRunManager extends Component {
                       ? originals[selectedKey]
                       : this.getParamValue(selectedKey);
                     const curr = this.getEditedParamValue(selectedKey);
-                    const equal = JSON.stringify(orig) === JSON.stringify(curr);
-                    const cliPlaceholder = `--params "${selectedKey}=<edited-value>"`;
+                    const selectedItem = paramItems.find(
+                      (i) => i.id === selectedKey
+                    );
+                    const prefixName = this.normalizeParamPrefix(
+                      (selectedItem && selectedItem.name) || selectedKey
+                    );
+                    const perPairs = this.collectParamDiffs(
+                      orig,
+                      curr,
+                      prefixName
+                    );
+                    const perParamArg = `--params ${this.quoteIfNeeded(
+                      perPairs.join(',')
+                    )}`;
+                    const combinedParamsArg = `--params ${this.quoteIfNeeded(
+                      this.state.paramsArgString || ''
+                    )}`;
                     return (
                       <div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '8px',
-                            alignItems: 'center',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          <label htmlFor="param-changes-select">
-                            Parameter:
-                          </label>
-                          <select
-                            id="param-changes-select"
-                            value={selectedKey}
-                            onChange={onSelect}
-                            style={{ maxWidth: '100%' }}
-                          >
-                            {paramItems.map((item) => (
-                              <option key={item.id} value={item.id}>
-                                {item.name || item.id}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
+                        {/* Combined params for all changes */}
                         <div
                           style={{ fontFamily: 'monospace', fontSize: '12px' }}
                         >
-                          Key: {selectedKey}
+                          <code>{combinedParamsArg}</code>
                         </div>
+
+                        {/* Parameter-specific section (distinct card) */}
                         <div
                           style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '12px',
-                            marginTop: '8px',
+                            marginTop: '10px',
+                            border: '1px solid var(--runner-border)',
+                            background: 'var(--runner-subpanel-bg)',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
                           }}
                         >
-                          <div>
-                            <div
-                              style={{ fontWeight: 600, marginBottom: '4px' }}
-                            >
-                              Original
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'auto 1fr',
+                              alignItems: 'center',
+                              gap: '12px',
+                              padding: '10px 12px',
+                              borderBottom: '1px solid var(--runner-border)',
+                              background: 'var(--runner-subpanel-header-bg)',
+                            }}
+                          >
+                            <div style={{ fontWeight: 700 }}>
+                              Selected parameter
                             </div>
-                            <pre
+                            <select
+                              id="param-changes-select"
+                              aria-label="Selected parameter"
+                              value={selectedKey}
+                              onChange={onSelect}
+                              style={{ width: '100%' }}
+                            >
+                              {paramItems.map((item) => (
+                                <option key={item.id} value={item.id}>
+                                  {item.name || item.id}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div style={{ padding: '12px' }}>
+                            <div
                               style={{
-                                whiteSpace: 'pre-wrap',
-                                background: 'var(--color-bg)',
-                                color: 'var(--color-text)',
-                                padding: '8px',
-                                borderRadius: '4px',
-                                maxHeight: '40vh',
-                                overflow: 'auto',
+                                fontFamily: 'monospace',
+                                fontSize: '12px',
+                                marginBottom: '10px',
                               }}
                             >
-                              {this.toYamlString(orig) || ''}
-                            </pre>
-                          </div>
-                          <div>
-                            <div
-                              style={{ fontWeight: 600, marginBottom: '4px' }}
-                            >
-                              Current
+                              <code>{perParamArg}</code>
                             </div>
-                            <pre
+                            <div
                               style={{
-                                whiteSpace: 'pre-wrap',
-                                background: 'var(--color-bg)',
-                                color: 'var(--color-text)',
-                                padding: '8px',
-                                borderRadius: '4px',
-                                maxHeight: '40vh',
-                                overflow: 'auto',
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '12px',
                               }}
                             >
-                              {this.toYamlString(curr) || ''}
-                            </pre>
+                              <div>
+                                <div
+                                  style={{
+                                    fontWeight: 600,
+                                    marginBottom: '6px',
+                                    fontSize: '12px',
+                                    opacity: 0.9,
+                                  }}
+                                >
+                                  Original
+                                </div>
+                                <pre
+                                  style={{
+                                    background: 'var(--runner-panel-bg)',
+                                    color: 'var(--runner-text)',
+                                    padding: '8px',
+                                    borderRadius: '4px',
+                                    maxHeight: '40vh',
+                                    overflow: 'auto',
+                                    border: '1px solid var(--runner-border)',
+                                  }}
+                                >
+                                  {this.renderHighlightedYamlLines(
+                                    this.toYamlString(orig) || '',
+                                    this.toYamlString(curr) || ''
+                                  )}
+                                </pre>
+                              </div>
+                              <div>
+                                <div
+                                  style={{
+                                    fontWeight: 600,
+                                    marginBottom: '6px',
+                                    fontSize: '12px',
+                                    opacity: 0.9,
+                                  }}
+                                >
+                                  Current
+                                </div>
+                                <pre
+                                  style={{
+                                    background: 'var(--runner-panel-bg)',
+                                    color: 'var(--runner-text)',
+                                    padding: '8px',
+                                    borderRadius: '4px',
+                                    maxHeight: '40vh',
+                                    overflow: 'auto',
+                                    border: '1px solid var(--runner-border)',
+                                  }}
+                                >
+                                  {this.renderHighlightedYamlLines(
+                                    this.toYamlString(curr) || '',
+                                    this.toYamlString(orig) || ''
+                                  )}
+                                </pre>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div style={{ marginTop: '8px', fontSize: '12px' }}>
-                          Different: {equal ? 'No' : 'Yes'}
-                        </div>
-                        <div style={{ marginTop: '8px' }}>
-                          <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-                            CLI placeholder
-                          </div>
-                          <code>{cliPlaceholder}</code>
                         </div>
                       </div>
                     );
