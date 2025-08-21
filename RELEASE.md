@@ -10,6 +10,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Render boolean values in table previews. (#2458)
+ - Enhance warning message for circular dependency detection in layers. (#2467)
 
 
 # Release 12.0.0
