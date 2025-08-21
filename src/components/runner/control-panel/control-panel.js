@@ -46,9 +46,18 @@ const ControlPanel = ({
     const combinedParamsArg = `--params ${quoteIfNeeded(
       paramsArgString || ''
     )}`;
+    // Shared style to safely wrap long --params strings without affecting copy
+    const argCodeStyle = {
+      fontFamily: 'monospace',
+      fontSize: '12px',
+      whiteSpace: 'pre-wrap',
+      overflowWrap: 'anywhere',
+      wordBreak: 'break-word',
+      lineBreak: 'anywhere',
+    };
     dialogBody = (
       <div>
-        <div style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+        <div style={argCodeStyle}>
           <code>{combinedParamsArg}</code>
         </div>
         <div
@@ -94,7 +103,9 @@ const ControlPanel = ({
                 marginBottom: '10px',
               }}
             >
-              <code>{perParamArg}</code>
+              <code style={{ ...argCodeStyle, marginBottom: '10px' }}>
+                {perParamArg}
+              </code>
             </div>
             <div
               style={{
@@ -197,7 +208,7 @@ const ControlPanel = ({
                 padding: '6px 8px',
               }}
             >
-              <CopyIcon className="icon" />
+              <CopyIcon className="pipeline-icon" />
             </button>
           </div>
         </div>

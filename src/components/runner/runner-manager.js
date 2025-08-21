@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Sidebar from '../sidebar';
 // Reuse existing metadata panel styles
 import '../metadata/styles/metadata.scss';
-// Removed unused imports (MetaDataStats, NodeIcon, JSONObject)
 import MetaData from '../metadata/metadata';
 import ControlPanel from './control-panel';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
@@ -17,8 +15,6 @@ import {
   cancelKedroCommand,
 } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
-// Removed unused import (FlowChart)
-import WatchListDialog from './watch-list-dialog';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 
@@ -42,71 +38,57 @@ class KedroRunManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // UI state for Data & Parameters panel
-      activeTab: 'parameters',
-      filterText: '',
-      // Simple mock of parameters dictionary. Replace via API on mount.
-      params: {
-        'model.learning_rate': 0.001,
-        'model.dropout': 0.2,
-        'etl.batch_size': 256,
-        'etl.shuffle': true,
-        'report.title': 'Weekly KPIs',
-        'thresholds.alert': { precision: 0.8, recall: 0.7 },
-      },
-      expandedParams: {},
-      // Right-side metadata panel state
-      showMetadata: false,
-      metadataMode: null,
-      selectedParamKey: null,
-      yamlText: '',
-      selectedDataset: null,
-      // Client-side jobs list (placeholder until API is wired)
       jobs: [],
+      expandedLogs: {},
+      isLogsModalOpen: false,
+      logsModalJobId: null,
+      isClearJobsModalOpen: false,
+      isClearJobModalOpen: false,
+      clearJobModalJobId: null,
+
       // Watch list state
       watchList: [],
+      watchTab: 'parameters',
+      customOrder: { param: false, dataset: false },
+      draggingWatch: null,
+
+      // Add-to-watch modal state
       isWatchModalOpen: false,
       selectedToAdd: {},
       tempModalSelections: {},
       watchSearch: '',
-      watchTab: 'parameters',
-      // Drag state and custom order flags for watch list
-      draggingWatch: null,
-      customOrder: { param: false, dataset: false },
-      // Logs UI state
-      expandedLogs: {},
-      isLogsModalOpen: false,
-      logsModalJobId: null,
-      // Parameter override state
-      paramOriginals: {},
-      paramEdits: {},
-      isParamsModalOpen: false,
-      // Aesthetic-only editor embedded at the bottom of MetaData
-      metaEditText: '',
-      // Store edits keyed by watched parameter id -> edited value
-      editedParameters: {},
-      // Map of strictly changed params in the watch list
-      strictlyChanged: {},
-      // Concatenated CLI-ready param arguments string
-      paramsArgString: '',
-      // Toast notification
-      toastMessage: '',
-      toastVisible: false,
-      // Selection for the Parameter changes dialog
-      paramsDialogSelectedKey: null,
-    };
 
-    // Refs and trackers
+      // Parameters state
+      paramOriginals: {},
+      editedParameters: {},
+      paramEdits: {},
+      params: {},
+      paramsArgString: '',
+      strictlyChanged: {},
+
+      // Metadata panel state
+      showMetadata: false,
+      metadataMode: null, // 'param' | 'dataset'
+      selectedParamKey: null,
+      selectedDataset: null,
+      yamlText: '',
+      metaEditText: '',
+
+      // Parameter changes dialog (rendered by ControlPanel)
+      isParamsModalOpen: false,
+      paramsDialogSelectedKey: null,
+
+      // Toast
+      toastVisible: false,
+      toastMessage: '',
+    };
     this.commandInputRef = React.createRef();
-    this.jobPollers = {};
     this.jobsPanelRef = React.createRef();
     this.jobsPanelBodyRef = React.createRef();
+    this.jobPollers = {};
     this.logRefs = {};
-    this._lastSid = null;
-    this._toastTimer = null;
   }
 
-  // --- Runner-only aesthetic editor (inside MetaData extra slot) ---
   onMetaEditChange = (e) => {
     this.setState({ metaEditText: e.target.value });
   };
@@ -1538,7 +1520,11 @@ class KedroRunManager extends Component {
         a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
       );
     const datasetResults = (this.props.datasets || [])
-      .map((d) => ({ kind: 'dataset', id: d.id, name: d.name || d.id }))
+      .map((dataset) => ({
+        kind: 'dataset',
+        id: dataset.id,
+        name: dataset.name || dataset.id,
+      }))
       .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
       .sort((a, b) =>
         a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
@@ -1910,663 +1896,480 @@ class KedroRunManager extends Component {
       watchSearch,
       selectedToAdd,
     } = this.state;
+    if (!isWatchModalOpen) {
+      return null;
+    }
     const { paramResults, datasetResults } = this.getSearchResults();
     const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
-      (acc, id) => {
-        acc[id] = true;
-        return acc;
-      },
+      (acc, id) => ({ ...acc, [id]: true }),
       {}
     );
-    const canConfirm =
-      !!Object.keys(selectedToAdd || {}).length ||
-      !!Object.keys(tempModalSelections || {}).length;
-
+    const canConfirm = !!Object.keys(selectedToAdd || {}).length;
     return (
-      <WatchListDialog
-        isOpen={isWatchModalOpen}
-        onClose={this.closeWatchModal}
-        onConfirm={this.confirmAddSelected}
-        onFlowchartNodeClick={this.handleFlowchartNodeClick}
-        onFlowchartNodeDoubleClick={this.handleFlowchartNodeDoubleClick}
-        tempSelectedMap={tempSelectedMap}
-        stagedItems={tempModalSelections}
-        watchSearch={watchSearch}
-        onWatchSearchChange={(value) => this.setState({ watchSearch: value })}
-        paramResults={paramResults}
-        datasetResults={datasetResults}
-        canConfirm={canConfirm}
-      />
+      <div
+        className="runner-logs-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Add to watch list"
+      >
+        <div className="runner-logs-modal__content">
+          <div className="runner-logs-modal__header">
+            <h3 className="runner-logs-modal__title">Add to watch list</h3>
+            <button
+              className="runner-logs-modal__close"
+              aria-label="Close"
+              onClick={this.closeWatchModal}
+            >
+              ×
+            </button>
+          </div>
+          <div className="runner-logs-modal__body">
+            <input
+              type="search"
+              className="runner-input"
+              placeholder="Search parameters or datasets"
+              value={watchSearch}
+              onChange={this.handleSearchChange}
+            />
+            <div className="runner-two-col" style={{ marginTop: '12px' }}>
+              <div>
+                <div className="panel-subheading">Parameters</div>
+                <ul>
+                  {paramResults.map((paramItem) => (
+                    <li key={paramItem.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!tempSelectedMap[paramItem.id]}
+                          onChange={() =>
+                            this.handleSearchToggle(
+                              'param',
+                              paramItem.id,
+                              paramItem.name
+                            )
+                          }
+                        />
+                        {paramItem.name}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="panel-subheading">Datasets</div>
+                <ul>
+                  {datasetResults.map((datasetItem) => (
+                    <li key={datasetItem.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!tempSelectedMap[datasetItem.id]}
+                          onChange={() =>
+                            this.handleSearchToggle(
+                              'dataset',
+                              datasetItem.id,
+                              datasetItem.name
+                            )
+                          }
+                        />
+                        {datasetItem.name}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="runner-logs-modal__footer">
+            <button className="btn" onClick={this.closeWatchModal}>
+              Cancel
+            </button>
+            <button
+              className="btn btn--primary"
+              disabled={!canConfirm}
+              onClick={this.confirmAddSelected}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   render() {
-    const { displaySidebar, sidebarVisible, displayGlobalNavigation } =
-      this.props;
-
-    const wrapperClassNames = [
-      'runner-manager',
-      displaySidebar ? 'runner-manager--with-sidebar' : null,
-      displaySidebar && sidebarVisible ? 'runner-manager--sidebar-open' : null,
-      !displayGlobalNavigation ? 'runner-manager--no-global-toolbar' : null,
-      this.state.showMetadata ? 'runner-manager--metadata-open' : null,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const hasParamChanges =
-      Object.keys(this.state.strictlyChanged || {}).length > 0;
-
+    const hasParamChanges = !!Object.keys(this.state.strictlyChanged || {})
+      .length;
     return (
-      <>
-        {displaySidebar && <Sidebar disableMinimap />}
-        <div className={wrapperClassNames}>
-          <header className="runner-manager__header">
-            <div className="runner-manager__title">
-              <h2>Runner</h2>
-              <p className="runner-manager__subtitle">
-                Start, monitor and inspect pipeline runs
-              </p>
-            </div>
-            <div className="runner-manager__overview">
-              <div className="overview-item">
-                <div className="overview-item__label">Active jobs</div>
-                <div className="overview-item__value">
-                  {
-                    (this.state.jobs || []).filter(
-                      (j) => j.status === 'running'
-                    ).length
-                  }
-                </div>
-              </div>
-              <div className="overview-item">
-                <div className="overview-item__label">Last run</div>
-                <div className="overview-item__value">—</div>
-              </div>
-            </div>
-          </header>
+      <div className="runner-manager">
+        <header className="runner-manager__header">
+          <h2 className="page-title">Runner</h2>
+        </header>
 
-          <main className="runner-manager__main">
-            <ControlPanel
-              currentCommand={this.getCurrentCommandString()}
-              onStartRun={this.onStartRun}
-              commandInputRef={this.commandInputRef}
-              onCopyCommand={this.copyCommandToClipboard}
-              hasParamChanges={hasParamChanges}
-              activePipeline={this.props.activePipeline || PIPELINE.DEFAULT}
-              selectedTags={this.props.selectedTags || []}
-              onOpenParamsDialog={this.openParamsDialog}
-              isParamsModalOpen={this.state.isParamsModalOpen}
-              onCloseParamsModal={() =>
-                this.setState({ isParamsModalOpen: false })
-              }
-              paramItems={(this.state.watchList || []).filter(
-                (i) => i.kind === 'param'
-              )}
-              paramsDialogSelectedKey={this.state.paramsDialogSelectedKey}
-              onSelectParamKey={(key) =>
-                this.setState({ paramsDialogSelectedKey: key })
-              }
-              paramOriginals={this.state.paramOriginals}
-              getParamValue={this.getParamValue}
-              getEditedParamValue={this.getEditedParamValue}
-              normalizeParamPrefix={this.normalizeParamPrefix}
-              collectParamDiffs={this.collectParamDiffs}
-              toYamlString={this.toYamlString}
-              renderHighlightedYamlLines={this.renderHighlightedYamlLines}
-              quoteIfNeeded={this.quoteIfNeeded}
-              paramsArgString={this.state.paramsArgString}
-            />
+        <main className="runner-manager__main">
+          <ControlPanel
+            currentCommand={this.getCurrentCommandString()}
+            onStartRun={this.onStartRun}
+            commandInputRef={this.commandInputRef}
+            onCopyCommand={this.copyCommandToClipboard}
+            hasParamChanges={hasParamChanges}
+            activePipeline={this.props.activePipeline || PIPELINE.DEFAULT}
+            selectedTags={this.props.selectedTags || []}
+            onOpenParamsDialog={this.openParamsDialog}
+            isParamsModalOpen={this.state.isParamsModalOpen}
+            onCloseParamsModal={() =>
+              this.setState({ isParamsModalOpen: false })
+            }
+            paramItems={(this.state.watchList || []).filter(
+              (i) => i.kind === 'param'
+            )}
+            paramsDialogSelectedKey={this.state.paramsDialogSelectedKey}
+            onSelectParamKey={(key) =>
+              this.setState({ paramsDialogSelectedKey: key })
+            }
+            paramOriginals={this.state.paramOriginals}
+            getParamValue={this.getParamValue}
+            getEditedParamValue={this.getEditedParamValue}
+            normalizeParamPrefix={this.normalizeParamPrefix}
+            collectParamDiffs={this.collectParamDiffs}
+            toYamlString={this.toYamlString}
+            renderHighlightedYamlLines={this.renderHighlightedYamlLines}
+            quoteIfNeeded={this.quoteIfNeeded}
+            paramsArgString={this.state.paramsArgString}
+          />
 
-            <section
-              className="runner-manager__jobs-panel"
-              ref={this.jobsPanelRef}
-            >
-              <div className="jobs-panel__header">
-                <h3 className="section-title">Jobs</h3>
-                <button
-                  className="btn btn--secondary"
-                  onClick={this.openClearJobsConfirm}
-                  disabled={(this.state.jobs || []).length === 0}
-                >
-                  Clear jobs
-                </button>
-              </div>
-              <div className="jobs-panel__body" ref={this.jobsPanelBodyRef}>
-                <div className="jobs-list">
-                  {(this.state.jobs || []).length === 0 && (
-                    <div className="job-card">
-                      <div className="job-card__meta">
-                        <div className="job-card__id">No jobs</div>
-                      </div>
-                      <div className="job-card__body">
-                        <div className="job-card__stdout">
-                          <pre>Click "Start run" to create a job.</pre>
-                        </div>
+          <section
+            className="runner-manager__jobs-panel"
+            ref={this.jobsPanelRef}
+          >
+            <div className="jobs-panel__header">
+              <h3 className="section-title">Jobs</h3>
+              <button
+                className="btn btn--secondary"
+                onClick={this.openClearJobsConfirm}
+                disabled={(this.state.jobs || []).length === 0}
+              >
+                Clear jobs
+              </button>
+            </div>
+            <div className="jobs-panel__body" ref={this.jobsPanelBodyRef}>
+              <div className="jobs-list">
+                {(this.state.jobs || []).length === 0 && (
+                  <div className="job-card">
+                    <div className="job-card__meta">
+                      <div className="job-card__id">No jobs</div>
+                    </div>
+                    <div className="job-card__body">
+                      <div className="job-card__stdout">
+                        <pre>Click "Start run" to create a job.</pre>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {(this.state.jobs || []).map((job) => {
-                    const isExpanded = (this.state.expandedLogs || {})[
-                      job.jobId
-                    ];
-                    const isTerminal = [
-                      'finished',
-                      'error',
-                      'terminated',
-                    ].includes(job.status);
-                    const expanded =
-                      typeof isExpanded === 'boolean'
-                        ? isExpanded
-                        : !isTerminal; // expand by default for non-terminal jobs
-                    const stdoutStyle = {
-                      display: expanded ? 'block' : 'none',
-                      // When expanded, show up to 70% of the viewport height, and never exceed viewport
-                      maxHeight: expanded ? '70vh' : '0px',
-                      overflow: 'auto',
-                    };
-                    // Constrain card to available body height (accounts for sticky header)
-                    const bodyHeight =
-                      this.jobsPanelBodyRef?.current?.clientHeight || 0;
-                    const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
-                    const status = job.status;
-                    const statusClass =
-                      status === 'error' || status === 'terminated'
-                        ? 'job-card__status--error'
-                        : status === 'finished'
-                        ? 'job-card__status--finished'
-                        : 'job-card__status--pending';
-                    const canTerminate = ![
-                      'finished',
-                      'error',
-                      'terminated',
-                    ].includes(status);
-                    const cardClass = `job-card ${
-                      canTerminate ? 'job-card--can-terminate' : ''
-                    }`;
-                    return (
-                      <article
-                        key={job.jobId}
-                        className={cardClass}
-                        style={cardMax ? { maxHeight: `${cardMax}px` } : null}
-                      >
-                        <div className="job-card__meta">
-                          <div className={`job-card__status ${statusClass}`}>
-                            {status}
-                          </div>
-                          <div className="job-card__time">
-                            started{' '}
-                            {new Date(job.startedAt).toLocaleTimeString()}
-                          </div>
-                          {/* Header actions on the right */}
-                          <div
-                            className="job-card__actions"
-                            style={{
-                              position: 'absolute',
-                              top: '8px',
-                              right: '8px',
-                              display: 'flex',
-                              gap: '8px',
-                            }}
-                          >
-                            {canTerminate && (
-                              <button
-                                className="btn btn--danger"
-                                onClick={() => this.onTerminateJob(job.jobId)}
-                                title="Terminate job"
-                              >
-                                Terminate
-                              </button>
-                            )}
-                            <button
-                              className="btn"
-                              onClick={() => this.openLogsModal(job.jobId)}
-                            >
-                              View full logs
-                            </button>
-                            <button
-                              className="btn"
-                              onClick={() =>
-                                this.openClearJobConfirm(job.jobId)
-                              }
-                              title="Remove this job from the list"
-                            >
-                              Remove
-                            </button>
-                          </div>
+                {(this.state.jobs || []).map((job) => {
+                  const isExpanded = (this.state.expandedLogs || {})[job.jobId];
+                  const isTerminal = [
+                    'finished',
+                    'error',
+                    'terminated',
+                  ].includes(job.status);
+                  const expanded =
+                    typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
+                  const stdoutStyle = {
+                    display: expanded ? 'block' : 'none',
+                    maxHeight: expanded ? '70vh' : '0px',
+                    overflow: 'auto',
+                  };
+                  const bodyHeight =
+                    this.jobsPanelBodyRef?.current?.clientHeight || 0;
+                  const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
+                  const status = job.status;
+                  const statusClass =
+                    status === 'error' || status === 'terminated'
+                      ? 'job-card__status--error'
+                      : status === 'finished'
+                      ? 'job-card__status--finished'
+                      : 'job-card__status--pending';
+                  const canTerminate = ![
+                    'finished',
+                    'error',
+                    'terminated',
+                  ].includes(status);
+                  const cardClass = `job-card ${
+                    canTerminate ? 'job-card--can-terminate' : ''
+                  }`;
+                  return (
+                    <article
+                      key={job.jobId}
+                      className={cardClass}
+                      style={cardMax ? { maxHeight: `${cardMax}px` } : null}
+                    >
+                      <div className="job-card__meta">
+                        <div className={`job-card__status ${statusClass}`}>
+                          {status}
                         </div>
-
-                        <div className="job-card__body">
-                          <div className="job-card__controls job-card__controls--top">
-                            <div className="job-card__toggle pipeline-toggle">
-                              <input
-                                id={`pipeline-toggle-input-${job.jobId}`}
-                                className="pipeline-toggle-input"
-                                type="checkbox"
-                                checked={expanded}
-                                onChange={(e) =>
-                                  this.setLogExpanded(
-                                    job.jobId,
-                                    e.target.checked
-                                  )
-                                }
-                              />
-                              <label
-                                className={`pipeline-toggle-label ${
-                                  expanded
-                                    ? 'pipeline-toggle-label--checked'
-                                    : ''
-                                }`}
-                                htmlFor={`pipeline-toggle-input-${job.jobId}`}
-                              >
-                                {expanded ? 'Collapse logs' : 'Expand logs'}
-                              </label>
-                            </div>
-                          </div>
-                          <div className="job-card__details">
-                            <div className="job-card__row">
-                              <strong>Job:</strong> {job.jobId}
-                            </div>
-                            <div className="job-card__row">
-                              <strong>Command:</strong> {job.command}
-                            </div>
-                            <div className="job-card__row">
-                              <strong>Duration:</strong>{' '}
-                              {typeof job.duration !== 'undefined'
-                                ? job.duration
-                                : '—'}
-                              {job.endTime && (
-                                <>
-                                  {' '}
-                                  · ended{' '}
-                                  {new Date(job.endTime).toLocaleTimeString()}
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <div
-                            className="job-card__stdout"
-                            style={stdoutStyle}
-                            ref={(el) => {
-                              this.logRefs[job.jobId] = el;
-                            }}
-                          >
-                            <pre>{job.logs}</pre>
-                          </div>
+                        <div className="job-card__time">
+                          started {new Date(job.startedAt).toLocaleTimeString()}
                         </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
-
-            {/* Editor replaced with Watch List */}
-            <section className="runner-manager__editor">
-              <div className="editor__header">
-                <h3 className="section-title">Watch list</h3>
-                <div className="editor__actions">
-                  <button
-                    className="btn btn--secondary"
-                    onClick={this.openWatchModal}
-                  >
-                    Add
-                  </button>
-                  <button
-                    className="btn btn--secondary"
-                    onClick={this.clearWatchList}
-                    disabled={!(this.state.watchList || []).length}
-                  >
-                    Clear
-                  </button>
-                </div>
-              </div>
-              <div className="runner-data-panel">
-                {this.renderWatchListPanel()}
-              </div>
-            </section>
-          </main>
-
-          <footer className="runner-manager__footer">
-            <small>
-              UI draft — not wired to backend. Connect API endpoints for
-              parameters, datasets and runs to make it live.
-            </small>
-          </footer>
-
-          {this.renderMetadataPanel()}
-          {this.renderWatchModal()}
-          {this.state.toastVisible && (
-            <div
-              className="runner-toast"
-              role="status"
-              aria-live="polite"
-              style={{
-                position: 'fixed',
-                right: '16px',
-                bottom: '16px',
-                background: 'var(--color-bg-alt)',
-                color: 'var(--color-text-alt)',
-                padding: '10px 12px',
-                borderRadius: '6px',
-                boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
-                zIndex: 9999,
-                maxWidth: '50vw',
-              }}
-              onClick={this.hideToast}
-            >
-              {this.state.toastMessage || 'Saved'}
-            </div>
-          )}
-          {this.state.isClearJobsModalOpen && (
-            <div
-              className="runner-logs-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Clear jobs confirmation"
-            >
-              <div className="runner-logs-modal__content">
-                <div className="runner-logs-modal__header">
-                  <h3 className="runner-logs-modal__title">Clear all jobs</h3>
-                  <button
-                    className="runner-logs-modal__close"
-                    aria-label="Close"
-                    onClick={this.closeClearJobsConfirm}
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="runner-logs-modal__body">
-                  <p>
-                    Are you sure you want to clear the jobs list? This will
-                    remove all jobs from the panel.
-                  </p>
-                </div>
-                <div className="runner-logs-modal__footer">
-                  <button className="btn" onClick={this.closeClearJobsConfirm}>
-                    Cancel
-                  </button>
-                  <button
-                    className="btn btn--danger"
-                    onClick={this.clearAllJobs}
-                  >
-                    Clear
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          {this.state.isParamsModalOpen && (
-            <div
-              className="runner-logs-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Parameter changes dialog"
-            >
-              <div className="runner-logs-modal__content">
-                <div className="runner-logs-modal__header">
-                  <h3 className="runner-logs-modal__title">
-                    Parameter changes
-                  </h3>
-                  <button
-                    className="runner-logs-modal__close"
-                    aria-label="Close"
-                    onClick={() => this.setState({ isParamsModalOpen: false })}
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="runner-logs-modal__body">
-                  {(() => {
-                    const paramItems = (this.state.watchList || []).filter(
-                      (i) => i.kind === 'param'
-                    );
-                    if (!paramItems.length) {
-                      return <div>No parameters in the watch list.</div>;
-                    }
-                    const selectedKey =
-                      this.state.paramsDialogSelectedKey || paramItems[0].id;
-                    const onSelect = (e) =>
-                      this.setState({
-                        paramsDialogSelectedKey: e.target.value,
-                      });
-                    const originals = this.state.paramOriginals || {};
-                    const orig = Object.prototype.hasOwnProperty.call(
-                      originals,
-                      selectedKey
-                    )
-                      ? originals[selectedKey]
-                      : this.getParamValue(selectedKey);
-                    const curr = this.getEditedParamValue(selectedKey);
-                    const selectedItem = paramItems.find(
-                      (i) => i.id === selectedKey
-                    );
-                    const prefixName = this.normalizeParamPrefix(
-                      (selectedItem && selectedItem.name) || selectedKey
-                    );
-                    const perPairs = this.collectParamDiffs(
-                      orig,
-                      curr,
-                      prefixName
-                    );
-                    const perParamArg = `--params ${this.quoteIfNeeded(
-                      perPairs.join(',')
-                    )}`;
-                    const combinedParamsArg = `--params ${this.quoteIfNeeded(
-                      this.state.paramsArgString || ''
-                    )}`;
-                    return (
-                      <div>
-                        {/* Combined params for all changes */}
                         <div
-                          style={{ fontFamily: 'monospace', fontSize: '12px' }}
-                        >
-                          <code>{combinedParamsArg}</code>
-                        </div>
-
-                        {/* Parameter-specific section (distinct card) */}
-                        <div
+                          className="job-card__actions"
                           style={{
-                            marginTop: '10px',
-                            border: '1px solid var(--runner-border)',
-                            background: 'var(--runner-subpanel-bg)',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            display: 'flex',
+                            gap: '8px',
                           }}
                         >
-                          <div
-                            style={{
-                              display: 'grid',
-                              gridTemplateColumns: 'auto 1fr',
-                              alignItems: 'center',
-                              gap: '12px',
-                              padding: '10px 12px',
-                              borderBottom: '1px solid var(--runner-border)',
-                              background: 'var(--runner-subpanel-header-bg)',
-                            }}
+                          {canTerminate && (
+                            <button
+                              className="btn btn--danger"
+                              onClick={() => this.onTerminateJob(job.jobId)}
+                              title="Terminate job"
+                            >
+                              Terminate
+                            </button>
+                          )}
+                          <button
+                            className="btn"
+                            onClick={() => this.openLogsModal(job.jobId)}
                           >
-                            <div style={{ fontWeight: 700 }}>
-                              Selected parameter
-                            </div>
-                            <select
-                              id="param-changes-select"
-                              aria-label="Selected parameter"
-                              value={selectedKey}
-                              onChange={onSelect}
-                              style={{ width: '100%' }}
-                            >
-                              {paramItems.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                  {item.name || item.id}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div style={{ padding: '12px' }}>
-                            <div
-                              style={{
-                                fontFamily: 'monospace',
-                                fontSize: '12px',
-                                marginBottom: '10px',
-                              }}
-                            >
-                              <code>{perParamArg}</code>
-                            </div>
-                            <div
-                              style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '12px',
-                              }}
-                            >
-                              <div>
-                                <div
-                                  style={{
-                                    fontWeight: 600,
-                                    marginBottom: '6px',
-                                    fontSize: '12px',
-                                    opacity: 0.9,
-                                  }}
-                                >
-                                  Original
-                                </div>
-                                <pre
-                                  style={{
-                                    background: 'var(--runner-panel-bg)',
-                                    color: 'var(--runner-text)',
-                                    padding: '8px',
-                                    borderRadius: '4px',
-                                    maxHeight: '40vh',
-                                    overflow: 'auto',
-                                    border: '1px solid var(--runner-border)',
-                                  }}
-                                >
-                                  {this.renderHighlightedYamlLines(
-                                    this.toYamlString(orig) || '',
-                                    this.toYamlString(curr) || ''
-                                  )}
-                                </pre>
-                              </div>
-                              <div>
-                                <div
-                                  style={{
-                                    fontWeight: 600,
-                                    marginBottom: '6px',
-                                    fontSize: '12px',
-                                    opacity: 0.9,
-                                  }}
-                                >
-                                  Current
-                                </div>
-                                <pre
-                                  style={{
-                                    background: 'var(--runner-panel-bg)',
-                                    color: 'var(--runner-text)',
-                                    padding: '8px',
-                                    borderRadius: '4px',
-                                    maxHeight: '40vh',
-                                    overflow: 'auto',
-                                    border: '1px solid var(--runner-border)',
-                                  }}
-                                >
-                                  {this.renderHighlightedYamlLines(
-                                    this.toYamlString(curr) || '',
-                                    this.toYamlString(orig) || ''
-                                  )}
-                                </pre>
-                              </div>
-                            </div>
-                          </div>
+                            View full logs
+                          </button>
+                          <button
+                            className="btn"
+                            onClick={() => this.openClearJobConfirm(job.jobId)}
+                            title="Remove this job from the list"
+                          >
+                            Remove
+                          </button>
                         </div>
                       </div>
-                    );
-                  })()}
-                </div>
-                <div className="runner-logs-modal__footer">
-                  <button
-                    className="btn"
-                    onClick={() => this.setState({ isParamsModalOpen: false })}
-                  >
-                    Close
-                  </button>
-                </div>
+
+                      <div className="job-card__body">
+                        <div className="job-card__controls job-card__controls--top">
+                          <div className="job-card__toggle pipeline-toggle">
+                            <input
+                              id={`pipeline-toggle-input-${job.jobId}`}
+                              className="pipeline-toggle-input"
+                              type="checkbox"
+                              checked={expanded}
+                              onChange={(e) =>
+                                this.setLogExpanded(job.jobId, e.target.checked)
+                              }
+                            />
+                            <label
+                              className={`pipeline-toggle-label ${
+                                expanded ? 'pipeline-toggle-label--checked' : ''
+                              }`}
+                              htmlFor={`pipeline-toggle-input-${job.jobId}`}
+                            >
+                              {expanded ? 'Collapse logs' : 'Expand logs'}
+                            </label>
+                          </div>
+                        </div>
+                        <div className="job-card__details">
+                          <div className="job-card__row">
+                            <strong>Job:</strong> {job.jobId}
+                          </div>
+                          <div className="job-card__row">
+                            <strong>Command:</strong> {job.command}
+                          </div>
+                          <div className="job-card__row">
+                            <strong>Duration:</strong>{' '}
+                            {typeof job.duration !== 'undefined'
+                              ? job.duration
+                              : '—'}
+                            {job.endTime && (
+                              <>
+                                {' '}
+                                · ended{' '}
+                                {new Date(job.endTime).toLocaleTimeString()}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div
+                          className="job-card__stdout"
+                          style={stdoutStyle}
+                          ref={(el) => {
+                            this.logRefs[job.jobId] = el;
+                          }}
+                        >
+                          <pre>{job.logs}</pre>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </div>
-          )}
-          {this.state.isClearJobModalOpen && (
-            <div
-              className="runner-logs-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Clear job confirmation"
-            >
-              <div className="runner-logs-modal__content">
-                <div className="runner-logs-modal__header">
-                  <h3 className="runner-logs-modal__title">Remove job</h3>
-                  <button
-                    className="runner-logs-modal__close"
-                    aria-label="Close"
-                    onClick={this.closeClearJobConfirm}
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="runner-logs-modal__body">
-                  <p>
-                    Remove this job from the list? This won’t affect any running
-                    process.
-                  </p>
-                </div>
-                <div className="runner-logs-modal__footer">
-                  <button className="btn" onClick={this.closeClearJobConfirm}>
-                    Cancel
-                  </button>
-                  <button
-                    className="btn btn--danger"
-                    onClick={() => this.clearJob()}
-                  >
-                    Remove
-                  </button>
-                </div>
+          </section>
+
+          <section className="runner-manager__editor">
+            <div className="editor__header">
+              <h3 className="section-title">Watch list</h3>
+              <div className="editor__actions">
+                <button
+                  className="btn btn--secondary"
+                  onClick={this.openWatchModal}
+                >
+                  Add
+                </button>
+                <button
+                  className="btn btn--secondary"
+                  onClick={this.clearWatchList}
+                  disabled={!(this.state.watchList || []).length}
+                >
+                  Clear
+                </button>
               </div>
             </div>
-          )}
-          {this.state.isLogsModalOpen && (
-            <div
-              className="runner-logs-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Job logs dialog"
-            >
-              <div className="runner-logs-modal__content">
-                <div className="runner-logs-modal__header">
-                  <h3 className="runner-logs-modal__title">Job logs</h3>
-                  <button
-                    className="runner-logs-modal__close"
-                    aria-label="Close"
-                    onClick={this.closeLogsModal}
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="runner-logs-modal__body">
-                  <pre>
-                    {(this.state.jobs || []).find(
-                      (j) => j.jobId === this.state.logsModalJobId
-                    )?.logs || ''}
-                  </pre>
-                </div>
-                <div className="runner-logs-modal__footer">
-                  <button className="btn" onClick={this.closeLogsModal}>
-                    Close
-                  </button>
-                </div>
+            <div className="runner-data-panel">
+              {this.renderWatchListPanel()}
+            </div>
+          </section>
+        </main>
+
+        <footer className="runner-manager__footer">
+          <small>
+            UI draft — not wired to backend. Connect API endpoints for
+            parameters, datasets and runs to make it live.
+          </small>
+        </footer>
+
+        {this.renderMetadataPanel()}
+        {this.renderWatchModal()}
+        {this.state.toastVisible && (
+          <div
+            className="runner-toast"
+            role="status"
+            aria-live="polite"
+            style={{
+              position: 'fixed',
+              right: '16px',
+              bottom: '16px',
+              background: 'var(--color-bg-alt)',
+              color: 'var(--color-text-alt)',
+              padding: '10px 12px',
+              borderRadius: '6px',
+              boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+              zIndex: 9999,
+              maxWidth: '50vw',
+            }}
+            onClick={this.hideToast}
+          >
+            {this.state.toastMessage || 'Saved'}
+          </div>
+        )}
+        {this.state.isClearJobsModalOpen && (
+          <div
+            className="runner-logs-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Clear jobs confirmation"
+          >
+            <div className="runner-logs-modal__content">
+              <div className="runner-logs-modal__header">
+                <h3 className="runner-logs-modal__title">Clear all jobs</h3>
+                <button
+                  className="runner-logs-modal__close"
+                  aria-label="Close"
+                  onClick={this.closeClearJobsConfirm}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="runner-logs-modal__body">
+                <p>
+                  Are you sure you want to clear the jobs list? This will remove
+                  all jobs from the panel.
+                </p>
+              </div>
+              <div className="runner-logs-modal__footer">
+                <button className="btn" onClick={this.closeClearJobsConfirm}>
+                  Cancel
+                </button>
+                <button className="btn btn--danger" onClick={this.clearAllJobs}>
+                  Clear
+                </button>
               </div>
             </div>
-          )}
-        </div>
-      </>
+          </div>
+        )}
+        {this.state.isClearJobModalOpen && (
+          <div
+            className="runner-logs-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Clear job confirmation"
+          >
+            <div className="runner-logs-modal__content">
+              <div className="runner-logs-modal__header">
+                <h3 className="runner-logs-modal__title">Remove job</h3>
+                <button
+                  className="runner-logs-modal__close"
+                  aria-label="Close"
+                  onClick={this.closeClearJobConfirm}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="runner-logs-modal__body">
+                <p>
+                  Remove this job from the list? This won’t affect any running
+                  process.
+                </p>
+              </div>
+              <div className="runner-logs-modal__footer">
+                <button className="btn" onClick={this.closeClearJobConfirm}>
+                  Cancel
+                </button>
+                <button
+                  className="btn btn--danger"
+                  onClick={() => this.clearJob()}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {this.state.isLogsModalOpen && (
+          <div
+            className="runner-logs-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Job logs dialog"
+          >
+            <div className="runner-logs-modal__content">
+              <div className="runner-logs-modal__header">
+                <h3 className="runner-logs-modal__title">Job logs</h3>
+                <button
+                  className="runner-logs-modal__close"
+                  aria-label="Close"
+                  onClick={this.closeLogsModal}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="runner-logs-modal__body">
+                <pre>
+                  {(this.state.jobs || []).find(
+                    (jobItem) => jobItem.jobId === this.state.logsModalJobId
+                  )?.logs || ''}
+                </pre>
+              </div>
+              <div className="runner-logs-modal__footer">
+                <button className="btn" onClick={this.closeLogsModal}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   }
 }
@@ -2576,18 +2379,13 @@ const mapStateToProps = (state) => ({
   sidebarVisible: state.visible.sidebar,
   displayGlobalNavigation: state.display.globalNavigation,
   theme: state.theme,
-  // Visible datasets from the current graph; we only need data nodes
   datasets: getVisibleNodes(state).filter((node) => node.type === 'data'),
-  // Also expose parameter nodes for selection in the watch modal
   paramNodes: getVisibleNodes(state).filter(
     (node) => node.type === 'parameters'
   ),
-  // Provide parameters map used by the flowchart metadata panel
   nodeParameters: state.node?.parameters || {},
-  // Clicked node metadata to mirror flowchart/workflow param sourcing
   clickedNodeMetaData: getClickedNodeMetaData(state),
   activePipeline: state.pipeline.active,
-  // Only include enabled tags that are present in the active pipeline; use raw IDs
   selectedTags: getTagData(state)
     .filter((tag) => tag.enabled)
     .map((tag) => tag.id),
