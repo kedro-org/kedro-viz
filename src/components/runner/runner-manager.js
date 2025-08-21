@@ -5,7 +5,7 @@ import Sidebar from '../sidebar';
 import '../metadata/styles/metadata.scss';
 // Removed unused imports (MetaDataStats, NodeIcon, JSONObject)
 import MetaData from '../metadata/metadata';
-import CopyIcon from '../icons/copy';
+import ControlPanel from './control-panel';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
@@ -1987,112 +1987,36 @@ class KedroRunManager extends Component {
           </header>
 
           <main className="runner-manager__main">
-            <section className="runner-manager__control-panel">
-              <div className="control-panel__header">
-                <h3 className="section-title">Run command</h3>
-                <button className="btn btn--primary" onClick={this.onStartRun}>
-                  Start run
-                </button>
-              </div>
-              <div className="runner-manager__control-body">
-                <div className="control-row">
-                  <label className="control-row__label">Command</label>
-                  {(() => {
-                    const currentCommand = this.getCurrentCommandString();
-                    return (
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '8px',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <input
-                          className="control-row__input"
-                          ref={this.commandInputRef}
-                          defaultValue="kedro run"
-                          title={currentCommand}
-                          style={{ flex: '1 1 auto', minWidth: 0 }}
-                        />
-                        <button
-                          className="btn"
-                          onClick={this.copyCommandToClipboard}
-                          title="Copy full command"
-                          aria-label="Copy full command"
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '6px 8px',
-                          }}
-                        >
-                          <CopyIcon className="icon" />
-                        </button>
-                      </div>
-                    );
-                  })()}
-                </div>
-                <div className="control-row">
-                  <ul className="arglist" aria-label="Run arguments overview">
-                    {/* Pipeline always has a concrete value */}
-                    <li className="arglist__item">
-                      <span className="arglist__label">Pipeline</span>
-                      <span className="arglist__flag">(-p)</span>
-                      <span className="arglist__sep">:</span>
-                      <span className="arglist__value">
-                        {this.props.activePipeline || PIPELINE.DEFAULT}
-                      </span>
-                    </li>
-                    {/* Tags only when selected */}
-                    {(this.props.selectedTags || []).length > 0 && (
-                      <li className="arglist__item">
-                        <span className="arglist__label">Tags</span>
-                        <span className="arglist__flag">(-t)</span>
-                        <span className="arglist__sep">:</span>
-                        <span className="arglist__value">
-                          {(this.props.selectedTags || []).map((tag) => (
-                            <span key={tag} className="chip" title={tag}>
-                              {tag}
-                            </span>
-                          ))}
-                        </span>
-                      </li>
-                    )}
-                    {/* Parameters only when there are changes */}
-                    {hasParamChanges && (
-                      <li className="arglist__item">
-                        <span className="arglist__label">Parameters</span>
-                        <span className="arglist__flag">(--params)</span>
-                        <span className="arglist__sep">:</span>
-                        <span className="arglist__value">
-                          <button
-                            type="button"
-                            className="control-link"
-                            onClick={this.openParamsDialog}
-                          >
-                            View changes (
-                            {
-                              Object.keys(this.state.strictlyChanged || {})
-                                .length
-                            }
-                            )
-                          </button>
-                        </span>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </div>
-              <div className="runner-manager__control-footer">
-                <div className="runner-manager__actions" />
-
-                <div className="runner-manager__hints">
-                  <small>
-                    Pro tip: use <code>kedro run -n</code> to run a single node.
-                  </small>
-                </div>
-              </div>
-            </section>
+            <ControlPanel
+              currentCommand={this.getCurrentCommandString()}
+              onStartRun={this.onStartRun}
+              commandInputRef={this.commandInputRef}
+              onCopyCommand={this.copyCommandToClipboard}
+              hasParamChanges={hasParamChanges}
+              activePipeline={this.props.activePipeline || PIPELINE.DEFAULT}
+              selectedTags={this.props.selectedTags || []}
+              onOpenParamsDialog={this.openParamsDialog}
+              isParamsModalOpen={this.state.isParamsModalOpen}
+              onCloseParamsModal={() =>
+                this.setState({ isParamsModalOpen: false })
+              }
+              paramItems={(this.state.watchList || []).filter(
+                (i) => i.kind === 'param'
+              )}
+              paramsDialogSelectedKey={this.state.paramsDialogSelectedKey}
+              onSelectParamKey={(key) =>
+                this.setState({ paramsDialogSelectedKey: key })
+              }
+              paramOriginals={this.state.paramOriginals}
+              getParamValue={this.getParamValue}
+              getEditedParamValue={this.getEditedParamValue}
+              normalizeParamPrefix={this.normalizeParamPrefix}
+              collectParamDiffs={this.collectParamDiffs}
+              toYamlString={this.toYamlString}
+              renderHighlightedYamlLines={this.renderHighlightedYamlLines}
+              quoteIfNeeded={this.quoteIfNeeded}
+              paramsArgString={this.state.paramsArgString}
+            />
 
             <section
               className="runner-manager__jobs-panel"
