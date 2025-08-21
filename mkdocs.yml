@@ -69,7 +69,7 @@ plugins:
         - Visual Workflow view to inspect execution, errors, and dataset stats.
 
         Current version: 12.0.0
-        Last updated: 2025
+        Last updated: 22/07/2025
 
       full_output: llms-full.txt
 
