@@ -805,11 +805,46 @@ class KedroRunManager extends Component {
 
   resetParamYaml = () => {
     const { selectedParamKey } = this.state;
-    const value = this.getParamValue(selectedParamKey);
-    this.setState({ yamlText: this.toYamlString(value) }, () => {
-      this.updateParamsArgString();
-      this.updateCommandFromProps(this.props);
-    });
+    if (!selectedParamKey) {
+      return;
+    }
+    const originals = this.state.paramOriginals || {};
+    const orig = Object.prototype.hasOwnProperty.call(
+      originals,
+      selectedParamKey
+    )
+      ? originals[selectedParamKey]
+      : this.getParamValue(selectedParamKey);
+    const origYaml = this.toYamlString(orig);
+    this.setState(
+      (prev) => {
+        const nextEdited = { ...(prev.editedParameters || {}) };
+        const nextParamEdits = { ...(prev.paramEdits || {}) };
+        const nextParams = { ...(prev.params || {}) };
+        if (typeof orig === 'undefined') {
+          delete nextEdited[selectedParamKey];
+          delete nextParamEdits[selectedParamKey];
+          delete nextParams[selectedParamKey];
+        } else {
+          nextEdited[selectedParamKey] = orig;
+          nextParamEdits[selectedParamKey] = orig;
+          nextParams[selectedParamKey] = orig;
+        }
+        return {
+          yamlText: origYaml,
+          metaEditText: origYaml,
+          editedParameters: nextEdited,
+          paramEdits: nextParamEdits,
+          params: nextParams,
+        };
+      },
+      () => {
+        this.updateStrictlyChanged();
+        this.updateParamsArgString();
+        this.updateCommandFromProps(this.props);
+        this.showToast('Reset to original');
+      }
+    );
   };
 
   // YAML stringifier using the 'yaml' package
