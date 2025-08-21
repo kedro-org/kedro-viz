@@ -10,6 +10,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Render boolean values in table previews. (#2458)
+ - Add llm.txt with mkdocs to improve LLM base query. (#2466)
  - Enhance warning message for circular dependency detection in layers. (#2467)
 
 
