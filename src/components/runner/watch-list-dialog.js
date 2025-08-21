@@ -19,10 +19,8 @@ export default function WatchListDialog({
   if (!isOpen) {
     return null;
   }
-  const allowConfirm =
-    typeof canConfirm === 'boolean'
-      ? canConfirm
-      : Object.keys(stagedItems || {}).length > 0;
+  // Allow confirm even when staged is empty (enables clearing all selections)
+  const allowConfirm = typeof canConfirm === 'boolean' ? canConfirm : true;
 
   // Pending counts for footer caption
   const stagedValues = Object.values(stagedItems || {});
@@ -159,7 +157,7 @@ export default function WatchListDialog({
               onClick={onConfirm}
               disabled={!allowConfirm}
             >
-              Add selected
+              Update
             </button>
           </div>
         </div>

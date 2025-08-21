@@ -95,7 +95,7 @@ class KedroRunManager extends Component {
   };
 
   onMetaEditSave = () => {
-    // Copy from the aesthetic editor into yamlText, then save
+    // Copy from the aesthetic editor into yamlText, then save via UPDATE helper
     this.setState(
       (prev) => ({ yamlText: prev.metaEditText || '' }),
       () => this.saveParamYaml()
@@ -281,21 +281,24 @@ class KedroRunManager extends Component {
           .filter((i) => i.kind === 'param')
           .map((i) => i.id)
       );
-      if (this.state.editedParameters) {
-        const pruned = Object.keys(this.state.editedParameters).reduce(
-          (acc, key) => {
-            if (watchKeys.has(key)) {
-              acc[key] = this.state.editedParameters[key];
-            }
-            return acc;
-          },
-          {}
-        );
-        if (
-          JSON.stringify(pruned) !== JSON.stringify(this.state.editedParameters)
-        ) {
-          this.setState({ editedParameters: pruned });
+      // Prune entries for removed keys and backfill missing entries for newly added keys
+      const prevEdited = this.state.editedParameters || {};
+      const nextEdited = Object.keys(prevEdited).reduce((acc, key) => {
+        if (watchKeys.has(key)) {
+          acc[key] = prevEdited[key];
         }
+        return acc;
+      }, {});
+      watchKeys.forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(nextEdited, key)) {
+          const val = this.getParamValue(key);
+          if (typeof val !== 'undefined') {
+            nextEdited[key] = val;
+          }
+        }
+      });
+      if (JSON.stringify(nextEdited) !== JSON.stringify(prevEdited)) {
+        this.setState({ editedParameters: nextEdited });
       }
       // Recompute strictly-changed map when watch list updates
       this.updateStrictlyChanged();
@@ -319,10 +322,37 @@ class KedroRunManager extends Component {
           .filter((i) => i.kind === 'param')
           .map((i) => i.id);
         this.ensureOriginalsFor(keys);
+        // Backfill editedParameters with any now-known values from Redux metadata
+        const prevEdited = this.state.editedParameters || {};
+        const nextEdited = { ...prevEdited };
+        let changed = false;
+        keys.forEach((key) => {
+          const val = this.getParamValue(key);
+          if (!Object.prototype.hasOwnProperty.call(nextEdited, key)) {
+            if (typeof val !== 'undefined') {
+              nextEdited[key] = val;
+              changed = true;
+            }
+          } else if (
+            typeof nextEdited[key] === 'undefined' &&
+            typeof val !== 'undefined'
+          ) {
+            nextEdited[key] = val;
+            changed = true;
+          }
+        });
+        if (changed) {
+          this.setState({ editedParameters: nextEdited }, () => {
+            this.updateStrictlyChanged();
+            this.updateParamsArgString();
+          });
+        } else {
+          this.updateParamsArgString();
+        }
       } catch (e) {
         // noop
+        this.updateParamsArgString();
       }
-      this.updateParamsArgString();
     }
 
     // Recompute CLI params string when originals baseline changes
@@ -836,22 +866,8 @@ class KedroRunManager extends Component {
       this.ensureOriginalsFor(selectedParamKey);
     }
     const parsed = this.parseYamlishValue(yamlText);
-    this.setState(
-      (prev) => ({
-        paramEdits: { ...(prev.paramEdits || {}), [selectedParamKey]: parsed },
-        params: { ...(prev.params || {}), [selectedParamKey]: parsed },
-        editedParameters: {
-          ...(prev.editedParameters || {}),
-          [selectedParamKey]: parsed,
-        },
-      }),
-      () => {
-        this.updateParamsArgString();
-        this.updateCommandFromProps(this.props);
-        this.saveParamsToStorage();
-        this.showToast('Parameter updated');
-      }
-    );
+    this.updateEditedParam(selectedParamKey, parsed);
+    this.showToast('Parameter updated');
   };
 
   resetParamYaml = () => {
@@ -859,44 +875,11 @@ class KedroRunManager extends Component {
     if (!selectedParamKey) {
       return;
     }
-    const originals = this.state.paramOriginals || {};
-    const orig = Object.prototype.hasOwnProperty.call(
-      originals,
-      selectedParamKey
-    )
-      ? originals[selectedParamKey]
-      : this.getParamValue(selectedParamKey);
+    const orig = this.resetParamKey(selectedParamKey);
     const origYaml = this.toYamlString(orig);
-    this.setState(
-      (prev) => {
-        const nextEdited = { ...(prev.editedParameters || {}) };
-        const nextParamEdits = { ...(prev.paramEdits || {}) };
-        const nextParams = { ...(prev.params || {}) };
-        if (typeof orig === 'undefined') {
-          delete nextEdited[selectedParamKey];
-          delete nextParamEdits[selectedParamKey];
-          delete nextParams[selectedParamKey];
-        } else {
-          nextEdited[selectedParamKey] = orig;
-          nextParamEdits[selectedParamKey] = orig;
-          nextParams[selectedParamKey] = orig;
-        }
-        return {
-          yamlText: origYaml,
-          metaEditText: origYaml,
-          editedParameters: nextEdited,
-          paramEdits: nextParamEdits,
-          params: nextParams,
-        };
-      },
-      () => {
-        this.updateStrictlyChanged();
-        this.updateParamsArgString();
-        this.updateCommandFromProps(this.props);
-        this.saveParamsToStorage();
-        this.showToast('Reset to original');
-      }
-    );
+    this.setState({ yamlText: origYaml, metaEditText: origYaml });
+    this.updateCommandFromProps(this.props);
+    this.showToast('Reset to original');
   };
 
   // YAML stringifier using the 'yaml' package
@@ -977,7 +960,11 @@ class KedroRunManager extends Component {
   getEditedParamValue = (paramKey) => {
     const edited = this.state.editedParameters || {};
     if (Object.prototype.hasOwnProperty.call(edited, paramKey)) {
-      return edited[paramKey];
+      const val = edited[paramKey];
+      if (typeof val !== 'undefined') {
+        return val;
+      }
+      // Fallback if placeholder undefined snuck in
     }
     return this.getParamValue(paramKey);
   };
@@ -1589,51 +1576,220 @@ class KedroRunManager extends Component {
     );
   };
 
-  confirmAddSelected = () => {
-    const { selectedToAdd } = this.state;
-    if (!selectedToAdd || !Object.keys(selectedToAdd).length) {
-      this.closeWatchModal();
+  // --- Parameter watchlist helpers (ADD / RESET / REMOVE / UPDATE) ---
+  // (ADD) Add parameter to watch list
+  addParamToWatchList = (paramKey) => {
+    if (!paramKey) {
       return;
     }
-    const items = Object.keys(selectedToAdd).map((key) => {
-      const [kind, id] = key.split(':');
-      if (kind === 'param') {
-        const node = (this.props.paramNodes || []).find(
-          (paramNode) => paramNode.id === id
-        );
-        return { kind, id, name: node?.name || id };
+    const exists = (this.state.watchList || []).some(
+      (i) => i.kind === 'param' && i.id === paramKey
+    );
+    if (exists) {
+      return;
+    }
+    const node = (this.props.paramNodes || []).find(
+      (nodeItem) => nodeItem.id === paramKey
+    );
+    const item = { kind: 'param', id: paramKey, name: node?.name || paramKey };
+    this.setState(
+      (prev) => ({ watchList: [...(prev.watchList || []), item] }),
+      () => {
+        this.saveWatchToStorage();
+        // Ensure originals are captured first, then reset edited to original
+        this.ensureOriginalsFor(paramKey);
+        this.resetParamKey(paramKey);
+        // Load metadata for this param
+        try {
+          if (this.props.dispatch) {
+            this.props.dispatch(loadNodeData(paramKey));
+          }
+        } catch (e) {}
       }
-      const dataset = (this.props.datasets || []).find((d) => d.id === id);
-      return { kind, id, name: dataset?.name || id };
-    });
+    );
+  };
+
+  // (RESET) Reset edited parameter to original and recompute derived data
+  resetParamKey = (paramKey) => {
+    if (!paramKey) {
+      return undefined;
+    }
+    const originals = this.state.paramOriginals || {};
+    const orig = Object.prototype.hasOwnProperty.call(originals, paramKey)
+      ? originals[paramKey]
+      : this.getParamValue(paramKey);
     this.setState(
       (prev) => {
-        const existingKeys = new Set(
-          (prev.watchList || []).map((item) => `${item.kind}:${item.id}`)
-        );
-        const merged = [
-          ...(prev.watchList || []),
-          ...items.filter(
-            (item) => !existingKeys.has(`${item.kind}:${item.id}`)
-          ),
-        ];
+        const nextEdited = { ...(prev.editedParameters || {}) };
+        const nextParamEdits = { ...(prev.paramEdits || {}) };
+        const nextParams = { ...(prev.params || {}) };
+        if (typeof orig === 'undefined') {
+          delete nextEdited[paramKey];
+          delete nextParamEdits[paramKey];
+          delete nextParams[paramKey];
+        } else {
+          nextEdited[paramKey] = orig;
+          nextParamEdits[paramKey] = orig;
+          nextParams[paramKey] = orig;
+        }
         return {
-          watchList: merged,
-          isWatchModalOpen: false,
-          selectedToAdd: {},
+          editedParameters: nextEdited,
+          paramEdits: nextParamEdits,
+          params: nextParams,
+        };
+      },
+      () => {
+        this.updateStrictlyChanged();
+        this.updateParamsArgString();
+        this.saveParamsToStorage();
+      }
+    );
+    return orig;
+  };
+
+  // (REMOVE) Remove parameter from watch list and all related state
+  removeParamFromWatchList = (paramKey) => {
+    if (!paramKey) {
+      return;
+    }
+    this.setState(
+      (prev) => {
+        const nextWatch = (prev.watchList || []).filter(
+          (item) => !(item.kind === 'param' && item.id === paramKey)
+        );
+        const nextOriginals = { ...(prev.paramOriginals || {}) };
+        const nextEdited = { ...(prev.editedParameters || {}) };
+        const nextParamEdits = { ...(prev.paramEdits || {}) };
+        const nextParams = { ...(prev.params || {}) };
+        const nextStrict = { ...(prev.strictlyChanged || {}) };
+        delete nextOriginals[paramKey];
+        delete nextEdited[paramKey];
+        delete nextParamEdits[paramKey];
+        delete nextParams[paramKey];
+        delete nextStrict[paramKey];
+        return {
+          watchList: nextWatch,
+          paramOriginals: nextOriginals,
+          editedParameters: nextEdited,
+          paramEdits: nextParamEdits,
+          params: nextParams,
+          strictlyChanged: nextStrict,
         };
       },
       () => {
         this.saveWatchToStorage();
-        this.refreshWatchParamsMetadata();
+        this.updateParamsArgString();
+        this.saveParamsToStorage();
+      }
+    );
+  };
+
+  // (UPDATE) Update the current parameter value and recompute derived data
+  updateEditedParam = (paramKey, value) => {
+    if (!paramKey) {
+      return;
+    }
+    this.setState(
+      (prev) => ({
+        editedParameters: {
+          ...(prev.editedParameters || {}),
+          [paramKey]: value,
+        },
+        paramEdits: { ...(prev.paramEdits || {}), [paramKey]: value },
+        params: { ...(prev.params || {}), [paramKey]: value },
+      }),
+      () => {
+        this.updateStrictlyChanged();
+        this.updateParamsArgString();
+        this.updateCommandFromProps(this.props);
+        this.saveParamsToStorage();
+      }
+    );
+  };
+
+  confirmAddSelected = () => {
+    const { selectedToAdd } = this.state;
+    // Build next desired set from staged map
+    const stagedKeys = new Set(Object.keys(selectedToAdd || {}));
+    const prevList = this.state.watchList || [];
+    const prevParamKeys = new Set(
+      prevList.filter((i) => i.kind === 'param').map((i) => i.id)
+    );
+    const nextParamKeys = new Set(
+      Array.from(stagedKeys)
+        .map((k) => k.split(':'))
+        .filter(([kind]) => kind === 'param')
+        .map(([, id]) => id)
+    );
+    // Compute adds and removes for params
+    const toAdd = Array.from(nextParamKeys).filter(
+      (k) => !prevParamKeys.has(k)
+    );
+    const toRemove = Array.from(prevParamKeys).filter(
+      (k) => !nextParamKeys.has(k)
+    );
+
+    // Apply param changes
+    toAdd.forEach((k) => this.addParamToWatchList(k));
+    toRemove.forEach((k) => this.removeParamFromWatchList(k));
+
+    // Compute dataset updates similarly
+    const prevDatasetKeys = new Set(
+      prevList.filter((i) => i.kind === 'dataset').map((i) => i.id)
+    );
+    const nextDatasetKeys = new Set(
+      Array.from(stagedKeys)
+        .map((k) => k.split(':'))
+        .filter(([kind]) => kind === 'dataset')
+        .map(([, id]) => id)
+    );
+    const dsToAdd = Array.from(nextDatasetKeys).filter(
+      (k) => !prevDatasetKeys.has(k)
+    );
+    const dsToRemove = Array.from(prevDatasetKeys).filter(
+      (k) => !nextDatasetKeys.has(k)
+    );
+
+    // Apply dataset changes (no param state impact)
+    if (dsToAdd.length || dsToRemove.length) {
+      this.setState(
+        (prev) => {
+          const keepDatasets = (prev.watchList || []).filter(
+            (i) => i.kind !== 'dataset'
+          );
+          const added = dsToAdd.map((id) => {
+            const d = (this.props.datasets || []).find((x) => x.id === id);
+            return { kind: 'dataset', id, name: d?.name || id };
+          });
+          const next = [
+            ...keepDatasets,
+            ...Array.from(nextDatasetKeys).map((id) => {
+              const d = (this.props.datasets || []).find((x) => x.id === id);
+              return { kind: 'dataset', id, name: d?.name || id };
+            }),
+          ];
+          return { watchList: next };
+        },
+        () => {
+          this.saveWatchToStorage();
+        }
+      );
+    }
+
+    // Close modal and clear staged selection
+    this.setState(
+      { isWatchModalOpen: false, selectedToAdd: {}, tempModalSelections: {} },
+      () => {
+        // Ensure originals and metadata for final param set
         try {
           const keys = (this.state.watchList || [])
             .filter((i) => i.kind === 'param')
             .map((i) => i.id);
           this.ensureOriginalsFor(keys);
-        } catch (e) {
-          // noop
-        }
+          this.refreshWatchParamsMetadata();
+        } catch (e) {}
+        this.updateStrictlyChanged();
+        this.updateParamsArgString();
       }
     );
   };
@@ -1657,13 +1813,15 @@ class KedroRunManager extends Component {
   };
 
   clearWatchList = () => {
+    const keys = (this.state.watchList || [])
+      .filter((i) => i.kind === 'param')
+      .map((i) => i.id);
+    // Remove param keys and then clear datasets
+    keys.forEach((k) => this.removeParamFromWatchList(k));
     this.setState(
-      {
-        watchList: [],
-        editedParameters: {},
-        paramEdits: {},
-        strictlyChanged: {},
-      },
+      (prev) => ({
+        watchList: (prev.watchList || []).filter((i) => i.kind !== 'dataset'),
+      }),
       () => {
         this.saveWatchToStorage();
         this.updateCommandFromProps(this.props);
@@ -1672,13 +1830,20 @@ class KedroRunManager extends Component {
   };
 
   removeFromWatchList = (kind, id) => {
+    if (kind === 'param') {
+      this.removeParamFromWatchList(id);
+      return;
+    }
+    // Dataset removal only updates the watch list
     this.setState(
       (prev) => ({
         watchList: (prev.watchList || []).filter(
           (item) => !(item.kind === kind && item.id === id)
         ),
       }),
-      () => this.saveWatchToStorage()
+      () => {
+        this.saveWatchToStorage();
+      }
     );
   };
 
