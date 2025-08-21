@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
 import ControlPanel from './control-panel';
+import WatchListDialog from './watch-list-dialog';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
@@ -1896,104 +1897,28 @@ class KedroRunManager extends Component {
       watchSearch,
       selectedToAdd,
     } = this.state;
-    if (!isWatchModalOpen) {
-      return null;
-    }
     const { paramResults, datasetResults } = this.getSearchResults();
     const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
-      (acc, id) => ({ ...acc, [id]: true }),
+      (acc, id) => {
+        acc[id] = true;
+        return acc;
+      },
       {}
     );
-    const canConfirm = !!Object.keys(selectedToAdd || {}).length;
     return (
-      <div
-        className="runner-logs-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Add to watch list"
-      >
-        <div className="runner-logs-modal__content">
-          <div className="runner-logs-modal__header">
-            <h3 className="runner-logs-modal__title">Add to watch list</h3>
-            <button
-              className="runner-logs-modal__close"
-              aria-label="Close"
-              onClick={this.closeWatchModal}
-            >
-              ×
-            </button>
-          </div>
-          <div className="runner-logs-modal__body">
-            <input
-              type="search"
-              className="runner-input"
-              placeholder="Search parameters or datasets"
-              value={watchSearch}
-              onChange={this.handleSearchChange}
-            />
-            <div className="runner-two-col" style={{ marginTop: '12px' }}>
-              <div>
-                <div className="panel-subheading">Parameters</div>
-                <ul>
-                  {paramResults.map((paramItem) => (
-                    <li key={paramItem.id}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={!!tempSelectedMap[paramItem.id]}
-                          onChange={() =>
-                            this.handleSearchToggle(
-                              'param',
-                              paramItem.id,
-                              paramItem.name
-                            )
-                          }
-                        />
-                        {paramItem.name}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <div className="panel-subheading">Datasets</div>
-                <ul>
-                  {datasetResults.map((datasetItem) => (
-                    <li key={datasetItem.id}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={!!tempSelectedMap[datasetItem.id]}
-                          onChange={() =>
-                            this.handleSearchToggle(
-                              'dataset',
-                              datasetItem.id,
-                              datasetItem.name
-                            )
-                          }
-                        />
-                        {datasetItem.name}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="runner-logs-modal__footer">
-            <button className="btn" onClick={this.closeWatchModal}>
-              Cancel
-            </button>
-            <button
-              className="btn btn--primary"
-              disabled={!canConfirm}
-              onClick={this.confirmAddSelected}
-            >
-              Add
-            </button>
-          </div>
-        </div>
-      </div>
+      <WatchListDialog
+        isOpen={isWatchModalOpen}
+        onClose={this.closeWatchModal}
+        onConfirm={this.confirmAddSelected}
+        onFlowchartNodeClick={this.handleFlowchartNodeClick}
+        onFlowchartNodeDoubleClick={this.handleFlowchartNodeDoubleClick}
+        tempSelectedMap={tempSelectedMap}
+        stagedItems={tempModalSelections}
+        watchSearch={watchSearch}
+        onWatchSearchChange={(value) => this.setState({ watchSearch: value })}
+        paramResults={paramResults}
+        datasetResults={datasetResults}
+      />
     );
   }
 
