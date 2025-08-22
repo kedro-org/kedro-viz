@@ -7,6 +7,8 @@ import subprocess
 from datetime import datetime
 from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
+import os
+import signal
 
 from kedro_viz.api.rest.requests import (
     DeployerConfiguration,
@@ -298,6 +300,35 @@ async def get_kedro_command_status(job_id: str):
             "returncode": job["returncode"],
         },
     )
+
+
+@router.post("/kedro-command-cancel/{job_id}")
+async def cancel_kedro_command(job_id: str):
+    """Attempt to terminate a running Kedro command."""
+    with _kedro_jobs_lock:
+        job = kedro_jobs.get(job_id)
+        if not job:
+            return JSONResponse(status_code=404, content={"message": "Job not found"})
+        pid = job.get("pid")
+        status = job.get("status")
+    if not pid or status not in {"initialize", "running"}:
+        # Nothing to do; treat as success for idempotency
+        return JSONResponse(status_code=200, content={"terminated": False})
+
+    try:
+        # On Windows, SIGTERM maps to TerminateProcess; on Unix it's a soft terminate
+        os.kill(pid, signal.SIGTERM)
+        with _kedro_jobs_lock:
+            job = kedro_jobs.get(job_id)
+            if job:
+                job["status"] = "terminated"
+                job["end_time"] = datetime.now()
+                if job.get("start_time"):
+                    job["duration"] = (job["end_time"] - job["start_time"]).total_seconds()
+        return JSONResponse(status_code=200, content={"terminated": True})
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Failed to terminate Kedro job %s: %s", job_id, exc)
+        return JSONResponse(status_code=500, content={"message": str(exc)})
 
 
 @router.get(
