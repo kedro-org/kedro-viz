@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 // Reuse existing metadata panel styles
 import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
 import ControlPanel from './control-panel';
+import WatchPanel, {
+  onFlowchartNodeClickImpl,
+  onFlowchartNodeDoubleClickImpl,
+} from './watch-panel';
 import WatchListDialog from './watch-list-dialog';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
@@ -1911,159 +1916,25 @@ class KedroRunManager extends Component {
     }));
   };
 
-  // Handle flowchart node clicks inside the watch modal to toggle selection
-  handleFlowchartNodeClick = (nodeId) => {
-    // Find if clicked node is a dataset or parameter
-    const isParam = (this.props.paramNodes || []).some(
-      (paramNode) => paramNode.id === nodeId
-    );
-    const datasetItem = (this.props.datasets || []).find(
-      (d) => d.id === nodeId
-    );
-    if (isParam) {
-      this.toggleSelectToAdd('param', nodeId);
-    } else if (datasetItem) {
-      this.toggleSelectToAdd('dataset', datasetItem.id);
-    }
-    // Also toggle clicked highlight on the flowchart (single highlight)
-    if (this.props.dispatch) {
-      this.props.dispatch(toggleNodeClicked(nodeId));
-    }
-  };
-
-  // Handle double-click to select and highlight green and stage into temp list
-  handleFlowchartNodeDoubleClick = (node) => {
-    const nodeId = node?.id;
-    if (!nodeId) {
-      return;
-    }
-    const isParam = (this.props.paramNodes || []).some(
-      (paramNode) => paramNode.id === nodeId
-    );
-    let entry;
-    if (isParam) {
-      entry = { kind: 'param', id: nodeId, name: node.name || nodeId };
-      this.toggleSelectToAdd('param', nodeId);
-    } else {
-      const datasetItem = (this.props.datasets || []).find(
-        (d) => d.id === nodeId
-      );
-      if (!datasetItem) {
-        return;
-      }
-      entry = {
-        kind: 'dataset',
-        id: datasetItem.id,
-        name: datasetItem.name || datasetItem.id,
-      };
-      this.toggleSelectToAdd('dataset', datasetItem.id);
-    }
-    this.setState((prev) => {
-      const next = { ...(prev.tempModalSelections || {}) };
-      if (next[nodeId]) {
-        delete next[nodeId];
-      } else {
-        next[nodeId] = entry;
-      }
-      return { tempModalSelections: next };
-    });
-  };
+  // Flowchart handlers moved to WatchPanel helpers
 
   renderWatchListPanel() {
-    const { watchList, watchTab, customOrder } = this.state;
-    const parameterItems = (watchList || []).filter(
-      (watchItem) => watchItem.kind === 'param'
-    );
-    const datasetItems = (watchList || []).filter(
-      (watchItem) => watchItem.kind === 'dataset'
-    );
-    let itemsToShow = watchTab === 'parameters' ? parameterItems : datasetItems;
-    const kindKey = watchTab === 'parameters' ? 'param' : 'dataset';
-    if (!customOrder[kindKey]) {
-      itemsToShow = [...itemsToShow].sort((a, b) =>
-        (a.name || a.id).localeCompare(b.name || b.id, undefined, {
-          sensitivity: 'base',
-        })
-      );
-    }
-    const getParamPreview = (key) => {
-      const value = this.getEditedParamValue(key);
-      if (typeof value === 'undefined') {
-        return '—';
-      }
-      const text = this.toYamlString(value) || '';
-      const firstLine = String(text).split(/\r?\n/)[0];
-      return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
-    };
-    // hasParamChanges computed in control panel only
+    const { watchList, watchTab, customOrder, strictlyChanged } = this.state;
     return (
-      <div className="runner-panel runner-panel--watchlist">
-        <div className="runner-panel__toolbar">
-          <div className="runner-panel__tabs">
-            <button
-              className={`runner-tab ${
-                watchTab === 'parameters' ? 'runner-tab--active' : ''
-              }`}
-              onClick={() => this.setState({ watchTab: 'parameters' })}
-            >
-              Parameters ({parameterItems.length})
-            </button>
-            <button
-              className={`runner-tab ${
-                watchTab === 'datasets' ? 'runner-tab--active' : ''
-              }`}
-              onClick={() => this.setState({ watchTab: 'datasets' })}
-            >
-              Datasets ({datasetItems.length})
-            </button>
-          </div>
-        </div>
-        <div
-          className="runner-panel__list"
-          role="region"
-          aria-label="Watch list"
-        >
-          {!watchList.length && (
-            <div className="watchlist-empty">No items in your watch list.</div>
-          )}
-          <ul className="watchlist-list">
-            {itemsToShow.map((item) => (
-              <li
-                key={`${item.kind}:${item.id}`}
-                className={`watchlist-item ${
-                  item.kind === 'param' &&
-                  (this.state.strictlyChanged || {})[item.id]
-                    ? 'watchlist-item--edited'
-                    : ''
-                }`}
-                draggable
-                onDragStart={() => this.startDragWatch(item.kind, item.id)}
-                onDragOver={this.allowDropWatch}
-                onDrop={() => this.dropWatch(item.kind, item.id)}
-              >
-                <button
-                  className="watchlist-item__main"
-                  onClick={() => this.onWatchItemClick(item)}
-                >
-                  <span className="watchlist-item__name">{item.name}</span>
-                  {watchTab === 'parameters' && (
-                    <span className="watchlist-item__preview">
-                      {getParamPreview(item.id)}
-                    </span>
-                  )}
-                </button>
-                <button
-                  className="watchlist-item__remove"
-                  aria-label="Remove from watch list"
-                  onClick={() => this.removeFromWatchList(item.kind, item.id)}
-                >
-                  ×
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <WatchPanel
+        watchList={watchList}
+        watchTab={watchTab}
+        customOrder={customOrder}
+        strictlyChanged={strictlyChanged}
+        setWatchTab={(tab) => this.setState({ watchTab: tab })}
+        onDragStart={this.startDragWatch}
+        onDragOver={this.allowDropWatch}
+        onDrop={this.dropWatch}
+        onItemClick={this.onWatchItemClick}
+        onRemove={this.removeFromWatchList}
+        getEditedParamValue={this.getEditedParamValue}
+        toYamlString={this.toYamlString}
+      />
     );
   }
 
@@ -2087,8 +1958,30 @@ class KedroRunManager extends Component {
         isOpen={isWatchModalOpen}
         onClose={this.closeWatchModal}
         onConfirm={this.confirmAddSelected}
-        onFlowchartNodeClick={this.handleFlowchartNodeClick}
-        onFlowchartNodeDoubleClick={this.handleFlowchartNodeDoubleClick}
+        onFlowchartNodeClick={(nodeId) =>
+          onFlowchartNodeClickImpl({
+            nodeId,
+            paramNodes: this.props.paramNodes || [],
+            datasets: this.props.datasets || [],
+            dispatch: this.props.dispatch,
+            toggleSelectToAdd: this.toggleSelectToAdd,
+          })
+        }
+        onFlowchartNodeDoubleClick={(node) =>
+          onFlowchartNodeDoubleClickImpl({
+            node,
+            paramNodes: this.props.paramNodes || [],
+            datasets: this.props.datasets || [],
+            toggleSelectToAdd: this.toggleSelectToAdd,
+            setTempModalSelections: (updater) =>
+              this.setState((prev) => ({
+                tempModalSelections:
+                  typeof updater === 'function'
+                    ? updater(prev.tempModalSelections)
+                    : updater,
+              })),
+          })
+        }
         tempSelectedMap={tempSelectedMap}
         stagedItems={tempModalSelections}
         watchSearch={watchSearch}
@@ -2102,8 +1995,14 @@ class KedroRunManager extends Component {
   render() {
     const hasParamChanges = !!Object.keys(this.state.strictlyChanged || {})
       .length;
+    const containerClass = classnames('runner-manager', {
+      'runner-manager--with-sidebar': this.props.displaySidebar,
+      'runner-manager--sidebar-open':
+        this.props.displaySidebar && this.props.sidebarVisible,
+      'runner-manager--no-global-toolbar': !this.props.displayGlobalNavigation,
+    });
     return (
-      <div className="runner-manager">
+      <div className={containerClass}>
         <header className="runner-manager__header">
           <h2 className="page-title">Runner</h2>
         </header>
@@ -2471,6 +2370,8 @@ class KedroRunManager extends Component {
             </div>
           </div>
         )}
+
+        {/* End of modals */}
       </div>
     );
   }

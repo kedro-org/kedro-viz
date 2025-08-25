@@ -1,1 +1,5 @@
-export { default } from './watch-list.impl';
+export {
+  default,
+  onFlowchartNodeClickImpl,
+  onFlowchartNodeDoubleClickImpl,
+} from './watch-panel';
