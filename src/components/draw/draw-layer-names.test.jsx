@@ -3,9 +3,6 @@ import { render, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DrawLayerNames, DrawLayerNamesGroup } from './draw-layer-names';
 
-// Mock d3 to avoid real DOM manipulation in tests
-global.d3Lib = require('d3');
-
 describe('DrawLayerNames', () => {
   it('does nothing if no layers or ref', () => {
     const ref = createRef();

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import * as d3 from 'd3';
-
+import { select } from 'd3-selection';
 import './styles/index.scss';
 
 /**
@@ -16,7 +15,7 @@ export function DrawLayers({
     if (!layersRef?.current || !layers.length) {
       return;
     }
-    const svg = d3.select(layersRef.current);
+    const svg = select(layersRef.current);
     // DATA JOIN
     const layerSel = svg.selectAll('.pipeline-layer').data(layers, (d) => d.id);
     // ENTER

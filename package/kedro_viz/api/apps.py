@@ -67,7 +67,7 @@ def create_api_app_from_project(
     if Path(_HTML_DIR).is_dir():
         # The html is needed when kedro_viz is used in cli but not required when running
         # frontend e2e tests via Cypress
-        app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+        app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
     # every time the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
@@ -125,7 +125,7 @@ def create_api_app_from_project(
 def create_api_app_from_file(api_dir: str) -> FastAPI:
     """Create an API from a json file."""
     app = _create_base_api_app()
-    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+    app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
     @app.get("/")
     async def index():
