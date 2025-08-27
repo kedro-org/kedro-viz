@@ -122,8 +122,11 @@ def sort_layers(
         return sorted(
             sorted_layers, key=lambda layer: (sorted_layers.index(layer), layer)
         )
-    except CycleError:
+    except CycleError as e:
         logger.warning(
-            "Layers visualisation is disabled as circular dependency detected among layers."
+            "Layers visualisation is disabled as circular dependency detected among layers. "
+            "Circular dependency detected: %s. "
+            "Please check the `layer` configuration in your catalog for the datasets to avoid circular references. ",
+            str(e),
         )
         return []

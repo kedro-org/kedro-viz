@@ -34,9 +34,9 @@ def register_pipelines() -> Dict[str, Pipeline]:
             + modelling_pipeline
             + reporting_pipeline
         ),
-        "Data ingestion": ingestion_pipeline,
-        "Modelling stage": modelling_pipeline,
-        "Feature engineering": feature_pipeline,
-        "Reporting stage": reporting_pipeline,
-        "Pre-modelling": ingestion_pipeline + feature_pipeline,
+        "data_ingestion": ingestion_pipeline,
+        "modelling_stage": modelling_pipeline,
+        "feature_engineering": feature_pipeline,
+        "reporting_stage": reporting_pipeline,
+        "pre_modelling": ingestion_pipeline + feature_pipeline,
     }

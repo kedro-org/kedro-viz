@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from kedro.pipeline import node
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
-    TIME_FORMAT,
     compute_size,
     extract_file_paths,
     generate_timestamp,
     get_file_size,
     hash_node,
     is_default_run,
+    is_sequential_runner,
     write_events,
     write_events_to_file,
 )
@@ -73,8 +73,22 @@ class TestFileSizeUtils:
 class TestTimestampUtils:
     def test_generate_timestamp_format(self):
         ts = generate_timestamp()
-        assert ts.endswith("Z")
-        datetime.strptime(ts, TIME_FORMAT)  # Should not raise
+        parsed_ts = datetime.fromisoformat(ts)
+
+        # Should have timezone info, and it should be UTC
+        assert parsed_ts.tzinfo is not None, (
+            "Parsed timestamp should have timezone info"
+        )
+        assert parsed_ts.tzinfo.utcoffset(parsed_ts) == timezone.utc.utcoffset(
+            parsed_ts
+        ), f"Timestamp timezone offset is not UTC, got: {parsed_ts.tzinfo}"
+
+        # Should be close to current UTC time
+        now = datetime.now(timezone.utc)
+        delta = abs((parsed_ts - now).total_seconds())
+        assert delta < 5, (
+            f"Timestamp is not within 5 seconds of current UTC time, delta={delta}, ts={ts}, now={now}"
+        )
 
 
 class TestWriteEvents:
@@ -124,3 +138,21 @@ class TestRunDefaults:
     )
     def test_is_default_run(self, params, expected):
         assert is_default_run(params) is expected
+
+    @pytest.mark.parametrize(
+        "params, expected",
+        [
+            ({}, True),
+            ({"runner": None}, True),
+            (
+                {"runner": "kedro.runner.sequential_runner.SequentialRunner object"},
+                True,
+            ),
+            ({"runner": "ParallelRunner"}, False),
+            ({"runner": "ThreadRunner"}, False),
+            ({"runner": 123}, False),
+            ({"runner": []}, False),
+        ],
+    )
+    def test_is_sequential_runner(self, params, expected):
+        assert is_sequential_runner(params) is expected

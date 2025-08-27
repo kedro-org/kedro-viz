@@ -701,25 +701,3 @@ class TestResolveDatasetFactoryPatterns:
             catalog_repo.get_layer_for_dataset("processing.int_companies")
             == "factory_test"
         )
-
-        # Testing for Kedro < 1.0
-        # Mock the `_get_dataset` method on the catalog
-        mocker.patch.object(catalog, "get", None)
-        mocked_get = mocker.patch.object(
-            catalog, "_get_dataset", return_value="mocked_dataset", create=True
-        )
-
-        # Set the catalog in the repository
-        catalog_repo.set_catalog(catalog)
-
-        # Call the method under test
-        data_access_manager.resolve_dataset_factory_patterns(catalog, pipelines)
-
-        # Assert that the layer for the dataset is resolved correctly
-        assert (
-            catalog_repo.get_layer_for_dataset("processing.int_companies")
-            == "factory_test"
-        )
-
-        # Assert that the `get` method was called
-        assert mocked_get.call_count == 3
