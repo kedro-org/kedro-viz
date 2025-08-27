@@ -1,11 +1,11 @@
+// Vite turns this into a Worker constructor.
+import GraphWorker from './graph-worker.js?worker&inline';
+
 // Check for test environment
 const isTest = typeof jest !== 'undefined';
 
-const createWorker = () => {
-  return new Worker(new URL('./graph-worker.js', import.meta.url), {
-    type: 'module',
-  });
-};
+// Factory that returns a Worker instance
+const createWorker = () => new GraphWorker({ name: 'graph-worker' });
 
 /**
  * Emulate a worker for tests
@@ -19,7 +19,9 @@ const createMockWorker = (workerModule) => {
     const mockWorker = {
       terminate: () => {},
       postMessage: async (payload) => {
-        const fn = workerModule.graph || workerModule.default || (() => {});
+        // For tests, call the worker module directly
+        const impl = require('./graph-worker.js');
+        const fn = impl.graph || impl.default || (() => {});
         const result = await fn(payload);
         // Simulate async message
         setTimeout(() => {

@@ -3,6 +3,15 @@
   "version": "11.1.0",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
+  "module": "lib/components/app/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./lib/components/app/index.mjs",
+      "require": "./lib/components/app/index.js"
+    },
+    "./lib/styles/styles.min.css": "./lib/styles/styles.min.css",
+    "./lib/utils/data/*": "./lib/utils/data/*"
+  },
   "files": [
     "lib"
   ],
@@ -20,12 +29,11 @@
     "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p dev start:lib",
     "start:dev": "rm -rf node_modules/.cache && npm run start",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
-    "lib": "npm-run-all -s lib:clean lib:copy lib:webpack lib:babel lib:prune",
+    "lib": "npm-run-all -s lib:clean lib:copy lib:vite lib:prune",
     "lib:clean": "rm -rf lib",
     "lib:copy": "cp -rf src lib",
-    "lib:webpack": "webpack --config webpack.lib.js",
-    "lib:babel": "BABEL_ENV=lib babel lib --out-dir lib",
-    "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete && find lib -type f -name '*.jsx' -delete",
+    "lib:vite": "vite build --config vite.lib.config.js",
+    "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete && find lib -type f -name '*.jsx' -delete && rm -f lib/utils/worker.js lib/utils/worker.blob.js lib/utils/graph-worker.js",
     "lib-test": "npm-run-all -s lib lib-test:setup lib-test:serve",
     "lib-test:setup": "node ./tools/test-lib/setup.js",
     "lib-test:serve": "node ./tools/test-lib/serve.js",
@@ -173,7 +181,8 @@
       "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
     ],
     "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy"
+      "\\.(css|scss)$": "identity-obj-proxy",
+      "^(.*)\\?worker&inline$": "$1"
     },
     "maxWorkers": 5
   },
