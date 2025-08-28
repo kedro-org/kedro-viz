@@ -50,6 +50,7 @@ class DataAccessManager:
         self.nodes = GraphNodesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
         self.tags = TagsRepository()
+        self.env: str = ""
 
         # Make sure each registered pipeline has a distinct collection of
         # - modular pipelines
@@ -87,6 +88,17 @@ class DataAccessManager:
                 catalog.get(dataset_name)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
+
+    def add_env(self,
+                env: str):
+        """Add the current Kedro environment to the manager.
+        
+        Args:
+            env: The current Kedro environment.
+        """
+        
+        self.env = env
+
 
     def add_catalog(
         self,

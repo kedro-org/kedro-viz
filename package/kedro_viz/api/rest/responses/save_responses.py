@@ -26,6 +26,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled:
         nodes_path = f"{path}/api/nodes"
         pipelines_path = f"{path}/api/pipelines"
         run_status_path = f"{path}/api/run-status"
+        env_path = f"{path}/api/env"
 
         if "file" in remote_fs.protocol:
             remote_fs.makedirs(path, exist_ok=True)
@@ -36,6 +37,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled:
         save_api_node_response_to_fs(nodes_path, remote_fs, is_all_previews_enabled)
         save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
         save_api_run_status_response_to_fs(run_status_path, remote_fs)
+        save_api_env_response_to_fs(env_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover
         logger.exception(
@@ -91,6 +93,14 @@ def save_api_node_response_to_fs(
             )
             raise exc
 
+def save_api_env_response_to_fs(env_path: str, remote_fs: Any):
+    """Saves API /env response to a directory."""
+    try:
+        write_api_response_to_fs(env_path, data_access_manager.env, remote_fs)
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Failed to save env response. Error: %s", str(exc))
+        raise exc
+
 
 def save_api_run_status_response_to_fs(run_status_path: str, remote_fs: Any):
     """Saves API /run-status response to a directory."""
@@ -107,3 +117,4 @@ def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
 
     with remote_fs.open(file_path, "wb") as file:
         file.write(encoded_response)
+        

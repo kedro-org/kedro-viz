@@ -18,6 +18,7 @@ DEV_PORT = 4142
 
 def populate_data(
     data_access_manager: DataAccessManager,
+    env: Optional[str],
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     stats_dict: Dict,
@@ -33,6 +34,10 @@ def populate_data(
     data_access_manager.add_dataset_stats(stats_dict)
 
     data_access_manager.add_pipelines(pipelines)
+
+    if env is None:
+        env = "local"
+    data_access_manager.add_env(env)
 
 
 def load_and_populate_data(
@@ -58,7 +63,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, stats_dict)
+    populate_data(data_access_manager, env, catalog, pipelines, stats_dict)
 
 
 def run_server(

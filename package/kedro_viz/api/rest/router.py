@@ -34,6 +34,10 @@ from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
 )
+from kedro_viz.api.rest.responses.env import (
+    EnvironmentAPIResponse,
+    get_env_response,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +51,10 @@ router = APIRouter(
 async def main():
     return get_pipeline_response()
 
+
+@router.get("/env", response_model=EnvironmentAPIResponse)
+async def get_env():
+    return get_env_response()
 
 @router.get(
     "/nodes/{node_id}",
