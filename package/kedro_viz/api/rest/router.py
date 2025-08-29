@@ -181,10 +181,7 @@ def _stream_reader(pipe, job_id, key):
                 # ensure key exists and is a string
                 kedro_jobs[job_id][key] += line
     finally:
-        try:
-            pipe.close()
-        except Exception:
-            pass
+        pass 
 
 
 def quote_if_needed(text:str) -> str:
