@@ -19,6 +19,7 @@ import {
   startKedroCommand,
   getKedroCommandStatus,
   cancelKedroCommand,
+  fetchKedroEnv,
 } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
@@ -87,6 +88,7 @@ class KedroRunManager extends Component {
       // Toast
       toastVisible: false,
       toastMessage: '',
+      kedroEnv: null,
     };
   }
 
@@ -159,6 +161,13 @@ class KedroRunManager extends Component {
     }
   };
 
+  fetchAndSetKedroEnv = async () => {
+    try {
+      const env = await fetchKedroEnv();
+      this.setState({ kedroEnv: env });
+    } catch (e) {}
+  };
+
   componentDidMount() {
     // Rehydrate any persisted jobs and resume polling where needed
     this.hydrateJobsFromStorage();
@@ -172,6 +181,8 @@ class KedroRunManager extends Component {
     } catch (e) {
       this.setState({ paramOriginals: { ...(this.state.params || {}) } });
     }
+    // Fetch Kedro env from API
+    this.fetchAndSetKedroEnv();
     this.updateCommandFromProps(this.props);
     this.updateParamsArgString();
     // Initial compute of strictly changed items
@@ -192,7 +203,8 @@ class KedroRunManager extends Component {
     const prevTags = (prevProps.selectedTags || []).slice().sort().join(',');
     const nextTags = (this.props.selectedTags || []).slice().sort().join(',');
     const tagsChanged = prevTags !== nextTags;
-    if (pipelineChanged || tagsChanged) {
+    const kedroEnvChanged = prevState.kedroEnv !== this.state.kedroEnv;
+    if (pipelineChanged || tagsChanged || kedroEnvChanged) {
       this.updateCommandFromProps(this.props);
     }
 
@@ -472,9 +484,14 @@ class KedroRunManager extends Component {
   };
 
   buildRunCommand = (props) => {
+    const kedroEnv = this.state.kedroEnv;
     const activePipeline = props.activePipeline;
     const selectedTags = props.selectedTags || [];
     const parts = ['kedro run'];
+    if (kedroEnv && kedroEnv !== 'local') {
+      parts.push('-e');
+      parts.push(kedroEnv);
+    }
     if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
       parts.push('-p');
       parts.push(this.quoteIfNeeded(activePipeline));
@@ -539,7 +556,6 @@ class KedroRunManager extends Component {
   getApiBase = () => `${sanitizedPathname()}api`;
 
   addOrUpdateJob = (partial) => {
-    // partial: {jobId, ...fields}
     if (!partial || !partial.jobId) {
       return;
     }
@@ -2037,6 +2053,7 @@ class KedroRunManager extends Component {
             renderHighlightedYamlLines={this.renderHighlightedYamlLines}
             quoteIfNeeded={this.quoteIfNeeded}
             paramsArgString={this.state.paramsArgString}
+            kedroEnv={this.state.kedroEnv}
           />
 
           <section

@@ -25,6 +25,7 @@ const ControlPanel = ({
   renderHighlightedYamlLines,
   quoteIfNeeded,
   paramsArgString,
+  kedroEnv,
 }) => {
   const selectedKey =
     paramsDialogSelectedKey ||
@@ -214,6 +215,14 @@ const ControlPanel = ({
         </div>
         <div className="control-row">
           <ul className="arglist" aria-label="Run arguments overview">
+            {kedroEnv && kedroEnv !== 'local' && (
+              <li className="arglist__item">
+                <span className="arglist__label">Environment</span>
+                <span className="arglist__flag">(-e)</span>
+                <span className="arglist__sep">:</span>
+                <span className="arglist__value">{kedroEnv}</span>
+              </li>
+            )}
             <li className="arglist__item">
               <span className="arglist__label">Pipeline</span>
               <span className="arglist__flag">(-p)</span>

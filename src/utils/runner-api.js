@@ -57,3 +57,19 @@ export const cancelKedroCommand = async (jobId) => {
   );
   return res.ok;
 };
+
+export async function fetchKedroEnv() {
+  try {
+    // Use the correct API endpoint for env
+    const response = await fetch(`${apiBase()}/env`);
+
+    if (!response.ok) {
+      return null;
+    }
+    const data = await response.json();
+    return data.env;
+  } catch (e) {
+    console.error('Error fetching Kedro Env:', e);
+    return null;
+  }
+}
