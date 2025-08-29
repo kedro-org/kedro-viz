@@ -6,10 +6,7 @@ import { connect } from 'react-redux';
 import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
 import ControlPanel from './control-panel';
-import WatchPanel, {
-  onFlowchartNodeClickImpl,
-  onFlowchartNodeDoubleClickImpl,
-} from './watch-panel';
+import WatchListPanel from './WatchListPanel';
 import WatchListDialog from './watch-list-dialog';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
@@ -1945,21 +1942,12 @@ class KedroRunManager extends Component {
   // Flowchart handlers moved to WatchPanel helpers
 
   renderWatchListPanel() {
-    const { watchList, watchTab, customOrder, strictlyChanged } = this.state;
     return (
-      <WatchPanel
-        watchList={watchList}
-        watchTab={watchTab}
-        customOrder={customOrder}
-        strictlyChanged={strictlyChanged}
-        setWatchTab={(tab) => this.setState({ watchTab: tab })}
-        onDragStart={this.startDragWatch}
-        onDragOver={this.allowDropWatch}
-        onDrop={this.dropWatch}
-        onItemClick={this.onWatchItemClick}
-        onRemove={this.removeFromWatchList}
-        getEditedParamValue={this.getEditedParamValue}
-        toYamlString={this.toYamlString}
+      <WatchListPanel
+        watchList={this.state.watchList}
+        onWatchItemClick={this.onWatchItemClick}
+        onRemoveFromWatchList={this.removeFromWatchList}
+        strictlyChanged={this.state.strictlyChanged}
       />
     );
   }
@@ -1984,30 +1972,6 @@ class KedroRunManager extends Component {
         isOpen={isWatchModalOpen}
         onClose={this.closeWatchModal}
         onConfirm={this.confirmAddSelected}
-        onFlowchartNodeClick={(nodeId) =>
-          onFlowchartNodeClickImpl({
-            nodeId,
-            paramNodes: this.props.paramNodes || [],
-            datasets: this.props.datasets || [],
-            dispatch: this.props.dispatch,
-            toggleSelectToAdd: this.toggleSelectToAdd,
-          })
-        }
-        onFlowchartNodeDoubleClick={(node) =>
-          onFlowchartNodeDoubleClickImpl({
-            node,
-            paramNodes: this.props.paramNodes || [],
-            datasets: this.props.datasets || [],
-            toggleSelectToAdd: this.toggleSelectToAdd,
-            setTempModalSelections: (updater) =>
-              this.setState((prev) => ({
-                tempModalSelections:
-                  typeof updater === 'function'
-                    ? updater(prev.tempModalSelections)
-                    : updater,
-              })),
-          })
-        }
         tempSelectedMap={tempSelectedMap}
         stagedItems={tempModalSelections}
         watchSearch={watchSearch}
