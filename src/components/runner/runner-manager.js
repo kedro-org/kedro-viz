@@ -430,11 +430,9 @@ class KedroRunManager extends Component {
     }
   }
 
-  // --- URL selected-id (sid) sync helpers ---
   getSidFromUrl = () => {
     try {
       const params = new URLSearchParams(window.location.search || '');
-      // Prefer short key used by flowchart; fall back to legacy if present
       return params.get('sid') || params.get('selected_id') || '';
     } catch (e) {
       return '';
@@ -551,9 +549,6 @@ class KedroRunManager extends Component {
       this.showToast('Copy failed');
     }
   };
-
-  // --- API helpers ---
-  getApiBase = () => `${sanitizedPathname()}api`;
 
   addOrUpdateJob = (partial) => {
     if (!partial || !partial.jobId) {
