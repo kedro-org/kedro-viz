@@ -1,3 +1,4 @@
+import JobListPanel from './JobListPanel';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -1470,6 +1471,20 @@ class KedroRunManager extends Component {
     return null;
   }
 
+  renderJobListPanel() {
+    return (
+      <JobListPanel
+        jobs={this.state.jobs}
+        expandedLogs={this.state.expandedLogs}
+        onToggleLogExpanded={this.toggleLogExpanded}
+        onOpenLogsModal={this.openLogsModal}
+        onOpenClearJobConfirm={this.openClearJobConfirm}
+        onTerminateJob={this.onTerminateJob}
+        logRefs={this.logRefs}
+      />
+    );
+  }
+
   // --- Watch list actions ---
   openWatchModal = () => {
     // Preselect previously selected items (existing watch list)
@@ -2065,159 +2080,7 @@ class KedroRunManager extends Component {
                 Clear jobs
               </button>
             </div>
-            <div className="jobs-panel__body" ref={this.jobsPanelBodyRef}>
-              <div className="jobs-list">
-                {(this.state.jobs || []).length === 0 && (
-                  <div className="job-card">
-                    <div className="job-card__meta">
-                      <div className="job-card__id">No jobs</div>
-                    </div>
-                    <div className="job-card__body">
-                      <div className="job-card__stdout">
-                        <pre>Click "Start run" to create a job.</pre>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {(this.state.jobs || []).map((job) => {
-                  const isExpanded = (this.state.expandedLogs || {})[job.jobId];
-                  const isTerminal = [
-                    'finished',
-                    'error',
-                    'terminated',
-                  ].includes(job.status);
-                  const expanded =
-                    typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
-                  const stdoutStyle = {
-                    display: expanded ? 'block' : 'none',
-                    maxHeight: expanded ? '70vh' : '0px',
-                    overflow: 'auto',
-                  };
-                  const bodyHeight =
-                    this.jobsPanelBodyRef?.current?.clientHeight || 0;
-                  const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
-                  const status = job.status;
-                  const statusClass =
-                    status === 'error' || status === 'terminated'
-                      ? 'job-card__status--error'
-                      : status === 'finished'
-                      ? 'job-card__status--finished'
-                      : 'job-card__status--pending';
-                  const canTerminate = ![
-                    'finished',
-                    'error',
-                    'terminated',
-                  ].includes(status);
-                  const cardClass = `job-card ${
-                    canTerminate ? 'job-card--can-terminate' : ''
-                  }`;
-                  return (
-                    <article
-                      key={job.jobId}
-                      className={cardClass}
-                      style={cardMax ? { maxHeight: `${cardMax}px` } : null}
-                    >
-                      <div className="job-card__meta">
-                        <div className={`job-card__status ${statusClass}`}>
-                          {status}
-                        </div>
-                        <div className="job-card__time">
-                          started {new Date(job.startedAt).toLocaleTimeString()}
-                        </div>
-                        <div
-                          className="job-card__actions"
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            display: 'flex',
-                            gap: '8px',
-                          }}
-                        >
-                          {canTerminate && (
-                            <button
-                              className="btn btn--danger"
-                              onClick={() => this.onTerminateJob(job.jobId)}
-                              title="Terminate job"
-                            >
-                              Terminate
-                            </button>
-                          )}
-                          <button
-                            className="btn"
-                            onClick={() => this.openLogsModal(job.jobId)}
-                          >
-                            View full logs
-                          </button>
-                          <button
-                            className="btn"
-                            onClick={() => this.openClearJobConfirm(job.jobId)}
-                            title="Remove this job from the list"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="job-card__body">
-                        <div className="job-card__controls job-card__controls--top">
-                          <div className="job-card__toggle pipeline-toggle">
-                            <input
-                              id={`pipeline-toggle-input-${job.jobId}`}
-                              className="pipeline-toggle-input"
-                              type="checkbox"
-                              checked={expanded}
-                              onChange={(e) =>
-                                this.setLogExpanded(job.jobId, e.target.checked)
-                              }
-                            />
-                            <label
-                              className={`pipeline-toggle-label ${
-                                expanded ? 'pipeline-toggle-label--checked' : ''
-                              }`}
-                              htmlFor={`pipeline-toggle-input-${job.jobId}`}
-                            >
-                              {expanded ? 'Collapse logs' : 'Expand logs'}
-                            </label>
-                          </div>
-                        </div>
-                        <div className="job-card__details">
-                          <div className="job-card__row">
-                            <strong>Job:</strong> {job.jobId}
-                          </div>
-                          <div className="job-card__row">
-                            <strong>Command:</strong> {job.command}
-                          </div>
-                          <div className="job-card__row">
-                            <strong>Duration:</strong>{' '}
-                            {typeof job.duration !== 'undefined'
-                              ? job.duration
-                              : '—'}
-                            {job.endTime && (
-                              <>
-                                {' '}
-                                · ended{' '}
-                                {new Date(job.endTime).toLocaleTimeString()}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        <div
-                          className="job-card__stdout"
-                          style={stdoutStyle}
-                          ref={(el) => {
-                            this.logRefs[job.jobId] = el;
-                          }}
-                        >
-                          <pre>{job.logs}</pre>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
+            {this.renderJobListPanel()}
           </section>
 
           <section className="runner-manager__editor">

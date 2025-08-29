@@ -1,5 +1,4 @@
 import React from 'react';
-import CopyIcon from '../../icons/copy';
 
 const ControlPanel = ({
   currentCommand,
