@@ -6,7 +6,10 @@ import { connect } from 'react-redux';
 import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
 import ControlPanel from './control-panel';
-import WatchListPanel from './WatchListPanel';
+import WatchPanel, {
+  onFlowchartNodeClickImpl,
+  onFlowchartNodeDoubleClickImpl,
+} from './watch-panel';
 import WatchListDialog from './watch-list-dialog';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
@@ -1896,7 +1899,14 @@ class KedroRunManager extends Component {
         this.props.dispatch(loadNodeData(item.id));
         this.props.dispatch(toggleNodeClicked(item.id));
       }
-      this.openParamEditor(item.id);
+      // Defensive: ensure param value is serializable and not iterable unless expected
+      try {
+        this.openParamEditor(item.id);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to open parameter editor for', item.id, e);
+        this.showToast('Error opening parameter editor');
+      }
     } else if (item.kind === 'dataset') {
       this.setSidInUrl(item.id);
       if (this.props.dispatch) {
@@ -1916,9 +1926,24 @@ class KedroRunManager extends Component {
     // Capture original if missing
     this.ensureOriginalsFor(paramKey);
     const existing = this.state.editedParameters || {};
-    const value = Object.prototype.hasOwnProperty.call(existing, paramKey)
+    let value = Object.prototype.hasOwnProperty.call(existing, paramKey)
       ? existing[paramKey]
       : this.getParamValue(paramKey);
+    // Defensive: if value is not serializable, fallback to empty string
+    try {
+      // If value is not a primitive, array, or plain object, fallback
+      if (
+        typeof value === 'function' ||
+        (typeof value === 'object' &&
+          value !== null &&
+          Object.getPrototypeOf(value) !== Object.prototype &&
+          !Array.isArray(value))
+      ) {
+        value = '';
+      }
+    } catch (e) {
+      value = '';
+    }
     // Dispatch node click to populate Redux metadata like flowchart/workflow
     if (this.props.dispatch) {
       // Ensure metadata is loaded if needed, then set clicked
@@ -1944,11 +1969,19 @@ class KedroRunManager extends Component {
 
   renderWatchListPanel() {
     return (
-      <WatchListPanel
+      <WatchPanel
         watchList={this.state.watchList}
-        onWatchItemClick={this.onWatchItemClick}
-        onRemoveFromWatchList={this.removeFromWatchList}
+        watchTab={this.state.watchTab}
+        customOrder={this.state.customOrder}
         strictlyChanged={this.state.strictlyChanged}
+        setWatchTab={(tab) => this.setState({ watchTab: tab })}
+        onDragStart={this.startDragWatch}
+        onDragOver={this.allowDropWatch}
+        onDrop={this.dropWatch}
+        onItemClick={this.onWatchItemClick}
+        onRemove={this.removeFromWatchList}
+        getEditedParamValue={this.getEditedParamValue}
+        toYamlString={this.toYamlString}
       />
     );
   }
@@ -1973,6 +2006,30 @@ class KedroRunManager extends Component {
         isOpen={isWatchModalOpen}
         onClose={this.closeWatchModal}
         onConfirm={this.confirmAddSelected}
+        onFlowchartNodeClick={(nodeId) =>
+          onFlowchartNodeClickImpl({
+            nodeId,
+            paramNodes: this.props.paramNodes || [],
+            datasets: this.props.datasets || [],
+            dispatch: this.props.dispatch,
+            toggleSelectToAdd: this.toggleSelectToAdd,
+          })
+        }
+        onFlowchartNodeDoubleClick={(node) =>
+          onFlowchartNodeDoubleClickImpl({
+            node,
+            paramNodes: this.props.paramNodes || [],
+            datasets: this.props.datasets || [],
+            toggleSelectToAdd: this.toggleSelectToAdd,
+            setTempModalSelections: (updater) =>
+              this.setState((prev) => ({
+                tempModalSelections:
+                  typeof updater === 'function'
+                    ? updater(prev.tempModalSelections)
+                    : updater,
+              })),
+          })
+        }
         tempSelectedMap={tempSelectedMap}
         stagedItems={tempModalSelections}
         watchSearch={watchSearch}
