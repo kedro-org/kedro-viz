@@ -1476,6 +1476,7 @@ class KedroRunManager extends Component {
         onToggleLogExpanded={this.toggleLogExpanded}
         onOpenLogsModal={this.openLogsModal}
         onOpenClearJobConfirm={this.openClearJobConfirm}
+        onOpenClearJobsConfirm={this.openClearJobsConfirm}
         onTerminateJob={this.onTerminateJob}
         logRefs={this.logRefs}
       />
@@ -2034,16 +2035,6 @@ class KedroRunManager extends Component {
             className="runner-manager__jobs-panel"
             ref={this.jobsPanelRef}
           >
-            <div className="jobs-panel__header">
-              <h3 className="section-title">Jobs</h3>
-              <button
-                className="btn btn--secondary"
-                onClick={this.openClearJobsConfirm}
-                disabled={(this.state.jobs || []).length === 0}
-              >
-                Clear jobs
-              </button>
-            </div>
             {this.renderJobListPanel()}
           </section>
 
