@@ -13,6 +13,8 @@ inputs:
 
 runs:
   using: "composite"
+  env:
+    KEDRO_DISABLE_TELEMETRY: "true"
   steps:
     - name: Set up Python ${{inputs.python-version}}
       uses: actions/setup-python@v5
