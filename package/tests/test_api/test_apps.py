@@ -7,6 +7,7 @@ from kedro_viz.api import apps
 
 
 class TestIndexEndpoint:
+    @mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False)
     def test_index(self, client):
         response = client.get("/")
         assert response.status_code == 200
@@ -20,10 +21,11 @@ class TestIndexEndpoint:
     ):
         mock_get_heap_app_id.return_value = "my_heap_app"
         mock_get_heap_identity.return_value = "my_heap_identity"
-        response = client.get("/")
-        assert response.status_code == 200
-        assert 'heap.load("my_heap_app")' in response.text
-        assert 'heap.identify("my_heap_identity")' in response.text
+        with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False):
+            response = client.get("/")
+            assert response.status_code == 200
+            assert 'heap.load("my_heap_app")' in response.text
+            assert 'heap.identify("my_heap_identity")' in response.text
 
 
 @pytest.fixture
