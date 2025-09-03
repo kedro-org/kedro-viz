@@ -11,9 +11,11 @@ def test_get_heap_app_id_no_telemetry_file():
 
 
 def test_get_heap_app_id_invalid_telemetry_file(tmpdir):
-    telemetry_file = tmpdir / ".telemetry"
-    telemetry_file.write_text("foo", encoding="utf-8")
-    assert kedro_telemetry.get_heap_app_id(tmpdir) is not None
+    # Ensure telemetry is not disabled by environment variable for this test
+    with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False):
+        telemetry_file = tmpdir / ".telemetry"
+        telemetry_file.write_text("foo", encoding="utf-8")
+        assert kedro_telemetry.get_heap_app_id(tmpdir) is not None
 
 
 def test_get_heap_app_id_no_consent(tmpdir):
@@ -27,11 +29,13 @@ def test_get_heap_app_id_no_consent(tmpdir):
 def test_get_heap_app_id_with_consent(
     mock_check_for_telemetry_consent, mock_get_heap_app_id, tmpdir
 ):
-    mock_check_for_telemetry_consent.return_value = True
-    mock_get_heap_app_id.return_value = "my_heap_id"
-    telemetry_file = tmpdir / ".telemetry"
-    telemetry_file.write_text("consent: true", encoding="utf-8")
-    assert kedro_telemetry.get_heap_app_id(tmpdir) == "my_heap_id"
+    # Ensure telemetry is not disabled by environment variable for this test
+    with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False):
+        mock_check_for_telemetry_consent.return_value = True
+        mock_get_heap_app_id.return_value = "my_heap_id"
+        telemetry_file = tmpdir / ".telemetry"
+        telemetry_file.write_text("consent: true", encoding="utf-8")
+        assert kedro_telemetry.get_heap_app_id(tmpdir) == "my_heap_id"
 
 
 @mock.patch("kedro_viz.integrations.kedro.telemetry._check_for_telemetry_consent")
