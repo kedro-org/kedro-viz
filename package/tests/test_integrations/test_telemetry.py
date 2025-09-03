@@ -5,7 +5,9 @@ from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 
 def test_get_heap_app_id_no_telemetry_file():
-    assert kedro_telemetry.get_heap_app_id(Path.cwd()) is not None
+    # Ensure telemetry is not disabled by environment variable for this test
+    with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False):
+        assert kedro_telemetry.get_heap_app_id(Path.cwd()) is not None
 
 
 def test_get_heap_app_id_invalid_telemetry_file(tmpdir):
