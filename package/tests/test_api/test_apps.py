@@ -21,7 +21,9 @@ class TestIndexEndpoint:
     ):
         mock_get_heap_app_id.return_value = "my_heap_app"
         mock_get_heap_identity.return_value = "my_heap_identity"
-        with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False):
+        with mock.patch.dict(
+            "os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False
+        ):
             response = client.get("/")
             assert response.status_code == 200
             assert 'heap.load("my_heap_app")' in response.text
