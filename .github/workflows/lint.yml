@@ -10,6 +10,10 @@ on:
         type: string
       python-version:
         type: string
+
+env:
+  KEDRO_DISABLE_TELEMETRY: "true"
+
 jobs:
     lint:
         runs-on: ${{ inputs.os }}

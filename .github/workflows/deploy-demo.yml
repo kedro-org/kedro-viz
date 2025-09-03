@@ -23,6 +23,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: '3.9'
+  KEDRO_DISABLE_TELEMETRY: "true"
 
 jobs:
   # Single deploy job since we're just deploying
