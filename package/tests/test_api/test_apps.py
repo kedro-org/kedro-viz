@@ -7,6 +7,7 @@ from kedro_viz.api import apps
 
 
 class TestIndexEndpoint:
+    # Ensure telemetry is not disabled by environment variable for this test
     @mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False)
     def test_index(self, client):
         response = client.get("/")
@@ -21,6 +22,7 @@ class TestIndexEndpoint:
     ):
         mock_get_heap_app_id.return_value = "my_heap_app"
         mock_get_heap_identity.return_value = "my_heap_identity"
+        # Ensure telemetry is not disabled by environment variable for this test
         with mock.patch.dict(
             "os.environ", {"KEDRO_DISABLE_TELEMETRY": ""}, clear=False
         ):
@@ -28,6 +30,13 @@ class TestIndexEndpoint:
             assert response.status_code == 200
             assert 'heap.load("my_heap_app")' in response.text
             assert 'heap.identify("my_heap_identity")' in response.text
+
+    def test_heap_disabled_by_env_var(self, client):
+        """Test that heap analytics is disabled when KEDRO_DISABLE_TELEMETRY=true"""
+        with mock.patch.dict("os.environ", {"KEDRO_DISABLE_TELEMETRY": "true"}):
+            response = client.get("/")
+            assert response.status_code == 200
+            assert "heap" not in response.text
 
 
 @pytest.fixture
