@@ -6,11 +6,14 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Unreleased
+# Release 12.1.0
 
 ## Bug fixes and other changes
- - Render boolean values in table previews. (#2458)
+ - Migrated React build system from Webpack to Vite, following CRA deprecation. (#2370)
  - Add llm.txt with mkdocs to improve LLM base query. (#2466)
+ - Update demo-project to be compatible with Databricks. (#2447)
+ - Render boolean values in table previews. (#2458)
+ - Fix CI build issue due to kedro-telemetry 0.6.4 release. (#2470)
  - Enhance warning message for circular dependency detection in layers. (#2467)
 
 
