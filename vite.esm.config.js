@@ -14,9 +14,6 @@ export default defineConfig({
       fileName: () => 'kedro-viz.production.mjs',
     },
     rollupOptions: {
-      external: [
-        'plotly.js-dist-min',
-      ],
       output: {
         format: 'es',
         entryFileNames: 'kedro-viz.production.mjs',
