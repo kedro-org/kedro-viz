@@ -107,8 +107,6 @@ const WatchPanel = ({
   );
 };
 
-export default WatchPanel;
-
 // Helper: handle single-click on a flowchart node within the watch modal
 // Moves selection logic here so Runner manager can delegate.
 export function onFlowchartNodeClickImpl({
@@ -182,3 +180,5 @@ export function onFlowchartNodeDoubleClickImpl({
     });
   }
 }
+
+export default WatchPanel;

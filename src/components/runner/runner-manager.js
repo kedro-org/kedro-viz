@@ -1,5 +1,5 @@
 import JobListPanel from './JobListPanel';
-import React, { Component } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 // Reuse existing metadata panel styles
@@ -42,502 +42,687 @@ const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
  * No functional wiring — purely presentational scaffolding you can hook up later.
  */
 
-class KedroRunManager extends Component {
-  constructor(props) {
-    super(props);
-    // Refs and timers
-    this.commandInputRef = React.createRef();
-    this.jobsPanelRef = React.createRef();
-    this.jobsPanelBodyRef = React.createRef();
-    this.logRefs = {};
-    this.jobPollers = {};
+function KedroRunManager(props) {
+  // Refs
+  const commandInputRef = useRef();
+  const jobsPanelRef = useRef();
+  const jobsPanelBodyRef = useRef();
+  const logRefs = useRef({});
+  const jobPollers = useRef({});
+  const toastTimer = useRef();
+  const saveWatchTimer = useRef();
+  const saveParamsTimer = useRef();
+  const lastSid = useRef();
+  const pendingSid = useRef(null);
 
-    // Initial state
-    this.state = {
-      jobs: [],
-      expandedLogs: {},
-      // Watch list
-      watchList: [],
-      customOrder: { param: false, dataset: false },
-      isWatchModalOpen: false,
-      selectedToAdd: {},
-      tempModalSelections: {},
-      watchSearch: '',
-      watchTab: 'parameters',
-      // Metadata/editor panels
-      showMetadata: false,
-      metadataMode: null,
-      selectedParamKey: null,
-      selectedDataset: null,
-      yamlText: '',
-      metaEditText: '',
-      isParamsModalOpen: false,
-      paramsDialogSelectedKey: null,
-      // Params data
-      params: {},
-      paramEdits: {},
-      editedParameters: {},
-      paramOriginals: {},
-      strictlyChanged: {},
-      paramsArgString: '',
-      // Modals for jobs/logs
-      isClearJobsModalOpen: false,
-      isClearJobModalOpen: false,
-      clearJobModalJobId: null,
-      isLogsModalOpen: false,
-      logsModalJobId: null,
-      // Toast
-      toastVisible: false,
-      toastMessage: '',
-      kedroEnv: null,
-    };
-  }
+  // State
+  const [jobs, setJobs] = useState([]);
+  const [expandedLogs, setExpandedLogs] = useState({});
+  const [watchList, setWatchList] = useState([]);
+  const [customOrder, setCustomOrder] = useState({
+    param: false,
+    dataset: false,
+  });
+  const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
+  const [selectedToAdd, setSelectedToAdd] = useState({});
+  const [tempModalSelections, setTempModalSelections] = useState({});
+  const [watchSearch, setWatchSearch] = useState('');
+  const [watchTab, setWatchTab] = useState('parameters');
+  const [showMetadata, setShowMetadata] = useState(false);
+  const [metadataMode, setMetadataMode] = useState(null);
+  const [selectedParamKey, setSelectedParamKey] = useState(null);
+  const [selectedDataset, setSelectedDataset] = useState(null);
+  const [yamlText, setYamlText] = useState('');
+  const [metaEditText, setMetaEditText] = useState('');
+  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
+  const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null);
+  const [params, setParams] = useState({});
+  const [paramEdits, setParamEdits] = useState({});
+  const [editedParameters, setEditedParameters] = useState({});
+  const [paramOriginals, setParamOriginals] = useState({});
+  const [strictlyChanged, setStrictlyChanged] = useState({});
+  const [paramsArgString, setParamsArgString] = useState('');
+  const [isClearJobsModalOpen, setIsClearJobsModalOpen] = useState(false);
+  const [isClearJobModalOpen, setIsClearJobModalOpen] = useState(false);
+  const [clearJobModalJobId, setClearJobModalJobId] = useState(null);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+  const [logsModalJobId, setLogsModalJobId] = useState(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [kedroEnv, setKedroEnv] = useState(null);
 
-  // Lightweight toast helper
-  showToast = (message, duration = 2000) => {
-    try {
-      if (this._toastTimer) {
-        clearTimeout(this._toastTimer);
-      }
-    } catch (e) {
-      // noop
-    }
-    this.setState({ toastMessage: String(message || ''), toastVisible: true });
-    this._toastTimer = setTimeout(() => {
-      this.hideToast();
-    }, Math.max(0, duration));
-  };
+  // Destructure frequently used props to satisfy exhaustive-deps and avoid adding entire props object
+  const { paramNodes = [], datasets = [], dispatch } = props || {};
 
-  hideToast = () => {
-    try {
-      if (this._toastTimer) {
-        clearTimeout(this._toastTimer);
-        this._toastTimer = null;
-      }
-    } catch (e) {
-      // noop
-    }
-    this.setState({ toastVisible: false });
-  };
-
-  // Metadata editor handlers
-  onMetaEditChange = (e) => {
-    this.setState({ metaEditText: e.target.value });
-  };
-
-  onMetaEditSave = () => {
-    this.setState(
-      (prev) => ({ yamlText: prev.metaEditText || '' }),
-      () => this.saveParamYaml()
-    );
-  };
-
-  onMetaEditReset = () => {
-    this.resetParamYaml();
-  };
-
-  // Ensure we have baseline originals captured for one or more param keys
-  ensureOriginalsFor = (keys) => {
-    if (!keys) {
-      return;
-    }
-    const arr = Array.isArray(keys) ? keys : [keys];
-    const existing = this.state.paramOriginals || {};
-    const additions = {};
-    arr.forEach((key) => {
-      if (!key) {
-        return;
-      }
-      if (!Object.prototype.hasOwnProperty.call(existing, key)) {
-        const resolved = this.getParamValue(key);
-        if (typeof resolved !== 'undefined') {
-          additions[key] = resolved;
-        }
-      }
-    });
-    if (Object.keys(additions).length) {
-      this.setState((prev) => ({
-        paramOriginals: { ...(prev.paramOriginals || {}), ...additions },
-      }));
-    }
-  };
-
-  fetchAndSetKedroEnv = async () => {
-    try {
-      const env = await fetchKedroEnv();
-      this.setState({ kedroEnv: env });
-    } catch (e) {}
-  };
-
-  componentDidMount() {
-    // Rehydrate any persisted jobs and resume polling where needed
-    this.hydrateJobsFromStorage();
-    // Rehydrate persisted watch list and custom order
-    this.hydrateWatchFromStorage();
-    // Store original params snapshot for diffing
-    try {
-      this.setState({
-        paramOriginals: JSON.parse(JSON.stringify(this.state.params || {})),
-      });
-    } catch (e) {
-      this.setState({ paramOriginals: { ...(this.state.params || {}) } });
-    }
-    // Fetch Kedro env from API
-    this.fetchAndSetKedroEnv();
-    this.updateCommandFromProps(this.props);
-    this.updateParamsArgString();
-    // Initial compute of strictly changed items
-    this.updateStrictlyChanged();
-
-    // Hydrate any persisted parameter edits/originals
-    this.hydrateParamsFromStorage();
-
-    // Sync metadata panel with `sid` from the URL, like the flowchart page
-    this.syncMetadataFromSid();
-    // Listen for browser navigation changes to keep in sync
-    window.addEventListener('popstate', this.syncMetadataFromSid);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const pipelineChanged =
-      prevProps.activePipeline !== this.props.activePipeline;
-    const prevTags = (prevProps.selectedTags || []).slice().sort().join(',');
-    const nextTags = (this.props.selectedTags || []).slice().sort().join(',');
-    const tagsChanged = prevTags !== nextTags;
-    const kedroEnvChanged = prevState.kedroEnv !== this.state.kedroEnv;
-    if (pipelineChanged || tagsChanged || kedroEnvChanged) {
-      this.updateCommandFromProps(this.props);
-    }
-
-    // If graph nodes change, attempt to (re)sync metadata for current sid
-    if (
-      prevProps.paramNodes !== this.props.paramNodes ||
-      prevProps.datasets !== this.props.datasets
-    ) {
-      this.syncMetadataFromSid(/*force*/ false);
-    }
-
-    // Auto-scroll logs to bottom when content updates or when expanded toggles on
-    try {
-      const prevJobs = (prevState && prevState.jobs) || [];
-      const currJobs = this.state.jobs || [];
-      const prevExpanded = (prevState && prevState.expandedLogs) || {};
-      const currExpanded = this.state.expandedLogs || {};
-
-      const prevMap = new Map(prevJobs.map((j) => [j.jobId, j]));
-      currJobs.forEach((job) => {
-        const prevJob = prevMap.get(job.jobId);
-
-        // Sync parameter editor once clicked metadata is available/updated
+  const getParamValue = useCallback(
+    (paramKey) => {
+      try {
+        const meta = props?.clickedNodeMetaData;
         if (
-          this.state.metadataMode === 'param' &&
-          this.state.selectedParamKey
+          meta?.parameters &&
+          Object.prototype.hasOwnProperty.call(meta.parameters, paramKey)
         ) {
-          const prevMeta = prevProps.clickedNodeMetaData;
-          const currMeta = this.props.clickedNodeMetaData;
-          if (
-            currMeta &&
-            currMeta !== prevMeta &&
-            currMeta.id === this.state.selectedParamKey
-          ) {
-            const val = this.getEditedParamValue(this.state.selectedParamKey);
-            const text = this.toYamlString(val) || '';
-            if (
-              this.state.metaEditText !== text ||
-              this.state.yamlText !== text
-            ) {
-              this.setState({ metaEditText: text, yamlText: text });
-            }
+          const metaVal = meta.parameters[paramKey];
+          if (typeof metaVal !== 'undefined') {
+            return metaVal;
           }
         }
-        const prevLogs = prevJob ? prevJob.logs : '';
-        const logsChanged = prevJob ? prevLogs !== job.logs : !!job.logs;
-        const wasExpanded =
-          typeof prevExpanded[job.jobId] === 'boolean'
-            ? prevExpanded[job.jobId]
-            : true; // default on
-        const isExpanded =
-          typeof currExpanded[job.jobId] === 'boolean'
-            ? currExpanded[job.jobId]
-            : true; // default on
-        const expandedBecameTrue = !wasExpanded && isExpanded;
-        if ((logsChanged && isExpanded) || expandedBecameTrue) {
-          const el = this.logRefs && this.logRefs[job.jobId];
-          if (el && el.scrollTo) {
-            // Smooth scroll could be jarring on frequent updates; use instant
-            el.scrollTop = el.scrollHeight;
-          } else if (el) {
-            el.scrollTop = el.scrollHeight;
+      } catch {}
+      const reduxMap = props?.nodeParameters || {};
+      if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
+        const val = reduxMap[paramKey];
+        if (val && typeof val === 'object' && !Array.isArray(val)) {
+          if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
+            return val[paramKey];
+          }
+          const keys = Object.keys(val);
+          if (keys.length === 1) {
+            return val[keys[0]];
           }
         }
-      });
-    } catch (e) {
-      // no-op: best-effort scrolling only
-    }
-
-    // If the watch list changes, refresh metadata for any parameter items
-    if (prevState.watchList !== this.state.watchList) {
-      this.refreshWatchParamsMetadata();
-      // Snapshot originals for any newly added watched params
-      try {
-        const paramKeys = (this.state.watchList || [])
-          .filter((i) => i.kind === 'param')
-          .map((i) => i.id);
-        this.ensureOriginalsFor(paramKeys);
-      } catch (e) {
-        // noop
-      }
-      // Keep editedParameters in sync with current watch list keys
-      const watchKeys = new Set(
-        (this.state.watchList || [])
-          .filter((i) => i.kind === 'param')
-          .map((i) => i.id)
-      );
-      // Prune entries for removed keys and backfill missing entries for newly added keys
-      const prevEdited = this.state.editedParameters || {};
-      const nextEdited = Object.keys(prevEdited).reduce((acc, key) => {
-        if (watchKeys.has(key)) {
-          acc[key] = prevEdited[key];
-        }
-        return acc;
-      }, {});
-      watchKeys.forEach((key) => {
-        if (!Object.prototype.hasOwnProperty.call(nextEdited, key)) {
-          const val = this.getParamValue(key);
-          if (typeof val !== 'undefined') {
-            nextEdited[key] = val;
+        if (typeof val === 'string' && val === paramKey) {
+          if (Object.prototype.hasOwnProperty.call(params || {}, paramKey)) {
+            return (params || {})[paramKey];
           }
         }
-      });
-      if (JSON.stringify(nextEdited) !== JSON.stringify(prevEdited)) {
-        this.setState({ editedParameters: nextEdited });
+        return val;
       }
-      // Recompute strictly-changed map when watch list updates
-      this.updateStrictlyChanged();
-      // Recompute CLI params string
-      this.updateParamsArgString();
-    }
+      return (params || {})[paramKey];
+    },
+    [props, params]
+  );
 
-    // Recompute when edited values or params change
-    if (
-      prevState.editedParameters !== this.state.editedParameters ||
-      prevState.params !== this.state.params
-    ) {
-      this.updateStrictlyChanged();
-      this.updateParamsArgString();
-    }
-
-    // Capture originals when metadata parameters map updates (lazy load from Redux)
-    if (prevProps.nodeParameters !== this.props.nodeParameters) {
-      try {
-        const keys = (this.state.watchList || [])
-          .filter((i) => i.kind === 'param')
-          .map((i) => i.id);
-        this.ensureOriginalsFor(keys);
-        // Backfill editedParameters with any now-known values from Redux metadata
-        const prevEdited = this.state.editedParameters || {};
-        const nextEdited = { ...prevEdited };
-        let changed = false;
-        keys.forEach((key) => {
-          const val = this.getParamValue(key);
-          if (!Object.prototype.hasOwnProperty.call(nextEdited, key)) {
-            if (typeof val !== 'undefined') {
-              nextEdited[key] = val;
-              changed = true;
-            }
-          } else if (
-            typeof nextEdited[key] === 'undefined' &&
-            typeof val !== 'undefined'
-          ) {
-            nextEdited[key] = val;
-            changed = true;
-          }
-        });
-        if (changed) {
-          this.setState({ editedParameters: nextEdited }, () => {
-            this.updateStrictlyChanged();
-            this.updateParamsArgString();
-          });
-        } else {
-          this.updateParamsArgString();
+  const getEditedParamValue = useCallback(
+    (paramKey) => {
+      const edited = editedParameters || {};
+      if (Object.prototype.hasOwnProperty.call(edited, paramKey)) {
+        const val = edited[paramKey];
+        if (typeof val !== 'undefined') {
+          return val;
         }
-      } catch (e) {
-        // noop
-        this.updateParamsArgString();
       }
-    }
+      return getParamValue(paramKey);
+    },
+    [editedParameters, getParamValue]
+  );
 
-    // Recompute CLI params string when originals baseline changes
-    if (prevState.paramOriginals !== this.state.paramOriginals) {
-      this.updateParamsArgString();
-      this.saveParamsToStorageDebounced();
-    }
-    // Persist when edits change
-    if (prevState.paramEdits !== this.state.paramEdits) {
-      this.saveParamsToStorageDebounced();
-    }
-  }
-
-  // Build a map of param keys in watch list that differ from originals
-  computeStrictlyChanged = () => {
-    const result = {};
-    const watchParamKeys = (this.state.watchList || [])
-      .filter((i) => i.kind === 'param')
-      .map((i) => i.id);
-    if (!watchParamKeys.length) {
-      return result;
-    }
-    const originals = this.state.paramOriginals || {};
-    watchParamKeys.forEach((key) => {
-      const orig = Object.prototype.hasOwnProperty.call(originals, key)
-        ? originals[key]
-        : this.getParamValue(key);
-      const current = this.getEditedParamValue(key);
-      if (JSON.stringify(orig) !== JSON.stringify(current)) {
-        result[key] = true;
-      }
-    });
-    return result;
-  };
-
-  updateStrictlyChanged = () => {
-    try {
-      const next = this.computeStrictlyChanged();
-      const prev = this.state.strictlyChanged || {};
-      if (JSON.stringify(next) !== JSON.stringify(prev)) {
-        this.setState({ strictlyChanged: next });
-      }
-    } catch (e) {
-      // noop
-    }
-  };
-
-  componentWillUnmount() {
-    // Clear any active pollers
-    Object.values(this.jobPollers || {}).forEach((timerId) => {
-      try {
-        clearInterval(timerId);
-      } catch (e) {
-        // noop
-      }
-    });
-    this.jobPollers = {};
-
-    // Remove URL listener
-    try {
-      window.removeEventListener('popstate', this.syncMetadataFromSid);
-    } catch (e) {
-      // noop
-    }
-  }
-
-  getSidFromUrl = () => {
-    try {
-      const params = new URLSearchParams(window.location.search || '');
-      return params.get('sid') || params.get('selected_id') || '';
-    } catch (e) {
-      return '';
-    }
-  };
-
-  syncMetadataFromSid = () => {
-    const sid = this.getSidFromUrl();
-    if (!sid || sid === this._lastSid) {
-      return;
-    }
-    // Find a matching parameter or dataset node
-    const paramNode = (this.props.paramNodes || []).find(
-      (node) => node.id === sid
-    );
-    if (paramNode) {
-      this._lastSid = sid;
-      // Trigger lazy load like flowchart so metadata exists
-      if (this.props.dispatch) {
-        this.props.dispatch(loadNodeData(sid));
-        this.props.dispatch(toggleNodeClicked(sid));
-      }
-      this.openParamEditor(sid);
-      return;
-    }
-    const datasetNode = (this.props.datasets || []).find(
-      (node) => node.id === sid
-    );
-    if (datasetNode) {
-      this._lastSid = sid;
-      if (this.props.dispatch) {
-        this.props.dispatch(loadNodeData(sid));
-        this.props.dispatch(toggleNodeClicked(sid));
-      }
-      this.openDatasetDetails(datasetNode);
-      return;
-    }
-    // If sid no longer matches anything, don't change the current panel
-  };
-
-  quoteIfNeeded = (text) => {
+  // --- Missing helpers restored ---
+  // Safely wrap a params argument string in single quotes if it contains spaces or shell meta chars
+  const quoteIfNeeded = useCallback((text) => {
     if (!text) {
       return '';
     }
     const str = String(text);
     return str.includes(' ') ? `"${str.replace(/"/g, '\\"')}"` : str;
-  };
+  }, []);
 
-  buildRunCommand = (props) => {
-    const kedroEnv = this.state.kedroEnv;
-    const activePipeline = props.activePipeline;
-    const selectedTags = props.selectedTags || [];
-    const parts = ['kedro run'];
-    if (kedroEnv && kedroEnv !== 'local') {
-      parts.push('-e');
-      parts.push(kedroEnv);
-    }
-    if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
-      parts.push('-p');
-      parts.push(this.quoteIfNeeded(activePipeline));
-    }
-    if (selectedTags.length) {
-      const tagArg = selectedTags.join(',');
-      parts.push('-t');
-      parts.push(tagArg);
-    }
-    return parts.join(' ');
-  };
-
-  updateCommandFromProps = (props) => {
-    const baseCmd = this.buildRunCommand(props);
-    // Prefer precomputed params string; fall back to existing helper if present
-    const paramsOverride =
-      (this.state && this.state.paramsArgString) ||
-      (this.getParamsOverrideString ? this.getParamsOverrideString() : '');
-    const cmd = paramsOverride
-      ? `${baseCmd} --params ${this.quoteIfNeeded(paramsOverride)}`
-      : baseCmd;
-    if (this.commandInputRef && this.commandInputRef.current) {
-      if (this.commandInputRef.current.value !== cmd) {
-        this.commandInputRef.current.value = cmd;
-      }
-    }
-  };
-
-  getCurrentCommandString = () => {
-    const baseCmd = this.buildRunCommand(this.props);
-    const paramsOverride =
-      (this.state && this.state.paramsArgString) ||
-      (this.getParamsOverrideString ? this.getParamsOverrideString() : '');
-    return paramsOverride
-      ? `${baseCmd} --params ${this.quoteIfNeeded(paramsOverride)}`
-      : baseCmd;
-  };
-
-  copyCommandToClipboard = async () => {
+  // Build the base kedro run command (excluding --params which is handled separately)
+  const buildRunCommand = useCallback(() => {
     try {
-      const text =
-        this.commandInputRef?.current?.value || this.getCurrentCommandString();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
+      const parts = ['kedro', 'run'];
+      const env = props?.kedroEnv ?? kedroEnv;
+      const activePipeline = props?.activePipeline;
+      const selectedTags = props?.selectedTags || [];
+      if (env && env !== 'local') {
+        parts.push('-e');
+        parts.push(env);
+      }
+      if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
+        parts.push('-p');
+        parts.push(quoteIfNeeded(activePipeline));
+      }
+      if (selectedTags.length) {
+        parts.push('-t');
+        parts.push(selectedTags.join(','));
+      }
+      return parts.join(' ');
+    } catch {
+      return 'kedro run';
+    }
+  }, [
+    props?.kedroEnv,
+    props?.activePipeline,
+    props?.selectedTags,
+    kedroEnv,
+    quoteIfNeeded,
+  ]);
+
+  // Update the visible command input when relevant props/state change
+  const updateCommandFromProps = useCallback(() => {
+    const baseCmd = buildRunCommand();
+    const paramsOverride = paramsArgString;
+    const cmd = paramsOverride
+      ? `${baseCmd} --params ${quoteIfNeeded(paramsOverride)}`
+      : baseCmd;
+    if (commandInputRef?.current && commandInputRef.current.value !== cmd) {
+      commandInputRef.current.value = cmd;
+    }
+  }, [buildRunCommand, paramsArgString, quoteIfNeeded]);
+
+  // Fetch kedro environment info from backend
+  const fetchAndSetKedroEnv = useCallback(async () => {
+    try {
+      const env = await fetchKedroEnv();
+      if (env && env !== kedroEnv) {
+        setKedroEnv(env);
+      }
+    } catch {
+      // eslint-disable-next-line no-console
+      console.warn('[Runner] Failed to fetch Kedro env');
+    }
+  }, [kedroEnv]);
+
+  // Helper to read sid from URL (placed before syncMetadataFromSid to avoid TDZ)
+  const getSidFromUrl = useCallback(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search || '');
+      return searchParams.get('sid') || searchParams.get('selected_id') || '';
+    } catch (e) {
+      return '';
+    }
+  }, []);
+
+  // Sync metadata panel from sid in URL (minimal implementation to avoid undefined errors before editors defined)
+  const syncMetadataFromSid = useCallback(
+    (props) => {
+      const sid = getSidFromUrl();
+      if (!sid || sid === lastSid.current) {
+        return;
+      }
+      // Defer actual open until callbacks definitely initialised
+      pendingSid.current = sid;
+    },
+    [getSidFromUrl]
+  );
+
+  const showToast = useCallback((message, duration = 2000) => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+    }
+    setToastMessage(String(message || ''));
+    setToastVisible(true);
+    toastTimer.current = setTimeout(() => {
+      setToastVisible(false);
+    }, Math.max(0, duration));
+  }, []);
+
+  const hideToast = useCallback(() => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+      toastTimer.current = null;
+    }
+    setToastVisible(false);
+  }, []);
+
+  const computeStrictlyChanged = useCallback(() => {
+    const result = {};
+    const watchParamKeys = (watchList || [])
+      .filter((i) => i.kind === 'param')
+      .map((i) => i.id);
+    if (!watchParamKeys.length) {
+      return result;
+    }
+    const originals = paramOriginals || {};
+    watchParamKeys.forEach((key) => {
+      const orig = Object.prototype.hasOwnProperty.call(originals, key)
+        ? originals[key]
+        : getParamValue(key);
+      const current = getEditedParamValue(key);
+      if (JSON.stringify(orig) !== JSON.stringify(current)) {
+        result[key] = true;
+      }
+    });
+    return result;
+  }, [watchList, paramOriginals, getParamValue, getEditedParamValue]);
+
+  const updateStrictlyChanged = useCallback(() => {
+    try {
+      const next = computeStrictlyChanged();
+      setStrictlyChanged((prev) => {
+        if (JSON.stringify(next) === JSON.stringify(prev || {})) {
+          return prev;
+        }
+        return next;
+      });
+    } catch {}
+  }, [computeStrictlyChanged]);
+
+  const saveParamsToStorage = useCallback(() => {
+    try {
+      window.localStorage.setItem(
+        RUNNER_PARAM_EDITS_STORAGE_KEY,
+        JSON.stringify(paramEdits || {})
+      );
+      window.localStorage.setItem(
+        RUNNER_PARAM_ORIGINALS_STORAGE_KEY,
+        JSON.stringify(paramOriginals || {})
+      );
+    } catch {}
+  }, [paramEdits, paramOriginals]);
+
+  const saveParamsToStorageDebounced = useCallback(
+    (wait = 200) => {
+      if (saveParamsTimer.current) {
+        clearTimeout(saveParamsTimer.current);
+      }
+      saveParamsTimer.current = setTimeout(() => {
+        saveParamsToStorage();
+      }, Math.max(0, wait));
+    },
+    [saveParamsToStorage]
+  );
+
+  const loadParamsFromStorage = useCallback(() => {
+    try {
+      const editsRaw = window.localStorage.getItem(
+        RUNNER_PARAM_EDITS_STORAGE_KEY
+      );
+      const originalsRaw = window.localStorage.getItem(
+        RUNNER_PARAM_ORIGINALS_STORAGE_KEY
+      );
+      const edits = editsRaw ? JSON.parse(editsRaw) : {};
+      const originals = originalsRaw ? JSON.parse(originalsRaw) : {};
+      return { edits, originals };
+    } catch {
+      return { edits: {}, originals: {} };
+    }
+  }, []);
+
+  const ensureOriginalsFor = useCallback(
+    (keys) => {
+      if (!keys) {
+        return;
+      }
+      const arr = Array.isArray(keys) ? keys : [keys];
+      const additions = {};
+      arr.forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(paramOriginals, key)) {
+          const currentVal = getParamValue(key);
+          additions[key] = currentVal;
+        }
+      });
+      if (Object.keys(additions).length > 0) {
+        setParamOriginals((prev) => ({ ...prev, ...additions }));
+      }
+    },
+    [paramOriginals, getParamValue]
+  );
+
+  const refreshWatchParamsMetadata = useCallback(() => {
+    const list = watchList || [];
+    if (!list.length || !props.dispatch) {
+      return;
+    }
+    const paramIds = list
+      .filter((item) => item.kind === 'param')
+      .map((i) => i.id);
+    paramIds.forEach((id) => {
+      try {
+        props.dispatch(loadNodeData(id));
+      } catch {}
+    });
+  }, [watchList, props]);
+
+  const saveWatchToStorage = useCallback(
+    (list = watchList, order = customOrder) => {
+      try {
+        window.localStorage.setItem(
+          RUNNER_WATCHLIST_STORAGE_KEY,
+          JSON.stringify(list || [])
+        );
+        window.localStorage.setItem(
+          RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY,
+          JSON.stringify({
+            param: !!order?.param,
+            dataset: !!order?.dataset,
+          })
+        );
+      } catch {}
+    },
+    [watchList, customOrder]
+  );
+
+  const saveWatchToStorageDebounced = useCallback(
+    (list, order, wait = 200) => {
+      if (saveWatchTimer.current) {
+        clearTimeout(saveWatchTimer.current);
+      }
+      saveWatchTimer.current = setTimeout(() => {
+        saveWatchToStorage(list, order);
+      }, Math.max(0, wait));
+    },
+    [saveWatchToStorage]
+  );
+
+  const formatParamValueForCli = useCallback((value) => {
+    if (
+      value === null ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+    ) {
+      return String(value);
+    }
+    if (typeof value === 'string') {
+      const needsQuotes = /[\s,]/.test(value);
+      const escaped = value.replace(/"/g, '\\"');
+      return needsQuotes ? `"${escaped}"` : escaped;
+    }
+    return JSON.stringify(value);
+  }, []);
+
+  const collectParamDiffs = useCallback(
+    (orig, edited, prefix) => {
+      const pairs = [];
+      if (typeof orig === 'undefined') {
+        if (typeof edited === 'undefined') {
+          return pairs;
+        }
+        if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
+          Object.keys(edited).forEach((k) => {
+            const val = edited[k];
+            const keyPath = `${prefix}.${k}`;
+            if (val && typeof val === 'object' && !Array.isArray(val)) {
+              pairs.push(...collectParamDiffs(undefined, val, keyPath));
+            } else {
+              pairs.push(`${keyPath}=${formatParamValueForCli(val)}`);
+            }
+          });
+        } else {
+          pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
+        }
+        return pairs;
+      }
+      if (
+        orig &&
+        typeof orig === 'object' &&
+        !Array.isArray(orig) &&
+        edited &&
+        typeof edited === 'object' &&
+        !Array.isArray(edited)
+      ) {
+        const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
+        keys.forEach((k) => {
+          const origVal = orig[k];
+          const editedVal = edited[k];
+          if (typeof editedVal === 'undefined') {
+            return;
+          }
+          const keyPath = `${prefix}.${k}`;
+          if (
+            origVal &&
+            typeof origVal === 'object' &&
+            !Array.isArray(origVal) &&
+            editedVal &&
+            typeof editedVal === 'object' &&
+            !Array.isArray(editedVal)
+          ) {
+            pairs.push(...collectParamDiffs(origVal, editedVal, keyPath));
+          } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
+            pairs.push(`${keyPath}=${formatParamValueForCli(editedVal)}`);
+          }
+        });
+        return pairs;
+      }
+      if (JSON.stringify(orig) !== JSON.stringify(edited)) {
+        pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
+      }
+      return pairs;
+    },
+    [formatParamValueForCli]
+  );
+
+  const normalizeParamPrefix = useCallback((text) => {
+    if (text == null || text === '') {
+      return '';
+    }
+    try {
+      return String(text).replace(/^params:/, '');
+    } catch {
+      return text;
+    }
+  }, []);
+
+  const getEditedParamChangesPairs = useCallback(() => {
+    const watchListItems = watchList || [];
+    if (!watchListItems.length) {
+      return [];
+    }
+    const pairs = [];
+    (watchListItems.filter((i) => i.kind === 'param') || []).forEach(
+      (wlItem) => {
+        const key = wlItem.id;
+        const prefixName = normalizeParamPrefix(wlItem.name || wlItem.id);
+        const originals = paramOriginals || {};
+        const orig = Object.prototype.hasOwnProperty.call(originals, key)
+          ? originals[key]
+          : getParamValue(key);
+        const curr = getEditedParamValue(key);
+        pairs.push(...collectParamDiffs(orig, curr, prefixName));
+      }
+    );
+    return pairs;
+  }, [
+    watchList,
+    paramOriginals,
+    getParamValue,
+    getEditedParamValue,
+    normalizeParamPrefix,
+    collectParamDiffs,
+  ]);
+
+  const updateParamsArgString = useCallback(() => {
+    try {
+      const pairs = getEditedParamChangesPairs();
+      const nextStr = pairs.join(',');
+      if (nextStr !== (paramsArgString || '')) {
+        setParamsArgString(nextStr);
+        updateCommandFromProps();
+      }
+    } catch {}
+  }, [
+    getEditedParamChangesPairs,
+    paramsArgString,
+    updateCommandFromProps,
+    props,
+  ]);
+
+  const confirmAddSelected = useCallback(() => {
+    const stagedKeys = new Set(Object.keys(selectedToAdd || {}));
+    const prevList = watchList || [];
+    const prevParams = prevList.filter((i) => i.kind === 'param');
+    const prevDatasets = prevList.filter((i) => i.kind === 'dataset');
+
+    const nextParamIds = Array.from(stagedKeys)
+      .map((k) => k.split(':'))
+      .filter(([kind]) => kind === 'param')
+      .map(([, id]) => id);
+    const nextDatasetIds = Array.from(stagedKeys)
+      .map((k) => k.split(':'))
+      .filter(([kind]) => kind === 'dataset')
+      .map(([, id]) => id);
+
+    const nextParamIdSet = new Set(nextParamIds);
+    const nextDatasetIdSet = new Set(nextDatasetIds);
+
+    const keptParamItems = prevParams.filter((paramItem) =>
+      nextParamIdSet.has(paramItem.id)
+    );
+    const addedParamItems = nextParamIds
+      .filter((id) => !prevParams.some((paramItem) => paramItem.id === id))
+      .map((id) => {
+        const node = (props.paramNodes || []).find(
+          (nodeItem) => nodeItem.id === id
+        );
+        return { kind: 'param', id, name: node?.name || id };
+      });
+    const nextParamItems = [...keptParamItems, ...addedParamItems];
+
+    const keptDatasetItems = prevDatasets.filter((d) =>
+      nextDatasetIdSet.has(d.id)
+    );
+    const addedDatasetItems = nextDatasetIds
+      .filter((id) => !prevDatasets.some((d) => d.id === id))
+      .map((id) => {
+        const dataset = (props.datasets || []).find((x) => x.id === id);
+        return { kind: 'dataset', id, name: dataset?.name || id };
+      });
+    const nextDatasetItems = [...keptDatasetItems, ...addedDatasetItems];
+
+    const nextWatchList = [...nextParamItems, ...nextDatasetItems];
+
+    const nextEdited = Object.keys(editedParameters || {}).reduce(
+      (acc, key) => {
+        if (nextParamIdSet.has(key)) {
+          acc[key] = editedParameters[key];
+        }
+        return acc;
+      },
+      {}
+    );
+    nextParamIds.forEach((id) => {
+      if (!Object.prototype.hasOwnProperty.call(nextEdited, id)) {
+        const val = getParamValue(id);
+        if (typeof val !== 'undefined') {
+          nextEdited[id] = val;
+        }
+      }
+    });
+
+    setWatchList(nextWatchList);
+    setIsWatchModalOpen(false);
+    setSelectedToAdd({});
+    setTempModalSelections({});
+    setEditedParameters(nextEdited);
+
+    saveWatchToStorageDebounced();
+    try {
+      ensureOriginalsFor(nextParamIds);
+      refreshWatchParamsMetadata();
+    } catch {}
+    updateStrictlyChanged();
+    updateParamsArgString();
+  }, [
+    selectedToAdd,
+    watchList,
+    editedParameters,
+    props.paramNodes,
+    props.datasets,
+    getParamValue,
+    saveWatchToStorageDebounced,
+    ensureOriginalsFor,
+    refreshWatchParamsMetadata,
+    updateStrictlyChanged,
+    updateParamsArgString,
+  ]);
+
+  const removeParamFromWatchList = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return;
+      }
+      setWatchList((prev) =>
+        (prev || []).filter(
+          (item) => !(item.kind === 'param' && item.id === paramKey)
+        )
+      );
+      setParamOriginals((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[paramKey];
+        return next;
+      });
+      setEditedParameters((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[paramKey];
+        return next;
+      });
+      setParamEdits((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[paramKey];
+        return next;
+      });
+      setParams((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[paramKey];
+        return next;
+      });
+      setStrictlyChanged((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[paramKey];
+        return next;
+      });
+      saveWatchToStorageDebounced();
+      updateParamsArgString();
+      saveParamsToStorageDebounced();
+    },
+    [
+      saveWatchToStorageDebounced,
+      updateParamsArgString,
+      saveParamsToStorageDebounced,
+    ]
+  );
+
+  // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
+  useEffect(() => {
+    // On mount: hydrate jobs, watch, params, fetch env, sync metadata, add popstate
+    hydrateJobsFromStorage();
+    hydrateWatchFromStorage();
+    try {
+      setParamOriginals(JSON.parse(JSON.stringify(params || {})));
+    } catch (e) {
+      setParamOriginals({ ...(params || {}) });
+    }
+    fetchAndSetKedroEnv();
+    updateCommandFromProps();
+    updateParamsArgString();
+    updateStrictlyChanged();
+    hydrateParamsFromStorage();
+    syncMetadataFromSid();
+    window.addEventListener('popstate', syncMetadataFromSid);
+    return () => {
+      // On unmount: clear pollers, remove popstate
+      Object.values(jobPollers.current || {}).forEach((timerId) => {
+        try {
+          clearInterval(timerId);
+        } catch (e) {}
+      });
+      jobPollers.current = {};
+      window.removeEventListener('popstate', syncMetadataFromSid);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // componentDidUpdate logic for prop/state changes
+  useEffect(() => {
+    // pipeline/tags/env changes
+    updateCommandFromProps();
+    // If watchList changes, refresh metadata, originals, strictlyChanged, paramsArgString
+    refreshWatchParamsMetadata();
+    // ...other logic from class componentDidUpdate can be ported here as needed...
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.activePipeline, props.selectedTags, kedroEnv, watchList]);
+
+  // --- Metadata editor handlers ---
+  const onMetaEditChange = (e) => setMetaEditText(e.target.value);
+  const onMetaEditSave = () => {
+    setYamlText(metaEditText || '');
+    saveParamYaml();
+  };
+  const onMetaEditReset = () => resetParamYaml();
+
+  const getCurrentCommandString = useCallback(() => {
+    const baseCmd = buildRunCommand();
+    return paramsArgString
+      ? `${baseCmd} --params ${quoteIfNeeded(paramsArgString)}`
+      : baseCmd;
+  }, [buildRunCommand, paramsArgString, quoteIfNeeded, props]);
+
+  const copyCommandToClipboard = useCallback(async () => {
+    try {
+      const text = commandInputRef.current?.value || getCurrentCommandString();
+      if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for older browsers
-        const input = this.commandInputRef?.current;
+        const input = commandInputRef.current;
         if (input) {
           input.focus();
           input.select();
@@ -545,115 +730,388 @@ class KedroRunManager extends Component {
           input.setSelectionRange(input.value.length, input.value.length);
         }
       }
-      this.showToast('Copied command to clipboard successfully');
-    } catch (e) {
-      this.showToast('Copy failed');
+      showToast('Copied command to clipboard successfully');
+    } catch {
+      showToast('Copy failed');
     }
-  };
+  }, [commandInputRef, getCurrentCommandString, showToast]);
 
-  addOrUpdateJob = (partial) => {
-    if (!partial || !partial.jobId) {
-      return;
-    }
-    this.setState(
-      (prev) => {
-        const list = [...(prev.jobs || [])];
-        const idx = list.findIndex((j) => j.jobId === partial.jobId);
-        if (idx >= 0) {
-          list[idx] = { ...list[idx], ...partial };
-        } else {
-          list.unshift({
-            jobId: partial.jobId,
-            status: partial.status || 'initialize',
-            startedAt: partial.startedAt || Date.now(),
-            command:
-              partial.command ||
-              (this.commandInputRef.current &&
-                this.commandInputRef.current.value) ||
-              'kedro run',
-            logs: partial.logs || '',
-          });
-        }
-        return { jobs: list };
-      },
-      () => {
-        this.saveJobsToStorage(this.state.jobs);
-      }
-    );
-  };
-
-  startJobPolling = (jobId) => {
-    if (!jobId) {
-      return;
-    }
-    // Avoid duplicate pollers
-    if (this.jobPollers[jobId]) {
-      clearInterval(this.jobPollers[jobId]);
-    }
-    this.jobPollers[jobId] = setInterval(() => {
-      this.fetchJobStatus(jobId);
-    }, 1000);
-  };
-
-  stopJobPolling = (jobId) => {
-    const timerId = this.jobPollers[jobId];
-    if (timerId) {
-      clearInterval(timerId);
-      delete this.jobPollers[jobId];
-    }
-  };
-
-  fetchJobStatus = async (jobId) => {
+  // --- Parameter helpers/persistence ---
+  const toYamlString = useCallback((value) => {
     try {
-      const {
-        status,
-        stdout,
-        stderr,
-        returncode,
-        startTime,
-        endTime,
-        duration,
-        cmd,
-      } = await getKedroCommandStatus(jobId);
-      const update = {
-        jobId,
-        status,
-        returncode,
-        command: cmd,
-      };
-      if (startTime instanceof Date && !Number.isNaN(startTime.getTime())) {
-        update.startedAt = startTime.getTime();
-      }
-      if (endTime instanceof Date && !Number.isNaN(endTime.getTime())) {
-        update.endTime = endTime.getTime();
-      }
-      if (typeof duration !== 'undefined') {
-        update.duration = duration;
-      }
-      if (typeof stdout === 'string' || typeof stderr === 'string') {
-        update.logs = `${stdout || ''}${
-          stderr ? `\n[stderr]:\n${stderr}` : ''
-        }`;
-      }
-      this.addOrUpdateJob(update);
-      const isTerminalStatus = ['finished', 'terminated', 'error'].includes(
-        status
-      );
-      const hasFinalReturnCode = typeof returncode === 'number';
-      if (isTerminalStatus || hasFinalReturnCode) {
-        this.stopJobPolling(jobId);
-      }
-    } catch (err) {
-      this.addOrUpdateJob({ jobId, status: 'error' });
-      this.stopJobPolling(jobId);
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch job status', err);
+      return yamlStringify(value, { indent: 2, lineWidth: 0 });
+    } catch {
+      return String(value);
     }
-  };
+  }, []);
 
-  // --- Persistence helpers ---
-  sanitizeJobForStorage = (job) => {
-    const maxLogLength = 50000; // limit stored logs size
+  const parseYamlishValue = useCallback((text) => {
+    if (text == null) {
+      return '';
+    }
+    const str = String(text);
+    if (!str.trim()) {
+      return '';
+    }
+    try {
+      return yamlParse(str);
+    } catch {
+      try {
+        return JSON.parse(str);
+      } catch {
+        return str;
+      }
+    }
+  }, []);
+
+  const hydrateParamsFromStorage = useCallback(() => {
+    const { edits, originals } = loadParamsFromStorage();
+    const hasEdits = edits && Object.keys(edits).length > 0;
+    const hasOriginals = originals && Object.keys(originals).length > 0;
+    if (!hasEdits && !hasOriginals) {
+      return;
+    }
+    if (hasEdits) {
+      setParamEdits(edits);
+      setEditedParameters(edits);
+      setParams((prev) => ({ ...(prev || {}), ...edits }));
+    }
+    if (hasOriginals) {
+      setParamOriginals(originals);
+    }
+    updateStrictlyChanged();
+    updateParamsArgString();
+    updateCommandFromProps();
+  }, [
+    loadParamsFromStorage,
+    updateStrictlyChanged,
+    updateParamsArgString,
+    updateCommandFromProps,
+    props,
+  ]);
+
+  const resetParamKey = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return undefined;
+      }
+      const originals = paramOriginals || {};
+      const orig = Object.prototype.hasOwnProperty.call(originals, paramKey)
+        ? originals[paramKey]
+        : getParamValue(paramKey);
+
+      setEditedParameters((prev) => {
+        const next = { ...(prev || {}) };
+        if (typeof orig === 'undefined') {
+          delete next[paramKey];
+        } else {
+          next[paramKey] = orig;
+        }
+        return next;
+      });
+      setParamEdits((prev) => {
+        const next = { ...(prev || {}) };
+        if (typeof orig === 'undefined') {
+          delete next[paramKey];
+        } else {
+          next[paramKey] = orig;
+        }
+        return next;
+      });
+      setParams((prev) => {
+        const next = { ...(prev || {}) };
+        if (typeof orig === 'undefined') {
+          delete next[paramKey];
+        } else {
+          next[paramKey] = orig;
+        }
+        return next;
+      });
+
+      updateStrictlyChanged();
+      updateParamsArgString();
+      saveParamsToStorageDebounced();
+      return orig;
+    },
+    [
+      paramOriginals,
+      getParamValue,
+      updateStrictlyChanged,
+      updateParamsArgString,
+      saveParamsToStorageDebounced,
+    ]
+  );
+
+  const updateEditedParam = useCallback(
+    (paramKey, value) => {
+      if (!paramKey) {
+        return;
+      }
+      setEditedParameters((prev) => ({
+        ...(prev || {}),
+        [paramKey]: value,
+      }));
+      setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: value }));
+      setParams((prev) => ({ ...(prev || {}), [paramKey]: value }));
+      updateStrictlyChanged();
+      updateParamsArgString();
+      updateCommandFromProps();
+      saveParamsToStorageDebounced();
+    },
+    [
+      updateStrictlyChanged,
+      updateParamsArgString,
+      updateCommandFromProps,
+      props,
+      saveParamsToStorageDebounced,
+    ]
+  );
+
+  const saveParamYaml = useCallback(() => {
+    if (selectedParamKey) {
+      ensureOriginalsFor(selectedParamKey);
+    }
+    const parsed = parseYamlishValue(yamlText);
+    updateEditedParam(selectedParamKey, parsed);
+    showToast('Parameter updated');
+  }, [
+    selectedParamKey,
+    yamlText,
+    ensureOriginalsFor,
+    parseYamlishValue,
+    updateEditedParam,
+    showToast,
+  ]);
+
+  const resetParamYaml = useCallback(() => {
+    if (!selectedParamKey) {
+      return;
+    }
+    const orig = resetParamKey(selectedParamKey);
+    const origYaml = toYamlString(orig);
+    setYamlText(origYaml);
+    setMetaEditText(origYaml);
+    updateCommandFromProps();
+    showToast('Reset to original');
+  }, [
+    selectedParamKey,
+    resetParamKey,
+    toYamlString,
+    updateCommandFromProps,
+    props,
+    showToast,
+  ]);
+
+  // --- Watch list persistence/helpers ---
+  const loadWatchFromStorage = useCallback(() => {
+    let watchListData = [];
+    let customOrderData = { param: false, dataset: false };
+    try {
+      const watchRaw = window.localStorage.getItem(
+        RUNNER_WATCHLIST_STORAGE_KEY
+      );
+      if (watchRaw) {
+        const parsed = JSON.parse(watchRaw);
+        if (Array.isArray(parsed)) {
+          watchListData = parsed.filter(
+            (item) =>
+              item &&
+              typeof item.kind === 'string' &&
+              typeof item.id === 'string'
+          );
+        }
+      }
+    } catch {}
+    try {
+      const orderRaw = window.localStorage.getItem(
+        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY
+      );
+      if (orderRaw) {
+        const parsed = JSON.parse(orderRaw);
+        if (parsed && typeof parsed === 'object') {
+          customOrderData = {
+            param: !!parsed.param,
+            dataset: !!parsed.dataset,
+          };
+        }
+      }
+    } catch {}
+    return { watchList: watchListData, customOrder: customOrderData };
+  }, []);
+
+  const hydrateWatchFromStorage = useCallback(() => {
+    const { watchList: storedWatchList, customOrder: storedCustomOrder } =
+      loadWatchFromStorage();
+    if ((storedWatchList || []).length) {
+      setWatchList(storedWatchList);
+      try {
+        const keys = (storedWatchList || [])
+          .filter((i) => i.kind === 'param')
+          .map((i) => i.id);
+        ensureOriginalsFor(keys);
+      } catch {}
+    }
+    if (storedCustomOrder) {
+      setCustomOrder(storedCustomOrder);
+    }
+  }, [loadWatchFromStorage, ensureOriginalsFor]);
+
+  const clearWatchList = useCallback(() => {
+    const keys = (watchList || [])
+      .filter((i) => i.kind === 'param')
+      .map((i) => i.id);
+    keys.forEach((k) => removeParamFromWatchList(k));
+    setWatchList((prev) => (prev || []).filter((i) => i.kind !== 'dataset'));
+    saveWatchToStorageDebounced();
+    updateCommandFromProps();
+  }, [
+    watchList,
+    removeParamFromWatchList,
+    saveWatchToStorageDebounced,
+    updateCommandFromProps,
+    props,
+  ]);
+
+  // --- Watch modal and DnD ---
+  const openWatchModal = useCallback(() => {
+    const selected = {};
+    const tempSelections = {};
+    (watchList || []).forEach((item) => {
+      selected[`${item.kind}:${item.id}`] = true;
+      tempSelections[item.id] = {
+        kind: item.kind,
+        id: item.id,
+        name: item.name || item.id,
+      };
+    });
+    setIsWatchModalOpen(true);
+    setSelectedToAdd(selected);
+    setTempModalSelections(tempSelections);
+    setWatchSearch('');
+  }, [watchList]);
+
+  const closeWatchModal = useCallback(() => {
+    setIsWatchModalOpen(false);
+    setTempModalSelections({});
+  }, []);
+
+  const toggleSelectToAdd = useCallback((kind, id) => {
+    const key = `${kind}:${id}`;
+    setSelectedToAdd((prev) => {
+      const next = { ...(prev || {}) };
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = true;
+      }
+      return next;
+    });
+  }, []);
+
+  const handleSearchToggle = useCallback(
+    (kind, id, name) => {
+      toggleSelectToAdd(kind, id);
+      setTempModalSelections((prev) => {
+        const next = { ...(prev || {}) };
+        if (next[id]) {
+          delete next[id];
+        } else {
+          next[id] = { kind, id, name: name || id };
+        }
+        return next;
+      });
+    },
+    [toggleSelectToAdd]
+  );
+
+  const handleSearchChange = useCallback((e) => {
+    setWatchSearch(e.target.value);
+  }, []);
+
+  const getSearchResults = useCallback(() => {
+    const query = (watchSearch || '').trim().toLowerCase();
+    const makeMatch = (text) =>
+      text && String(text).toLowerCase().includes(query);
+
+    const paramResults = (props.paramNodes || [])
+      .map((node) => ({
+        kind: 'param',
+        id: node.id,
+        name: node.name || node.id,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    const datasetResults = (props.datasets || [])
+      .map((dataset) => ({
+        kind: 'dataset',
+        id: dataset.id,
+        name: dataset.name || dataset.id,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    return { paramResults, datasetResults };
+  }, [watchSearch, props]);
+
+  const [draggingWatch, setDraggingWatch] = useState(null);
+
+  const startDragWatch = useCallback((kind, id) => {
+    setDraggingWatch({ kind, id });
+  }, []);
+
+  const allowDropWatch = useCallback((e) => {
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
+  }, []);
+
+  const dropWatch = useCallback(
+    (targetKind, targetId) => {
+      if (
+        !draggingWatch ||
+        draggingWatch.kind !== targetKind ||
+        draggingWatch.id === targetId
+      ) {
+        setDraggingWatch(null);
+        return;
+      }
+      setWatchList((prev) => {
+        const list = [...(prev || [])];
+        const kind = targetKind;
+        const kindItems = list.filter((item) => item.kind === kind);
+        const fromIndex = kindItems.findIndex(
+          (item) => item.id === draggingWatch.id
+        );
+        const toIndex = kindItems.findIndex((item) => item.id === targetId);
+        if (fromIndex === -1 || toIndex === -1) {
+          setDraggingWatch(null);
+          return prev;
+        }
+        const reordered = [...kindItems];
+        const [moved] = reordered.splice(fromIndex, 1);
+        reordered.splice(toIndex, 0, moved);
+        let i = 0;
+        const nextList = list.map((item) =>
+          item.kind === kind ? reordered[i++] : item
+        );
+        const nextCustom = { ...(customOrder || {}), [kind]: true };
+        setCustomOrder(nextCustom);
+        saveWatchToStorageDebounced(nextList, nextCustom);
+        setDraggingWatch(null);
+        return nextList;
+      });
+    },
+    [draggingWatch, customOrder, saveWatchToStorageDebounced]
+  );
+
+  // --- Jobs: persistence and polling ---
+  const sanitizeJobForStorage = useCallback((job) => {
+    const maxLogLength = 50000;
     const safeLogs =
       typeof job.logs === 'string' ? job.logs.slice(-maxLogLength) : '';
     const stored = {
@@ -673,21 +1131,22 @@ class KedroRunManager extends Component {
       stored.duration = job.duration;
     }
     return stored;
-  };
+  }, []);
 
-  saveJobsToStorage = (jobs) => {
-    try {
-      const payload = (jobs || []).map(this.sanitizeJobForStorage);
-      window.localStorage.setItem(
-        RUNNER_JOBS_STORAGE_KEY,
-        JSON.stringify(payload)
-      );
-    } catch (e) {
-      // ignore storage errors (quota/privacy mode)
-    }
-  };
+  const saveJobsToStorage = useCallback(
+    (list) => {
+      try {
+        const payload = (list || []).map(sanitizeJobForStorage);
+        window.localStorage.setItem(
+          RUNNER_JOBS_STORAGE_KEY,
+          JSON.stringify(payload)
+        );
+      } catch {}
+    },
+    [sanitizeJobForStorage]
+  );
 
-  loadJobsFromStorage = () => {
+  const loadJobsFromStorage = useCallback(() => {
     try {
       const raw = window.localStorage.getItem(RUNNER_JOBS_STORAGE_KEY);
       if (!raw) {
@@ -707,19 +1166,126 @@ class KedroRunManager extends Component {
         endTime: typeof j.endTime === 'number' ? j.endTime : undefined,
         duration: typeof j.duration !== 'undefined' ? j.duration : undefined,
       }));
-    } catch (e) {
+    } catch {
       return [];
     }
-  };
+  }, []);
 
-  hydrateJobsFromStorage = () => {
-    const jobs = this.loadJobsFromStorage();
-    if (!jobs.length) {
+  const addOrUpdateJob = useCallback(
+    (partial) => {
+      if (!partial?.jobId) {
+        return;
+      }
+      setJobs((prev) => {
+        const list = [...(prev || [])];
+        const idx = list.findIndex((j) => j.jobId === partial.jobId);
+        if (idx >= 0) {
+          list[idx] = { ...list[idx], ...partial };
+        } else {
+          list.unshift({
+            jobId: partial.jobId,
+            status: partial.status || 'initialize',
+            startedAt: partial.startedAt || Date.now(),
+            command:
+              partial.command || commandInputRef.current?.value || 'kedro run',
+            logs: partial.logs || '',
+          });
+        }
+        // persist async
+        setTimeout(() => saveJobsToStorage(list), 0);
+        return list;
+      });
+    },
+    [commandInputRef, saveJobsToStorage]
+  );
+
+  const fetchJobStatus = useCallback(
+    async (jobId) => {
+      try {
+        const {
+          status,
+          stdout,
+          stderr,
+          returncode,
+          startTime,
+          endTime,
+          duration,
+          cmd,
+        } = await getKedroCommandStatus(jobId);
+        const update = {
+          jobId,
+          status,
+          returncode,
+          command: cmd,
+        };
+        if (startTime instanceof Date && !Number.isNaN(startTime.getTime())) {
+          update.startedAt = startTime.getTime();
+        }
+        if (endTime instanceof Date && !Number.isNaN(endTime.getTime())) {
+          update.endTime = endTime.getTime();
+        }
+        if (typeof duration !== 'undefined') {
+          update.duration = duration;
+        }
+        if (typeof stdout === 'string' || typeof stderr === 'string') {
+          update.logs = `${stdout || ''}${
+            stderr ? `\n[stderr]:\n${stderr}` : ''
+          }`;
+        }
+        addOrUpdateJob(update);
+        const isTerminal = ['finished', 'terminated', 'error'].includes(status);
+        const hasFinalReturnCode = typeof returncode === 'number';
+        if (isTerminal || hasFinalReturnCode) {
+          const pollTimer = jobPollers.current[jobId];
+          if (pollTimer) {
+            clearInterval(pollTimer);
+          }
+          delete jobPollers.current[jobId];
+        }
+      } catch (err) {
+        addOrUpdateJob({ jobId, status: 'error' });
+        const pollTimer = jobPollers.current[jobId];
+        if (pollTimer) {
+          clearInterval(pollTimer);
+        }
+        delete jobPollers.current[jobId];
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch job status', err);
+      }
+    },
+    [addOrUpdateJob]
+  );
+
+  const startJobPolling = useCallback(
+    (jobId) => {
+      if (!jobId) {
+        return;
+      }
+      if (jobPollers.current[jobId]) {
+        clearInterval(jobPollers.current[jobId]);
+      }
+      jobPollers.current[jobId] = setInterval(() => {
+        fetchJobStatus(jobId);
+      }, 1000);
+    },
+    [fetchJobStatus]
+  );
+
+  const stopJobPolling = useCallback((jobId) => {
+    const timerId = jobPollers.current[jobId];
+    if (timerId) {
+      clearInterval(timerId);
+      delete jobPollers.current[jobId];
+    }
+  }, []);
+
+  const hydrateJobsFromStorage = useCallback(() => {
+    const stored = loadJobsFromStorage();
+    if (!stored.length) {
       return;
     }
-    this.setState({ jobs });
-    // Resume polling for jobs that appear to be in-flight
-    jobs.forEach((job) => {
+    setJobs(stored);
+    stored.forEach((job) => {
       const isTerminal = ['finished', 'terminated', 'error'].includes(
         job.status
       );
@@ -729,509 +1295,312 @@ class KedroRunManager extends Component {
         !isTerminal &&
         !hasFinalReturnCode
       ) {
-        this.startJobPolling(job.jobId);
+        startJobPolling(job.jobId);
       }
     });
-  };
+  }, [loadJobsFromStorage, startJobPolling]);
 
-  // --- Watch list persistence ---
-  loadWatchFromStorage = () => {
-    let watchList = [];
-    let customOrder = { param: false, dataset: false };
-    try {
-      const wlRaw = window.localStorage.getItem(RUNNER_WATCHLIST_STORAGE_KEY);
-      if (wlRaw) {
-        const parsed = JSON.parse(wlRaw);
-        if (Array.isArray(parsed)) {
-          watchList = parsed.filter(
-            (item) =>
-              item &&
-              typeof item.kind === 'string' &&
-              typeof item.id === 'string'
-          );
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-    try {
-      const coRaw = window.localStorage.getItem(
-        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY
-      );
-      if (coRaw) {
-        const parsed = JSON.parse(coRaw);
-        if (parsed && typeof parsed === 'object') {
-          customOrder = {
-            param: !!parsed.param,
-            dataset: !!parsed.dataset,
-          };
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-    return { watchList, customOrder };
-  };
+  // --- Jobs UI helpers ---
+  const toggleLogExpanded = useCallback((jobId) => {
+    setExpandedLogs((prev) => {
+      const next = { ...(prev || {}) };
+      next[jobId] = !next[jobId];
+      return next;
+    });
+  }, []);
 
-  saveWatchToStorage = (watchList, customOrder) => {
-    try {
-      const watchListArray = Array.isArray(watchList)
-        ? watchList
-        : this.state.watchList;
-      const customOrderObj = customOrder || this.state.customOrder || {};
-      window.localStorage.setItem(
-        RUNNER_WATCHLIST_STORAGE_KEY,
-        JSON.stringify(watchListArray || [])
-      );
-      window.localStorage.setItem(
-        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY,
-        JSON.stringify({
-          param: !!customOrderObj.param,
-          dataset: !!customOrderObj.dataset,
+  const openLogsModal = useCallback((jobId) => {
+    setIsLogsModalOpen(true);
+    setLogsModalJobId(jobId);
+  }, []);
+
+  const closeLogsModal = useCallback(() => {
+    setIsLogsModalOpen(false);
+    setLogsModalJobId(null);
+  }, []);
+
+  const setLogExpanded = useCallback((jobId, value) => {
+    setExpandedLogs((prev) => ({
+      ...(prev || {}),
+      [jobId]: !!value,
+    }));
+  }, []);
+
+  const openClearJobsConfirm = useCallback(() => {
+    setIsClearJobsModalOpen(true);
+  }, []);
+  const closeClearJobsConfirm = useCallback(() => {
+    setIsClearJobsModalOpen(false);
+  }, []);
+
+  const clearAllJobs = useCallback(() => {
+    (jobs || []).forEach((j) => stopJobPolling(j.jobId));
+    setJobs([]);
+    saveJobsToStorage([]);
+    closeClearJobsConfirm();
+  }, [jobs, stopJobPolling, saveJobsToStorage, closeClearJobsConfirm]);
+
+  const openClearJobConfirm = useCallback((jobId) => {
+    setIsClearJobModalOpen(true);
+    setClearJobModalJobId(jobId);
+  }, []);
+
+  const closeClearJobConfirm = useCallback(() => {
+    setIsClearJobModalOpen(false);
+    setClearJobModalJobId(null);
+  }, []);
+
+  const clearJob = useCallback(
+    (jobId) => {
+      const id = jobId || clearJobModalJobId;
+      if (!id) {
+        return;
+      }
+      stopJobPolling(id);
+      setJobs((prev) => {
+        const next = (prev || []).filter((j) => j.jobId !== id);
+        saveJobsToStorage(next);
+        return next;
+      });
+      closeClearJobConfirm();
+    },
+    [
+      clearJobModalJobId,
+      stopJobPolling,
+      saveJobsToStorage,
+      closeClearJobConfirm,
+    ]
+  );
+
+  const onTerminateJob = useCallback(
+    (jobId) => {
+      // eslint-disable-next-line no-console
+      console.log('[Runner] Terminate job', jobId);
+      cancelKedroCommand(jobId)
+        .then(() => {
+          stopJobPolling(jobId);
+          addOrUpdateJob({ jobId, status: 'terminated' });
         })
-      );
-    } catch (e) {
-      // ignore storage errors
-    }
-  };
-
-  // Debounced persistence helpers to avoid excessive writes
-  saveWatchToStorageDebounced = (watchList, customOrder, wait = 200) => {
-    try {
-      if (this._saveWatchTimer) {
-        clearTimeout(this._saveWatchTimer);
-      }
-    } catch (e) {}
-    this._saveWatchTimer = setTimeout(() => {
-      this.saveWatchToStorage(watchList, customOrder);
-    }, Math.max(0, wait));
-  };
-
-  hydrateWatchFromStorage = () => {
-    const { watchList, customOrder } = this.loadWatchFromStorage();
-    if ((watchList || []).length) {
-      this.setState({ watchList }, () => {
-        try {
-          const keys = (this.state.watchList || [])
-            .filter((i) => i.kind === 'param')
-            .map((i) => i.id);
-          this.ensureOriginalsFor(keys);
-        } catch (e) {
-          // noop
-        }
-      });
-    }
-    if (customOrder) {
-      this.setState({ customOrder });
-    }
-  };
-
-  // --- Parameter persistence ---
-  saveParamsToStorage = () => {
-    try {
-      const edits = this.state.paramEdits || {};
-      const originals = this.state.paramOriginals || {};
-      window.localStorage.setItem(
-        RUNNER_PARAM_EDITS_STORAGE_KEY,
-        JSON.stringify(edits)
-      );
-      window.localStorage.setItem(
-        RUNNER_PARAM_ORIGINALS_STORAGE_KEY,
-        JSON.stringify(originals)
-      );
-    } catch (e) {
-      // ignore
-    }
-  };
-
-  saveParamsToStorageDebounced = (wait = 200) => {
-    try {
-      if (this._saveParamsTimer) {
-        clearTimeout(this._saveParamsTimer);
-      }
-    } catch (e) {}
-    this._saveParamsTimer = setTimeout(() => {
-      this.saveParamsToStorage();
-    }, Math.max(0, wait));
-  };
-
-  loadParamsFromStorage = () => {
-    try {
-      const editsRaw = window.localStorage.getItem(
-        RUNNER_PARAM_EDITS_STORAGE_KEY
-      );
-      const originalsRaw = window.localStorage.getItem(
-        RUNNER_PARAM_ORIGINALS_STORAGE_KEY
-      );
-      const edits = editsRaw ? JSON.parse(editsRaw) : {};
-      const originals = originalsRaw ? JSON.parse(originalsRaw) : {};
-      return { edits, originals };
-    } catch (e) {
-      return { edits: {}, originals: {} };
-    }
-  };
-
-  hydrateParamsFromStorage = () => {
-    const { edits, originals } = this.loadParamsFromStorage();
-    const hasEdits = edits && Object.keys(edits).length > 0;
-    const hasOriginals = originals && Object.keys(originals).length > 0;
-    if (!hasEdits && !hasOriginals) {
-      return;
-    }
-    this.setState(
-      (prev) => ({
-        paramEdits: hasEdits ? edits : prev.paramEdits,
-        editedParameters: hasEdits ? edits : prev.editedParameters,
-        params: hasEdits ? { ...(prev.params || {}), ...edits } : prev.params,
-        paramOriginals: hasOriginals ? originals : prev.paramOriginals,
-      }),
-      () => {
-        this.updateStrictlyChanged();
-        this.updateParamsArgString();
-        this.updateCommandFromProps(this.props);
-      }
-    );
-  };
-
-  saveParamYaml = () => {
-    const { selectedParamKey, yamlText } = this.state;
-    // Capture original baseline if missing before applying the edit
-    if (selectedParamKey) {
-      this.ensureOriginalsFor(selectedParamKey);
-    }
-    const parsed = this.parseYamlishValue(yamlText);
-    this.updateEditedParam(selectedParamKey, parsed);
-    this.showToast('Parameter updated');
-  };
-
-  resetParamYaml = () => {
-    const { selectedParamKey } = this.state;
-    if (!selectedParamKey) {
-      return;
-    }
-    const orig = this.resetParamKey(selectedParamKey);
-    const origYaml = this.toYamlString(orig);
-    this.setState({ yamlText: origYaml, metaEditText: origYaml });
-    this.updateCommandFromProps(this.props);
-    this.showToast('Reset to original');
-  };
-
-  // YAML stringifier using the 'yaml' package
-  toYamlString(value) {
-    try {
-      return yamlStringify(value, { indent: 2, lineWidth: 0 });
-    } catch (error) {
-      return String(value);
-    }
-  }
-
-  // YAML parser using the 'yaml' package (with safe fallbacks)
-  parseYamlishValue(text) {
-    if (text == null) {
-      return '';
-    }
-    const str = String(text);
-    if (!str.trim()) {
-      return '';
-    }
-    try {
-      return yamlParse(str);
-    } catch (error) {
-      try {
-        return JSON.parse(str);
-      } catch (error2) {
-        return str;
-      }
-    }
-  }
-
-  // Resolve parameter value from metadata first, then Redux map, then local state
-  getParamValue = (paramKey) => {
-    // Prefer clicked node metadata (authoritative for the selected node)
-    try {
-      const meta = this.props && this.props.clickedNodeMetaData;
-      if (
-        meta &&
-        meta.parameters &&
-        Object.prototype.hasOwnProperty.call(meta.parameters, paramKey)
-      ) {
-        const metaVal = meta.parameters[paramKey];
-        if (typeof metaVal !== 'undefined') {
-          return metaVal;
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-    const reduxMap = (this.props && this.props.nodeParameters) || {};
-    if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
-      const val = reduxMap[paramKey];
-      // Unwrap containers or maps
-      if (val && typeof val === 'object' && !Array.isArray(val)) {
-        // Prefer explicit property if present
-        if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
-          return val[paramKey];
-        }
-        const keys = Object.keys(val);
-        if (keys.length === 1) {
-          return val[keys[0]];
-        }
-      }
-      // Some sources may return the key name itself; fallback to local map
-      if (typeof val === 'string' && val === paramKey) {
-        const localParams = this.state.params || {};
-        if (Object.prototype.hasOwnProperty.call(localParams, paramKey)) {
-          return localParams[paramKey];
-        }
-      }
-      return val;
-    }
-    const local = this.state.params || {};
-    return local[paramKey];
-  };
-
-  // Prefer existing editedParameters entry, fallback to resolved value
-  getEditedParamValue = (paramKey) => {
-    const edited = this.state.editedParameters || {};
-    if (Object.prototype.hasOwnProperty.call(edited, paramKey)) {
-      const val = edited[paramKey];
-      if (typeof val !== 'undefined') {
-        return val;
-      }
-      // Fallback if placeholder undefined snuck in
-    }
-    return this.getParamValue(paramKey);
-  };
-
-  // Build pairs for edited params vs originals, restricted to watched param items
-  getEditedParamChangesPairs = () => {
-    const { watchList, paramOriginals } = this.state;
-    if (!watchList || !watchList.length) {
-      return [];
-    }
-    const pairs = [];
-    (watchList.filter((wlItem) => wlItem.kind === 'param') || []).forEach(
-      (wlItem) => {
-        const key = wlItem.id;
-        const prefixName = this.normalizeParamPrefix(wlItem.name || wlItem.id);
-        const originals = paramOriginals || {};
-        const orig = Object.prototype.hasOwnProperty.call(originals, key)
-          ? originals[key]
-          : this.getParamValue(key);
-        const curr = this.getEditedParamValue(key);
-        pairs.push(...this.collectParamDiffs(orig, curr, prefixName));
-      }
-    );
-    return pairs;
-  };
-
-  // Compute and store the concatenated CLI params string, then refresh the command text
-  updateParamsArgString = () => {
-    try {
-      const pairs = this.getEditedParamChangesPairs();
-      const nextStr = pairs.join(',');
-      if (nextStr !== (this.state.paramsArgString || '')) {
-        this.setState({ paramsArgString: nextStr }, () =>
-          this.updateCommandFromProps(this.props)
-        );
-      }
-    } catch (e) {
-      // noop
-    }
-  };
-
-  // Build a minimal diff object of changed keys only; for non-objects, return the edited value if different
-  buildDiffObject = (orig, edited) => {
-    const isObj = (val) =>
-      val && typeof val === 'object' && !Array.isArray(val);
-    const equal = (a, b) => {
-      try {
-        return JSON.stringify(a) === JSON.stringify(b);
-      } catch (e) {
-        return a === b;
-      }
-    };
-    if (isObj(orig) && isObj(edited)) {
-      const diff = {};
-      const keys = new Set([
-        ...Object.keys(orig || {}),
-        ...Object.keys(edited || {}),
-      ]);
-      keys.forEach((key) => {
-        const origVal = orig[key];
-        const editedVal = edited[key];
-        if (isObj(origVal) && isObj(editedVal)) {
-          const child = this.buildDiffObject(origVal, editedVal);
-          if (
-            child &&
-            (typeof child !== 'object' || Object.keys(child).length)
-          ) {
-            diff[key] = child;
-          }
-        } else if (
-          !equal(origVal, editedVal) &&
-          typeof editedVal !== 'undefined'
-        ) {
-          diff[key] = editedVal;
-        }
-      });
-      return diff;
-    }
-    // For arrays or primitives, if changed, return the edited value; otherwise undefined
-    return equal(orig, edited) ? undefined : edited;
-  };
-
-  // CLI-safe value formatting
-  formatParamValueForCli = (value) => {
-    if (
-      value === null ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    ) {
-      return String(value);
-    }
-    if (typeof value === 'string') {
-      const needsQuotes = /[\s,]/.test(value);
-      const escaped = value.replace(/"/g, '\\"');
-      return needsQuotes ? `"${escaped}"` : escaped;
-    }
-    return JSON.stringify(value);
-  };
-
-  // Normalize parameter key prefix for CLI output (strip leading 'params:')
-  normalizeParamPrefix = (text) => {
-    if (!text) {
-      return '';
-    }
-    try {
-      return String(text).replace(/^params:/, '');
-    } catch (e) {
-      return text;
-    }
-  };
-
-  collectParamDiffs = (orig, edited, prefix) => {
-    const pairs = [];
-    if (typeof orig === 'undefined') {
-      if (typeof edited === 'undefined') {
-        return pairs;
-      }
-      if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
-        Object.keys(edited).forEach((k) => {
-          const val = edited[k];
-          const keyPath = `${prefix}.${k}`;
-          if (val && typeof val === 'object' && !Array.isArray(val)) {
-            pairs.push(...this.collectParamDiffs(undefined, val, keyPath));
-          } else {
-            pairs.push(`${keyPath}=${this.formatParamValueForCli(val)}`);
-          }
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Terminate failed', err);
         });
-      } else {
-        pairs.push(`${prefix}=${this.formatParamValueForCli(edited)}`);
-      }
-      return pairs;
+    },
+    [stopJobPolling, addOrUpdateJob]
+  );
+
+  // --- Metadata editors ---
+  const closeMetadata = useCallback(() => {
+    setShowMetadata(false);
+    setMetadataMode(null);
+    setSelectedParamKey(null);
+    setSelectedDataset(null);
+    setYamlText('');
+  }, []);
+
+  const openParamsDialog = useCallback(() => {
+    try {
+      const paramItems = (watchList || []).filter((i) => i.kind === 'param');
+      const keys = paramItems.map((i) => i.id);
+      ensureOriginalsFor(keys);
+      const changedKeys = Object.keys(strictlyChanged || {}).filter((k) =>
+        keys.includes(k)
+      );
+      const initial = changedKeys[0] || keys[0] || null;
+      setIsParamsModalOpen(true);
+      setParamsDialogSelectedKey(initial);
+    } catch {
+      setIsParamsModalOpen(true);
     }
-    if (
-      orig &&
-      typeof orig === 'object' &&
-      !Array.isArray(orig) &&
-      edited &&
-      typeof edited === 'object' &&
-      !Array.isArray(edited)
-    ) {
-      const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
-      keys.forEach((k) => {
-        const origVal = orig[k];
-        const editedVal = edited[k];
-        if (typeof editedVal === 'undefined') {
-          return; // ignore deletions for now
-        }
-        const keyPath = `${prefix}.${k}`;
+  }, [watchList, ensureOriginalsFor, strictlyChanged]);
+
+  const setSidInUrl = useCallback((nodeId) => {
+    if (!nodeId) {
+      return;
+    }
+    try {
+      const current = new URL(window.location.href);
+      current.searchParams.set('sid', nodeId);
+      current.searchParams.delete('sn');
+      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
+      window.history.pushState({}, '', nextUrl);
+      lastSid.current = nodeId;
+    } catch {}
+  }, []);
+
+  const openDatasetDetails = useCallback((dataset) => {
+    setShowMetadata(true);
+    setMetadataMode('dataset');
+    setSelectedDataset(dataset);
+  }, []);
+
+  const openParamEditor = useCallback(
+    (paramKey) => {
+      ensureOriginalsFor(paramKey);
+      let value = Object.prototype.hasOwnProperty.call(
+        editedParameters || {},
+        paramKey
+      )
+        ? editedParameters[paramKey]
+        : getParamValue(paramKey);
+      try {
         if (
-          origVal &&
-          typeof origVal === 'object' &&
-          !Array.isArray(origVal) &&
-          editedVal &&
-          typeof editedVal === 'object' &&
-          !Array.isArray(editedVal)
+          typeof value === 'function' ||
+          (typeof value === 'object' &&
+            value !== null &&
+            Object.getPrototypeOf(value) !== Object.prototype &&
+            !Array.isArray(value))
         ) {
-          pairs.push(...this.collectParamDiffs(origVal, editedVal, keyPath));
-        } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
-          pairs.push(`${keyPath}=${this.formatParamValueForCli(editedVal)}`);
+          value = '';
         }
-      });
-      return pairs;
-    }
-    if (JSON.stringify(orig) !== JSON.stringify(edited)) {
-      pairs.push(`${prefix}=${this.formatParamValueForCli(edited)}`);
-    }
-    return pairs;
-  };
-
-  getParamChangesPairs = () => {
-    const { watchList, paramEdits, paramOriginals } = this.state;
-    if (!watchList || !watchList.length) {
-      return [];
-    }
-    const pairs = [];
-    (watchList.filter((wlItem) => wlItem.kind === 'param') || []).forEach(
-      (wlItem) => {
-        const key = wlItem.id;
-        const prefixName = this.normalizeParamPrefix(wlItem.name || wlItem.id);
-        if (!Object.prototype.hasOwnProperty.call(paramEdits || {}, key)) {
-          return;
-        }
-        const edited = (paramEdits || {})[key];
-        const orig = Object.prototype.hasOwnProperty.call(
-          paramOriginals || {},
-          key
-        )
-          ? (paramOriginals || {})[key]
-          : (this.state.params || {})[key];
-        pairs.push(...this.collectParamDiffs(orig, edited, prefixName));
+      } catch {
+        value = '';
       }
-    );
-    return pairs;
-  };
+      if (props.dispatch) {
+        props.dispatch(loadNodeData(paramKey));
+        props.dispatch(toggleNodeClicked(paramKey));
+      }
+      const text = toYamlString(value) || '';
+      setShowMetadata(true);
+      setMetadataMode('param');
+      setSelectedParamKey(paramKey);
+      setYamlText(text);
+      setMetaEditText(text);
+      setEditedParameters((prev) =>
+        Object.prototype.hasOwnProperty.call(prev || {}, paramKey)
+          ? prev
+          : { ...(prev || {}), [paramKey]: value }
+      );
+      setSidInUrl(paramKey);
+    },
+    [
+      ensureOriginalsFor,
+      editedParameters,
+      getParamValue,
+      props,
+      toYamlString,
+      setSidInUrl,
+    ]
+  );
 
-  getParamsOverrideString = () => {
-    const pairs = this.getParamChangesPairs();
-    return pairs.join(',');
-  };
-
-  // Build a CLI-style parameter argument string for a single parameter key
-  // Input:
-  // - parameterKey: string identifier for the parameter group (e.g. 'random_forest')
-  // - originalParams: original parameter object/value
-  // - editedParams: edited parameter object/value
-  // Behavior:
-  // - Computes minimal diff between original and edited
-  // - Flattens nested keys using dot notation under the parameterKey
-  // - Produces comma-separated key=value pairs using edited values
-  // Example output: "random_forest.kwargs.n_estimators=110"
-  buildParamArgString = (parameterKey, originalParams, editedParams) => {
-    if (!parameterKey || typeof parameterKey !== 'string') {
-      return '';
+  // Process any deferred sid (from initial URL) after editors are defined
+  useEffect(() => {
+    const sid = pendingSid.current;
+    if (!sid || sid === lastSid.current) {
+      return;
     }
-    const prefix = this.normalizeParamPrefix(parameterKey);
-    const pairs = this.collectParamDiffs(originalParams, editedParams, prefix);
-    return pairs.join(',');
-  };
+    // Attempt to find param node first
+    const paramNode = (paramNodes || []).find((node) => node.id === sid);
+    if (paramNode) {
+      lastSid.current = sid;
+      if (dispatch) {
+        dispatch(loadNodeData(sid));
+        dispatch(toggleNodeClicked(sid));
+      }
+      try {
+        openParamEditor(sid);
+      } catch (e) {
+        /* ignore */
+      }
+      pendingSid.current = null;
+      return;
+    }
+    const datasetNode = (datasets || []).find((node) => node.id === sid);
+    if (datasetNode) {
+      lastSid.current = sid;
+      if (dispatch) {
+        dispatch(loadNodeData(sid));
+        dispatch(toggleNodeClicked(sid));
+      }
+      try {
+        openDatasetDetails(datasetNode);
+      } catch (e) {
+        /* ignore */
+      }
+      pendingSid.current = null;
+    }
+  }, [paramNodes, datasets, openParamEditor, openDatasetDetails, dispatch]);
 
-  // --- Dataset interactions ---
-  openDatasetDetails = (dataset) => {
-    // API: Optionally fetch more metadata here if needed
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // fetch(`${apiBase}/datasets/${encodeURIComponent(dataset.id)}`).then((r) => r.json()).then((full) => this.setState({ selectedDataset: full }));
-    this.setState({
-      showMetadata: true,
-      metadataMode: 'dataset',
-      selectedDataset: dataset,
-    });
-  };
+  const onStartRun = useCallback(() => {
+    const command = commandInputRef.current
+      ? commandInputRef.current.value
+      : getCurrentCommandString();
+    // eslint-disable-next-line no-console
+    console.log('[Runner] Start run clicked', command);
+    startKedroCommand(command)
+      .then(({ jobId, status }) => {
+        if (!jobId) {
+          throw new Error('No job_id returned');
+        }
+        addOrUpdateJob({
+          jobId,
+          status,
+          startedAt: Date.now(),
+          command,
+          logs: '',
+        });
+        startJobPolling(jobId);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to start run', err);
+      });
+  }, [
+    commandInputRef,
+    getCurrentCommandString,
+    addOrUpdateJob,
+    startJobPolling,
+  ]);
 
-  // Render YAML lines with per-line highlight based on differences vs otherText
-  renderHighlightedYamlLines = (text, otherText) => {
+  const onWatchItemClick = useCallback(
+    (item) => {
+      if (item.kind === 'param') {
+        setSidInUrl(item.id);
+        if (props.dispatch) {
+          props.dispatch(loadNodeData(item.id));
+          props.dispatch(toggleNodeClicked(item.id));
+        }
+        try {
+          openParamEditor(item.id);
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to open parameter editor for', item.id, e);
+          showToast('Error opening parameter editor');
+        }
+      } else if (item.kind === 'dataset') {
+        setSidInUrl(item.id);
+        if (props.dispatch) {
+          props.dispatch(loadNodeData(item.id));
+          props.dispatch(toggleNodeClicked(item.id));
+        }
+        const dataset = (props.datasets || []).find(
+          (datasetItem) => datasetItem.id === item.id
+        );
+        if (dataset) {
+          openDatasetDetails(dataset);
+        }
+      }
+    },
+    [props, setSidInUrl, openParamEditor, showToast, openDatasetDetails]
+  );
+
+  // Removed unused addParamToWatchList (was unused and triggered lint warning)
+
+  const removeFromWatchList = useCallback(
+    (kind, id) => {
+      if (kind === 'param') {
+        removeParamFromWatchList(id);
+        return;
+      }
+      setWatchList((prev) =>
+        (prev || []).filter((item) => !(item.kind === kind && item.id === id))
+      );
+      saveWatchToStorageDebounced();
+    },
+    [removeParamFromWatchList, saveWatchToStorageDebounced]
+  );
+
+  const renderHighlightedYamlLines = useCallback((text, otherText) => {
     const a = String(text == null ? '' : text).split(/\r?\n/);
     const b = String(otherText == null ? '' : otherText).split(/\r?\n/);
     const max = Math.max(a.length, b.length);
@@ -1250,182 +1619,13 @@ class KedroRunManager extends Component {
         </div>
       );
     });
-  };
+  }, []);
 
-  onStartRun = () => {
-    // Read the command string from the input
-    const command = this.commandInputRef.current
-      ? this.commandInputRef.current.value
-      : 'kedro run';
-    // eslint-disable-next-line no-console
-    console.log('[Runner] Start run clicked', command);
-    startKedroCommand(command)
-      .then(({ jobId, status }) => {
-        if (!jobId) {
-          throw new Error('No job_id returned');
-        }
-        this.addOrUpdateJob({
-          jobId,
-          status,
-          startedAt: Date.now(),
-          command,
-          logs: '',
-        });
-        this.startJobPolling(jobId);
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Failed to start run', err);
-      });
-  };
-
-  onViewLogs = (jobId) => {
-    console.log('[Runner] View logs for', jobId);
-    // API wiring: load full logs for a given job (optionally with pagination)
-    // const apiBase = `${sanitizedPathname()}api/runner`;
-    // fetch(`${apiBase}/runs/${encodeURIComponent(jobId)}/logs?offset=0&limit=1000`)
-    //   .then((r) => r.text())
-    //   .then((text) => {/* show in a modal/panel */})
-    //   .catch((err) => console.error('Load logs failed', err));
-  };
-
-  // Toggle expand/collapse for job logs
-  toggleLogExpanded = (jobId) => {
-    this.setState((prev) => {
-      const next = { ...(prev.expandedLogs || {}) };
-      next[jobId] = !next[jobId];
-      return { expandedLogs: next };
-    });
-  };
-
-  openLogsModal = (jobId) => {
-    this.setState({ isLogsModalOpen: true, logsModalJobId: jobId });
-  };
-
-  closeLogsModal = () => {
-    this.setState({ isLogsModalOpen: false, logsModalJobId: null });
-  };
-
-  // Explicitly set expansion state for a job
-  setLogExpanded = (jobId, value) => {
-    this.setState((prev) => ({
-      expandedLogs: { ...(prev.expandedLogs || {}), [jobId]: !!value },
-    }));
-  };
-
-  // Clear all jobs with confirmation
-  openClearJobsConfirm = () => {
-    this.setState({ isClearJobsModalOpen: true });
-  };
-
-  closeClearJobsConfirm = () => {
-    this.setState({ isClearJobsModalOpen: false });
-  };
-
-  clearAllJobs = () => {
-    const jobs = this.state.jobs || [];
-    jobs.forEach((j) => this.stopJobPolling(j.jobId));
-    this.setState({ jobs: [] }, () => {
-      this.saveJobsToStorage([]);
-    });
-    this.closeClearJobsConfirm();
-  };
-
-  // Per-job clear with confirmation
-  openClearJobConfirm = (jobId) => {
-    this.setState({ isClearJobModalOpen: true, clearJobModalJobId: jobId });
-  };
-
-  closeClearJobConfirm = () => {
-    this.setState({ isClearJobModalOpen: false, clearJobModalJobId: null });
-  };
-
-  clearJob = (jobId) => {
-    const id = jobId || this.state.clearJobModalJobId;
-    if (!id) {
-      return;
-    }
-    this.stopJobPolling(id);
-    this.setState(
-      (prev) => ({ jobs: (prev.jobs || []).filter((j) => j.jobId !== id) }),
-      () => this.saveJobsToStorage(this.state.jobs)
-    );
-    this.closeClearJobConfirm();
-  };
-
-  onTerminateJob = (jobId) => {
-    // eslint-disable-next-line no-console
-    console.log('[Runner] Terminate job', jobId);
-    cancelKedroCommand(jobId)
-      .then(() => {
-        this.stopJobPolling(jobId);
-        this.addOrUpdateJob({ jobId, status: 'terminated' });
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Terminate failed', err);
-      });
-  };
-
-  closeMetadata = () => {
-    this.setState({
-      showMetadata: false,
-      metadataMode: null,
-      selectedParamKey: null,
-      selectedDataset: null,
-      yamlText: '',
-    });
-  };
-
-  // Open the control-panel Parameter Changes dialog with initial selection
-  openParamsDialog = () => {
-    try {
-      const paramItems = (this.state.watchList || []).filter(
-        (i) => i.kind === 'param'
-      );
-      const keys = paramItems.map((i) => i.id);
-      // snapshot originals for any missing keys
-      this.ensureOriginalsFor(keys);
-      const changedKeys = Object.keys(this.state.strictlyChanged || {}).filter(
-        (k) => keys.includes(k)
-      );
-      const initial = changedKeys[0] || keys[0] || null;
-      this.setState({
-        isParamsModalOpen: true,
-        paramsDialogSelectedKey: initial,
-      });
-    } catch (e) {
-      this.setState({ isParamsModalOpen: true });
-    }
-  };
-
-  // Update URL to reflect selected node id (sid) for shareable/back-nav parity
-  setSidInUrl = (nodeId) => {
-    if (!nodeId) {
-      return;
-    }
-    try {
-      const current = new URL(window.location.href);
-      // Preserve existing params, only update sid and clear sn
-      current.searchParams.set('sid', nodeId);
-      current.searchParams.delete('sn');
-      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
-      window.history.pushState({}, '', nextUrl);
-      // Avoid reprocessing immediately if a popstate happens
-      this._lastSid = nodeId;
-    } catch (e) {
-      // noop
-    }
-  };
-
-  renderMetadataPanel() {
-    const { metadataMode, showMetadata, selectedDataset } = this.state;
-
+  // --- Render helpers (converted from class) ---
+  const renderMetadataPanel = () => {
     if (!showMetadata) {
       return null;
     }
-
-    // For parameters, use the shared MetaData component; any dataset-specific panel remains below
     if (metadataMode === 'param') {
       const extra = (
         <div style={{ margin: '0 36px 24px' }}>
@@ -1437,15 +1637,15 @@ class KedroRunManager extends Component {
           </h3>
           <textarea
             className="runner-meta-editor"
-            value={this.state.metaEditText}
-            onChange={this.onMetaEditChange}
+            value={metaEditText}
+            onChange={onMetaEditChange}
             spellCheck={false}
           />
           <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-            <button className="btn btn--primary" onClick={this.onMetaEditSave}>
+            <button className="btn btn--primary" onClick={onMetaEditSave}>
               Save
             </button>
-            <button className="btn" onClick={this.onMetaEditReset}>
+            <button className="btn" onClick={onMetaEditReset}>
               Reset
             </button>
           </div>
@@ -1453,547 +1653,43 @@ class KedroRunManager extends Component {
       );
       return <MetaData extraComponent={extra} />;
     }
-
     if (metadataMode === 'dataset' && selectedDataset) {
       return <MetaData />;
     }
-
     return null;
-  }
-
-  renderParametersTab() {
-    // Deprecated: replaced by Watch List UI
-    return null;
-  }
-
-  renderDatasetsTab() {
-    // Deprecated: replaced by Watch List UI
-    return null;
-  }
-
-  renderJobListPanel() {
-    return (
-      <JobListPanel
-        jobs={this.state.jobs}
-        expandedLogs={this.state.expandedLogs}
-        onToggleLogExpanded={this.toggleLogExpanded}
-        onOpenLogsModal={this.openLogsModal}
-        onOpenClearJobConfirm={this.openClearJobConfirm}
-        onOpenClearJobsConfirm={this.openClearJobsConfirm}
-        onTerminateJob={this.onTerminateJob}
-        logRefs={this.logRefs}
-      />
-    );
-  }
-
-  // --- Watch list actions ---
-  openWatchModal = () => {
-    // Preselect previously selected items (existing watch list)
-    const selected = {};
-    const tempSelections = {};
-    (this.state.watchList || []).forEach((item) => {
-      selected[`${item.kind}:${item.id}`] = true;
-      tempSelections[item.id] = {
-        kind: item.kind,
-        id: item.id,
-        name: item.name || item.id,
-      };
-    });
-    this.setState({
-      isWatchModalOpen: true,
-      selectedToAdd: selected,
-      tempModalSelections: tempSelections,
-      watchSearch: '',
-    });
   };
 
-  closeWatchModal = () => {
-    this.setState({ isWatchModalOpen: false, tempModalSelections: {} });
-  };
+  const renderJobListPanel = () => (
+    <JobListPanel
+      jobs={jobs}
+      expandedLogs={expandedLogs}
+      onToggleLogExpanded={toggleLogExpanded}
+      onOpenLogsModal={openLogsModal}
+      onOpenClearJobConfirm={openClearJobConfirm}
+      onOpenClearJobsConfirm={openClearJobsConfirm}
+      onTerminateJob={onTerminateJob}
+      logRefs={logRefs}
+    />
+  );
 
-  toggleSelectToAdd = (kind, id) => {
-    const key = `${kind}:${id}`;
-    this.setState((prev) => {
-      const next = { ...(prev.selectedToAdd || {}) };
-      if (next[key]) {
-        delete next[key];
-      } else {
-        next[key] = true;
-      }
-      return { selectedToAdd: next };
-    });
-  };
+  const renderWatchListPanel = () => (
+    <WatchPanel
+      watchList={watchList}
+      watchTab={watchTab}
+      customOrder={customOrder}
+      strictlyChanged={strictlyChanged}
+      setWatchTab={setWatchTab}
+      onDragStart={startDragWatch}
+      onDragOver={allowDropWatch}
+      onDrop={dropWatch}
+      onItemClick={onWatchItemClick}
+      onRemove={removeFromWatchList}
+      getEditedParamValue={getEditedParamValue}
+      toYamlString={toYamlString}
+    />
+  );
 
-  // Toggle from search results
-  handleSearchToggle = (kind, id, name) => {
-    this.toggleSelectToAdd(kind, id);
-    this.setState((prev) => {
-      const next = { ...(prev.tempModalSelections || {}) };
-      if (next[id]) {
-        delete next[id];
-      } else {
-        next[id] = { kind, id, name: name || id };
-      }
-      return { tempModalSelections: next };
-    });
-  };
-
-  handleSearchChange = (e) => {
-    this.setState({ watchSearch: e.target.value });
-  };
-
-  getSearchResults() {
-    const query = (this.state.watchSearch || '').trim().toLowerCase();
-    const makeMatch = (text) =>
-      text && String(text).toLowerCase().includes(query);
-    const paramResults = (this.props.paramNodes || [])
-      .map((node) => ({
-        kind: 'param',
-        id: node.id,
-        name: node.name || node.id,
-      }))
-      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-      );
-    const datasetResults = (this.props.datasets || [])
-      .map((dataset) => ({
-        kind: 'dataset',
-        id: dataset.id,
-        name: dataset.name || dataset.id,
-      }))
-      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-      );
-    return { paramResults, datasetResults };
-  }
-
-  // --- Drag-and-drop reordering for watch list ---
-  startDragWatch = (kind, id) => {
-    this.setState({ draggingWatch: { kind, id } });
-  };
-
-  allowDropWatch = (e) => {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-  };
-
-  dropWatch = (targetKind, targetId) => {
-    const { draggingWatch } = this.state;
-    if (
-      !draggingWatch ||
-      draggingWatch.kind !== targetKind ||
-      draggingWatch.id === targetId
-    ) {
-      this.setState({ draggingWatch: null });
-      return;
-    }
-    this.setState(
-      (prev) => {
-        const list = [...(prev.watchList || [])];
-        const kind = targetKind;
-        // Extract the sequence of items of this kind in their current order
-        const kindItems = list.filter((item) => item.kind === kind);
-        const fromIndex = kindItems.findIndex(
-          (item) => item.id === draggingWatch.id
-        );
-        const toIndex = kindItems.findIndex((item) => item.id === targetId);
-        if (fromIndex === -1 || toIndex === -1) {
-          return { draggingWatch: null };
-        }
-        const reordered = [...kindItems];
-        const [moved] = reordered.splice(fromIndex, 1);
-        reordered.splice(toIndex, 0, moved);
-        // Rebuild the full list: replace items of this kind in encounter order with reordered
-        let i = 0;
-        const nextList = list.map((item) =>
-          item.kind === kind ? reordered[i++] : item
-        );
-        const nextCustom = {
-          ...(prev.customOrder || {}),
-          [kind]: true,
-        };
-        return {
-          watchList: nextList,
-          draggingWatch: null,
-          customOrder: nextCustom,
-        };
-      },
-      () => this.saveWatchToStorageDebounced()
-    );
-  };
-
-  // --- Parameter watchlist helpers (ADD / RESET / REMOVE / UPDATE) ---
-  // (ADD) Add parameter to watch list
-  addParamToWatchList = (paramKey) => {
-    if (!paramKey) {
-      return;
-    }
-    const exists = (this.state.watchList || []).some(
-      (i) => i.kind === 'param' && i.id === paramKey
-    );
-    if (exists) {
-      return;
-    }
-    const node = (this.props.paramNodes || []).find(
-      (nodeItem) => nodeItem.id === paramKey
-    );
-    const item = { kind: 'param', id: paramKey, name: node?.name || paramKey };
-    this.setState(
-      (prev) => ({ watchList: [...(prev.watchList || []), item] }),
-      () => {
-        this.saveWatchToStorageDebounced();
-        // Ensure originals are captured first, then reset edited to original
-        this.ensureOriginalsFor(paramKey);
-        this.resetParamKey(paramKey);
-        // Load metadata for this param
-        try {
-          if (this.props.dispatch) {
-            this.props.dispatch(loadNodeData(paramKey));
-          }
-        } catch (e) {}
-      }
-    );
-  };
-
-  // (RESET) Reset edited parameter to original and recompute derived data
-  resetParamKey = (paramKey) => {
-    if (!paramKey) {
-      return undefined;
-    }
-    const originals = this.state.paramOriginals || {};
-    const orig = Object.prototype.hasOwnProperty.call(originals, paramKey)
-      ? originals[paramKey]
-      : this.getParamValue(paramKey);
-    this.setState(
-      (prev) => {
-        const nextEdited = { ...(prev.editedParameters || {}) };
-        const nextParamEdits = { ...(prev.paramEdits || {}) };
-        const nextParams = { ...(prev.params || {}) };
-        if (typeof orig === 'undefined') {
-          delete nextEdited[paramKey];
-          delete nextParamEdits[paramKey];
-          delete nextParams[paramKey];
-        } else {
-          nextEdited[paramKey] = orig;
-          nextParamEdits[paramKey] = orig;
-          nextParams[paramKey] = orig;
-        }
-        return {
-          editedParameters: nextEdited,
-          paramEdits: nextParamEdits,
-          params: nextParams,
-        };
-      },
-      () => {
-        this.updateStrictlyChanged();
-        this.updateParamsArgString();
-        this.saveParamsToStorageDebounced();
-      }
-    );
-    return orig;
-  };
-
-  // (REMOVE) Remove parameter from watch list and all related state
-  removeParamFromWatchList = (paramKey) => {
-    if (!paramKey) {
-      return;
-    }
-    this.setState(
-      (prev) => {
-        const nextWatch = (prev.watchList || []).filter(
-          (item) => !(item.kind === 'param' && item.id === paramKey)
-        );
-        const nextOriginals = { ...(prev.paramOriginals || {}) };
-        const nextEdited = { ...(prev.editedParameters || {}) };
-        const nextParamEdits = { ...(prev.paramEdits || {}) };
-        const nextParams = { ...(prev.params || {}) };
-        const nextStrict = { ...(prev.strictlyChanged || {}) };
-        delete nextOriginals[paramKey];
-        delete nextEdited[paramKey];
-        delete nextParamEdits[paramKey];
-        delete nextParams[paramKey];
-        delete nextStrict[paramKey];
-        return {
-          watchList: nextWatch,
-          paramOriginals: nextOriginals,
-          editedParameters: nextEdited,
-          paramEdits: nextParamEdits,
-          params: nextParams,
-          strictlyChanged: nextStrict,
-        };
-      },
-      () => {
-        this.saveWatchToStorageDebounced();
-        this.updateParamsArgString();
-        this.saveParamsToStorageDebounced();
-      }
-    );
-  };
-
-  // (UPDATE) Update the current parameter value and recompute derived data
-  updateEditedParam = (paramKey, value) => {
-    if (!paramKey) {
-      return;
-    }
-    this.setState(
-      (prev) => ({
-        editedParameters: {
-          ...(prev.editedParameters || {}),
-          [paramKey]: value,
-        },
-        paramEdits: { ...(prev.paramEdits || {}), [paramKey]: value },
-        params: { ...(prev.params || {}), [paramKey]: value },
-      }),
-      () => {
-        this.updateStrictlyChanged();
-        this.updateParamsArgString();
-        this.updateCommandFromProps(this.props);
-        this.saveParamsToStorageDebounced();
-      }
-    );
-  };
-
-  confirmAddSelected = () => {
-    const { selectedToAdd } = this.state;
-    const stagedKeys = new Set(Object.keys(selectedToAdd || {}));
-    const prevList = this.state.watchList || [];
-    const prevParams = prevList.filter((i) => i.kind === 'param');
-    const prevDatasets = prevList.filter((i) => i.kind === 'dataset');
-
-    const nextParamIds = Array.from(stagedKeys)
-      .map((k) => k.split(':'))
-      .filter(([kind]) => kind === 'param')
-      .map(([, id]) => id);
-    const nextDatasetIds = Array.from(stagedKeys)
-      .map((k) => k.split(':'))
-      .filter(([kind]) => kind === 'dataset')
-      .map(([, id]) => id);
-    const nextParamIdSet = new Set(nextParamIds);
-    const nextDatasetIdSet = new Set(nextDatasetIds);
-
-    // Preserve order of kept items, append new ones
-    const keptParamItems = prevParams.filter((paramItem) =>
-      nextParamIdSet.has(paramItem.id)
-    );
-    const addedParamItems = nextParamIds
-      .filter((id) => !prevParams.some((paramItem) => paramItem.id === id))
-      .map((id) => {
-        const node = (this.props.paramNodes || []).find(
-          (paramNode) => paramNode.id === id
-        );
-        return { kind: 'param', id, name: node?.name || id };
-      });
-    const nextParamItems = [...keptParamItems, ...addedParamItems];
-
-    const keptDatasetItems = prevDatasets.filter((d) =>
-      nextDatasetIdSet.has(d.id)
-    );
-    const addedDatasetItems = nextDatasetIds
-      .filter((id) => !prevDatasets.some((d) => d.id === id))
-      .map((id) => {
-        const dataset = (this.props.datasets || []).find((x) => x.id === id);
-        return { kind: 'dataset', id, name: dataset?.name || id };
-      });
-    const nextDatasetItems = [...keptDatasetItems, ...addedDatasetItems];
-
-    const nextWatchList = [...nextParamItems, ...nextDatasetItems];
-
-    // Build next editedParameters: prune removed keys and seed for new ones
-    const prevEdited = this.state.editedParameters || {};
-    const nextEdited = Object.keys(prevEdited).reduce((acc, key) => {
-      if (nextParamIdSet.has(key)) {
-        acc[key] = prevEdited[key];
-      }
-      return acc;
-    }, {});
-    nextParamIds.forEach((id) => {
-      if (!Object.prototype.hasOwnProperty.call(nextEdited, id)) {
-        const val = this.getParamValue(id);
-        if (typeof val !== 'undefined') {
-          nextEdited[id] = val;
-        }
-      }
-    });
-
-    this.setState(
-      {
-        watchList: nextWatchList,
-        isWatchModalOpen: false,
-        selectedToAdd: {},
-        tempModalSelections: {},
-        editedParameters: nextEdited,
-      },
-      () => {
-        this.saveWatchToStorageDebounced();
-        try {
-          this.ensureOriginalsFor(nextParamIds);
-          this.refreshWatchParamsMetadata();
-        } catch (e) {}
-        this.updateStrictlyChanged();
-        this.updateParamsArgString();
-      }
-    );
-  };
-
-  // Refresh metadata for all parameter nodes currently in the watch list
-  refreshWatchParamsMetadata = () => {
-    const list = this.state.watchList || [];
-    if (!list.length || !this.props.dispatch) {
-      return;
-    }
-    const paramIds = list
-      .filter((item) => item.kind === 'param')
-      .map((i) => i.id);
-    paramIds.forEach((id) => {
-      try {
-        this.props.dispatch(loadNodeData(id));
-      } catch (e) {
-        // ignore dispatch errors
-      }
-    });
-  };
-
-  clearWatchList = () => {
-    const keys = (this.state.watchList || [])
-      .filter((i) => i.kind === 'param')
-      .map((i) => i.id);
-    // Remove param keys and then clear datasets
-    keys.forEach((k) => this.removeParamFromWatchList(k));
-    this.setState(
-      (prev) => ({
-        watchList: (prev.watchList || []).filter((i) => i.kind !== 'dataset'),
-      }),
-      () => {
-        this.saveWatchToStorageDebounced();
-        this.updateCommandFromProps(this.props);
-      }
-    );
-  };
-
-  removeFromWatchList = (kind, id) => {
-    if (kind === 'param') {
-      this.removeParamFromWatchList(id);
-      return;
-    }
-    // Dataset removal only updates the watch list
-    this.setState(
-      (prev) => ({
-        watchList: (prev.watchList || []).filter(
-          (item) => !(item.kind === kind && item.id === id)
-        ),
-      }),
-      () => {
-        this.saveWatchToStorageDebounced();
-      }
-    );
-  };
-
-  onWatchItemClick = (item) => {
-    if (item.kind === 'param') {
-      // Reflect selection in URL like flowchart does
-      this.setSidInUrl(item.id);
-      if (this.props.dispatch) {
-        this.props.dispatch(loadNodeData(item.id));
-        this.props.dispatch(toggleNodeClicked(item.id));
-      }
-      // Defensive: ensure param value is serializable and not iterable unless expected
-      try {
-        this.openParamEditor(item.id);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to open parameter editor for', item.id, e);
-        this.showToast('Error opening parameter editor');
-      }
-    } else if (item.kind === 'dataset') {
-      this.setSidInUrl(item.id);
-      if (this.props.dispatch) {
-        this.props.dispatch(loadNodeData(item.id));
-        this.props.dispatch(toggleNodeClicked(item.id));
-      }
-      const dataset = (this.props.datasets || []).find(
-        (datasetItem) => datasetItem.id === item.id
-      );
-      if (dataset) {
-        this.openDatasetDetails(dataset);
-      }
-    }
-  };
-
-  openParamEditor = (paramKey) => {
-    // Capture original if missing
-    this.ensureOriginalsFor(paramKey);
-    const existing = this.state.editedParameters || {};
-    let value = Object.prototype.hasOwnProperty.call(existing, paramKey)
-      ? existing[paramKey]
-      : this.getParamValue(paramKey);
-    // Defensive: if value is not serializable, fallback to empty string
-    try {
-      // If value is not a primitive, array, or plain object, fallback
-      if (
-        typeof value === 'function' ||
-        (typeof value === 'object' &&
-          value !== null &&
-          Object.getPrototypeOf(value) !== Object.prototype &&
-          !Array.isArray(value))
-      ) {
-        value = '';
-      }
-    } catch (e) {
-      value = '';
-    }
-    // Dispatch node click to populate Redux metadata like flowchart/workflow
-    if (this.props.dispatch) {
-      // Ensure metadata is loaded if needed, then set clicked
-      this.props.dispatch(loadNodeData(paramKey));
-      this.props.dispatch(toggleNodeClicked(paramKey));
-    }
-    this.setState((prev) => ({
-      showMetadata: true,
-      metadataMode: 'param',
-      selectedParamKey: paramKey,
-      yamlText: this.toYamlString(value),
-      metaEditText: this.toYamlString(value) || '',
-      editedParameters: Object.prototype.hasOwnProperty.call(
-        prev.editedParameters || {},
-        paramKey
-      )
-        ? prev.editedParameters
-        : { ...(prev.editedParameters || {}), [paramKey]: value },
-    }));
-  };
-
-  // Flowchart handlers moved to WatchPanel helpers
-
-  renderWatchListPanel() {
-    return (
-      <WatchPanel
-        watchList={this.state.watchList}
-        watchTab={this.state.watchTab}
-        customOrder={this.state.customOrder}
-        strictlyChanged={this.state.strictlyChanged}
-        setWatchTab={(tab) => this.setState({ watchTab: tab })}
-        onDragStart={this.startDragWatch}
-        onDragOver={this.allowDropWatch}
-        onDrop={this.dropWatch}
-        onItemClick={this.onWatchItemClick}
-        onRemove={this.removeFromWatchList}
-        getEditedParamValue={this.getEditedParamValue}
-        toYamlString={this.toYamlString}
-      />
-    );
-  }
-
-  renderWatchModal() {
-    const {
-      isWatchModalOpen,
-      tempModalSelections,
-      watchSearch,
-      selectedToAdd,
-    } = this.state;
-    const { paramResults, datasetResults } = this.getSearchResults();
+  const renderWatchModal = () => {
     const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
       (acc, id) => {
         acc[id] = true;
@@ -2001,274 +1697,149 @@ class KedroRunManager extends Component {
       },
       {}
     );
+    const { paramResults, datasetResults } = getSearchResults();
     return (
       <WatchListDialog
         isOpen={isWatchModalOpen}
-        onClose={this.closeWatchModal}
-        onConfirm={this.confirmAddSelected}
+        onClose={closeWatchModal}
+        onConfirm={confirmAddSelected}
         onFlowchartNodeClick={(nodeId) =>
           onFlowchartNodeClickImpl({
             nodeId,
-            paramNodes: this.props.paramNodes || [],
-            datasets: this.props.datasets || [],
-            dispatch: this.props.dispatch,
-            toggleSelectToAdd: this.toggleSelectToAdd,
+            paramNodes: props.paramNodes || [],
+            datasets: props.datasets || [],
+            dispatch: props.dispatch,
+            toggleSelectToAdd,
           })
         }
         onFlowchartNodeDoubleClick={(node) =>
           onFlowchartNodeDoubleClickImpl({
             node,
-            paramNodes: this.props.paramNodes || [],
-            datasets: this.props.datasets || [],
-            toggleSelectToAdd: this.toggleSelectToAdd,
+            paramNodes: props.paramNodes || [],
+            datasets: props.datasets || [],
+            toggleSelectToAdd,
             setTempModalSelections: (updater) =>
-              this.setState((prev) => ({
-                tempModalSelections:
-                  typeof updater === 'function'
-                    ? updater(prev.tempModalSelections)
-                    : updater,
-              })),
+              setTempModalSelections((prev) =>
+                typeof updater === 'function' ? updater(prev) : updater
+              ),
           })
         }
         tempSelectedMap={tempSelectedMap}
         stagedItems={tempModalSelections}
         watchSearch={watchSearch}
-        onWatchSearchChange={(value) => this.setState({ watchSearch: value })}
+        onWatchSearchChange={setWatchSearch}
         paramResults={paramResults}
         datasetResults={datasetResults}
       />
     );
-  }
+  };
 
-  render() {
-    const hasParamChanges = !!Object.keys(this.state.strictlyChanged || {})
-      .length;
-    const containerClass = classnames('runner-manager', {
-      'runner-manager--with-sidebar': this.props.displaySidebar,
-      'runner-manager--sidebar-open':
-        this.props.displaySidebar && this.props.sidebarVisible,
-      'runner-manager--no-global-toolbar': !this.props.displayGlobalNavigation,
-    });
-    return (
-      <div className={containerClass}>
-        <header className="runner-manager__header">
-          <h2 className="page-title">Runner</h2>
-        </header>
+  // --- Main render ---
+  const hasParamChanges = !!Object.keys(strictlyChanged || {}).length;
+  const containerClass = classnames('runner-manager', {
+    'runner-manager--with-sidebar': props.displaySidebar,
+    'runner-manager--sidebar-open':
+      props.displaySidebar && props.sidebarVisible,
+    'runner-manager--no-global-toolbar': !props.displayGlobalNavigation,
+  });
 
-        <main className="runner-manager__main">
-          <ControlPanel
-            currentCommand={this.getCurrentCommandString()}
-            onStartRun={this.onStartRun}
-            commandInputRef={this.commandInputRef}
-            onCopyCommand={this.copyCommandToClipboard}
-            hasParamChanges={hasParamChanges}
-            activePipeline={this.props.activePipeline || PIPELINE.DEFAULT}
-            selectedTags={this.props.selectedTags || []}
-            onOpenParamsDialog={this.openParamsDialog}
-            isParamsModalOpen={this.state.isParamsModalOpen}
-            onCloseParamsModal={() =>
-              this.setState({ isParamsModalOpen: false })
-            }
-            paramItems={(this.state.watchList || []).filter(
-              (i) => i.kind === 'param'
-            )}
-            paramsDialogSelectedKey={this.state.paramsDialogSelectedKey}
-            onSelectParamKey={(key) =>
-              this.setState({ paramsDialogSelectedKey: key })
-            }
-            paramOriginals={this.state.paramOriginals}
-            getParamValue={this.getParamValue}
-            getEditedParamValue={this.getEditedParamValue}
-            normalizeParamPrefix={this.normalizeParamPrefix}
-            collectParamDiffs={this.collectParamDiffs}
-            toYamlString={this.toYamlString}
-            renderHighlightedYamlLines={this.renderHighlightedYamlLines}
-            quoteIfNeeded={this.quoteIfNeeded}
-            paramsArgString={this.state.paramsArgString}
-            kedroEnv={this.state.kedroEnv}
-          />
+  return (
+    <div className={containerClass}>
+      <header className="runner-manager__header">
+        <h2 className="page-title">Runner</h2>
+      </header>
 
-          <section
-            className="runner-manager__jobs-panel"
-            ref={this.jobsPanelRef}
-          >
-            {this.renderJobListPanel()}
-          </section>
+      <main className="runner-manager__main">
+        <ControlPanel
+          currentCommand={getCurrentCommandString()}
+          onStartRun={onStartRun}
+          commandInputRef={commandInputRef}
+          onCopyCommand={copyCommandToClipboard}
+          hasParamChanges={hasParamChanges}
+          activePipeline={props.activePipeline || PIPELINE.DEFAULT}
+          selectedTags={props.selectedTags || []}
+          onOpenParamsDialog={openParamsDialog}
+          isParamsModalOpen={isParamsModalOpen}
+          onCloseParamsModal={() => setIsParamsModalOpen(false)}
+          paramItems={(watchList || []).filter((i) => i.kind === 'param')}
+          paramsDialogSelectedKey={paramsDialogSelectedKey}
+          onSelectParamKey={setParamsDialogSelectedKey}
+          paramOriginals={paramOriginals}
+          getParamValue={getParamValue}
+          getEditedParamValue={getEditedParamValue}
+          normalizeParamPrefix={normalizeParamPrefix}
+          collectParamDiffs={collectParamDiffs}
+          toYamlString={toYamlString}
+          renderHighlightedYamlLines={renderHighlightedYamlLines}
+          quoteIfNeeded={quoteIfNeeded}
+          paramsArgString={paramsArgString}
+          kedroEnv={kedroEnv}
+        />
 
-          <section className="runner-manager__editor">
-            <div className="editor__header">
-              <h3 className="section-title">Watch list</h3>
-              <div className="editor__actions">
-                <button
-                  className="btn btn--secondary"
-                  onClick={this.openWatchModal}
-                >
-                  Add
-                </button>
-                <button
-                  className="btn btn--secondary"
-                  onClick={this.clearWatchList}
-                  disabled={!(this.state.watchList || []).length}
-                >
-                  Clear
-                </button>
-              </div>
-            </div>
-            <div className="runner-data-panel">
-              {this.renderWatchListPanel()}
-            </div>
-          </section>
-        </main>
+        <section className="runner-manager__jobs-panel" ref={jobsPanelRef}>
+          {renderJobListPanel()}
+        </section>
 
-        <footer className="runner-manager__footer">
-          <small>
-            UI draft — not wired to backend. Connect API endpoints for
-            parameters, datasets and runs to make it live.
-          </small>
-        </footer>
-
-        {this.renderMetadataPanel()}
-        {this.renderWatchModal()}
-        {this.state.toastVisible && (
-          <div
-            className="runner-toast"
-            role="status"
-            aria-live="polite"
-            style={{
-              position: 'fixed',
-              right: '16px',
-              bottom: '16px',
-              background: 'var(--color-bg-alt)',
-              color: 'var(--color-text-alt)',
-              padding: '10px 12px',
-              borderRadius: '6px',
-              boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
-              zIndex: 9999,
-              maxWidth: '50vw',
-            }}
-            onClick={this.hideToast}
-          >
-            {this.state.toastMessage || 'Saved'}
-          </div>
-        )}
-        {this.state.isClearJobsModalOpen && (
-          <div
-            className="runner-logs-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Clear jobs confirmation"
-          >
-            <div className="runner-logs-modal__content">
-              <div className="runner-logs-modal__header">
-                <h3 className="runner-logs-modal__title">Clear all jobs</h3>
-                <button
-                  className="runner-logs-modal__close"
-                  aria-label="Close"
-                  onClick={this.closeClearJobsConfirm}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="runner-logs-modal__body">
-                <p>
-                  Are you sure you want to clear the jobs list? This will remove
-                  all jobs from the panel.
-                </p>
-              </div>
-              <div className="runner-logs-modal__footer">
-                <button className="btn" onClick={this.closeClearJobsConfirm}>
-                  Cancel
-                </button>
-                <button className="btn btn--danger" onClick={this.clearAllJobs}>
-                  Clear
-                </button>
-              </div>
+        <section className="runner-manager__editor">
+          <div className="editor__header">
+            <h3 className="section-title">Watch list</h3>
+            <div className="editor__actions">
+              <button className="btn btn--secondary" onClick={openWatchModal}>
+                Add
+              </button>
+              <button
+                className="btn btn--secondary"
+                onClick={clearWatchList}
+                disabled={!(watchList || []).length}
+              >
+                Clear
+              </button>
             </div>
           </div>
-        )}
-        {this.state.isClearJobModalOpen && (
-          <div
-            className="runner-logs-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Clear job confirmation"
-          >
-            <div className="runner-logs-modal__content">
-              <div className="runner-logs-modal__header">
-                <h3 className="runner-logs-modal__title">Remove job</h3>
-                <button
-                  className="runner-logs-modal__close"
-                  aria-label="Close"
-                  onClick={this.closeClearJobConfirm}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="runner-logs-modal__body">
-                <p>
-                  Remove this job from the list? This won’t affect any running
-                  process.
-                </p>
-              </div>
-              <div className="runner-logs-modal__footer">
-                <button className="btn" onClick={this.closeClearJobConfirm}>
-                  Cancel
-                </button>
-                <button
-                  className="btn btn--danger"
-                  onClick={() => this.clearJob()}
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        {this.state.isLogsModalOpen && (
-          <div
-            className="runner-logs-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Job logs dialog"
-          >
-            <div className="runner-logs-modal__content">
-              <div className="runner-logs-modal__header">
-                <h3 className="runner-logs-modal__title">Job logs</h3>
-                <button
-                  className="runner-logs-modal__close"
-                  aria-label="Close"
-                  onClick={this.closeLogsModal}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="runner-logs-modal__body">
-                <pre>
-                  {(this.state.jobs || []).find(
-                    (jobItem) => jobItem.jobId === this.state.logsModalJobId
-                  )?.logs || ''}
-                </pre>
-              </div>
-              <div className="runner-logs-modal__footer">
-                <button className="btn" onClick={this.closeLogsModal}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+          <div className="runner-data-panel">{renderWatchListPanel()}</div>
+        </section>
+      </main>
 
-        {/* End of modals */}
-      </div>
-    );
-  }
+      <footer className="runner-manager__footer">
+        <small>
+          UI draft — not wired to backend. Connect API endpoints for parameters,
+          datasets and runs to make it live.
+        </small>
+      </footer>
+
+      {renderMetadataPanel()}
+      {renderWatchModal()}
+      {toastVisible && (
+        <div
+          className="runner-toast"
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            right: '16px',
+            bottom: '16px',
+            background: 'var(--color-bg-alt)',
+            color: 'var(--color-text-alt)',
+            padding: '10px 12px',
+            borderRadius: '6px',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+            zIndex: 9999,
+            maxWidth: '50vw',
+          }}
+          onClick={hideToast}
+        >
+          {toastMessage || 'Saved'}
+        </div>
+      )}
+      {/* Modals for clear jobs, clear job, logs, etc. can be added here as needed */}
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => ({
   displaySidebar: state.display.sidebar,
   sidebarVisible: state.visible.sidebar,
   displayGlobalNavigation: state.display.globalNavigation,
-  theme: state.theme,
   datasets: getVisibleNodes(state).filter((node) => node.type === 'data'),
   paramNodes: getVisibleNodes(state).filter(
     (node) => node.type === 'parameters'
