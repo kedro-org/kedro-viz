@@ -1790,6 +1790,46 @@ function KedroRunManager(props) {
     );
   }
 
+  function renderLogsModal({
+    title = 'Job logs',
+    logMessage,
+    confirmLabel = 'Close',
+    onClose = closeLogsModal,
+  }) {
+    if (!isLogsModalOpen) {
+      return null;
+    }
+    return (
+      <div
+        className="runner-logs-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Job logs dialog"
+      >
+        <div className="runner-logs-modal__content">
+          <div className="runner-logs-modal__header">
+            <h3 className="runner-logs-modal__title">{title}</h3>
+            <button
+              className="runner-logs-modal__close"
+              aria-label="Close"
+              onClick={onClose}
+            >
+              ×
+            </button>
+          </div>
+          <div className="runner-logs-modal__body">
+            <pre>{logMessage || 'No logs available.'}</pre>
+          </div>
+          <div className="runner-logs-modal__footer">
+            <button className="btn" onClick={onClose}>
+              {confirmLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={containerClass}>
       <header className="runner-manager__header">
@@ -1897,6 +1937,12 @@ function KedroRunManager(props) {
         cancelLabel: 'Cancel',
         onConfirm: () => clearJob(clearJobModalJobId),
         onCancel: closeClearJobConfirm,
+      })}
+      {renderLogsModal({
+        title: `Job logs - ${logsModalJobId || ''}`,
+        logMessage:
+          (jobs || []).find((j) => j.jobId === logsModalJobId)?.logs || '',
+        onClose: closeLogsModal,
       })}
     </div>
   );
