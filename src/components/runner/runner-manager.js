@@ -1743,6 +1743,53 @@ function KedroRunManager(props) {
     'runner-manager--no-global-toolbar': !props.displayGlobalNavigation,
   });
 
+  // Generic confirmation modal renderer (lightweight, self-contained)
+  function renderConfirmationModal({
+    isOpen,
+    title,
+    message,
+    confirmLabel = 'Confirm',
+    cancelLabel = 'Cancel',
+    onConfirm,
+    onCancel,
+  }) {
+    if (!isOpen) {
+      return null;
+    }
+    return (
+      <div
+        className="runner-logs-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Clear job confirmation"
+      >
+        <div className="runner-logs-modal__content">
+          <div className="runner-logs-modal__header">
+            <h3 className="runner-logs-modal__title">{title}</h3>
+            <button
+              className="runner-logs-modal__close"
+              aria-label="Close"
+              onClick={onCancel}
+            >
+              ×
+            </button>
+          </div>
+          <div className="runner-logs-modal__body">
+            <p>{message}</p>
+          </div>
+          <div className="runner-logs-modal__footer">
+            <button className="btn" onClick={onCancel}>
+              {cancelLabel}
+            </button>
+            <button className="btn btn--danger" onClick={onConfirm}>
+              {confirmLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={containerClass}>
       <header className="runner-manager__header">
@@ -1831,7 +1878,26 @@ function KedroRunManager(props) {
           {toastMessage || 'Saved'}
         </div>
       )}
-      {/* Modals for clear jobs, clear job, logs, etc. can be added here as needed */}
+      {renderConfirmationModal({
+        isOpen: isClearJobsModalOpen,
+        title: 'Clear all jobs',
+        message:
+          'This will remove all jobs from the list (running jobs will have polling stopped). Continue?',
+        confirmLabel: 'Yes, clear all',
+        cancelLabel: 'Cancel',
+        onConfirm: clearAllJobs,
+        onCancel: closeClearJobsConfirm,
+      })}
+      {renderConfirmationModal({
+        isOpen: isClearJobModalOpen,
+        title: 'Clear job',
+        message:
+          'Remove this job from the list? (If running, polling will stop.)',
+        confirmLabel: 'Yes, clear job',
+        cancelLabel: 'Cancel',
+        onConfirm: () => clearJob(clearJobModalJobId),
+        onCancel: closeClearJobConfirm,
+      })}
     </div>
   );
 }
