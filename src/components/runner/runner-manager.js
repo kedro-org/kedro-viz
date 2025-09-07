@@ -90,6 +90,7 @@ function KedroRunManager(props) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [kedroEnv, setKedroEnv] = useState(null);
+  const [mounted, setMounted] = useState(false);
 
   // Destructure frequently used props to satisfy exhaustive-deps and avoid adding entire props object
   const { paramNodes = [], datasets = [], dispatch } = props || {};
@@ -356,11 +357,11 @@ function KedroRunManager(props) {
     const paramIds = list
       .filter((item) => item.kind === 'param')
       .map((i) => i.id);
-    paramIds.forEach((id) => {
-      try {
-        props.dispatch(loadNodeData(id));
-      } catch {}
-    });
+    // paramIds.forEach((id) => {
+    //   try {
+    //     props.dispatch(loadNodeData(id));
+    //   } catch {}
+    // });
   }, [watchList, props]);
 
   const saveWatchToStorage = useCallback(
@@ -588,31 +589,22 @@ function KedroRunManager(props) {
       }
     });
 
+    // Update state (no side effects here)
     setWatchList(nextWatchList);
     setIsWatchModalOpen(false);
     setSelectedToAdd({});
     setTempModalSelections({});
     setEditedParameters(nextEdited);
 
-    saveWatchToStorageDebounced();
-    try {
-      ensureOriginalsFor(nextParamIds);
-      refreshWatchParamsMetadata();
-    } catch {}
-    updateStrictlyChanged();
-    updateParamsArgString();
+    // mark for side-effects via ref flag
+    confirmAddSelected.pendingIds = nextParamIds;
   }, [
-    selectedToAdd,
     watchList,
-    editedParameters,
+    selectedToAdd,
     props.paramNodes,
     props.datasets,
+    editedParameters,
     getParamValue,
-    saveWatchToStorageDebounced,
-    ensureOriginalsFor,
-    refreshWatchParamsMetadata,
-    updateStrictlyChanged,
-    updateParamsArgString,
   ]);
 
   const removeParamFromWatchList = useCallback(
@@ -1460,7 +1452,7 @@ function KedroRunManager(props) {
         props.dispatch(loadNodeData(paramKey));
         props.dispatch(toggleNodeClicked(paramKey));
       }
-      const text = toYamlString(value) || '';
+      const text = toYamlString(value) || 'default text';
       setShowMetadata(true);
       setMetadataMode('param');
       setSelectedParamKey(paramKey);
@@ -1621,9 +1613,13 @@ function KedroRunManager(props) {
     });
   }, []);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // --- Render helpers (converted from class) ---
   const renderMetadataPanel = () => {
-    if (!showMetadata) {
+    if (!showMetadata || !mounted) {
       return null;
     }
     if (metadataMode === 'param') {
