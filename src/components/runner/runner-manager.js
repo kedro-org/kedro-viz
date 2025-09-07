@@ -12,6 +12,7 @@ import WatchPanel, {
   onFlowchartNodeClickImpl,
   onFlowchartNodeDoubleClickImpl,
 } from './watch-panel';
+import WatchListDialog from './watch-list-dialog';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
@@ -60,12 +61,45 @@ function KedroRunManager(props) {
     paramEdits,
     resetParamInEditor,
     editParamInEditor,
+  getEditedParamValue,
+  normalizeParamPrefix,
+  collectParamDiffs,
+  toYamlString,
+  parseYamlishValue,
+  paramsArgString,
+  updateParamsArgString,
+  ensureOriginalsFor,
+  // exposed helpers
+  getParamValue,
+  saveParamsToStorageDebounced,
 
   } = useWatchList(props);
 
   // State
   const [kedroEnv, setKedroEnv] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [watchTab, setWatchTab] = useState('parameters');
+  // Toast and transient UI state
+  const toastTimer = useRef();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Metadata / parameter editor UI state
+  const [metaEditText, setMetaEditText] = useState('');
+  const [yamlText, setYamlText] = useState('');
+  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
+  const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null);
+  const [params, setParams] = useState({});
+  const [editedParameters, setEditedParameters] = useState({});
+  const [selectedParamKey, setSelectedParamKey] = useState(null);
+  const [selectedDataset, setSelectedDataset] = useState(null);
+  const [showMetadata, setShowMetadata] = useState(false);
+  const [metadataMode, setMetadataMode] = useState(null);
+  // Watch modal state
+  const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
+  const [tempModalSelections, setTempModalSelections] = useState({});
+  const [watchSearch, setWatchSearch] = useState('');
+  const [selectedToAdd, setSelectedToAdd] = useState({});
 
   // Destructure frequently used props to satisfy exhaustive-deps and avoid adding entire props object
   const { paramNodes = [], datasets = [], dispatch } = props || {};
@@ -161,11 +195,10 @@ function KedroRunManager(props) {
 
   // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
   useEffect(() => {
-    fetchAndSetKedroEnv();
-    updateCommandFromProps();
-    updateParamsArgString();
-    updateStrictlyChanged();
-    syncMetadataFromSid();
+  fetchAndSetKedroEnv();
+  updateCommandFromProps();
+  updateParamsArgString();
+  syncMetadataFromSid();
     window.addEventListener('popstate', syncMetadataFromSid);
     return () => {
       window.removeEventListener('popstate', syncMetadataFromSid);
@@ -313,6 +346,114 @@ function KedroRunManager(props) {
     }
   }, [watchList, ensureOriginalsFor, strictlyChanged]);
 
+  // Toast helpers
+  const showToast = useCallback((message, duration = 2000) => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+    }
+    setToastMessage(String(message || ''));
+    setToastVisible(true);
+    toastTimer.current = setTimeout(() => {
+      setToastVisible(false);
+    }, Math.max(0, duration));
+  }, []);
+
+  const hideToast = useCallback(() => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+      toastTimer.current = null;
+    }
+    setToastVisible(false);
+  }, []);
+
+  // Parameter editing helpers adapted from legacy implementation
+  const resetParamKey = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return undefined;
+      }
+      const originals = paramOriginals || {};
+      const orig = Object.prototype.hasOwnProperty.call(originals, paramKey)
+        ? originals[paramKey]
+        : getParamValue(paramKey);
+
+      setEditedParameters((prev) => {
+        const next = { ...(prev || {}) };
+        if (typeof orig === 'undefined') {
+          delete next[paramKey];
+        } else {
+          next[paramKey] = orig;
+        }
+        return next;
+      });
+      setParams((prev) => {
+        const next = { ...(prev || {}) };
+        if (typeof orig === 'undefined') {
+          delete next[paramKey];
+        } else {
+          next[paramKey] = orig;
+        }
+        return next;
+      });
+
+      try {
+        editParamInEditor(paramKey, orig);
+      } catch {}
+
+      updateParamsArgString();
+      saveParamsToStorageDebounced();
+      return orig;
+    },
+    [
+      paramOriginals,
+      getParamValue,
+      editParamInEditor,
+      saveParamsToStorageDebounced,
+      updateParamsArgString,
+    ]
+  );
+
+  const updateEditedParam = useCallback(
+    (paramKey, value) => {
+      if (!paramKey) {
+        return;
+      }
+      setEditedParameters((prev) => ({ ...(prev || {}), [paramKey]: value }));
+      setParams((prev) => ({ ...(prev || {}), [paramKey]: value }));
+      try {
+        editParamInEditor(paramKey, value);
+      } catch {}
+      updateParamsArgString();
+      updateCommandFromProps();
+      saveParamsToStorageDebounced();
+    },
+    [editParamInEditor, updateParamsArgString, saveParamsToStorageDebounced]
+  );
+
+  const saveParamYaml = useCallback(() => {
+    if (!selectedParamKey) {
+      return;
+    }
+    try {
+      ensureOriginalsFor(selectedParamKey);
+    } catch {}
+    const parsed = parseYamlishValue(yamlText);
+    updateEditedParam(selectedParamKey, parsed);
+    showToast('Parameter updated');
+  }, [selectedParamKey, yamlText, ensureOriginalsFor, parseYamlishValue, updateEditedParam, showToast]);
+
+  const resetParamYaml = useCallback(() => {
+    if (!selectedParamKey) {
+      return;
+    }
+    const orig = resetParamKey(selectedParamKey);
+    const origYaml = toYamlString(orig);
+    setYamlText(origYaml);
+    setMetaEditText(origYaml);
+    updateCommandFromProps();
+    showToast('Reset to original');
+  }, [selectedParamKey, resetParamKey, toYamlString, updateCommandFromProps, showToast]);
+
   const setSidInUrl = useCallback((nodeId) => {
     if (!nodeId) {
       return;
@@ -332,6 +473,110 @@ function KedroRunManager(props) {
     setMetadataMode('dataset');
     setSelectedDataset(dataset);
   }, []);
+
+  const openWatchModal = useCallback(() => {
+    const selected = {};
+    const tempSelections = {};
+    (watchList || []).forEach((item) => {
+      selected[`${item.kind}:${item.id}`] = true;
+      tempSelections[item.id] = {
+        kind: item.kind,
+        id: item.id,
+        name: item.name || item.id,
+      };
+    });
+    setIsWatchModalOpen(true);
+    setSelectedToAdd(selected);
+    setTempModalSelections(tempSelections);
+    setWatchSearch('');
+  }, [watchList]);
+
+  const closeWatchModal = useCallback(() => {
+    setIsWatchModalOpen(false);
+    setTempModalSelections({});
+  }, []);
+
+  const toggleSelectToAdd = useCallback((kind, id, name) => {
+    const key = `${kind}:${id}`;
+    setSelectedToAdd((prev) => {
+      const next = { ...(prev || {}) };
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = true;
+      }
+      return next;
+    });
+    setTempModalSelections((prev) => {
+      const next = { ...(prev || {}) };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = { kind, id, name: name || id };
+      }
+      return next;
+    });
+  }, []);
+
+  const confirmAddSelected = useCallback(() => {
+    const stagedValues = Object.values(tempModalSelections || {});
+    // Replace watchList with staged selections
+    updateWatchList(stagedValues);
+    // Ensure parameters are registered in editor
+    stagedValues
+      .filter((i) => i.kind === 'param')
+      .forEach((param) => {
+        try {
+          addToWatchList(param);
+        } catch (e) {}
+      });
+    saveWatchToStorageDebounced(stagedValues, null);
+    setIsWatchModalOpen(false);
+  }, [tempModalSelections, updateWatchList, addToWatchList, saveWatchToStorageDebounced]);
+
+  const renderWatchModal = () => {
+    const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
+      (acc, id) => {
+        acc[id] = true;
+        return acc;
+      },
+      {}
+    );
+    return (
+      <WatchListDialog
+        isOpen={isWatchModalOpen}
+        onClose={closeWatchModal}
+        onConfirm={confirmAddSelected}
+        onFlowchartNodeClick={(nodeId) =>
+          onFlowchartNodeClickImpl({
+            nodeId,
+            paramNodes: paramNodes || [],
+            datasets: datasets || [],
+            dispatch: dispatch,
+            toggleSelectToAdd: toggleSelectToAdd,
+          })
+        }
+        onFlowchartNodeDoubleClick={(node) =>
+          onFlowchartNodeDoubleClickImpl({
+            node,
+            paramNodes: paramNodes || [],
+            datasets: datasets || [],
+            toggleSelectToAdd: toggleSelectToAdd,
+            setTempModalSelections: (updater) =>
+              setTempModalSelections((prev) =>
+                typeof updater === 'function' ? updater(prev) : updater
+              ),
+          })
+        }
+        tempSelectedMap={tempSelectedMap}
+        stagedItems={tempModalSelections}
+        watchSearch={watchSearch}
+        onWatchSearchChange={setWatchSearch}
+        paramResults={[]}
+        datasetResults={[]}
+      />
+    );
+  };
 
   const openParamEditor = useCallback(
     (paramKey) => {
@@ -524,6 +769,17 @@ function KedroRunManager(props) {
       strictlyChanged={strictlyChanged}
       getEditedParamValue={getEditedParamValue}
       toYamlString={toYamlString}
+      setSidInUrl={setSidInUrl}
+      openParamEditor={openParamEditor}
+      openDatasetDetails={openDatasetDetails}
+      saveWatchToStorageDebounced={saveWatchToStorageDebounced}
+      removeParamFromWatchList={removeFromWatchList}
+      setWatchList={(updater) =>
+        updateWatchList(typeof updater === 'function' ? updater(watchList) : updater)
+      }
+      props={props}
+      setTempModalSelections={setTempModalSelections}
+      setWatchSearch={setWatchSearch}
     />
   );
 

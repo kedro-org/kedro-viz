@@ -1,97 +1,25 @@
-import React from 'react';
-import { toggleNodeClicked } from '../../../actions/nodes';
+import React, { useState, useRef, useCallback } from 'react';
+import { toggleNodeClicked, loadNodeData } from '../../../actions/nodes';
 import WatchListDialog from '../watch-list-dialog';
-
-
-
-
-function renderWatchModal(props){
-  const [tempModalSelections, setTempModalSelections] = useState({});
-  const [watchSearch, setWatchSearch] = useState('');
-
-  const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
-    (acc, id) => {
-      acc[id] = true;
-      return acc;
-    },
-    {}
-  );
-  
-  const getSearchResults = useCallback(() => {
-    const query = (watchSearch || '').trim().toLowerCase();
-    const makeMatch = (text) =>
-      text && String(text).toLowerCase().includes(query);
-
-    const paramResults = (props.paramNodes || [])
-      .map((node) => ({
-        kind: 'param',
-        id: node.id,
-        name: node.name || node.id,
-      }))
-      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-      );
-
-    const datasetResults = (props.datasets || [])
-      .map((dataset) => ({
-        kind: 'dataset',
-        id: dataset.id,
-        name: dataset.name || dataset.id,
-      }))
-      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-      );
-
-    return { paramResults, datasetResults };
-  }, [watchSearch, props]);
-  
-  const { paramResults, datasetResults } = getSearchResults();
-
-  return (
-    <WatchListDialog
-      isOpen={isWatchModalOpen}
-      onClose={closeWatchModal}
-      onConfirm={confirmAddSelected}
-      onFlowchartNodeClick={(nodeId) =>
-        onFlowchartNodeClickImpl({
-          nodeId,
-          paramNodes: props.paramNodes || [],
-          datasets: props.datasets || [],
-          dispatch: props.dispatch,
-          toggleSelectToAdd,
-        })
-      }
-      onFlowchartNodeDoubleClick={(node) =>
-        onFlowchartNodeDoubleClickImpl({
-          node,
-          paramNodes: props.paramNodes || [],
-          datasets: props.datasets || [],
-          toggleSelectToAdd,
-          setTempModalSelections: (updater) =>
-            setTempModalSelections((prev) =>
-              typeof updater === 'function' ? updater(prev) : updater
-            ),
-        })
-      }
-      tempSelectedMap={tempSelectedMap}
-      stagedItems={tempModalSelections}
-      watchSearch={watchSearch}
-      onWatchSearchChange={setWatchSearch}
-      paramResults={paramResults}
-      datasetResults={datasetResults}
-    />
-  );
-};
 
 function WatchPanel({
   watchList,
-  watchTab,
   strictlyChanged,
   getEditedParamValue,
   toYamlString,
+  // external handlers passed from runner-manager
+  setSidInUrl,
+  openParamEditor,
+  openDatasetDetails,
+  saveWatchToStorageDebounced,
+  removeParamFromWatchList,
+  setWatchList,
+  // Items needed for rendering and interactions
+  props,
+  setTempModalSelections,
+  setWatchSearch,
 }) {
+  const toastTimer = useRef();
   const [customOrder, setCustomOrder] = useState({
     param: false,
     dataset: false,
@@ -105,6 +33,7 @@ function WatchPanel({
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [draggingWatch, setDraggingWatch] = useState(null);
+  const [selectedToAdd, setSelectedToAdd] = useState({});
 
   const showToast = useCallback((message, duration = 2000) => {
     if (toastTimer.current) {
@@ -142,6 +71,13 @@ function WatchPanel({
     setTempModalSelections(tempSelections);
     setWatchSearch('');
   }, [watchList]);
+
+  // Aliases expected by JSX (the implementation names differ)
+  const onDragStart = startDragWatch;
+  const onDragOver = allowDropWatch;
+  const onDrop = dropWatch;
+  const onItemClick = onWatchItemClick;
+  const onRemove = removeFromWatchList;
   
   const parameterItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'param'

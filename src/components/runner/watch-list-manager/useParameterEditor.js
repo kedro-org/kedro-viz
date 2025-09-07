@@ -143,12 +143,14 @@ function useParameterEditor() {
   return {
     paramOriginals,
     paramEdits,
-    strictlyChanged,
+  strictlyChanged,
     addParams,
     removeParam,
     resetParam,
     editParam,
     saveParamsToStorageDebounced,
+  loadParamEditsFromStorage,
+  hydrateParamEditsFromStorage,
   }
 }
 
