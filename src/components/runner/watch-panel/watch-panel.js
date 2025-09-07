@@ -1,20 +1,148 @@
 import React from 'react';
 import { toggleNodeClicked } from '../../../actions/nodes';
+import WatchListDialog from '../watch-list-dialog';
 
-const WatchPanel = ({
+
+
+
+function renderWatchModal(props){
+  const [tempModalSelections, setTempModalSelections] = useState({});
+  const [watchSearch, setWatchSearch] = useState('');
+
+  const tempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
+    (acc, id) => {
+      acc[id] = true;
+      return acc;
+    },
+    {}
+  );
+  
+  const getSearchResults = useCallback(() => {
+    const query = (watchSearch || '').trim().toLowerCase();
+    const makeMatch = (text) =>
+      text && String(text).toLowerCase().includes(query);
+
+    const paramResults = (props.paramNodes || [])
+      .map((node) => ({
+        kind: 'param',
+        id: node.id,
+        name: node.name || node.id,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    const datasetResults = (props.datasets || [])
+      .map((dataset) => ({
+        kind: 'dataset',
+        id: dataset.id,
+        name: dataset.name || dataset.id,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    return { paramResults, datasetResults };
+  }, [watchSearch, props]);
+  
+  const { paramResults, datasetResults } = getSearchResults();
+
+  return (
+    <WatchListDialog
+      isOpen={isWatchModalOpen}
+      onClose={closeWatchModal}
+      onConfirm={confirmAddSelected}
+      onFlowchartNodeClick={(nodeId) =>
+        onFlowchartNodeClickImpl({
+          nodeId,
+          paramNodes: props.paramNodes || [],
+          datasets: props.datasets || [],
+          dispatch: props.dispatch,
+          toggleSelectToAdd,
+        })
+      }
+      onFlowchartNodeDoubleClick={(node) =>
+        onFlowchartNodeDoubleClickImpl({
+          node,
+          paramNodes: props.paramNodes || [],
+          datasets: props.datasets || [],
+          toggleSelectToAdd,
+          setTempModalSelections: (updater) =>
+            setTempModalSelections((prev) =>
+              typeof updater === 'function' ? updater(prev) : updater
+            ),
+        })
+      }
+      tempSelectedMap={tempSelectedMap}
+      stagedItems={tempModalSelections}
+      watchSearch={watchSearch}
+      onWatchSearchChange={setWatchSearch}
+      paramResults={paramResults}
+      datasetResults={datasetResults}
+    />
+  );
+};
+
+function WatchPanel({
   watchList,
   watchTab,
-  customOrder,
   strictlyChanged,
-  setWatchTab,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onItemClick,
-  onRemove,
   getEditedParamValue,
   toYamlString,
-}) => {
+}) {
+  const [customOrder, setCustomOrder] = useState({
+    param: false,
+    dataset: false,
+  });
+  const [watchTab, setWatchTab] = useState('parameters');
+  const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
+  const [showMetadata, setShowMetadata] = useState(false);
+  const [metadataMode, setMetadataMode] = useState(null);
+  const [selectedParamKey, setSelectedParamKey] = useState(null);
+  const [selectedDataset, setSelectedDataset] = useState(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [draggingWatch, setDraggingWatch] = useState(null);
+
+  const showToast = useCallback((message, duration = 2000) => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+    }
+    setToastMessage(String(message || ''));
+    setToastVisible(true);
+    toastTimer.current = setTimeout(() => {
+      setToastVisible(false);
+    }, Math.max(0, duration));
+  }, []);
+
+  const hideToast = useCallback(() => {
+    if (toastTimer.current) {
+      clearTimeout(toastTimer.current);
+      toastTimer.current = null;
+    }
+    setToastVisible(false);
+  }, []);
+
+
+  const openWatchModal = useCallback(() => {
+    const selected = {};
+    const tempSelections = {};
+    (watchList || []).forEach((item) => {
+      selected[`${item.kind}:${item.id}`] = true;
+      tempSelections[item.id] = {
+        kind: item.kind,
+        id: item.id,
+        name: item.name || item.id,
+      };
+    });
+    setIsWatchModalOpen(true);
+    setSelectedToAdd(selected);
+    setTempModalSelections(tempSelections);
+    setWatchSearch('');
+  }, [watchList]);
+  
   const parameterItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'param'
   );
@@ -31,6 +159,19 @@ const WatchPanel = ({
     );
   }
 
+  const toggleSelectToAdd = useCallback((kind, id) => {
+    const key = `${kind}:${id}`;
+    setSelectedToAdd((prev) => {
+      const next = { ...(prev || {}) };
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = true;
+      }
+      return next;
+    });
+  }, []);
+  
   const getParamPreview = (key) => {
     const value = getEditedParamValue(key);
     if (typeof value === 'undefined') {
@@ -40,6 +181,103 @@ const WatchPanel = ({
     const firstLine = String(text).split(/\r?\n/)[0];
     return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
   };
+
+  const startDragWatch = useCallback((kind, id) => {
+    setDraggingWatch({ kind, id });
+  }, []);
+
+  const allowDropWatch = useCallback((e) => {
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
+  }, []);
+
+  const dropWatch = useCallback(
+    (targetKind, targetId) => {
+      if (
+        !draggingWatch ||
+        draggingWatch.kind !== targetKind ||
+        draggingWatch.id === targetId
+      ) {
+        setDraggingWatch(null);
+        return;
+      }
+      setWatchList((prev) => {
+        const list = [...(prev || [])];
+        const kind = targetKind;
+        const kindItems = list.filter((item) => item.kind === kind);
+        const fromIndex = kindItems.findIndex(
+          (item) => item.id === draggingWatch.id
+        );
+        const toIndex = kindItems.findIndex((item) => item.id === targetId);
+        if (fromIndex === -1 || toIndex === -1) {
+          setDraggingWatch(null);
+          return prev;
+        }
+        const reordered = [...kindItems];
+        const [moved] = reordered.splice(fromIndex, 1);
+        reordered.splice(toIndex, 0, moved);
+        let i = 0;
+        const nextList = list.map((item) =>
+          item.kind === kind ? reordered[i++] : item
+        );
+        const nextCustom = { ...(customOrder || {}), [kind]: true };
+        setCustomOrder(nextCustom);
+        saveWatchToStorageDebounced(nextList, nextCustom);
+        setDraggingWatch(null);
+        return nextList;
+      });
+    },
+    [draggingWatch, customOrder, saveWatchToStorageDebounced]
+  );
+
+
+  const onWatchItemClick = useCallback(
+    (item) => {
+      if (item.kind === 'param') {
+        setSidInUrl(item.id);
+        if (props.dispatch) {
+          props.dispatch(loadNodeData(item.id));
+          props.dispatch(toggleNodeClicked(item.id));
+        }
+        try {
+          openParamEditor(item.id);
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to open parameter editor for', item.id, e);
+          showToast('Error opening parameter editor');
+        }
+      } else if (item.kind === 'dataset') {
+        setSidInUrl(item.id);
+        if (props.dispatch) {
+          props.dispatch(loadNodeData(item.id));
+          props.dispatch(toggleNodeClicked(item.id));
+        }
+        const dataset = (props.datasets || []).find(
+          (datasetItem) => datasetItem.id === item.id
+        );
+        if (dataset) {
+          openDatasetDetails(dataset);
+        }
+      }
+    },
+    [props, setSidInUrl, openParamEditor, showToast, openDatasetDetails]
+  );
+
+  const removeFromWatchList = useCallback(
+    (kind, id) => {
+      if (kind === 'param') {
+        removeParamFromWatchList(id);
+        return;
+      }
+      setWatchList((prev) =>
+        (prev || []).filter((item) => !(item.kind === kind && item.id === id))
+      );
+      saveWatchToStorageDebounced();
+    },
+    [removeParamFromWatchList, saveWatchToStorageDebounced]
+  );
+
 
   return (
     <div className="runner-panel runner-panel--watchlist">

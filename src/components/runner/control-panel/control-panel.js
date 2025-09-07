@@ -26,6 +26,7 @@ const ControlPanel = ({
   paramsArgString,
   kedroEnv,
 }) => {
+
   const selectedKey =
     paramsDialogSelectedKey ||
     (paramItems && paramItems[0] && paramItems[0].id);
@@ -46,6 +47,7 @@ const ControlPanel = ({
     const combinedParamsArg = `--params ${quoteIfNeeded(
       paramsArgString || ''
     )}`;
+
     // Shared style to safely wrap long --params strings without affecting copy
     const argCodeStyle = {
       fontFamily: 'monospace',
