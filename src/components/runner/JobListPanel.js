@@ -1,35 +1,288 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 
-/**
- * JobListPanel - Presentational component for displaying the list of jobs and their statuses.
- * Props:
- *   jobs: Array of job objects
- *   expandedLogs: Object mapping jobId to expanded state
- *   onToggleLogExpanded: Function(jobId)
- *   onOpenLogsModal: Function(jobId)
- *   onOpenClearJobConfirm: Function(jobId)
- *   onTerminateJob: Function(jobId)
- *   logRefs: Object mapping jobId to ref
- */
+function renderConfirmationModal({
+  isOpen,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  onConfirm,
+  onCancel,
+}) {
+  if (!isOpen) {
+    return null;
+  }
+  return (
+    <div
+      className="runner-logs-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Clear job confirmation"
+    >
+      <div className="runner-logs-modal__content">
+        <div className="runner-logs-modal__header">
+          <h3 className="runner-logs-modal__title">{title}</h3>
+          <button
+            className="runner-logs-modal__close"
+            aria-label="Close"
+            onClick={onCancel}
+          >
+            ×
+          </button>
+        </div>
+        <div className="runner-logs-modal__body">
+          <p>{message}</p>
+        </div>
+        <div className="runner-logs-modal__footer">
+          <button className="btn" onClick={onCancel}>
+            {cancelLabel}
+          </button>
+          <button className="btn btn--danger" onClick={onConfirm}>
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderLogsModal({
+  isLogsModalOpen = false,
+  title = 'Job logs',
+  logMessage,
+  confirmLabel = 'Close',
+  onClose,
+}) {
+  if (!isLogsModalOpen) {
+    return null;
+  }
+  return (
+    <div
+      className="runner-logs-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Job logs dialog"
+    >
+      <div className="runner-logs-modal__content">
+        <div className="runner-logs-modal__header">
+          <h3 className="runner-logs-modal__title">{title}</h3>
+          <button
+            className="runner-logs-modal__close"
+            aria-label="Close"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+        <div className="runner-logs-modal__body">
+          <pre>{logMessage || 'No logs available.'}</pre>
+        </div>
+        <div className="runner-logs-modal__footer">
+          <button className="btn" onClick={onClose}>
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderJobMetadata({
+  job,
+  isExpanded,
+  logRefs,
+  jobsPanelBodyRef,
+  onTerminateJob,
+  toggleLogExpanded,
+  openLogsModal,
+  openClearJobConfirm,
+}) {
+  const isTerminal = ['finished', 'error', 'terminated'].includes(job.status);
+  const expanded = typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
+  const stdoutStyle = {
+    display: expanded ? 'block' : 'none',
+    maxHeight: expanded ? '70vh' : '0px',
+    overflow: 'auto',
+  };
+  const bodyHeight = jobsPanelBodyRef.current?.clientHeight || 0;
+  const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
+  const status = job.status;
+  const statusClass =
+    status === 'error' || status === 'terminated'
+      ? 'job-card__status--error'
+      : status === 'finished'
+      ? 'job-card__status--finished'
+      : 'job-card__status--pending';
+  const canTerminate = !['finished', 'error', 'terminated'].includes(status);
+  const cardClass = `job-card ${canTerminate ? 'job-card--can-terminate' : ''}`;
+  return (
+    <article
+      key={job.jobId}
+      className={cardClass}
+      style={cardMax ? { maxHeight: `${cardMax}px` } : null}
+    >
+      <div className="job-card__meta">
+        <div className={`job-card__status ${statusClass}`}>{status}</div>
+        <div className="job-card__time">
+          started {new Date(job.startedAt).toLocaleTimeString()}
+        </div>
+        <div
+          className="job-card__actions"
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            display: 'flex',
+            gap: '8px',
+          }}
+        >
+          {canTerminate && (
+            <button
+              className="btn btn--danger"
+              onClick={() => onTerminateJob(job.jobId)}
+              title="Terminate job"
+            >
+              Terminate
+            </button>
+          )}
+          <button className="btn" onClick={() => openLogsModal(job.jobId)}>
+            View full logs
+          </button>
+          <button
+            className="btn"
+            onClick={() => openClearJobConfirm(job.jobId)}
+            title="Remove this job from the list"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+      <div className="job-card__body">
+        <div className="job-card__controls job-card__controls--top">
+          <div className="job-card__toggle pipeline-toggle">
+            <input
+              id={`pipeline-toggle-input-${job.jobId}`}
+              className="pipeline-toggle-input"
+              type="checkbox"
+              checked={expanded}
+              onChange={(e) => toggleLogExpanded(job.jobId)}
+            />
+            <label
+              className={`pipeline-toggle-label ${
+                expanded ? 'pipeline-toggle-label--checked' : ''
+              }`}
+              htmlFor={`pipeline-toggle-input-${job.jobId}`}
+            >
+              {expanded ? 'Collapse logs' : 'Expand logs'}
+            </label>
+          </div>
+        </div>
+        <div className="job-card__details">
+          <div className="job-card__row">
+            <strong>Job:</strong> {job.jobId}
+          </div>
+          <div className="job-card__row">
+            <strong>Command:</strong> {job.command}
+          </div>
+          <div className="job-card__row">
+            <strong>Duration:</strong>{' '}
+            {typeof job.duration !== 'undefined' ? job.duration : '—'}
+            {job.endTime && (
+              <> · ended {new Date(job.endTime).toLocaleTimeString()}</>
+            )}
+          </div>
+        </div>
+        <div
+          className="job-card__stdout"
+          style={stdoutStyle}
+          ref={(el) => {
+            if (logRefs) {
+              logRefs[job.jobId] = el;
+            }
+          }}
+        >
+          <pre>{job.logs}</pre>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function JobListPanel({
   jobs = [],
-  expandedLogs = {},
-  onToggleLogExpanded,
-  onOpenLogsModal,
-  onOpenClearJobConfirm,
-  onOpenClearJobsConfirm,
-  onTerminateJob,
-  setLogExpanded,
   logRefs = {},
+  onRemoveJob,
+  onTerminateJob,
 }) {
   const jobsPanelBodyRef = useRef(null);
+  const [expandedLogs, setExpandedLogs] = useState({});
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+  const [isClearAllJobsModalOpen, setIsClearAllJobsModalOpen] = useState(false);
+  const [isClearJobModalOpen, setIsClearJobModalOpen] = useState(false);
+  const [clearJobModalJobId, setClearJobModalJobId] = useState(null);
+  const [logsModalJobId, setLogsModalJobId] = useState(null);
+
+  const toggleLogExpanded = useCallback((jobId) => {
+    setExpandedLogs((prev) => {
+      const next = { ...(prev || {}) };
+      next[jobId] = !next[jobId];
+      return next;
+    });
+  }, []);
+
+  const openLogsModal = useCallback((jobId) => {
+    setIsLogsModalOpen(true);
+    setLogsModalJobId(jobId);
+  }, []);
+
+  const closeLogsModal = useCallback(() => {
+    setIsLogsModalOpen(false);
+    setLogsModalJobId(null);
+  }, []);
+
+  const openClearJobConfirm = useCallback((jobId) => {
+    setIsClearJobModalOpen(true);
+    setClearJobModalJobId(jobId);
+  }, []);
+
+  const closeClearJobConfirm = useCallback(() => {
+    setIsClearJobModalOpen(false);
+    setClearJobModalJobId(null);
+  }, []);
+
+  const openClearAllJobsConfirm = useCallback(() => {
+    setIsClearAllJobsModalOpen(true);
+  }, []);
+
+  const closeClearAllJobsConfirm = useCallback(() => {
+    setIsClearAllJobsModalOpen(false);
+  }, []);
+
+  const clearJob = useCallback(
+    (jobId) => {
+      onRemoveJob(jobId);
+
+      // Remove jobID from expandedLogs state
+      setExpandedLogs((prev) => {
+        const next = { ...(prev || {}) };
+        delete next[jobId];
+        return next;
+      });
+    },
+    [onRemoveJob]
+  );
+
+  const clearAllJobs = useCallback(() => {
+    (jobs || []).forEach((j) => clearJob(j.jobId));
+  }, [jobs, clearJob]);
+
   return (
     <>
       <div className="jobs-panel__header">
         <h3 className="section-title">Jobs</h3>
         <button
           className="btn btn--secondary"
-          onClick={onOpenClearJobsConfirm}
+          onClick={openClearAllJobsConfirm}
           disabled={jobs.length === 0}
         >
           Clear jobs
@@ -49,138 +302,52 @@ function JobListPanel({
               </div>
             </div>
           )}
-          {jobs.map((job) => {
-            const isExpanded = expandedLogs[job.jobId];
-            const isTerminal = ['finished', 'error', 'terminated'].includes(
-              job.status
-            );
-            const expanded =
-              typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
-            const stdoutStyle = {
-              display: expanded ? 'block' : 'none',
-              maxHeight: expanded ? '70vh' : '0px',
-              overflow: 'auto',
-            };
-            const bodyHeight = jobsPanelBodyRef.current?.clientHeight || 0;
-            const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
-            const status = job.status;
-            const statusClass =
-              status === 'error' || status === 'terminated'
-                ? 'job-card__status--error'
-                : status === 'finished'
-                ? 'job-card__status--finished'
-                : 'job-card__status--pending';
-            const canTerminate = !['finished', 'error', 'terminated'].includes(
-              status
-            );
-            const cardClass = `job-card ${
-              canTerminate ? 'job-card--can-terminate' : ''
-            }`;
-            return (
-              <article
-                key={job.jobId}
-                className={cardClass}
-                style={cardMax ? { maxHeight: `${cardMax}px` } : null}
-              >
-                <div className="job-card__meta">
-                  <div className={`job-card__status ${statusClass}`}>
-                    {status}
-                  </div>
-                  <div className="job-card__time">
-                    started {new Date(job.startedAt).toLocaleTimeString()}
-                  </div>
-                  <div
-                    className="job-card__actions"
-                    style={{
-                      position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      display: 'flex',
-                      gap: '8px',
-                    }}
-                  >
-                    {canTerminate && (
-                      <button
-                        className="btn btn--danger"
-                        onClick={() => onTerminateJob(job.jobId)}
-                        title="Terminate job"
-                      >
-                        Terminate
-                      </button>
-                    )}
-                    <button
-                      className="btn"
-                      onClick={() => onOpenLogsModal(job.jobId)}
-                    >
-                      View full logs
-                    </button>
-                    <button
-                      className="btn"
-                      onClick={() => onOpenClearJobConfirm(job.jobId)}
-                      title="Remove this job from the list"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-                <div className="job-card__body">
-                  <div className="job-card__controls job-card__controls--top">
-                    <div className="job-card__toggle pipeline-toggle">
-                      <input
-                        id={`pipeline-toggle-input-${job.jobId}`}
-                        className="pipeline-toggle-input"
-                        type="checkbox"
-                        checked={expanded}
-                        onChange={(e) =>
-                          setLogExpanded
-                            ? setLogExpanded(job.jobId, e.target.checked)
-                            : onToggleLogExpanded(job.jobId)
-                        }
-                      />
-                      <label
-                        className={`pipeline-toggle-label ${
-                          expanded ? 'pipeline-toggle-label--checked' : ''
-                        }`}
-                        htmlFor={`pipeline-toggle-input-${job.jobId}`}
-                      >
-                        {expanded ? 'Collapse logs' : 'Expand logs'}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="job-card__details">
-                    <div className="job-card__row">
-                      <strong>Job:</strong> {job.jobId}
-                    </div>
-                    <div className="job-card__row">
-                      <strong>Command:</strong> {job.command}
-                    </div>
-                    <div className="job-card__row">
-                      <strong>Duration:</strong>{' '}
-                      {typeof job.duration !== 'undefined' ? job.duration : '—'}
-                      {job.endTime && (
-                        <>
-                          {' '}
-                          · ended {new Date(job.endTime).toLocaleTimeString()}
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div
-                    className="job-card__stdout"
-                    style={stdoutStyle}
-                    ref={(el) => {
-                      if (logRefs) {
-                        logRefs[job.jobId] = el;
-                      }
-                    }}
-                  >
-                    <pre>{job.logs}</pre>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+          {jobs.map((job) =>
+            renderJobMetadata({
+              job,
+              isExpanded: expandedLogs[job.jobId],
+              logRefs,
+              jobsPanelBodyRef,
+              onTerminateJob,
+              toggleLogExpanded,
+              openLogsModal,
+              openClearJobConfirm,
+            })
+          )}
         </div>
+        {renderConfirmationModal({
+          isOpen: isClearAllJobsModalOpen,
+          title: 'Clear all jobs',
+          message:
+            'This will remove all jobs from the list (running jobs will have polling stopped). Continue?',
+          confirmLabel: 'Yes, clear all',
+          cancelLabel: 'Cancel',
+          onConfirm: () => {
+            clearAllJobs();
+            closeClearAllJobsConfirm();
+          },
+          onCancel: closeClearAllJobsConfirm,
+        })}
+        {renderConfirmationModal({
+          isOpen: isClearJobModalOpen,
+          title: 'Clear job',
+          message:
+            'Remove this job from the list? (If running, polling will stop.)',
+          confirmLabel: 'Yes, clear job',
+          cancelLabel: 'Cancel',
+          onConfirm: () => {
+            clearJob(clearJobModalJobId);
+            closeClearJobConfirm();
+          },
+          onCancel: closeClearJobConfirm,
+        })}
+        {renderLogsModal({
+          isLogsModalOpen,
+          title: `Job logs - ${logsModalJobId || ''}`,
+          logMessage:
+            (jobs || []).find((j) => j.jobId === logsModalJobId)?.logs || '',
+          onClose: closeLogsModal,
+        })}
       </div>
     </>
   );

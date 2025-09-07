@@ -1,4 +1,5 @@
 import JobListPanel from './JobListPanel';
+import useJobs from './job-manager/useJobs';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -16,18 +17,11 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { sanitizedPathname } from '../../utils';
-import {
-  startKedroCommand,
-  getKedroCommandStatus,
-  cancelKedroCommand,
-  fetchKedroEnv,
-} from '../../utils/runner-api';
+import { startKedroCommand, fetchKedroEnv } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 
-// Key for persisting runner jobs across page changes
-const RUNNER_JOBS_STORAGE_KEY = 'kedro_viz_runner_jobs';
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
@@ -46,18 +40,15 @@ function KedroRunManager(props) {
   // Refs
   const commandInputRef = useRef();
   const jobsPanelRef = useRef();
-  const jobsPanelBodyRef = useRef();
-  const logRefs = useRef({});
-  const jobPollers = useRef({});
   const toastTimer = useRef();
   const saveWatchTimer = useRef();
   const saveParamsTimer = useRef();
   const lastSid = useRef();
   const pendingSid = useRef(null);
 
+  const { jobs, logRefs, clearJob, terminateJob, addJob } = useJobs();
+
   // State
-  const [jobs, setJobs] = useState([]);
-  const [expandedLogs, setExpandedLogs] = useState({});
   const [watchList, setWatchList] = useState([]);
   const [customOrder, setCustomOrder] = useState({
     param: false,
@@ -82,11 +73,6 @@ function KedroRunManager(props) {
   const [paramOriginals, setParamOriginals] = useState({});
   const [strictlyChanged, setStrictlyChanged] = useState({});
   const [paramsArgString, setParamsArgString] = useState('');
-  const [isClearJobsModalOpen, setIsClearJobsModalOpen] = useState(false);
-  const [isClearJobModalOpen, setIsClearJobModalOpen] = useState(false);
-  const [clearJobModalJobId, setClearJobModalJobId] = useState(null);
-  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
-  const [logsModalJobId, setLogsModalJobId] = useState(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [kedroEnv, setKedroEnv] = useState(null);
@@ -656,7 +642,6 @@ function KedroRunManager(props) {
   // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
   useEffect(() => {
     // On mount: hydrate jobs, watch, params, fetch env, sync metadata, add popstate
-    hydrateJobsFromStorage();
     hydrateWatchFromStorage();
     try {
       setParamOriginals(JSON.parse(JSON.stringify(params || {})));
@@ -671,13 +656,6 @@ function KedroRunManager(props) {
     syncMetadataFromSid();
     window.addEventListener('popstate', syncMetadataFromSid);
     return () => {
-      // On unmount: clear pollers, remove popstate
-      Object.values(jobPollers.current || {}).forEach((timerId) => {
-        try {
-          clearInterval(timerId);
-        } catch (e) {}
-      });
-      jobPollers.current = {};
       window.removeEventListener('popstate', syncMetadataFromSid);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1101,286 +1079,6 @@ function KedroRunManager(props) {
     [draggingWatch, customOrder, saveWatchToStorageDebounced]
   );
 
-  // --- Jobs: persistence and polling ---
-  const sanitizeJobForStorage = useCallback((job) => {
-    const maxLogLength = 50000;
-    const safeLogs =
-      typeof job.logs === 'string' ? job.logs.slice(-maxLogLength) : '';
-    const stored = {
-      jobId: job.jobId,
-      status: job.status,
-      startedAt: job.startedAt || Date.now(),
-      command: job.command || 'kedro run',
-      logs: safeLogs,
-    };
-    if (typeof job.returncode === 'number') {
-      stored.returncode = job.returncode;
-    }
-    if (typeof job.endTime === 'number') {
-      stored.endTime = job.endTime;
-    }
-    if (typeof job.duration !== 'undefined') {
-      stored.duration = job.duration;
-    }
-    return stored;
-  }, []);
-
-  const saveJobsToStorage = useCallback(
-    (list) => {
-      try {
-        const payload = (list || []).map(sanitizeJobForStorage);
-        window.localStorage.setItem(
-          RUNNER_JOBS_STORAGE_KEY,
-          JSON.stringify(payload)
-        );
-      } catch {}
-    },
-    [sanitizeJobForStorage]
-  );
-
-  const loadJobsFromStorage = useCallback(() => {
-    try {
-      const raw = window.localStorage.getItem(RUNNER_JOBS_STORAGE_KEY);
-      if (!raw) {
-        return [];
-      }
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) {
-        return [];
-      }
-      return parsed.map((j) => ({
-        jobId: j.jobId,
-        status: j.status || 'unknown',
-        startedAt: j.startedAt || Date.now(),
-        command: j.command || 'kedro run',
-        logs: typeof j.logs === 'string' ? j.logs : '',
-        returncode: typeof j.returncode === 'number' ? j.returncode : undefined,
-        endTime: typeof j.endTime === 'number' ? j.endTime : undefined,
-        duration: typeof j.duration !== 'undefined' ? j.duration : undefined,
-      }));
-    } catch {
-      return [];
-    }
-  }, []);
-
-  const addOrUpdateJob = useCallback(
-    (partial) => {
-      if (!partial?.jobId) {
-        return;
-      }
-      setJobs((prev) => {
-        const list = [...(prev || [])];
-        const idx = list.findIndex((j) => j.jobId === partial.jobId);
-        if (idx >= 0) {
-          list[idx] = { ...list[idx], ...partial };
-        } else {
-          list.unshift({
-            jobId: partial.jobId,
-            status: partial.status || 'initialize',
-            startedAt: partial.startedAt || Date.now(),
-            command:
-              partial.command || commandInputRef.current?.value || 'kedro run',
-            logs: partial.logs || '',
-          });
-        }
-        // persist async
-        setTimeout(() => saveJobsToStorage(list), 0);
-        return list;
-      });
-    },
-    [commandInputRef, saveJobsToStorage]
-  );
-
-  const fetchJobStatus = useCallback(
-    async (jobId) => {
-      try {
-        const {
-          status,
-          stdout,
-          stderr,
-          returncode,
-          startTime,
-          endTime,
-          duration,
-          cmd,
-        } = await getKedroCommandStatus(jobId);
-        const update = {
-          jobId,
-          status,
-          returncode,
-          command: cmd,
-        };
-        if (startTime instanceof Date && !Number.isNaN(startTime.getTime())) {
-          update.startedAt = startTime.getTime();
-        }
-        if (endTime instanceof Date && !Number.isNaN(endTime.getTime())) {
-          update.endTime = endTime.getTime();
-        }
-        if (typeof duration !== 'undefined') {
-          update.duration = duration;
-        }
-        if (typeof stdout === 'string' || typeof stderr === 'string') {
-          update.logs = `${stdout || ''}${
-            stderr ? `\n[stderr]:\n${stderr}` : ''
-          }`;
-        }
-        addOrUpdateJob(update);
-        const isTerminal = ['finished', 'terminated', 'error'].includes(status);
-        const hasFinalReturnCode = typeof returncode === 'number';
-        if (isTerminal || hasFinalReturnCode) {
-          const pollTimer = jobPollers.current[jobId];
-          if (pollTimer) {
-            clearInterval(pollTimer);
-          }
-          delete jobPollers.current[jobId];
-        }
-      } catch (err) {
-        addOrUpdateJob({ jobId, status: 'error' });
-        const pollTimer = jobPollers.current[jobId];
-        if (pollTimer) {
-          clearInterval(pollTimer);
-        }
-        delete jobPollers.current[jobId];
-        // eslint-disable-next-line no-console
-        console.error('Failed to fetch job status', err);
-      }
-    },
-    [addOrUpdateJob]
-  );
-
-  const startJobPolling = useCallback(
-    (jobId) => {
-      if (!jobId) {
-        return;
-      }
-      if (jobPollers.current[jobId]) {
-        clearInterval(jobPollers.current[jobId]);
-      }
-      jobPollers.current[jobId] = setInterval(() => {
-        fetchJobStatus(jobId);
-      }, 1000);
-    },
-    [fetchJobStatus]
-  );
-
-  const stopJobPolling = useCallback((jobId) => {
-    const timerId = jobPollers.current[jobId];
-    if (timerId) {
-      clearInterval(timerId);
-      delete jobPollers.current[jobId];
-    }
-  }, []);
-
-  const hydrateJobsFromStorage = useCallback(() => {
-    const stored = loadJobsFromStorage();
-    if (!stored.length) {
-      return;
-    }
-    setJobs(stored);
-    stored.forEach((job) => {
-      const isTerminal = ['finished', 'terminated', 'error'].includes(
-        job.status
-      );
-      const hasFinalReturnCode = typeof job.returncode === 'number';
-      if (
-        (job.status === 'initialize' || job.status === 'running') &&
-        !isTerminal &&
-        !hasFinalReturnCode
-      ) {
-        startJobPolling(job.jobId);
-      }
-    });
-  }, [loadJobsFromStorage, startJobPolling]);
-
-  // --- Jobs UI helpers ---
-  const toggleLogExpanded = useCallback((jobId) => {
-    setExpandedLogs((prev) => {
-      const next = { ...(prev || {}) };
-      next[jobId] = !next[jobId];
-      return next;
-    });
-  }, []);
-
-  const openLogsModal = useCallback((jobId) => {
-    setIsLogsModalOpen(true);
-    setLogsModalJobId(jobId);
-  }, []);
-
-  const closeLogsModal = useCallback(() => {
-    setIsLogsModalOpen(false);
-    setLogsModalJobId(null);
-  }, []);
-
-  const setLogExpanded = useCallback((jobId, value) => {
-    setExpandedLogs((prev) => ({
-      ...(prev || {}),
-      [jobId]: !!value,
-    }));
-  }, []);
-
-  const openClearJobsConfirm = useCallback(() => {
-    setIsClearJobsModalOpen(true);
-  }, []);
-  const closeClearJobsConfirm = useCallback(() => {
-    setIsClearJobsModalOpen(false);
-  }, []);
-
-  const clearAllJobs = useCallback(() => {
-    (jobs || []).forEach((j) => stopJobPolling(j.jobId));
-    setJobs([]);
-    saveJobsToStorage([]);
-    closeClearJobsConfirm();
-  }, [jobs, stopJobPolling, saveJobsToStorage, closeClearJobsConfirm]);
-
-  const openClearJobConfirm = useCallback((jobId) => {
-    setIsClearJobModalOpen(true);
-    setClearJobModalJobId(jobId);
-  }, []);
-
-  const closeClearJobConfirm = useCallback(() => {
-    setIsClearJobModalOpen(false);
-    setClearJobModalJobId(null);
-  }, []);
-
-  const clearJob = useCallback(
-    (jobId) => {
-      const id = jobId || clearJobModalJobId;
-      if (!id) {
-        return;
-      }
-      stopJobPolling(id);
-      setJobs((prev) => {
-        const next = (prev || []).filter((j) => j.jobId !== id);
-        saveJobsToStorage(next);
-        return next;
-      });
-      closeClearJobConfirm();
-    },
-    [
-      clearJobModalJobId,
-      stopJobPolling,
-      saveJobsToStorage,
-      closeClearJobConfirm,
-    ]
-  );
-
-  const onTerminateJob = useCallback(
-    (jobId) => {
-      // eslint-disable-next-line no-console
-      console.log('[Runner] Terminate job', jobId);
-      cancelKedroCommand(jobId)
-        .then(() => {
-          stopJobPolling(jobId);
-          addOrUpdateJob({ jobId, status: 'terminated' });
-        })
-        .catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Terminate failed', err);
-        });
-    },
-    [stopJobPolling, addOrUpdateJob]
-  );
-
   // --- Metadata editors ---
   const closeMetadata = useCallback(() => {
     setShowMetadata(false);
@@ -1524,25 +1222,19 @@ function KedroRunManager(props) {
         if (!jobId) {
           throw new Error('No job_id returned');
         }
-        addOrUpdateJob({
+        addJob({
           jobId,
           status,
           startedAt: Date.now(),
           command,
           logs: '',
         });
-        startJobPolling(jobId);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
         console.error('Failed to start run', err);
       });
-  }, [
-    commandInputRef,
-    getCurrentCommandString,
-    addOrUpdateJob,
-    startJobPolling,
-  ]);
+  }, [commandInputRef, getCurrentCommandString, addJob]);
 
   const onWatchItemClick = useCallback(
     (item) => {
@@ -1575,8 +1267,6 @@ function KedroRunManager(props) {
     },
     [props, setSidInUrl, openParamEditor, showToast, openDatasetDetails]
   );
-
-  // Removed unused addParamToWatchList (was unused and triggered lint warning)
 
   const removeFromWatchList = useCallback(
     (kind, id) => {
@@ -1658,13 +1348,9 @@ function KedroRunManager(props) {
   const renderJobListPanel = () => (
     <JobListPanel
       jobs={jobs}
-      expandedLogs={expandedLogs}
-      onToggleLogExpanded={toggleLogExpanded}
-      onOpenLogsModal={openLogsModal}
-      onOpenClearJobConfirm={openClearJobConfirm}
-      onOpenClearJobsConfirm={openClearJobsConfirm}
-      onTerminateJob={onTerminateJob}
       logRefs={logRefs}
+      onRemoveJob={clearJob}
+      onTerminateJob={terminateJob}
     />
   );
 
@@ -1738,93 +1424,6 @@ function KedroRunManager(props) {
       props.displaySidebar && props.sidebarVisible,
     'runner-manager--no-global-toolbar': !props.displayGlobalNavigation,
   });
-
-  // Generic confirmation modal renderer (lightweight, self-contained)
-  function renderConfirmationModal({
-    isOpen,
-    title,
-    message,
-    confirmLabel = 'Confirm',
-    cancelLabel = 'Cancel',
-    onConfirm,
-    onCancel,
-  }) {
-    if (!isOpen) {
-      return null;
-    }
-    return (
-      <div
-        className="runner-logs-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Clear job confirmation"
-      >
-        <div className="runner-logs-modal__content">
-          <div className="runner-logs-modal__header">
-            <h3 className="runner-logs-modal__title">{title}</h3>
-            <button
-              className="runner-logs-modal__close"
-              aria-label="Close"
-              onClick={onCancel}
-            >
-              ×
-            </button>
-          </div>
-          <div className="runner-logs-modal__body">
-            <p>{message}</p>
-          </div>
-          <div className="runner-logs-modal__footer">
-            <button className="btn" onClick={onCancel}>
-              {cancelLabel}
-            </button>
-            <button className="btn btn--danger" onClick={onConfirm}>
-              {confirmLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function renderLogsModal({
-    title = 'Job logs',
-    logMessage,
-    confirmLabel = 'Close',
-    onClose = closeLogsModal,
-  }) {
-    if (!isLogsModalOpen) {
-      return null;
-    }
-    return (
-      <div
-        className="runner-logs-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Job logs dialog"
-      >
-        <div className="runner-logs-modal__content">
-          <div className="runner-logs-modal__header">
-            <h3 className="runner-logs-modal__title">{title}</h3>
-            <button
-              className="runner-logs-modal__close"
-              aria-label="Close"
-              onClick={onClose}
-            >
-              ×
-            </button>
-          </div>
-          <div className="runner-logs-modal__body">
-            <pre>{logMessage || 'No logs available.'}</pre>
-          </div>
-          <div className="runner-logs-modal__footer">
-            <button className="btn" onClick={onClose}>
-              {confirmLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={containerClass}>
@@ -1914,32 +1513,6 @@ function KedroRunManager(props) {
           {toastMessage || 'Saved'}
         </div>
       )}
-      {renderConfirmationModal({
-        isOpen: isClearJobsModalOpen,
-        title: 'Clear all jobs',
-        message:
-          'This will remove all jobs from the list (running jobs will have polling stopped). Continue?',
-        confirmLabel: 'Yes, clear all',
-        cancelLabel: 'Cancel',
-        onConfirm: clearAllJobs,
-        onCancel: closeClearJobsConfirm,
-      })}
-      {renderConfirmationModal({
-        isOpen: isClearJobModalOpen,
-        title: 'Clear job',
-        message:
-          'Remove this job from the list? (If running, polling will stop.)',
-        confirmLabel: 'Yes, clear job',
-        cancelLabel: 'Cancel',
-        onConfirm: () => clearJob(clearJobModalJobId),
-        onCancel: closeClearJobConfirm,
-      })}
-      {renderLogsModal({
-        title: `Job logs - ${logsModalJobId || ''}`,
-        logMessage:
-          (jobs || []).find((j) => j.jobId === logsModalJobId)?.logs || '',
-        onClose: closeLogsModal,
-      })}
     </div>
   );
 }
