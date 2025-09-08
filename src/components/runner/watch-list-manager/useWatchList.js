@@ -20,6 +20,7 @@ function useWatchList(props) {
     strictlyChanged,
     addParams: addParamsInEditor,
     removeParam: removeParamInEditor,
+    clearParams: clearParamsInEditor,
     resetParam: resetParamInEditor,
     editParam: editParamInEditor,
     saveParamsToStorageDebounced,
@@ -112,26 +113,27 @@ function useWatchList(props) {
     [props]
   );
 
-  const getParamValueFromKey = useCallback(
-    (paramKey) => {
-      const edits = paramEdits || {};
-      if (Object.prototype.hasOwnProperty.call(edits, paramKey)) {
-        const val = edits[paramKey];
-        if (typeof val !== 'undefined') {
-          return val;
-        }
-        return "Cannot find edited value";
-      }
-      return getParamValue(paramKey);
-    },
-    [paramEdits, getParamValue]
-  );
-
   const setParamValueForKey = useCallback(
     (paramKey, newValue) => {
       editParamInEditor(paramKey, newValue);
     },
     [editParamInEditor]
+  );
+
+  const getParamValueFromKey = useCallback(
+    (paramKey) => {
+      if (Object.prototype.hasOwnProperty.call(paramEdits, paramKey)) {
+        const val = paramEdits[paramKey];
+        if (typeof val !== 'undefined') {
+          return val;
+        }
+        return undefined;
+      }
+      const val = getParamValue(paramKey);
+      setParamValueForKey(paramKey, val);
+      return val;
+    },
+    [paramEdits, getParamValue]
   );
 
   const addToWatchList = useCallback(
@@ -156,13 +158,21 @@ function useWatchList(props) {
         return [...prev, item];
       });
     },
-    [getParamValue, addParamsInEditor, setWatchList, dispatch, loadNodeData, toggleNodeClicked]
+    [getParamValue, setWatchList, dispatch, loadNodeData, toggleNodeClicked]
   );
 
   useEffect(() => {
     if (!watchList.length) {
       return;
     }
+
+    // Remove any param edits that are no longer in the watch list
+    const keysToRemove = Object.keys(paramEdits || {}).filter((itemId) => {
+      return !watchList.some((item) => item.kind === 'param' && item.id === itemId);
+    });
+    keysToRemove.forEach((itemId) => {
+      removeParamInEditor(itemId);
+    });
 
     watchList.forEach((item) => {
       if (item.kind === 'param' && Object.prototype.hasOwnProperty.call(paramEdits, item.id)) {
@@ -172,7 +182,7 @@ function useWatchList(props) {
         }
       }
     });
-  }, [watchList, paramEdits, getParamValue, addParamsInEditor]);
+  }, [watchList, paramEdits, getParamValue, addParamsInEditor, props.nodeParameters]);
 
   const removeFromWatchList = useCallback(
     (itemId) => {
@@ -186,12 +196,12 @@ function useWatchList(props) {
       );
 
       // Remove from parameter editor if applicable
-      const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
+      // const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
 
-      removeParamInEditor(itemId);
+      // removeParamInEditor(itemId);
       
     },
-    [removeParamInEditor, setWatchList, watchList]
+    [setWatchList, watchList]
   );
 
   const updateWatchList = useCallback(
@@ -225,15 +235,16 @@ function useWatchList(props) {
   );
 
   const clearWatchList = useCallback(() => {
-    const currentParamKeys = (watchList || [])
-      .filter((item) => item.kind === 'param')
-      .map((item) => item.id);
+    // const currentParamKeys = (watchList || [])
+    //   .filter((item) => item.kind === 'param')
+    //   .map((item) => item.id);
 
-    currentParamKeys.forEach((key) => {
-      removeFromWatchList(key);
-    });
+    // currentParamKeys.forEach((key) => {
+    //   removeFromWatchList(key);
+    // });
     setWatchList([]);
-  }, [setWatchList]);
+    clearParamsInEditor();
+  }, [setWatchList, clearParamsInEditor]);
 
   const formatParamValueForCli = useCallback((value) => {
     if (

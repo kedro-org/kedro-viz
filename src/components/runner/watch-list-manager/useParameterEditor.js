@@ -61,6 +61,12 @@ function useParameterEditor() {
     });
   }, []);
 
+  const clearParams = useCallback(() => {
+    setParamOriginals({});
+    setParamEdits({});
+    setStrictlyChanged({});
+  }, []);
+
   const saveParamsToStorage = useCallback(() => {
     try {
       window.localStorage.setItem(
@@ -146,9 +152,9 @@ function useParameterEditor() {
     updateStrictlyChanged();
   }, [paramEdits, updateStrictlyChanged]);
 
-  useEffect(() => {
-    hydrateParamEditsFromStorage();
-  }, []);
+  // useEffect(() => {
+  //   hydrateParamEditsFromStorage();
+  // }, []);
 
   return {
     paramOriginals,
@@ -156,11 +162,10 @@ function useParameterEditor() {
     strictlyChanged,
     addParams,
     removeParam,
+    clearParams,
     resetParam,
     editParam,
     saveParamsToStorageDebounced,
-    loadParamEditsFromStorage,
-    hydrateParamEditsFromStorage,
   };
 }
 
