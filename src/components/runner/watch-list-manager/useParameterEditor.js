@@ -76,6 +76,10 @@ function useParameterEditor() {
     [saveParamsToStorage]
   );
 
+  useEffect(() => {
+    saveParamsToStorageDebounced();
+  }, [paramEdits, paramOriginals]);
+
   const resetParam = useCallback((paramKey) => {
     if (!paramKey) {
       return undefined;
@@ -89,15 +93,12 @@ function useParameterEditor() {
       }
       return updated;
     });
-    saveParamsToStorageDebounced();
   }, []);
 
   const editParam = useCallback(
     (paramKey, newValue) => {
       setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
-      saveParamsToStorageDebounced();
     },
-    [saveParamsToStorageDebounced]
   );
 
   const loadParamEditsFromStorage = useCallback(() => {

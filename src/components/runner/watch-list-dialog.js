@@ -38,7 +38,6 @@ function onSelectNodeClickImpl({
 // Presentational dialog for selecting parameters/datasets for the watch list
 function WatchListDialog({ watchList, props, onClose, onConfirm }) {
   const [watchSearch, setWatchSearch] = useState('');
-  const [selectedToAdd, setSelectedToAdd] = useState({}); // { 'kind:id': true }
   const [tempModalSelections, setTempModalSelections] = useState({}); // { id: {kind, id, name} }
   const [tempSelectedMap, setTempSelectedMap] = useState({}); // { id: true }
   const [allowConfirm, setAllowConfirm] = useState(false);
@@ -69,30 +68,19 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       tempSelections[item.id] = {
         kind: item.kind,
         id: item.id,
-        name: item.name || item.id,
+        name: item.name,
       };
     });
-    setSelectedToAdd(selected);
     setTempModalSelections(tempSelections);
   }, [watchList]);
 
   const toggleSelectToAdd = useCallback((kind, id, name) => {
-    const key = `${kind}:${id}`;
-    setSelectedToAdd((prev) => {
-      const next = { ...(prev || {}) };
-      if (next[key]) {
-        delete next[key];
-      } else {
-        next[key] = true;
-      }
-      return next;
-    });
     setTempModalSelections((prev) => {
       const next = { ...(prev || {}) };
       if (next[id]) {
         delete next[id];
       } else {
-        next[id] = { kind, id, name: name || id };
+        next[id] = { kind, id, name};
       }
       return next;
     });
@@ -121,7 +109,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       .map((node) => ({
         kind: 'param',
         id: node.id,
-        name: node.name || node.id,
+        name: node.name,
       }))
       .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
       .sort((a, b) =>
@@ -132,7 +120,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       .map((dataset) => ({
         kind: 'dataset',
         id: dataset.id,
-        name: dataset.name || dataset.id,
+        name: dataset.name,
       }))
       .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
       .sort((a, b) =>

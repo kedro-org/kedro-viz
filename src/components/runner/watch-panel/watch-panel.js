@@ -130,7 +130,7 @@ function WatchPanel({
         <ul className="watchlist-list">
           {itemsToShow.map((item) => (
             <li
-              key={`${item.kind}:${item.id}`}
+              key={`${item.name} (${item.kind}:${item.id})`}
               className={`watchlist-item ${
                 item.kind === 'param' && strictlyChanged?.[item.id]
                   ? 'watchlist-item--edited'
@@ -155,7 +155,7 @@ function WatchPanel({
               <button
                 className="watchlist-item__remove"
                 aria-label="Remove from watch list"
-                onClick={() => onRemove(item.kind, item.id)}
+                onClick={() => onRemove(item.id)}
               >
                 ×
               </button>

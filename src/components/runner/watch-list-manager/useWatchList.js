@@ -9,6 +9,7 @@ import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
 
 function useWatchList(props) {
+  const { dispatch } = props || {};
   const saveWatchTimer = useRef();
   const [watchList, setWatchList] = useState([]);
 
@@ -50,6 +51,10 @@ function useWatchList(props) {
     [saveWatchToStorage]
   );
 
+  useEffect(() => {
+    saveWatchToStorageDebounced();
+  }, [watchList]);
+
   // --- Watch list persistence/helpers ---
   const loadWatchFromStorage = useCallback(() => {
     let watchListData = [];
@@ -74,6 +79,7 @@ function useWatchList(props) {
 
   const getParamValue = useCallback(
     (paramKey) => {
+      // First check if there's metadata available from the clicked node
       try {
         const meta = props?.clickedNodeMetaData;
         if (
@@ -86,9 +92,12 @@ function useWatchList(props) {
           }
         }
       } catch {}
+
+      // Fallback to the redux store
       const reduxMap = props?.nodeParameters || {};
       if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
         const val = reduxMap[paramKey];
+
         if (val && typeof val === 'object' && !Array.isArray(val)) {
           if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
             return val[paramKey];
@@ -98,9 +107,8 @@ function useWatchList(props) {
             return val[keys[0]];
           }
         }
-        return val;
       }
-      return 'undefined';
+      return undefined;
     },
     [props]
   );
@@ -113,6 +121,7 @@ function useWatchList(props) {
         if (typeof val !== 'undefined') {
           return val;
         }
+        return "Cannot find edited value";
       }
       return getParamValue(paramKey);
     },
@@ -144,10 +153,21 @@ function useWatchList(props) {
 
       // Register parameter in the editor
       if (item.kind === 'param') {
-        addParamsInEditor({ [item.id]: getParamValue(item.id) });
+        const currentVal = getParamValue(item.id);
+        if (typeof currentVal !== 'undefined') {
+          addParamsInEditor({ [item.id]: currentVal });
+        } else {
+          // seed with nothing; will backfill later
+          addParamsInEditor({ [item.id]: undefined });
+        }
+        
+        if (dispatch) {
+          dispatch(loadNodeData(item.id));
+          dispatch(toggleNoneClicked(item.id));
+        }
       }
     },
-    [getParamValue, addParamsInEditor]
+    [getParamValue, addParamsInEditor, setWatchList]
   );
 
   const removeFromWatchList = useCallback(
@@ -164,7 +184,7 @@ function useWatchList(props) {
         removeParamInEditor(itemId);
       }
     },
-    [removeParamInEditor]
+    [removeParamInEditor, setWatchList, watchList]
   );
 
   const updateWatchList = useCallback(
@@ -193,7 +213,6 @@ function useWatchList(props) {
 
       // Save watch list
       setWatchList(newWatchList);
-      saveWatchToStorageDebounced();
     },
     [setWatchList]
   );
