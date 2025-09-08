@@ -56,8 +56,10 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       originalKeys.every((key) => currentKeys.includes(key))
     ) {
       setAllowConfirm(false);
+    } else {
+      setAllowConfirm(true);
     }
-  });
+  }, [watchList, tempModalSelections]);
 
   useEffect(() => {
     const selected = {};
