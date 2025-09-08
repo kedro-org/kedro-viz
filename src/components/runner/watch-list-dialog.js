@@ -14,24 +14,16 @@ function onSelectNodeClickImpl({
   if (!nodeId) {
     return;
   }
+  // Check if it's a param or dataset node
   const isParam = (paramNodes || []).some(
     (paramNode) => paramNode.id === nodeId
   );
-  let entry;
-  if (isParam) {
-    entry = { kind: 'param', id: nodeId, name: node.name || nodeId };
-    toggleSelectToAdd && toggleSelectToAdd('param', nodeId);
-  } else {
-    const datasetItem = (datasets || []).find((d) => d.id === nodeId);
-    if (!datasetItem) {
-      return;
-    }
-    entry = {
-      kind: 'dataset',
-      id: datasetItem.id,
-      name: datasetItem.name || datasetItem.id,
-    };
-    toggleSelectToAdd && toggleSelectToAdd('dataset', datasetItem.id);
+  const isDataset = (datasets || []).some(
+    (dataset) => dataset.id === nodeId
+  );
+
+  if (isParam || isDataset) {
+    toggleSelectToAdd && toggleSelectToAdd(isParam ? 'param' : 'dataset', nodeId, node.name);
   }
 }
 
@@ -61,10 +53,8 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
   }, [watchList, tempModalSelections]);
 
   useEffect(() => {
-    const selected = {};
     const tempSelections = {};
     (watchList || []).forEach((item) => {
-      selected[`${item.kind}:${item.id}`] = true;
       tempSelections[item.id] = {
         kind: item.kind,
         id: item.id,

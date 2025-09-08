@@ -139,6 +139,12 @@ function useWatchList(props) {
       if (!item || !item.kind || !item.id) {
         return;
       }
+        
+      if (dispatch) {
+        dispatch(loadNodeData(item.id));
+        dispatch(toggleNodeClicked(item.id));
+      }
+
       setWatchList((prev) => {
         const exists = prev.some(
           (wlItem) => wlItem.kind === item.kind && wlItem.id === item.id
@@ -149,39 +155,41 @@ function useWatchList(props) {
 
         return [...prev, item];
       });
+    },
+    [getParamValue, addParamsInEditor, setWatchList, dispatch, loadNodeData, toggleNodeClicked]
+  );
 
-      // Register parameter in the editor
-      if (item.kind === 'param') {
+  useEffect(() => {
+    if (!watchList.length) {
+      return;
+    }
+
+    watchList.forEach((item) => {
+      if (item.kind === 'param' && Object.prototype.hasOwnProperty.call(paramEdits, item.id)) {
         const currentVal = getParamValue(item.id);
         if (typeof currentVal !== 'undefined') {
           addParamsInEditor({ [item.id]: currentVal });
-        } else {
-          // seed with nothing; will backfill later
-          addParamsInEditor({ [item.id]: undefined });
-        }
-        
-        if (dispatch) {
-          dispatch(loadNodeData(item.id));
-          dispatch(toggleNodeClicked(item.id));
         }
       }
-    },
-    [getParamValue, addParamsInEditor, setWatchList]
-  );
+    });
+  }, [watchList, paramEdits, getParamValue, addParamsInEditor]);
 
   const removeFromWatchList = useCallback(
     (itemId) => {
-      const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
-      if (!itemId || !kind) {
+      if (!itemId) {
         return;
       }
+
+      // Remove from watch list
       setWatchList((prev) =>
-        prev.filter((wlItem) => !(wlItem.kind === kind && wlItem.id === itemId))
+        prev.filter((wlItem) => !(wlItem.id === itemId))
       );
 
-      if (kind === 'param') {
-        removeParamInEditor(itemId);
-      }
+      // Remove from parameter editor if applicable
+      const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
+
+      removeParamInEditor(itemId);
+      
     },
     [removeParamInEditor, setWatchList, watchList]
   );

@@ -44,7 +44,17 @@ function useParameterEditor() {
   }, []);
 
   const removeParam = useCallback((paramKey) => {
+    setParamOriginals((prev) => {
+      const updated = { ...(prev || {}) };
+      delete updated[paramKey];
+      return updated;
+    });
     setParamEdits((prev) => {
+      const updated = { ...(prev || {}) };
+      delete updated[paramKey];
+      return updated;
+    });
+    setStrictlyChanged((prev) => {
       const updated = { ...(prev || {}) };
       delete updated[paramKey];
       return updated;
@@ -93,12 +103,12 @@ function useParameterEditor() {
       }
       return updated;
     });
-  }, []);
+  }, [paramOriginals]);
 
   const editParam = useCallback(
     (paramKey, newValue) => {
       setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
-    },
+    }, []
   );
 
   const loadParamEditsFromStorage = useCallback(() => {

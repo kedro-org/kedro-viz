@@ -18,14 +18,6 @@ import { PIPELINE } from '../../config';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 
-// // Keys for persisting Watch list and custom order
-// const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
-// const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
-//   'kedro_viz_runner_watch_custom_order';
-// // Keys for persisting parameter edits and originals
-// const RUNNER_PARAM_EDITS_STORAGE_KEY = 'kedro_viz_runner_param_edits';
-// const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
-
 /**
  * KedroRunManager
  * A visual draft page for starting and monitoring Kedro runs.
@@ -417,7 +409,6 @@ function KedroRunManager(props) {
 
   const openParamEditor = useCallback(
     (paramKey) => {
-      ensureOriginalsFor(paramKey);
       let value = Object.prototype.hasOwnProperty.call(
         editedParameters || {},
         paramKey
@@ -467,7 +458,6 @@ function KedroRunManager(props) {
   const onWatchItemClick = useCallback(
     (item) => {
       if (item.kind === 'param') {
-        setSidInUrl(item.id);
         if (props.dispatch) {
           props.dispatch(loadNodeData(item.id));
           props.dispatch(toggleNodeClicked(item.id));
@@ -659,6 +649,54 @@ function KedroRunManager(props) {
     />
   );
 
+
+  const renderWatchListDeveloper = () => (
+    <details
+      className="runner-data-panel__developer"
+      style={{ margin: '12px 0' }}
+    >
+      <summary
+        style={{
+          cursor: 'pointer',
+          padding: '8px 12px',
+          fontWeight: 600,
+          listStyle: 'none',
+        }}
+      >
+        Developer view (toggle)
+      </summary>
+
+      <div
+        style={{
+          maxHeight: '240px',
+          overflow: 'auto',
+          padding: '8px 12px',
+        }}
+      >
+        <div style={{ marginBottom: 8 }}>
+          <strong>Watch List</strong>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {JSON.stringify(watchList, null, 2)}
+          </pre>
+        </div>
+
+        <div>
+          <strong>Param Originals</strong>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {JSON.stringify(paramOriginals, null, 2)}
+          </pre>
+        </div>
+
+        <div>
+          <strong>Param Edits</strong>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {JSON.stringify(paramEdits, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </details>
+  );
+
   // --- Main render ---
   const hasParamChanges = !!Object.keys(strictlyChanged || {}).length;
   const containerClass = classnames('runner-manager', {
@@ -732,6 +770,7 @@ function KedroRunManager(props) {
         </small>
       </footer>
 
+      {renderWatchListDeveloper()}
       {renderMetadataPanel()}
       {renderWatchModal()}
       {toastVisible && (

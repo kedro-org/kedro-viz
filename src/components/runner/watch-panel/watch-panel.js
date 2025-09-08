@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect} from 'react';
 
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
   'kedro_viz_runner_watch_custom_order';
@@ -15,8 +15,9 @@ function WatchPanel({
     param: false,
     dataset: false,
   });
-  const [watchTab, setWatchTab] = useState('parameters');
+  const [watchTab, setWatchTab] = useState('param');
   const [draggingWatch, setDraggingWatch] = useState(null);
+  const [itemsToShow, setItemsToShow] = useState([]);
 
   const saveCustomOrderToStorage = useCallback(() => {
     try {
@@ -33,17 +34,21 @@ function WatchPanel({
   const datasetItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'dataset'
   );
-  let itemsToShow = watchTab === 'parameters' ? parameterItems : datasetItems;
-  const kindKey = watchTab === 'parameters' ? 'param' : 'dataset';
-  if (!customOrder?.[kindKey]) {
-    itemsToShow = [...itemsToShow].sort((a, b) =>
-      (a.name || a.id).localeCompare(b.name || b.id, undefined, {
-        sensitivity: 'base',
-      })
-    );
-  }
 
-  const getParamPreview = (key) => {
+  useEffect(() => {
+    let newItemsToShow = watchTab === 'param' ? parameterItems : datasetItems;
+
+    if (!customOrder?.[watchTab]) {
+      newItemsToShow = [...newItemsToShow].sort((a, b) =>
+        (a.name || a.id).localeCompare(b.name || b.id, undefined, {
+          sensitivity: 'base',
+        })
+      );
+    }
+    setItemsToShow(newItemsToShow);
+  }, [watchTab, parameterItems, datasetItems, customOrder]);
+
+  const getParamPreview = useCallback((key) => {
     const value = getEditedParamValue(key);
     if (typeof value === 'undefined') {
       return '—';
@@ -51,7 +56,7 @@ function WatchPanel({
     const text = toYamlString(value) || '';
     const firstLine = String(text).split(/\r?\n/)[0];
     return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
-  };
+  }, [getEditedParamValue, toYamlString]);
 
   const startDragWatch = useCallback((kind, id) => {
     setDraggingWatch({ kind, id });
@@ -89,17 +94,13 @@ function WatchPanel({
       const nextCustom = { ...(customOrder || {}), [kind]: true };
       setCustomOrder(nextCustom);
       setDraggingWatch(null);
-      saveCustomOrderToStorage();
     },
     [draggingWatch, watchList, customOrder, saveCustomOrderToStorage]
   );
 
-  // Aliases expected by JSX (the implementation names differ)
-  const onDragStart = startDragWatch;
-  const onDragOver = allowDropWatch;
-  const onDrop = dropWatch;
-  const onItemClick = onWatchItemClick;
-  const onRemove = removeFromWatchList;
+  useEffect(() => {
+    saveCustomOrderToStorage();
+  }, [customOrder, saveCustomOrderToStorage]);
 
   return (
     <div className="runner-panel runner-panel--watchlist">
@@ -107,9 +108,9 @@ function WatchPanel({
         <div className="runner-panel__tabs">
           <button
             className={`runner-tab ${
-              watchTab === 'parameters' ? 'runner-tab--active' : ''
+              watchTab === 'param' ? 'runner-tab--active' : ''
             }`}
-            onClick={() => setWatchTab('parameters')}
+            onClick={() => setWatchTab('param')}
           >
             Parameters ({parameterItems.length})
           </button>
@@ -137,16 +138,16 @@ function WatchPanel({
                   : ''
               }`}
               draggable
-              onDragStart={() => onDragStart(item.kind, item.id)}
-              onDragOver={onDragOver}
-              onDrop={() => onDrop(item.kind, item.id)}
+              onDragStart={() => startDragWatch(item.kind, item.id)}
+              onDragOver={allowDropWatch}
+              onDrop={() => dropWatch(item.kind, item.id)}
             >
               <button
                 className="watchlist-item__main"
-                onClick={() => onItemClick(item)}
+                onClick={() => onWatchItemClick(item)}
               >
-                <span className="watchlist-item__name">{item.name}</span>
-                {watchTab === 'parameters' && (
+                <span className="watchlist-item__name">{`${item.name} (${item.kind}:${item.id})`}</span>
+                {watchTab === 'param' && (
                   <span className="watchlist-item__preview">
                     {getParamPreview(item.id)}
                   </span>
@@ -155,7 +156,7 @@ function WatchPanel({
               <button
                 className="watchlist-item__remove"
                 aria-label="Remove from watch list"
-                onClick={() => onRemove(item.id)}
+                onClick={() => removeFromWatchList(item.id)}
               >
                 ×
               </button>
