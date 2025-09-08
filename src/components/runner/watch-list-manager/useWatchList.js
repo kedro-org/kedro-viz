@@ -1,9 +1,8 @@
-import { set } from 'lodash';
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import useParameterEditor from './useParameterEditor';
-import watch from 'redux-watch';
-import { use } from 'react';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
+import { loadNodeData, toggleNodeClicked } from '../../../actions/nodes'; // ensure path is correct
+
 
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
@@ -163,7 +162,7 @@ function useWatchList(props) {
         
         if (dispatch) {
           dispatch(loadNodeData(item.id));
-          dispatch(toggleNoneClicked(item.id));
+          dispatch(toggleNodeClicked(item.id));
         }
       }
     },
