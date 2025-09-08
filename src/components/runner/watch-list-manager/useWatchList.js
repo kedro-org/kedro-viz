@@ -7,12 +7,10 @@ import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
-const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
-  'kedro_viz_runner_watch_custom_order';
 
 function useWatchList(props) {
   const saveWatchTimer = useRef();
-  const [watchList, setWatchList] = useState([]);  
+  const [watchList, setWatchList] = useState([]);
 
   const [paramsArgString, setParamsArgString] = useState('');
 
@@ -25,9 +23,54 @@ function useWatchList(props) {
     resetParam: resetParamInEditor,
     editParam: editParamInEditor,
     saveParamsToStorageDebounced,
-
   } = useParameterEditor();
 
+  // --- Watch list persistence/helpers ---
+  const saveWatchToStorage = useCallback(
+    (list = watchList) => {
+      try {
+        window.localStorage.setItem(
+          RUNNER_WATCHLIST_STORAGE_KEY,
+          JSON.stringify(list || [])
+        );
+      } catch {}
+    },
+    [watchList]
+  );
+
+  const saveWatchToStorageDebounced = useCallback(
+    (wait = 200) => {
+      if (saveWatchTimer.current) {
+        clearTimeout(saveWatchTimer.current);
+      }
+      saveWatchTimer.current = setTimeout(() => {
+        saveWatchToStorage(watchList);
+      }, Math.max(0, wait));
+    },
+    [saveWatchToStorage]
+  );
+
+  // --- Watch list persistence/helpers ---
+  const loadWatchFromStorage = useCallback(() => {
+    let watchListData = [];
+    try {
+      const watchRaw = window.localStorage.getItem(
+        RUNNER_WATCHLIST_STORAGE_KEY
+      );
+      if (watchRaw) {
+        const parsed = JSON.parse(watchRaw);
+        if (Array.isArray(parsed)) {
+          watchListData = parsed.filter(
+            (item) =>
+              item &&
+              typeof item.kind === 'string' &&
+              typeof item.id === 'string'
+          );
+        }
+      }
+    } catch {}
+    return { watchList: watchListData };
+  }, []);
 
   const getParamValue = useCallback(
     (paramKey) => {
@@ -57,24 +100,31 @@ function useWatchList(props) {
         }
         return val;
       }
-      return "undefined";
+      return 'undefined';
     },
     [props]
-    );
+  );
 
-    const getEditedParamValue = useCallback(
-      (paramKey) => {
-        const edits = paramEdits || {};
-        if (Object.prototype.hasOwnProperty.call(edits, paramKey)) {
-          const val = edits[paramKey];
-          if (typeof val !== 'undefined') {
-            return val;
-          }
+  const getParamValueFromKey = useCallback(
+    (paramKey) => {
+      const edits = paramEdits || {};
+      if (Object.prototype.hasOwnProperty.call(edits, paramKey)) {
+        const val = edits[paramKey];
+        if (typeof val !== 'undefined') {
+          return val;
         }
-        return getParamValue(paramKey);
-      },
-      [paramEdits, getParamValue]
-    );
+      }
+      return getParamValue(paramKey);
+    },
+    [paramEdits, getParamValue]
+  );
+
+  const setParamValueForKey = useCallback(
+    (paramKey, newValue) => {
+      editParamInEditor(paramKey, newValue);
+    },
+    [editParamInEditor]
+  );
 
   const addToWatchList = useCallback(
     (item) => {
@@ -82,16 +132,18 @@ function useWatchList(props) {
         return;
       }
       setWatchList((prev) => {
-        const exists = prev.some((wlItem) => wlItem.kind === item.kind && wlItem.id === item.id);
+        const exists = prev.some(
+          (wlItem) => wlItem.kind === item.kind && wlItem.id === item.id
+        );
         if (exists) {
-            return prev;
+          return prev;
         }
 
         return [...prev, item];
       });
 
       // Register parameter in the editor
-      if (item.kind === "param") {
+      if (item.kind === 'param') {
         addParamsInEditor({ [item.id]: getParamValue(item.id) });
       }
     },
@@ -100,7 +152,6 @@ function useWatchList(props) {
 
   const removeFromWatchList = useCallback(
     (itemId) => {
-
       const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
       if (!itemId || !kind) {
         return;
@@ -109,100 +160,54 @@ function useWatchList(props) {
         prev.filter((wlItem) => !(wlItem.kind === kind && wlItem.id === itemId))
       );
 
-      if (kind === "param") {
+      if (kind === 'param') {
         removeParamInEditor(itemId);
       }
     },
     [removeParamInEditor]
   );
 
-
   const updateWatchList = useCallback(
-    (newList) => {
-        // Iterate through all parameter keys
-        if (!Array.isArray(newList)) {
-            return;
+    (newWatchList) => {
+      // Iterate through all parameter keys
+      if (!Array.isArray(newWatchList)) {
+        return;
+      }
+
+      // Remove parameters that are no longer in the watch list
+      const currentParamKeys = (watchList || [])
+        .filter((item) => item.kind === 'param')
+        .map((item) => item.id);
+      currentParamKeys.forEach((key) => {
+        if (
+          !newWatchList.some((item) => item.kind === 'param' && item.id === key)
+        ) {
+          removeFromWatchList(key);
         }
+      });
 
-        // Remove parameters that are no longer in the watch list
-        const currentParamKeys = (watchList || [])
-            .filter((item) => item.kind === 'param')
-            .map((item) => item.id);
-        currentParamKeys.forEach((key) => {
-            if (!newList.some((item) => item.kind === 'param' && item.id === key)) {
-                removeFromWatchList(key);
-            }
-        });
+      // Add new parameters from the new list
+      newWatchList.forEach((item) => {
+        addToWatchList(item);
+      });
 
-        // Add new parameters from the new list
-        newList.forEach((item) => {
-            addToWatchList(item);
-        });
-
-        // Save watch list
-        setWatchList(newList);
+      // Save watch list
+      setWatchList(newWatchList);
+      saveWatchToStorageDebounced();
     },
     [setWatchList]
   );
 
   const clearWatchList = useCallback(() => {
     const currentParamKeys = (watchList || [])
-        .filter((item) => item.kind === 'param')
-        .map((item) => item.id);
+      .filter((item) => item.kind === 'param')
+      .map((item) => item.id);
 
     currentParamKeys.forEach((key) => {
-        removeFromWatchList(key);
+      removeFromWatchList(key);
     });
     setWatchList([]);
   }, [setWatchList]);
-
-
-  // --- Watch list persistence/helpers ---
-  const saveWatchToStorage = useCallback(
-    (list = watchList) => {
-      try {
-        window.localStorage.setItem(
-          RUNNER_WATCHLIST_STORAGE_KEY,
-          JSON.stringify(list || [])
-        );
-      } catch {}
-    },
-    [watchList,]
-  );
-
-  const saveWatchToStorageDebounced = useCallback(
-    (list, order, wait = 200) => {
-      if (saveWatchTimer.current) {
-        clearTimeout(saveWatchTimer.current);
-      }
-      saveWatchTimer.current = setTimeout(() => {
-        saveWatchToStorage(list, order);
-      }, Math.max(0, wait));
-    },
-    [saveWatchToStorage]
-  );
-  
-  // --- Watch list persistence/helpers ---
-  const loadWatchFromStorage = useCallback(() => {
-    let watchListData = [];
-    try {
-      const watchRaw = window.localStorage.getItem(
-        RUNNER_WATCHLIST_STORAGE_KEY
-      );
-      if (watchRaw) {
-        const parsed = JSON.parse(watchRaw);
-        if (Array.isArray(parsed)) {
-          watchListData = parsed.filter(
-            (item) =>
-              item &&
-              typeof item.kind === 'string' &&
-              typeof item.id === 'string'
-          );
-        }
-      }
-    } catch {}
-    return { watchList: watchListData };
-  }, []);
 
   const formatParamValueForCli = useCallback((value) => {
     if (
@@ -306,7 +311,7 @@ function useWatchList(props) {
         const orig = Object.prototype.hasOwnProperty.call(originals, key)
           ? originals[key]
           : getParamValue(key);
-        const curr = getEditedParamValue(key);
+        const curr = getParamValueFromKey(key);
         pairs.push(...collectParamDiffs(orig, curr, prefixName));
       }
     );
@@ -315,7 +320,7 @@ function useWatchList(props) {
     watchList,
     paramOriginals,
     getParamValue,
-    getEditedParamValue,
+    getParamValueFromKey,
     normalizeParamPrefix,
     collectParamDiffs,
   ]);
@@ -328,10 +333,7 @@ function useWatchList(props) {
         setParamsArgString(nextStr);
       }
     } catch {}
-  }, [
-    getEditedParamChangesPairs,
-    paramsArgString,
-  ]);
+  }, [getEditedParamChangesPairs, paramsArgString]);
 
   const ensureOriginalsFor = useCallback(
     (keys) => {
@@ -389,7 +391,6 @@ function useWatchList(props) {
     }
   }, [loadWatchFromStorage]);
 
-
   // hydrate once on mount
   useEffect(() => {
     hydrateWatchFromStorage();
@@ -403,26 +404,26 @@ function useWatchList(props) {
     updateWatchList,
     clearWatchList,
     saveWatchToStorageDebounced,
-    
+
     // Parameter editor interactions
     paramOriginals,
     paramEdits,
     strictlyChanged,
     resetParamInEditor,
     editParamInEditor,
-  // expose helpers
-  getParamValue,
-  saveParamsToStorageDebounced,
-  // Param helpers
-  getEditedParamValue,
-  normalizeParamPrefix,
-  collectParamDiffs,
-  toYamlString,
-  parseYamlishValue,
-  paramsArgString,
-  updateParamsArgString,
-  ensureOriginalsFor,
-
+    // expose helpers
+    getParamValue,
+    saveParamsToStorageDebounced,
+    // Param helpers
+    getParamValueFromKey,
+    setParamValueForKey,
+    normalizeParamPrefix,
+    collectParamDiffs,
+    toYamlString,
+    parseYamlishValue,
+    paramsArgString,
+    updateParamsArgString,
+    ensureOriginalsFor,
   };
 }
 

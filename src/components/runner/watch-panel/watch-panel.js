@@ -1,84 +1,32 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { toggleNodeClicked, loadNodeData } from '../../../actions/nodes';
-import WatchListDialog from '../watch-list-dialog';
+
+const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
+  'kedro_viz_runner_watch_custom_order';
 
 function WatchPanel({
   watchList,
   strictlyChanged,
   getEditedParamValue,
   toYamlString,
-  // external handlers passed from runner-manager
-  setSidInUrl,
-  openParamEditor,
-  openDatasetDetails,
-  saveWatchToStorageDebounced,
-  removeParamFromWatchList,
-  setWatchList,
-  // Items needed for rendering and interactions
-  props,
-  setTempModalSelections,
-  setWatchSearch,
+  onWatchItemClick,
+  removeFromWatchList,
 }) {
-  const toastTimer = useRef();
   const [customOrder, setCustomOrder] = useState({
     param: false,
     dataset: false,
   });
   const [watchTab, setWatchTab] = useState('parameters');
-  const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
-  const [showMetadata, setShowMetadata] = useState(false);
-  const [metadataMode, setMetadataMode] = useState(null);
-  const [selectedParamKey, setSelectedParamKey] = useState(null);
-  const [selectedDataset, setSelectedDataset] = useState(null);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
   const [draggingWatch, setDraggingWatch] = useState(null);
-  const [selectedToAdd, setSelectedToAdd] = useState({});
 
-  const showToast = useCallback((message, duration = 2000) => {
-    if (toastTimer.current) {
-      clearTimeout(toastTimer.current);
-    }
-    setToastMessage(String(message || ''));
-    setToastVisible(true);
-    toastTimer.current = setTimeout(() => {
-      setToastVisible(false);
-    }, Math.max(0, duration));
-  }, []);
+  const saveCustomOrderToStorage = useCallback(() => {
+    try {
+      window.localStorage.setItem(
+        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY,
+        JSON.stringify(customOrder || {})
+      );
+    } catch {}
+  }, [customOrder]);
 
-  const hideToast = useCallback(() => {
-    if (toastTimer.current) {
-      clearTimeout(toastTimer.current);
-      toastTimer.current = null;
-    }
-    setToastVisible(false);
-  }, []);
-
-
-  const openWatchModal = useCallback(() => {
-    const selected = {};
-    const tempSelections = {};
-    (watchList || []).forEach((item) => {
-      selected[`${item.kind}:${item.id}`] = true;
-      tempSelections[item.id] = {
-        kind: item.kind,
-        id: item.id,
-        name: item.name || item.id,
-      };
-    });
-    setIsWatchModalOpen(true);
-    setSelectedToAdd(selected);
-    setTempModalSelections(tempSelections);
-    setWatchSearch('');
-  }, [watchList]);
-
-  // Aliases expected by JSX (the implementation names differ)
-  const onDragStart = startDragWatch;
-  const onDragOver = allowDropWatch;
-  const onDrop = dropWatch;
-  const onItemClick = onWatchItemClick;
-  const onRemove = removeFromWatchList;
-  
   const parameterItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'param'
   );
@@ -95,19 +43,6 @@ function WatchPanel({
     );
   }
 
-  const toggleSelectToAdd = useCallback((kind, id) => {
-    const key = `${kind}:${id}`;
-    setSelectedToAdd((prev) => {
-      const next = { ...(prev || {}) };
-      if (next[key]) {
-        delete next[key];
-      } else {
-        next[key] = true;
-      }
-      return next;
-    });
-  }, []);
-  
   const getParamPreview = (key) => {
     const value = getEditedParamValue(key);
     if (typeof value === 'undefined') {
@@ -138,82 +73,33 @@ function WatchPanel({
         setDraggingWatch(null);
         return;
       }
-      setWatchList((prev) => {
-        const list = [...(prev || [])];
-        const kind = targetKind;
-        const kindItems = list.filter((item) => item.kind === kind);
-        const fromIndex = kindItems.findIndex(
-          (item) => item.id === draggingWatch.id
-        );
-        const toIndex = kindItems.findIndex((item) => item.id === targetId);
-        if (fromIndex === -1 || toIndex === -1) {
-          setDraggingWatch(null);
-          return prev;
-        }
-        const reordered = [...kindItems];
-        const [moved] = reordered.splice(fromIndex, 1);
-        reordered.splice(toIndex, 0, moved);
-        let i = 0;
-        const nextList = list.map((item) =>
-          item.kind === kind ? reordered[i++] : item
-        );
-        const nextCustom = { ...(customOrder || {}), [kind]: true };
-        setCustomOrder(nextCustom);
-        saveWatchToStorageDebounced(nextList, nextCustom);
-        setDraggingWatch(null);
-        return nextList;
-      });
-    },
-    [draggingWatch, customOrder, saveWatchToStorageDebounced]
-  );
-
-
-  const onWatchItemClick = useCallback(
-    (item) => {
-      if (item.kind === 'param') {
-        setSidInUrl(item.id);
-        if (props.dispatch) {
-          props.dispatch(loadNodeData(item.id));
-          props.dispatch(toggleNodeClicked(item.id));
-        }
-        try {
-          openParamEditor(item.id);
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to open parameter editor for', item.id, e);
-          showToast('Error opening parameter editor');
-        }
-      } else if (item.kind === 'dataset') {
-        setSidInUrl(item.id);
-        if (props.dispatch) {
-          props.dispatch(loadNodeData(item.id));
-          props.dispatch(toggleNodeClicked(item.id));
-        }
-        const dataset = (props.datasets || []).find(
-          (datasetItem) => datasetItem.id === item.id
-        );
-        if (dataset) {
-          openDatasetDetails(dataset);
-        }
-      }
-    },
-    [props, setSidInUrl, openParamEditor, showToast, openDatasetDetails]
-  );
-
-  const removeFromWatchList = useCallback(
-    (kind, id) => {
-      if (kind === 'param') {
-        removeParamFromWatchList(id);
-        return;
-      }
-      setWatchList((prev) =>
-        (prev || []).filter((item) => !(item.kind === kind && item.id === id))
+      const kind = targetKind;
+      const kindItems = watchList.filter((item) => item.kind === kind);
+      const fromIndex = kindItems.findIndex(
+        (item) => item.id === draggingWatch.id
       );
-      saveWatchToStorageDebounced();
+      const toIndex = kindItems.findIndex((item) => item.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) {
+        setDraggingWatch(null);
+      }
+      const reordered = [...kindItems];
+      const [moved] = reordered.splice(fromIndex, 1);
+      reordered.splice(toIndex, 0, moved);
+      let i = 0;
+      const nextCustom = { ...(customOrder || {}), [kind]: true };
+      setCustomOrder(nextCustom);
+      setDraggingWatch(null);
+      saveCustomOrderToStorage();
     },
-    [removeParamFromWatchList, saveWatchToStorageDebounced]
+    [draggingWatch, watchList, customOrder, saveCustomOrderToStorage]
   );
 
+  // Aliases expected by JSX (the implementation names differ)
+  const onDragStart = startDragWatch;
+  const onDragOver = allowDropWatch;
+  const onDrop = dropWatch;
+  const onItemClick = onWatchItemClick;
+  const onRemove = removeFromWatchList;
 
   return (
     <div className="runner-panel runner-panel--watchlist">
@@ -279,80 +165,6 @@ function WatchPanel({
       </div>
     </div>
   );
-};
-
-// Helper: handle single-click on a flowchart node within the watch modal
-// Moves selection logic here so Runner manager can delegate.
-export function onFlowchartNodeClickImpl({
-  nodeId,
-  paramNodes = [],
-  datasets = [],
-  dispatch,
-  toggleSelectToAdd,
-}) {
-  if (!nodeId) {
-    return;
-  }
-  const isParam = (paramNodes || []).some(
-    (paramNode) => paramNode.id === nodeId
-  );
-  const datasetItem = (datasets || []).find((d) => d.id === nodeId);
-  if (isParam) {
-    toggleSelectToAdd && toggleSelectToAdd('param', nodeId);
-  } else if (datasetItem) {
-    toggleSelectToAdd && toggleSelectToAdd('dataset', datasetItem.id);
-  }
-  if (dispatch) {
-    try {
-      dispatch(toggleNodeClicked(nodeId));
-    } catch (e) {
-      // ignore
-    }
-  }
-}
-
-// Helper: handle double-click on a flowchart/search result item to stage selection
-export function onFlowchartNodeDoubleClickImpl({
-  node,
-  paramNodes = [],
-  datasets = [],
-  toggleSelectToAdd,
-  setTempModalSelections, // function: (updater) => void
-}) {
-  const nodeId = node && node.id;
-  if (!nodeId) {
-    return;
-  }
-  const isParam = (paramNodes || []).some(
-    (paramNode) => paramNode.id === nodeId
-  );
-  let entry;
-  if (isParam) {
-    entry = { kind: 'param', id: nodeId, name: node.name || nodeId };
-    toggleSelectToAdd && toggleSelectToAdd('param', nodeId);
-  } else {
-    const datasetItem = (datasets || []).find((d) => d.id === nodeId);
-    if (!datasetItem) {
-      return;
-    }
-    entry = {
-      kind: 'dataset',
-      id: datasetItem.id,
-      name: datasetItem.name || datasetItem.id,
-    };
-    toggleSelectToAdd && toggleSelectToAdd('dataset', datasetItem.id);
-  }
-  if (typeof setTempModalSelections === 'function') {
-    setTempModalSelections((prevMap = {}) => {
-      const next = { ...prevMap };
-      if (next[nodeId]) {
-        delete next[nodeId];
-      } else {
-        next[nodeId] = entry;
-      }
-      return next;
-    });
-  }
 }
 
 export default WatchPanel;

@@ -1,5 +1,1 @@
-export {
-  default,
-  onFlowchartNodeClickImpl,
-  onFlowchartNodeDoubleClickImpl,
-} from './watch-panel';
+export { default } from './watch-panel';

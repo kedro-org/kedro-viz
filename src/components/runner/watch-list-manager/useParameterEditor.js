@@ -4,7 +4,6 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 const RUNNER_PARAM_EDITS_STORAGE_KEY = 'kedro_viz_runner_param_edits';
 const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
 
-
 function useParameterEditor() {
   const saveParamsTimer = useRef();
   const [paramOriginals, setParamOriginals] = useState({});
@@ -79,14 +78,13 @@ function useParameterEditor() {
 
   const resetParam = useCallback((paramKey) => {
     if (!paramKey) {
-    return undefined;
+      return undefined;
     }
     setParamEdits((prev) => {
       const updated = { ...(prev || {}) };
       if (!Object.prototype.hasOwnProperty.call(paramOriginals, paramKey)) {
-        updated[paramKey] = "Cannot find original value";
-      }
-      else {
+        updated[paramKey] = 'Cannot find original value';
+      } else {
         updated[paramKey] = paramOriginals[paramKey];
       }
       return updated;
@@ -94,10 +92,13 @@ function useParameterEditor() {
     saveParamsToStorageDebounced();
   }, []);
 
-  const editParam = useCallback((paramKey, newValue) => {
-    setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
-    saveParamsToStorageDebounced();
-  }, [saveParamsToStorageDebounced]);
+  const editParam = useCallback(
+    (paramKey, newValue) => {
+      setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
+      saveParamsToStorageDebounced();
+    },
+    [saveParamsToStorageDebounced]
+  );
 
   const loadParamEditsFromStorage = useCallback(() => {
     try {
@@ -128,9 +129,7 @@ function useParameterEditor() {
     if (hasOriginals) {
       setParamOriginals(originals);
     }
-  }, [
-    loadParamEditsFromStorage,
-  ]);
+  }, [loadParamEditsFromStorage]);
 
   useEffect(() => {
     updateStrictlyChanged();
@@ -143,15 +142,15 @@ function useParameterEditor() {
   return {
     paramOriginals,
     paramEdits,
-  strictlyChanged,
+    strictlyChanged,
     addParams,
     removeParam,
     resetParam,
     editParam,
     saveParamsToStorageDebounced,
-  loadParamEditsFromStorage,
-  hydrateParamEditsFromStorage,
-  }
+    loadParamEditsFromStorage,
+    hydrateParamEditsFromStorage,
+  };
 }
 
 export default useParameterEditor;
