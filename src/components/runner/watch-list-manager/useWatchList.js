@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import useParameterEditor from './useParameterEditor';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { loadNodeData, toggleNodeClicked } from '../../../actions/nodes'; // ensure path is correct
-
+import { current } from '@reduxjs/toolkit';
 
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
@@ -141,11 +141,6 @@ function useWatchList(props) {
       if (!item || !item.kind || !item.id) {
         return;
       }
-        
-      if (dispatch) {
-        dispatch(loadNodeData(item.id));
-        dispatch(toggleNodeClicked(item.id));
-      }
 
       setWatchList((prev) => {
         const exists = prev.some(
@@ -158,31 +153,48 @@ function useWatchList(props) {
         return [...prev, item];
       });
     },
-    [getParamValue, setWatchList, dispatch, loadNodeData, toggleNodeClicked]
+    [getParamValue, setWatchList]
   );
 
   useEffect(() => {
-    if (!watchList.length) {
-      return;
-    }
-
     // Remove any param edits that are no longer in the watch list
-    const keysToRemove = Object.keys(paramEdits || {}).filter((itemId) => {
-      return !watchList.some((item) => item.kind === 'param' && item.id === itemId);
+    const keysToRemove = Object.values(paramOriginals || {}).filter((item) => {
+      if (item.kind !== 'param') {
+        return false;
+      }
+      if (!watchList.length) {
+        return true;
+      }
+      return !watchList.some((wlItem) => wlItem.id === item.id);
     });
+
     keysToRemove.forEach((itemId) => {
       removeParamInEditor(itemId);
     });
 
+    if (!watchList.length) {
+      return;
+    }
+
     watchList.forEach((item) => {
-      if (item.kind === 'param' && Object.prototype.hasOwnProperty.call(paramEdits, item.id)) {
+      const isMissingInEditor =
+        !Object.prototype.hasOwnProperty.call(paramOriginals, item.id) ||
+        !Object.prototype.hasOwnProperty.call(paramEdits, item.id);
+      if (item.kind === 'param' && isMissingInEditor) {
         const currentVal = getParamValue(item.id);
-        if (typeof currentVal !== 'undefined') {
+        if (typeof currentVal !== 'undefined' && item.kind === 'param') {
           addParamsInEditor({ [item.id]: currentVal });
         }
       }
     });
-  }, [watchList, paramEdits, getParamValue, addParamsInEditor, props.nodeParameters]);
+  }, [
+    watchList,
+    paramOriginals,
+    paramEdits,
+    getParamValue,
+    addParamsInEditor,
+    removeParamInEditor,
+  ]);
 
   const removeFromWatchList = useCallback(
     (itemId) => {
@@ -191,15 +203,7 @@ function useWatchList(props) {
       }
 
       // Remove from watch list
-      setWatchList((prev) =>
-        prev.filter((wlItem) => !(wlItem.id === itemId))
-      );
-
-      // Remove from parameter editor if applicable
-      // const kind = watchList.find((wlItem) => wlItem.id === itemId)?.kind;
-
-      // removeParamInEditor(itemId);
-      
+      setWatchList((prev) => prev.filter((wlItem) => !(wlItem.id === itemId)));
     },
     [setWatchList, watchList]
   );
@@ -211,21 +215,12 @@ function useWatchList(props) {
         return;
       }
 
-      // Remove parameters that are no longer in the watch list
-      const currentParamKeys = (watchList || [])
-        .filter((item) => item.kind === 'param')
-        .map((item) => item.id);
-      currentParamKeys.forEach((key) => {
-        if (
-          !newWatchList.some((item) => item.kind === 'param' && item.id === key)
-        ) {
-          removeFromWatchList(key);
+      const currentIds = (newWatchList || []).map((item) => item.id);
+      currentIds.forEach((itemId) => {
+        if (dispatch) {
+          dispatch(loadNodeData(itemId));
+          dispatch(toggleNodeClicked(itemId));
         }
-      });
-
-      // Add new parameters from the new list
-      newWatchList.forEach((item) => {
-        addToWatchList(item);
       });
 
       // Save watch list
@@ -235,13 +230,7 @@ function useWatchList(props) {
   );
 
   const clearWatchList = useCallback(() => {
-    // const currentParamKeys = (watchList || [])
-    //   .filter((item) => item.kind === 'param')
-    //   .map((item) => item.id);
-
-    // currentParamKeys.forEach((key) => {
-    //   removeFromWatchList(key);
-    // });
+    debugger;
     setWatchList([]);
     clearParamsInEditor();
   }, [setWatchList, clearParamsInEditor]);

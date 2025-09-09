@@ -39,8 +39,26 @@ function useParameterEditor() {
     if (!newParams || Object.keys(newParams).length === 0) {
       return;
     }
-    setParamOriginals((prev) => ({ ...(prev || {}), ...newParams }));
-    setParamEdits((prev) => ({ ...(prev || {}), ...newParams }));
+
+    // Only add parameters that are not already present
+    setParamOriginals((prev) => {
+      const updated = { ...(prev || {}) };
+      Object.keys(newParams || {}).forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(updated, key)) {
+          updated[key] = newParams[key];
+        }
+      });
+      return updated;
+    });
+    setParamEdits((prev) => {
+      const updated = { ...(prev || {}) };
+      Object.keys(newParams || {}).forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(updated, key)) {
+          updated[key] = newParams[key];
+        }
+      });
+      return updated;
+    });
   }, []);
 
   const removeParam = useCallback((paramKey) => {
@@ -92,30 +110,27 @@ function useParameterEditor() {
     [saveParamsToStorage]
   );
 
-  useEffect(() => {
-    saveParamsToStorageDebounced();
-  }, [paramEdits, paramOriginals]);
-
-  const resetParam = useCallback((paramKey) => {
-    if (!paramKey) {
-      return undefined;
-    }
-    setParamEdits((prev) => {
-      const updated = { ...(prev || {}) };
-      if (!Object.prototype.hasOwnProperty.call(paramOriginals, paramKey)) {
-        updated[paramKey] = 'Cannot find original value';
-      } else {
-        updated[paramKey] = paramOriginals[paramKey];
+  const resetParam = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return undefined;
       }
-      return updated;
-    });
-  }, [paramOriginals]);
-
-  const editParam = useCallback(
-    (paramKey, newValue) => {
-      setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
-    }, []
+      setParamEdits((prev) => {
+        const updated = { ...(prev || {}) };
+        if (!Object.prototype.hasOwnProperty.call(paramOriginals, paramKey)) {
+          delete updated[paramKey];
+        } else {
+          updated[paramKey] = paramOriginals[paramKey];
+        }
+        return updated;
+      });
+    },
+    [paramOriginals]
   );
+
+  const editParam = useCallback((paramKey, newValue) => {
+    setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
+  }, []);
 
   const loadParamEditsFromStorage = useCallback(() => {
     try {
@@ -149,8 +164,12 @@ function useParameterEditor() {
   }, [loadParamEditsFromStorage]);
 
   useEffect(() => {
+    saveParamsToStorageDebounced();
+  }, [paramEdits, paramOriginals]);
+
+  useEffect(() => {
     updateStrictlyChanged();
-  }, [paramEdits, updateStrictlyChanged]);
+  }, [paramOriginals, paramEdits, updateStrictlyChanged]);
 
   // useEffect(() => {
   //   hydrateParamEditsFromStorage();
