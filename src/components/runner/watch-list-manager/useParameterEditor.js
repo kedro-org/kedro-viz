@@ -41,7 +41,15 @@ function useParameterEditor() {
   }, [paramEntries]);
 
   // Persistence
+  const isHydratingRef = useRef(false);
+  const [isHydrating, setIsHydrating] = useState(false);
+
   const saveParamsToStorage = useCallback(() => {
+    // Do not save while hydration is in progress to avoid clobbering
+    // persisted user edits.
+    if (isHydratingRef.current) {
+      return;
+    }
     try {
       window.localStorage.setItem(
         RUNNER_PARAM_STATES_STORAGE_KEY,
@@ -51,6 +59,8 @@ function useParameterEditor() {
   }, [paramEntries]);
 
   const loadParamsFromStorage = useCallback(() => {
+    isHydratingRef.current = true;
+    setIsHydrating(true);
     try {
       const raw = window.localStorage.getItem(RUNNER_PARAM_STATES_STORAGE_KEY);
       if (!raw) {
@@ -67,10 +77,7 @@ function useParameterEditor() {
           ? parsed.entries
           : {};
       setParamEntries((prev) => {
-        if (Object.keys(prev).length) {
-          return prev; // don't overwrite existing
-        }
-        // Validate entry shape
+        // Validate entry shape from storage
         const cleaned = {};
         Object.entries(entries).forEach(([key, entry]) => {
           if (entry && typeof entry === 'object') {
@@ -84,11 +91,15 @@ function useParameterEditor() {
         });
         return cleaned;
       });
-    } catch {}
+    } catch {
+    } finally {
+      setTimeout(() => {
+        isHydratingRef.current = false;
+        setIsHydrating(false);
+      }, 0);
+    }
   }, []);
 
-  // Generic state updater ensuring strictlyChanged consistency
-  // Helper to update entries immutably
   const setEntries = useCallback((updater) => {
     setParamEntries((prev) => {
       const next = updater(prev);
@@ -104,6 +115,10 @@ function useParameterEditor() {
 
   const addParams = useCallback(
     (newParams) => {
+      // Block programmatic additions while hydration is in progress.
+      if (isHydratingRef.current) {
+        return;
+      }
       if (!newParams || !Object.keys(newParams).length) {
         return;
       }
@@ -122,6 +137,10 @@ function useParameterEditor() {
 
   const editParam = useCallback(
     (paramKey, newValue) => {
+      // Block user edits while hydration is in progress.
+      if (isHydratingRef.current) {
+        return;
+      }
       if (!paramKey) {
         return;
       }
@@ -131,12 +150,17 @@ function useParameterEditor() {
         }
         return { ...prev, [paramKey]: { ...prev[paramKey], edit: newValue } };
       });
+      saveParamsToStorage();
     },
     [setEntries]
   );
 
   const resetParam = useCallback(
     (paramKey) => {
+      // Block resets while hydrating
+      if (isHydratingRef.current) {
+        return;
+      }
       if (!paramKey) {
         return;
       }
@@ -155,6 +179,10 @@ function useParameterEditor() {
 
   const removeParam = useCallback(
     (paramKey) => {
+      // Block removals while hydrating
+      if (isHydratingRef.current) {
+        return;
+      }
       if (!paramKey) {
         return;
       }
@@ -171,6 +199,9 @@ function useParameterEditor() {
   );
 
   const clearParams = useCallback(() => {
+    if (isHydratingRef.current) {
+      return;
+    }
     setParamEntries({});
     try {
       window.localStorage.setItem(
@@ -181,23 +212,24 @@ function useParameterEditor() {
   }, []);
 
   useEffect(() => {
-    saveParamsToStorage();
-  }, [paramEntries, saveParamsToStorage]);
-
-  // Hydrate once on mount
-  useEffect(() => {
     loadParamsFromStorage();
   }, [loadParamsFromStorage]);
+
+  useEffect(() => {
+    saveParamsToStorage();
+  }, [paramEntries, saveParamsToStorage]);
 
   return {
     paramOriginals,
     paramEdits,
     strictlyChanged,
+    isHydrating,
     addParams,
     removeParam,
     clearParams,
     resetParam,
     editParam,
+    loadParamsFromStorage,
   };
 }
 

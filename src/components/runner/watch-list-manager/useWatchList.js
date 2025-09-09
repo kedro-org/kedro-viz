@@ -12,7 +12,6 @@ function useWatchList(props) {
   const saveWatchTimer = useRef();
   const [watchList, setWatchList] = useState([]);
 
-
   const {
     paramOriginals,
     paramEdits,
@@ -22,7 +21,7 @@ function useWatchList(props) {
     clearParams: clearParamsInEditor,
     resetParam: resetParamInEditor,
     editParam: editParamInEditor,
-    saveParamsToStorageDebounced,
+    loadParamsFromStorage,
   } = useParameterEditor();
 
   // --- Watch list persistence/helpers ---
@@ -50,11 +49,6 @@ function useWatchList(props) {
     [saveWatchToStorage]
   );
 
-  useEffect(() => {
-    saveWatchToStorageDebounced();
-  }, [watchList]);
-
-  // --- Watch list persistence/helpers ---
   const loadWatchFromStorage = useCallback(() => {
     let watchListData = [];
     try {
@@ -75,6 +69,25 @@ function useWatchList(props) {
     } catch {}
     return { watchList: watchListData };
   }, []);
+
+  const hydrateWatchFromStorage = useCallback(() => {
+    loadParamsFromStorage(); // Load params first
+
+    const { watchList: storedWatchList } = loadWatchFromStorage();
+    if ((storedWatchList || []).length) {
+      updateWatchList(storedWatchList);
+    }
+  }, [loadWatchFromStorage]);
+
+  // hydrate once on mount
+  useEffect(() => {
+    hydrateWatchFromStorage();
+  }, [hydrateWatchFromStorage]);
+
+  // Save to storage whenever watch list changes
+  useEffect(() => {
+    saveWatchToStorageDebounced();
+  }, [watchList]);
 
   const getParamValue = useCallback(
     (paramKey) => {
@@ -155,8 +168,8 @@ function useWatchList(props) {
     [getParamValue, setWatchList]
   );
 
+  // Sync watch list with parameter editor originals/edits
   useEffect(() => {
-    // Build a Set of current param IDs in the watch list for quick lookup
     const watchParamIds = new Set(
       (watchList || [])
         .filter((wlItem) => wlItem.kind === 'param')
@@ -172,7 +185,7 @@ function useWatchList(props) {
     }
 
     if (!watchList.length) {
-      return; // nothing to seed if list empty
+      return;
     }
 
     // Ensure any newly added watch list params are seeded in the editor
@@ -238,24 +251,6 @@ function useWatchList(props) {
     clearParamsInEditor();
   }, [setWatchList, clearParamsInEditor]);
 
-  const formatParamValueForCli = useCallback((value) => {
-    if (
-      value === null ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    ) {
-      return String(value);
-    }
-    if (typeof value === 'string') {
-      const needsQuotes = /[\s,]/.test(value);
-      const escaped = value.replace(/"/g, '\\"');
-      return needsQuotes ? `"${escaped}"` : escaped;
-    }
-    return JSON.stringify(value);
-  }, []);
-
-  // Removed param diff + paramsArgString responsibility (handled in useCommandBuilder)
-
   const ensureOriginalsFor = useCallback(
     (keys) => {
       if (!keys) {
@@ -305,18 +300,6 @@ function useWatchList(props) {
     }
   }, []);
 
-  const hydrateWatchFromStorage = useCallback(() => {
-    const { watchList: storedWatchList } = loadWatchFromStorage();
-    if ((storedWatchList || []).length) {
-      updateWatchList(storedWatchList);
-    }
-  }, [loadWatchFromStorage]);
-
-  // hydrate once on mount
-  useEffect(() => {
-    hydrateWatchFromStorage();
-  }, [hydrateWatchFromStorage]);
-
   return {
     // Direct watch list interactions
     watchList,
@@ -334,13 +317,12 @@ function useWatchList(props) {
     editParamInEditor,
     // expose helpers
     getParamValue,
-    saveParamsToStorageDebounced,
     // Param helpers
     getParamValueFromKey,
     setParamValueForKey,
     toYamlString,
     parseYamlishValue,
-  // paramsArgString & update handled in command builder now
+    // paramsArgString & update handled in command builder now
     ensureOriginalsFor,
   };
 }

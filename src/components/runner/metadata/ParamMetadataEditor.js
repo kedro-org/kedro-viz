@@ -34,8 +34,11 @@ function ParamMetadataEditor({
 
   // Load initial YAML for active param or when original value changes (e.g., external reset)
   useEffect(() => {
-    if (!activeParamKey) return;
-    const base = paramOriginals[activeParamKey] ?? getParamValue(activeParamKey);
+    if (!activeParamKey) {
+      return;
+    }
+    const base =
+      paramOriginals[activeParamKey] ?? getParamValue(activeParamKey);
     try {
       const yaml = toYamlString(base) || '';
       setDraft(yaml);
@@ -55,7 +58,11 @@ function ParamMetadataEditor({
   }, []);
 
   const handleSave = useCallback(() => {
-    if (disabled || !activeParamKey) return;
+    if (disabled || !activeParamKey) {
+      {
+        return;
+      }
+    }
     try {
       const parsed = parseYamlishValue(draft);
       editParamInEditor(activeParamKey, parsed);
@@ -66,23 +73,43 @@ function ParamMetadataEditor({
       setError('Invalid YAML');
       showToast && showToast('Failed to update');
     }
-  }, [draft, disabled, activeParamKey, parseYamlishValue, editParamInEditor, showToast]);
+  }, [
+    draft,
+    disabled,
+    activeParamKey,
+    parseYamlishValue,
+    editParamInEditor,
+    showToast,
+  ]);
 
   const handleReset = useCallback(() => {
-    if (disabled || !activeParamKey) return;
+    if (disabled || !activeParamKey) {
+      return;
+    }
     try {
       resetParamInEditor(activeParamKey);
     } finally {
-      const base = paramOriginals[activeParamKey] ?? getParamValue(activeParamKey);
+      const base =
+        paramOriginals[activeParamKey] ?? getParamValue(activeParamKey);
       const yaml = toYamlString(base) || '';
       setDraft(yaml);
       setDirty(false);
       setError(null);
       showToast && showToast('Reset to original');
     }
-  }, [activeParamKey, disabled, resetParamInEditor, paramOriginals, getParamValue, toYamlString, showToast]);
+  }, [
+    activeParamKey,
+    disabled,
+    resetParamInEditor,
+    paramOriginals,
+    getParamValue,
+    toYamlString,
+    showToast,
+  ]);
 
-  if (!isOpen || !activeParamKey) return null;
+  if (!isOpen || !activeParamKey) {
+    return null;
+  }
 
   return (
     <div style={{ margin: '0 36px 24px' }}>
@@ -118,7 +145,11 @@ function ParamMetadataEditor({
         )}
         {error && (
           <span
-            style={{ fontSize: 12, color: 'var(--color-danger)', alignSelf: 'center' }}
+            style={{
+              fontSize: 12,
+              color: 'var(--color-danger)',
+              alignSelf: 'center',
+            }}
           >
             {error}
           </span>
