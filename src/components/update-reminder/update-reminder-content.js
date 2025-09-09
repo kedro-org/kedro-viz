@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '23 July 2025',
+  date: '9 September 2025',
   features: [
     {
       title: 'Workflow run status',
