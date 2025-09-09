@@ -13,8 +13,9 @@ import WatchListDialog from './watch-list-dialog';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
-import { startKedroCommand, fetchKedroEnv } from '../../utils/runner-api';
+import { startKedroCommand } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
+import useCommandBuilder from './command-builder/useCommandBuilder';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 
@@ -48,21 +49,17 @@ function KedroRunManager(props) {
     paramEdits,
     resetParamInEditor,
     editParamInEditor,
-    getParamValueFromKey,
-    normalizeParamPrefix,
-    collectParamDiffs,
+  getParamValueFromKey,
     toYamlString,
     parseYamlishValue,
-    paramsArgString,
-    updateParamsArgString,
-    ensureOriginalsFor,
+  ensureOriginalsFor,
     // exposed helpers
     getParamValue,
     saveParamsToStorageDebounced,
   } = useWatchList(props);
 
   // State
-  const [kedroEnv, setKedroEnv] = useState(null);
+  const [kedroEnvOverride, setKedroEnvOverride] = useState(null); // optional external override
   const [mounted, setMounted] = useState(false);
   const [watchTab, setWatchTab] = useState('parameters');
 
@@ -88,71 +85,42 @@ function KedroRunManager(props) {
   // Destructure frequently used props to satisfy exhaustive-deps and avoid adding entire props object
   const { paramNodes = [], datasets = [], dispatch } = props || {};
 
-  // --- Missing helpers restored ---
-  // Safely wrap a params argument string in single quotes if it contains spaces or shell meta chars
-  const quoteIfNeeded = useCallback((text) => {
-    if (!text) {
-      return '';
-    }
-    const str = String(text);
-    return str.includes(' ') ? `"${str.replace(/"/g, '\\"')}"` : str;
-  }, []);
+  // --- Command builder hook ---
+  const {
+    kedroEnv: kedroEnvDerived,
+    commandString,
+  paramsArgString,
+  quoteIfNeeded,
+  collectParamDiffs,
+  normalizeParamPrefix,
+  } = useCommandBuilder({
+    activePipeline: props?.activePipeline,
+    selectedTags: props?.selectedTags,
+    kedroEnv: props?.kedroEnv || kedroEnvOverride,
+    watchList,
+    paramOriginals,
+    paramEdits,
+    getParamValue,
+    getParamValueFromKey,
+  });
 
-  // Build the base kedro run command (excluding --params which is handled separately)
-  const buildRunCommand = useCallback(() => {
-    try {
-      const parts = ['kedro', 'run'];
-      const env = props?.kedroEnv ?? kedroEnv;
-      const activePipeline = props?.activePipeline;
-      const selectedTags = props?.selectedTags || [];
-      if (env && env !== 'local') {
-        parts.push('-e');
-        parts.push(env);
-      }
-      if (activePipeline && activePipeline !== PIPELINE.DEFAULT) {
-        parts.push('-p');
-        parts.push(quoteIfNeeded(activePipeline));
-      }
-      if (selectedTags.length) {
-        parts.push('-t');
-        parts.push(selectedTags.join(','));
-      }
-      return parts.join(' ');
-    } catch {
-      return 'kedro run';
+  // Mirror env (if user wants to adjust via UI later)
+  useEffect(() => {
+    if (props?.kedroEnv) {
+      setKedroEnvOverride(props.kedroEnv);
     }
-  }, [
-    props?.kedroEnv,
-    props?.activePipeline,
-    props?.selectedTags,
-    kedroEnv,
-    quoteIfNeeded,
-  ]);
+  }, [props?.kedroEnv]);
 
-  // Update the visible command input when relevant props/state change
+  // Keep command input ref updated
   const updateCommandFromProps = useCallback(() => {
-    const baseCmd = buildRunCommand();
-    const paramsOverride = paramsArgString;
-    const cmd = paramsOverride
-      ? `${baseCmd} --params ${quoteIfNeeded(paramsOverride)}`
-      : baseCmd;
+    const cmd = commandString;
     if (commandInputRef?.current && commandInputRef.current.value !== cmd) {
       commandInputRef.current.value = cmd;
     }
-  }, [buildRunCommand, paramsArgString, quoteIfNeeded]);
+  }, [commandString]);
 
   // Fetch kedro environment info from backend
-  const fetchAndSetKedroEnv = useCallback(async () => {
-    try {
-      const env = await fetchKedroEnv();
-      if (env && env !== kedroEnv) {
-        setKedroEnv(env);
-      }
-    } catch {
-      // eslint-disable-next-line no-console
-      console.warn('[Runner] Failed to fetch Kedro env');
-    }
-  }, [kedroEnv]);
+  // (fetching handled inside useCommandBuilder when not provided)
 
   // Helper to read sid from URL (placed before syncMetadataFromSid to avoid TDZ)
   const getSidFromUrl = useCallback(() => {
@@ -179,9 +147,8 @@ function KedroRunManager(props) {
 
   // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
   useEffect(() => {
-    fetchAndSetKedroEnv();
-    updateCommandFromProps();
-    updateParamsArgString();
+  updateCommandFromProps(); // initial
+  // paramsArgString now derived inside useCommandBuilder
     syncMetadataFromSid();
     window.addEventListener('popstate', syncMetadataFromSid);
     return () => {
@@ -195,7 +162,7 @@ function KedroRunManager(props) {
     // pipeline/tags/env changes
     updateCommandFromProps();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.activePipeline, props.selectedTags, kedroEnv, watchList]);
+  }, [props.activePipeline, props.selectedTags, kedroEnvDerived, watchList, commandString]);
 
   // Visual components used by run manager (stays here for now)
   // Toast helpers
@@ -227,12 +194,7 @@ function KedroRunManager(props) {
   const onMetaEditReset = () => resetParamYaml();
 
   // Control panel helpers (Move to control panel component)
-  const getCurrentCommandString = useCallback(() => {
-    const baseCmd = buildRunCommand();
-    return paramsArgString
-      ? `${baseCmd} --params ${quoteIfNeeded(paramsArgString)}`
-      : baseCmd;
-  }, [buildRunCommand, paramsArgString, quoteIfNeeded, props]);
+  const getCurrentCommandString = useCallback(() => commandString, [commandString]);
 
   const copyCommandToClipboard = useCallback(async () => {
     try {
@@ -304,7 +266,6 @@ function KedroRunManager(props) {
         editParamInEditor(paramKey, orig);
       } catch {}
 
-      updateParamsArgString();
       saveParamsToStorageDebounced();
       return orig;
     },
@@ -327,11 +288,10 @@ function KedroRunManager(props) {
       try {
         editParamInEditor(paramKey, value);
       } catch {}
-      updateParamsArgString();
       updateCommandFromProps();
-      saveParamsToStorageDebounced();
+  saveParamsToStorageDebounced();
     },
-    [editParamInEditor, updateParamsArgString, saveParamsToStorageDebounced]
+  [editParamInEditor, saveParamsToStorageDebounced, updateCommandFromProps]
   );
 
   const saveParamYaml = useCallback(() => {
@@ -361,7 +321,7 @@ function KedroRunManager(props) {
     const origYaml = toYamlString(orig);
     setYamlText(origYaml);
     setMetaEditText(origYaml);
-    updateCommandFromProps();
+  updateCommandFromProps();
     showToast('Reset to original');
   }, [
     selectedParamKey,
@@ -736,7 +696,7 @@ function KedroRunManager(props) {
           renderHighlightedYamlLines={renderHighlightedYamlLines}
           quoteIfNeeded={quoteIfNeeded}
           paramsArgString={paramsArgString}
-          kedroEnv={kedroEnv}
+          kedroEnv={kedroEnvDerived}
         />
 
         <section className="runner-manager__jobs-panel" ref={jobsPanelRef}>

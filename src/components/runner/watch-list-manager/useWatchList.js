@@ -12,7 +12,6 @@ function useWatchList(props) {
   const saveWatchTimer = useRef();
   const [watchList, setWatchList] = useState([]);
 
-  const [paramsArgString, setParamsArgString] = useState('');
 
   const {
     paramOriginals,
@@ -255,115 +254,7 @@ function useWatchList(props) {
     return JSON.stringify(value);
   }, []);
 
-  const collectParamDiffs = useCallback(
-    (orig, edited, prefix) => {
-      const pairs = [];
-      if (typeof orig === 'undefined') {
-        if (typeof edited === 'undefined') {
-          return pairs;
-        }
-        if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
-          Object.keys(edited).forEach((k) => {
-            const val = edited[k];
-            const keyPath = `${prefix}.${k}`;
-            if (val && typeof val === 'object' && !Array.isArray(val)) {
-              pairs.push(...collectParamDiffs(undefined, val, keyPath));
-            } else {
-              pairs.push(`${keyPath}=${formatParamValueForCli(val)}`);
-            }
-          });
-        } else {
-          pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-        }
-        return pairs;
-      }
-      if (
-        orig &&
-        typeof orig === 'object' &&
-        !Array.isArray(orig) &&
-        edited &&
-        typeof edited === 'object' &&
-        !Array.isArray(edited)
-      ) {
-        const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
-        keys.forEach((k) => {
-          const origVal = orig[k];
-          const editedVal = edited[k];
-          if (typeof editedVal === 'undefined') {
-            return;
-          }
-          const keyPath = `${prefix}.${k}`;
-          if (
-            origVal &&
-            typeof origVal === 'object' &&
-            !Array.isArray(origVal) &&
-            editedVal &&
-            typeof editedVal === 'object' &&
-            !Array.isArray(editedVal)
-          ) {
-            pairs.push(...collectParamDiffs(origVal, editedVal, keyPath));
-          } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
-            pairs.push(`${keyPath}=${formatParamValueForCli(editedVal)}`);
-          }
-        });
-        return pairs;
-      }
-      if (JSON.stringify(orig) !== JSON.stringify(edited)) {
-        pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-      }
-      return pairs;
-    },
-    [formatParamValueForCli]
-  );
-
-  const normalizeParamPrefix = useCallback((text) => {
-    if (text == null || text === '') {
-      return '';
-    }
-    try {
-      return String(text).replace(/^params:/, '');
-    } catch {
-      return text;
-    }
-  }, []);
-
-  const getEditedParamChangesPairs = useCallback(() => {
-    const watchListItems = watchList || [];
-    if (!watchListItems.length) {
-      return [];
-    }
-    const pairs = [];
-    (watchListItems.filter((i) => i.kind === 'param') || []).forEach(
-      (wlItem) => {
-        const key = wlItem.id;
-        const prefixName = normalizeParamPrefix(wlItem.name || wlItem.id);
-        const originals = paramOriginals || {};
-        const orig = Object.prototype.hasOwnProperty.call(originals, key)
-          ? originals[key]
-          : getParamValue(key);
-        const curr = getParamValueFromKey(key);
-        pairs.push(...collectParamDiffs(orig, curr, prefixName));
-      }
-    );
-    return pairs;
-  }, [
-    watchList,
-    paramOriginals,
-    getParamValue,
-    getParamValueFromKey,
-    normalizeParamPrefix,
-    collectParamDiffs,
-  ]);
-
-  const updateParamsArgString = useCallback(() => {
-    try {
-      const pairs = getEditedParamChangesPairs();
-      const nextStr = pairs.join(',');
-      if (nextStr !== (paramsArgString || '')) {
-        setParamsArgString(nextStr);
-      }
-    } catch {}
-  }, [getEditedParamChangesPairs, paramsArgString]);
+  // Removed param diff + paramsArgString responsibility (handled in useCommandBuilder)
 
   const ensureOriginalsFor = useCallback(
     (keys) => {
@@ -447,12 +338,9 @@ function useWatchList(props) {
     // Param helpers
     getParamValueFromKey,
     setParamValueForKey,
-    normalizeParamPrefix,
-    collectParamDiffs,
     toYamlString,
     parseYamlishValue,
-    paramsArgString,
-    updateParamsArgString,
+  // paramsArgString & update handled in command builder now
     ensureOriginalsFor,
   };
 }
