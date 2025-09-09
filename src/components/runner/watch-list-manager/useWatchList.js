@@ -157,32 +157,36 @@ function useWatchList(props) {
   );
 
   useEffect(() => {
-    // Remove any param edits that are no longer in the watch list
-    const keysToRemove = Object.values(paramOriginals || {}).filter((item) => {
-      if (item.kind !== 'param') {
-        return false;
-      }
-      if (!watchList.length) {
-        return true;
-      }
-      return !watchList.some((wlItem) => wlItem.id === item.id);
-    });
+    // Build a Set of current param IDs in the watch list for quick lookup
+    const watchParamIds = new Set(
+      (watchList || [])
+        .filter((wlItem) => wlItem.kind === 'param')
+        .map((wlItem) => wlItem.id)
+    );
 
-    keysToRemove.forEach((itemId) => {
-      removeParamInEditor(itemId);
-    });
-
-    if (!watchList.length) {
-      return;
+    // Remove any param originals/edits that are no longer in the watch list
+    const keysToRemove = Object.keys(paramOriginals || {}).filter(
+      (key) => !watchParamIds.has(key)
+    );
+    if (keysToRemove.length) {
+      keysToRemove.forEach((paramKey) => removeParamInEditor(paramKey));
     }
 
+    if (!watchList.length) {
+      return; // nothing to seed if list empty
+    }
+
+    // Ensure any newly added watch list params are seeded in the editor
     watchList.forEach((item) => {
+      if (item.kind !== 'param') {
+        return;
+      }
       const isMissingInEditor =
         !Object.prototype.hasOwnProperty.call(paramOriginals, item.id) ||
         !Object.prototype.hasOwnProperty.call(paramEdits, item.id);
-      if (item.kind === 'param' && isMissingInEditor) {
+      if (isMissingInEditor) {
         const currentVal = getParamValue(item.id);
-        if (typeof currentVal !== 'undefined' && item.kind === 'param') {
+        if (typeof currentVal !== 'undefined') {
           addParamsInEditor({ [item.id]: currentVal });
         }
       }
