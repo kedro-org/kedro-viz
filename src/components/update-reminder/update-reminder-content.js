@@ -18,7 +18,7 @@ export const updateContent = {
     {
       title: 'Log CycleError and layer dependencies',
       image: '',
-      copy: 'Improved error handling for circular dependencies by logging the CycleError exception along with the affected layer dependencies.',
+      copy: 'When a circular dependency is detected, Kedro-Viz now logs the CycleError and shows which layers are involved, making it easier to identify and fix the issue.',
       buttonLink: '',
       buttonText: '',
     },
