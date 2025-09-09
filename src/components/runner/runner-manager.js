@@ -89,10 +89,7 @@ function KedroRunManager(props) {
   const {
     kedroEnv: kedroEnvDerived,
     commandString,
-  paramsArgString,
-  quoteIfNeeded,
-  collectParamDiffs,
-  normalizeParamPrefix,
+    paramsArgString,
   } = useCommandBuilder({
     activePipeline: props?.activePipeline,
     selectedTags: props?.selectedTags,
@@ -274,7 +271,6 @@ function KedroRunManager(props) {
       getParamValue,
       editParamInEditor,
       saveParamsToStorageDebounced,
-      updateParamsArgString,
     ]
   );
 
@@ -690,11 +686,8 @@ function KedroRunManager(props) {
           paramOriginals={paramOriginals}
           getParamValue={getParamValue}
           getEditedParamValue={getParamValueFromKey}
-          normalizeParamPrefix={normalizeParamPrefix}
-          collectParamDiffs={collectParamDiffs}
           toYamlString={toYamlString}
           renderHighlightedYamlLines={renderHighlightedYamlLines}
-          quoteIfNeeded={quoteIfNeeded}
           paramsArgString={paramsArgString}
           kedroEnv={kedroEnvDerived}
         />

@@ -175,19 +175,12 @@ function useCommandBuilder({
   }, [kedroEnvProp, kedroEnv]);
 
   return {
-    // Environment
     kedroEnv: kedroEnvProp ?? kedroEnv,
     setKedroEnv,
-    // Command & params
     commandString,
     paramsArgString,
     paramPairs,
     buildRunCommand,
-    // Helpers
-    quoteIfNeeded,
-    normalizeParamPrefix,
-    collectParamDiffs,
-    formatParamValueForCli,
   };
 }
 
