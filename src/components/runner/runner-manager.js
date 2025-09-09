@@ -61,9 +61,7 @@ function KedroRunManager(props) {
   const toastTimer = useRef();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-
-  // Metadata / parameter editor UI state
-  // (moved metaEditText state into ParamMetadataEditor component)
+  // Metadata panel state
   const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
   const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null); // for dialog
   const [activeParamKey, setActiveParamKey] = useState(null); // for metadata editor
@@ -81,7 +79,7 @@ function KedroRunManager(props) {
     kedroEnv: kedroEnvDerived,
     commandString,
     paramsArgString,
-  diffModel,
+    diffModel,
   } = useCommandBuilder({
     activePipeline: props?.activePipeline,
     selectedTags: props?.selectedTags,
@@ -136,8 +134,8 @@ function KedroRunManager(props) {
 
   // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
   useEffect(() => {
-  updateCommandFromProps(); // initial
-  // paramsArgString now derived inside useCommandBuilder
+    updateCommandFromProps(); // initial
+    // paramsArgString now derived inside useCommandBuilder
     syncMetadataFromSid();
     window.addEventListener('popstate', syncMetadataFromSid);
     return () => {
@@ -151,7 +149,13 @@ function KedroRunManager(props) {
     // pipeline/tags/env changes
     updateCommandFromProps();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.activePipeline, props.selectedTags, kedroEnvDerived, watchList, commandString]);
+  }, [
+    props.activePipeline,
+    props.selectedTags,
+    kedroEnvDerived,
+    watchList,
+    commandString,
+  ]);
 
   // Visual components used by run manager (stays here for now)
   // Toast helpers
@@ -174,11 +178,11 @@ function KedroRunManager(props) {
     setToastVisible(false);
   }, []);
 
-  // --- Metadata editor handlers --- (Move to metadata parameter editor UI)
-  // (moved onMetaEditChange/onMetaEditSave/onMetaEditReset into ParamMetadataEditor)
-
   // Control panel helpers (Move to control panel component)
-  const getCurrentCommandString = useCallback(() => commandString, [commandString]);
+  const getCurrentCommandString = useCallback(
+    () => commandString,
+    [commandString]
+  );
 
   const copyCommandToClipboard = useCallback(async () => {
     try {
@@ -250,20 +254,22 @@ function KedroRunManager(props) {
     [updateWatchList]
   );
 
-  const openParamEditor = useCallback((paramKey) => {
-    if (!paramKey) {
-      return;
-    }
-    if (props.dispatch) {
-      props.dispatch(loadNodeData(paramKey));
-      props.dispatch(toggleNodeClicked(paramKey));
-    }
-    setActiveParamKey(paramKey);
-    setShowMetadata(true);
-    setMetadataMode('param');
-  // ParamMetadataEditor will load YAML internally
-    setSidInUrl(paramKey);
-  }, [props, paramOriginals, getParamValue, toYamlString, setSidInUrl]);
+  const openParamEditor = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return;
+      }
+      if (props.dispatch) {
+        props.dispatch(loadNodeData(paramKey));
+        props.dispatch(toggleNodeClicked(paramKey));
+      }
+      setActiveParamKey(paramKey);
+      setShowMetadata(true);
+      setMetadataMode('param');
+      setSidInUrl(paramKey);
+    },
+    [props, paramOriginals, getParamValue, toYamlString, setSidInUrl]
+  );
 
   const onWatchItemClick = useCallback(
     (item) => {
@@ -392,17 +398,21 @@ function KedroRunManager(props) {
     if (!showMetadata || !mounted) {
       return null;
     }
-    if (metadataMode === 'param') {
+    if (metadataMode === 'param' && activeParamKey) {
       const extra = (
         <ParamMetadataEditor
-          isOpen={true}
-          activeParamKey={activeParamKey}
-          paramOriginals={paramOriginals}
-          getParamValue={getParamValue}
+          key={activeParamKey}
+          getParamValue={() => getParamValue(activeParamKey)}
           toYamlString={toYamlString}
           parseYamlishValue={parseYamlishValue}
-          editParamInEditor={editParamInEditor}
-          resetParamInEditor={resetParamInEditor}
+          onSave={(val) => {
+            editParamInEditor(activeParamKey, val);
+            getParamValue(activeParamKey); // Refresh editor content
+          }}
+          onReset={() => {
+            resetParamInEditor(activeParamKey);
+            getParamValue(activeParamKey); // Refresh editor content
+          }}
           showToast={showToast}
         />
       );
@@ -447,7 +457,6 @@ function KedroRunManager(props) {
       removeFromWatchList={removeFromWatchList}
     />
   );
-
 
   const renderWatchListDeveloper = () => (
     <details

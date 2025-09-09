@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect} from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
   'kedro_viz_runner_watch_custom_order';
@@ -48,15 +48,18 @@ function WatchPanel({
     setItemsToShow(newItemsToShow);
   }, [watchTab, parameterItems, datasetItems, customOrder]);
 
-  const getParamPreview = useCallback((key) => {
-    const value = getEditedParamValue(key);
-    if (typeof value === 'undefined') {
-      return '—';
-    }
-    const text = toYamlString(value) || '';
-    const firstLine = String(text).split(/\r?\n/)[0];
-    return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
-  }, [getEditedParamValue, toYamlString]);
+  const getParamPreview = useCallback(
+    (key) => {
+      const value = getEditedParamValue(key);
+      if (typeof value === 'undefined') {
+        return '—';
+      }
+      const text = toYamlString(value) || '';
+      const firstLine = String(text).split(/\r?\n/)[0];
+      return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
+    },
+    [getEditedParamValue, toYamlString]
+  );
 
   const startDragWatch = useCallback((kind, id) => {
     setDraggingWatch({ kind, id });
@@ -131,7 +134,7 @@ function WatchPanel({
         <ul className="watchlist-list">
           {itemsToShow.map((item) => (
             <li
-              key={`${item.name} (${item.kind}:${item.id})`}
+              key={`${item.name}`}
               className={`watchlist-item ${
                 item.kind === 'param' && strictlyChanged?.[item.id]
                   ? 'watchlist-item--edited'
@@ -146,7 +149,7 @@ function WatchPanel({
                 className="watchlist-item__main"
                 onClick={() => onWatchItemClick(item)}
               >
-                <span className="watchlist-item__name">{`${item.name} (${item.kind}:${item.id})`}</span>
+                <span className="watchlist-item__name">{`${item.name}`}</span>
                 {watchTab === 'param' && (
                   <span className="watchlist-item__preview">
                     {getParamPreview(item.id)}

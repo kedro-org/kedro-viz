@@ -76,7 +76,7 @@ function useParameterEditor() {
         !Array.isArray(parsed.entries)
           ? parsed.entries
           : {};
-      setParamEntries((prev) => {
+      setParamEntries((_) => {
         // Validate entry shape from storage
         const cleaned = {};
         Object.entries(entries).forEach(([key, entry]) => {
