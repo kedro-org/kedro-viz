@@ -1,179 +1,193 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 
 // Keys for persisting parameter edits and originals
-const RUNNER_PARAM_EDITS_STORAGE_KEY = 'kedro_viz_runner_param_edits';
-const RUNNER_PARAM_ORIGINALS_STORAGE_KEY = 'kedro_viz_runner_param_originals';
+const RUNNER_PARAM_STATES_STORAGE_KEY = 'kedro_viz_runner_param_states';
 
 function useParameterEditor() {
-  const saveParamsTimer = useRef();
-  const [paramOriginals, setParamOriginals] = useState({});
-  const [paramEdits, setParamEdits] = useState({});
-  const [strictlyChanged, setStrictlyChanged] = useState({});
+  // Unified per-key entry: { original, edit }
+  const [paramEntries, setParamEntries] = useState({}); // key -> { original, edit }
 
-  const computeStrictlyChanged = useCallback(() => {
-    const result = {};
-    const watchParamKeys = Object.keys(paramOriginals || {});
-    watchParamKeys.forEach((key) => {
-      const orig = paramOriginals[key];
-      const current = paramEdits[key];
-      if (JSON.stringify(orig) !== JSON.stringify(current)) {
-        result[key] = true;
+  const paramOriginals = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(paramEntries).map(([key, entry]) => [
+          key,
+          entry.original,
+        ])
+      ),
+    [paramEntries]
+  );
+  const paramEdits = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(paramEntries).map(([key, entry]) => [key, entry.edit])
+      ),
+    [paramEntries]
+  );
+  const strictlyChanged = useMemo(() => {
+    const changed = {};
+    Object.entries(paramEntries).forEach(([key, entry]) => {
+      if (JSON.stringify(entry.original) !== JSON.stringify(entry.edit)) {
+        changed[key] = true;
       }
     });
-    return result;
-  }, [paramOriginals, paramEdits]);
+    return changed;
+  }, [paramEntries]);
 
-  const updateStrictlyChanged = useCallback(() => {
-    try {
-      const next = computeStrictlyChanged();
-      setStrictlyChanged((prev) => {
-        if (JSON.stringify(next) === JSON.stringify(prev || {})) {
-          return prev;
-        }
-        return next;
-      });
-    } catch {}
-  }, [computeStrictlyChanged]);
-
-  const addParams = useCallback((newParams) => {
-    if (!newParams || Object.keys(newParams).length === 0) {
-      return;
-    }
-
-    // Only add parameters that are not already present
-    setParamOriginals((prev) => {
-      const updated = { ...(prev || {}) };
-      Object.keys(newParams || {}).forEach((key) => {
-        if (!Object.prototype.hasOwnProperty.call(updated, key)) {
-          updated[key] = newParams[key];
-        }
-      });
-      return updated;
-    });
-    setParamEdits((prev) => {
-      const updated = { ...(prev || {}) };
-      Object.keys(newParams || {}).forEach((key) => {
-        if (!Object.prototype.hasOwnProperty.call(updated, key)) {
-          updated[key] = newParams[key];
-        }
-      });
-      return updated;
-    });
-  }, []);
-
-  const removeParam = useCallback((paramKey) => {
-    setParamOriginals((prev) => {
-      const updated = { ...(prev || {}) };
-      delete updated[paramKey];
-      return updated;
-    });
-    setParamEdits((prev) => {
-      const updated = { ...(prev || {}) };
-      delete updated[paramKey];
-      return updated;
-    });
-    setStrictlyChanged((prev) => {
-      const updated = { ...(prev || {}) };
-      delete updated[paramKey];
-      return updated;
-    });
-  }, []);
-
-  const clearParams = useCallback(() => {
-    setParamOriginals({});
-    setParamEdits({});
-    setStrictlyChanged({});
-  }, []);
-
+  // Persistence
   const saveParamsToStorage = useCallback(() => {
     try {
       window.localStorage.setItem(
-        RUNNER_PARAM_EDITS_STORAGE_KEY,
-        JSON.stringify(paramEdits || {})
-      );
-      window.localStorage.setItem(
-        RUNNER_PARAM_ORIGINALS_STORAGE_KEY,
-        JSON.stringify(paramOriginals || {})
+        RUNNER_PARAM_STATES_STORAGE_KEY,
+        JSON.stringify({ entries: paramEntries })
       );
     } catch {}
-  }, [paramEdits, paramOriginals]);
+  }, [paramEntries]);
 
-  const saveParamsToStorageDebounced = useCallback(
-    (wait = 200) => {
-      if (saveParamsTimer.current) {
-        clearTimeout(saveParamsTimer.current);
+  const loadParamsFromStorage = useCallback(() => {
+    try {
+      const raw = window.localStorage.getItem(RUNNER_PARAM_STATES_STORAGE_KEY);
+      if (!raw) {
+        return;
       }
-      saveParamsTimer.current = setTimeout(() => {
-        saveParamsToStorage();
-      }, Math.max(0, wait));
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') {
+        return;
+      }
+      const entries =
+        parsed.entries &&
+        typeof parsed.entries === 'object' &&
+        !Array.isArray(parsed.entries)
+          ? parsed.entries
+          : {};
+      setParamEntries((prev) => {
+        if (Object.keys(prev).length) {
+          return prev; // don't overwrite existing
+        }
+        // Validate entry shape
+        const cleaned = {};
+        Object.entries(entries).forEach(([key, entry]) => {
+          if (entry && typeof entry === 'object') {
+            cleaned[key] = {
+              original: entry.original,
+              edit: Object.prototype.hasOwnProperty.call(entry, 'edit')
+                ? entry.edit
+                : entry.original,
+            };
+          }
+        });
+        return cleaned;
+      });
+    } catch {}
+  }, []);
+
+  // Generic state updater ensuring strictlyChanged consistency
+  // Helper to update entries immutably
+  const setEntries = useCallback((updater) => {
+    setParamEntries((prev) => {
+      const next = updater(prev);
+      if (!next) {
+        return prev;
+      }
+      if (JSON.stringify(prev) === JSON.stringify(next)) {
+        return prev;
+      }
+      return next;
+    });
+  }, []);
+
+  const addParams = useCallback(
+    (newParams) => {
+      if (!newParams || !Object.keys(newParams).length) {
+        return;
+      }
+      setEntries((prev) => {
+        const next = { ...prev };
+        Object.entries(newParams).forEach(([key, value]) => {
+          if (!Object.prototype.hasOwnProperty.call(next, key)) {
+            next[key] = { original: value, edit: value };
+          }
+        });
+        return next;
+      });
     },
-    [saveParamsToStorage]
+    [setEntries]
+  );
+
+  const editParam = useCallback(
+    (paramKey, newValue) => {
+      if (!paramKey) {
+        return;
+      }
+      setEntries((prev) => {
+        if (!Object.prototype.hasOwnProperty.call(prev, paramKey)) {
+          return prev;
+        }
+        return { ...prev, [paramKey]: { ...prev[paramKey], edit: newValue } };
+      });
+    },
+    [setEntries]
   );
 
   const resetParam = useCallback(
     (paramKey) => {
       if (!paramKey) {
-        return undefined;
+        return;
       }
-      setParamEdits((prev) => {
-        const updated = { ...(prev || {}) };
-        if (!Object.prototype.hasOwnProperty.call(paramOriginals, paramKey)) {
-          delete updated[paramKey];
-        } else {
-          updated[paramKey] = paramOriginals[paramKey];
+      setEntries((prev) => {
+        if (!prev[paramKey]) {
+          return prev;
         }
-        return updated;
+        return {
+          ...prev,
+          [paramKey]: { ...prev[paramKey], edit: prev[paramKey].original },
+        };
       });
     },
-    [paramOriginals]
+    [setEntries]
   );
 
-  const editParam = useCallback((paramKey, newValue) => {
-    setParamEdits((prev) => ({ ...(prev || {}), [paramKey]: newValue }));
-  }, []);
+  const removeParam = useCallback(
+    (paramKey) => {
+      if (!paramKey) {
+        return;
+      }
+      setEntries((prev) => {
+        if (!Object.prototype.hasOwnProperty.call(prev, paramKey)) {
+          return prev;
+        }
+        const next = { ...prev };
+        delete next[paramKey];
+        return next;
+      });
+    },
+    [setEntries]
+  );
 
-  const loadParamEditsFromStorage = useCallback(() => {
+  const clearParams = useCallback(() => {
+    setParamEntries({});
     try {
-      const editsRaw = window.localStorage.getItem(
-        RUNNER_PARAM_EDITS_STORAGE_KEY
+      window.localStorage.setItem(
+        RUNNER_PARAM_STATES_STORAGE_KEY,
+        JSON.stringify({ entries: {} })
       );
-      const originalsRaw = window.localStorage.getItem(
-        RUNNER_PARAM_ORIGINALS_STORAGE_KEY
-      );
-      const edits = editsRaw ? JSON.parse(editsRaw) : {};
-      const originals = originalsRaw ? JSON.parse(originalsRaw) : {};
-      return { edits, originals };
-    } catch {
-      return { edits: {}, originals: {} };
-    }
+    } catch {}
   }, []);
 
-  const hydrateParamEditsFromStorage = useCallback(() => {
-    const { edits, originals } = loadParamEditsFromStorage();
-    const hasEdits = edits && Object.keys(edits).length > 0;
-    const hasOriginals = originals && Object.keys(originals).length > 0;
-    if (!hasEdits && !hasOriginals) {
-      return;
-    }
-    if (hasEdits) {
-      setParamEdits(edits);
-    }
-    if (hasOriginals) {
-      setParamOriginals(originals);
-    }
-  }, [loadParamEditsFromStorage]);
-
   useEffect(() => {
-    saveParamsToStorageDebounced();
-  }, [paramEdits, paramOriginals]);
+    saveParamsToStorage();
+  }, [paramEntries, saveParamsToStorage]);
 
+  // Hydrate once on mount
   useEffect(() => {
-    updateStrictlyChanged();
-  }, [paramOriginals, paramEdits, updateStrictlyChanged]);
-
-  // useEffect(() => {
-  //   hydrateParamEditsFromStorage();
-  // }, []);
+    loadParamsFromStorage();
+  }, [loadParamsFromStorage]);
 
   return {
     paramOriginals,
@@ -184,7 +198,6 @@ function useParameterEditor() {
     clearParams,
     resetParam,
     editParam,
-    saveParamsToStorageDebounced,
   };
 }
 
