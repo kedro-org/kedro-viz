@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { PIPELINE } from '../../../config';
 import { fetchKedroEnv } from '../../../utils/runner-api';
+import {
+  quoteIfNeeded,
+  normalizeParamPrefix,
+  collectParamDiffs,
+  buildParamDiffModel,
+} from '../utils/paramsDiff';
 
 /**
  * useCommandBuilder
@@ -21,110 +27,22 @@ function useCommandBuilder({
 }) {
   const [kedroEnv, setKedroEnv] = useState(kedroEnvProp || null);
 
-  // --- Helpers ---
-  const quoteIfNeeded = useCallback((text) => {
-    if (!text) {
-      return '';
-    }
-    const str = String(text);
-    return /\s/.test(str) ? `"${str.replace(/"/g, '\\"')}"` : str;
-  }, []);
-
-  const normalizeParamPrefix = useCallback((text) => {
-    if (text == null || text === '') {
-      return '';
-    }
-    try {
-      return String(text).replace(/^params:/, '');
-    } catch {
-      return text;
-    }
-  }, []);
-
-  const formatParamValueForCli = useCallback((value) => {
-    if (value === null || typeof value === 'number' || typeof value === 'boolean') {
-      return String(value);
-    }
-    if (typeof value === 'string') {
-      const needsQuotes = /[\s,]/.test(value);
-      const escaped = value.replace(/"/g, '\\"');
-      return needsQuotes ? `"${escaped}"` : escaped;
-    }
-    return JSON.stringify(value);
-  }, []);
-
-  const collectParamDiffs = useCallback(
-    (orig, edited, prefix) => {
-      const pairs = [];
-      if (typeof orig === 'undefined') {
-        if (typeof edited === 'undefined') {
-          return pairs;
-        }
-        if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
-          Object.keys(edited).forEach((k) => {
-            const val = edited[k];
-            const keyPath = `${prefix}.${k}`;
-            if (val && typeof val === 'object' && !Array.isArray(val)) {
-              pairs.push(...collectParamDiffs(undefined, val, keyPath));
-            } else {
-              pairs.push(`${keyPath}=${formatParamValueForCli(val)}`);
-            }
-          });
-        } else {
-          pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-        }
-        return pairs;
-      }
-      if (
-        orig && typeof orig === 'object' && !Array.isArray(orig) &&
-        edited && typeof edited === 'object' && !Array.isArray(edited)
-      ) {
-        const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
-        keys.forEach((k) => {
-          const origVal = orig[k];
-            const editedVal = edited[k];
-            if (typeof editedVal === 'undefined') {
-              return;
-            }
-            const keyPath = `${prefix}.${k}`;
-            if (
-              origVal && typeof origVal === 'object' && !Array.isArray(origVal) &&
-              editedVal && typeof editedVal === 'object' && !Array.isArray(editedVal)
-            ) {
-              pairs.push(...collectParamDiffs(origVal, editedVal, keyPath));
-            } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
-              pairs.push(`${keyPath}=${formatParamValueForCli(editedVal)}`);
-            }
-        });
-        return pairs;
-      }
-      if (JSON.stringify(orig) !== JSON.stringify(edited)) {
-        pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-      }
-      return pairs;
-    },
-    [formatParamValueForCli]
-  );
-
-  // Derive parameter change pairs & paramsArgString
-  const paramPairs = useMemo(() => {
-    const currentWatchList = watchList || [];
-    if (!currentWatchList.length) {
-      return [];
-    }
-    const pairs = [];
-    currentWatchList.filter((i) => i.kind === 'param').forEach((item) => {
+  // --- Diff Model ---
+  const diffModel = useMemo(() => {
+    const items = (watchList || []).filter((i) => i.kind === 'param');
+    return items.map((item) => {
       const key = item.id;
-      const prefixName = normalizeParamPrefix(item.name || item.id);
       const originals = paramOriginals || {};
       const orig = Object.prototype.hasOwnProperty.call(originals, key)
         ? originals[key]
         : getParamValue?.(key);
       const curr = getParamValueFromKey ? getParamValueFromKey(key) : paramEdits[key];
-      pairs.push(...collectParamDiffs(orig, curr, prefixName));
+      return buildParamDiffModel(key, item.name || key, orig, curr);
     });
-    return pairs;
-  }, [watchList, paramOriginals, paramEdits, getParamValue, getParamValueFromKey, normalizeParamPrefix, collectParamDiffs]);
+  }, [watchList, paramOriginals, paramEdits, getParamValue, getParamValueFromKey]);
+
+  // Derive parameter change pairs & paramsArgString
+  const paramPairs = useMemo(() => diffModel.flatMap((d) => d.pairs), [diffModel]);
 
   const paramsArgString = useMemo(() => paramPairs.join(','), [paramPairs]);
 
@@ -180,7 +98,8 @@ function useCommandBuilder({
     commandString,
     paramsArgString,
     paramPairs,
-    buildRunCommand,
+  buildRunCommand,
+  diffModel,
   };
 }
 

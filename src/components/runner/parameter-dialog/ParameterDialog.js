@@ -1,89 +1,23 @@
 import React from 'react';
-
-// Helper utilities (kept local to dialog)
-const quoteIfNeeded = (text) => {
-  if (!text) { return ''; }
-  const str = String(text);
-  return /\s/.test(str) ? `"${str.replace(/"/g, '\\"')}"` : str;
-};
-
-const normalizeParamPrefix = (text) => {
-  if (text == null || text === '') { return ''; }
-  try { return String(text).replace(/^params:/, ''); } catch { return text; }
-};
-
-const formatParamValueForCli = (value) => {
-  if (value === null || typeof value === 'number' || typeof value === 'boolean') { return String(value); }
-  if (typeof value === 'string') {
-    const needsQuotes = /[\s,]/.test(value);
-    const escaped = value.replace(/"/g, '\\"');
-    return needsQuotes ? `"${escaped}"` : escaped;
-  }
-  return JSON.stringify(value);
-};
-
-const collectParamDiffs = (orig, edited, prefix) => {
-  const pairs = [];
-  if (typeof orig === 'undefined') {
-    if (typeof edited === 'undefined') { return pairs; }
-    if (edited && typeof edited === 'object' && !Array.isArray(edited)) {
-      Object.keys(edited).forEach((k) => {
-        const val = edited[k];
-        const keyPath = `${prefix}.${k}`;
-        if (val && typeof val === 'object' && !Array.isArray(val)) {
-          pairs.push(...collectParamDiffs(undefined, val, keyPath));
-        } else {
-          pairs.push(`${keyPath}=${formatParamValueForCli(val)}`);
-        }
-      });
-    } else {
-      pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-    }
-    return pairs;
-  }
-  if (orig && typeof orig === 'object' && !Array.isArray(orig) && edited && typeof edited === 'object' && !Array.isArray(edited)) {
-    const keys = new Set([...Object.keys(orig), ...Object.keys(edited)]);
-    keys.forEach((k) => {
-      const origVal = orig[k];
-      const editedVal = edited[k];
-      if (typeof editedVal === 'undefined') { return; }
-      const keyPath = `${prefix}.${k}`;
-      if (origVal && typeof origVal === 'object' && !Array.isArray(origVal) && editedVal && typeof editedVal === 'object' && !Array.isArray(editedVal)) {
-        pairs.push(...collectParamDiffs(origVal, editedVal, keyPath));
-      } else if (JSON.stringify(origVal) !== JSON.stringify(editedVal)) {
-        pairs.push(`${keyPath}=${formatParamValueForCli(editedVal)}`);
-      }
-    });
-    return pairs;
-  }
-  if (JSON.stringify(orig) !== JSON.stringify(edited)) {
-    pairs.push(`${prefix}=${formatParamValueForCli(edited)}`);
-  }
-  return pairs;
-};
+import { quoteIfNeeded } from '../utils/paramsDiff';
 
 const ParameterDialog = ({
   isOpen,
   onClose,
-  paramItems = [],
-  paramOriginals = {},
-  getParamValue,
-  getEditedParamValue,
+  diffModel = [],
   paramsArgString,
-  paramsDialogSelectedKey,
-  onSelectParamKey,
+  selectedKey: externalSelectedKey,
+  onSelectKey,
   toYamlString,
   renderHighlightedYamlLines,
 }) => {
   if (!isOpen) { return null; }
-  const selectedKey = paramsDialogSelectedKey || (paramItems[0] && paramItems[0].id);
-  const selectedItem = paramItems.find((i) => i.id === selectedKey) || paramItems[0];
-  const originals = paramOriginals || {};
-  const orig = Object.prototype.hasOwnProperty.call(originals, selectedKey) ? originals[selectedKey] : getParamValue(selectedKey);
-  const curr = getEditedParamValue(selectedKey);
-  const prefixName = normalizeParamPrefix((selectedItem && selectedItem.name) || selectedKey);
-  const perPairs = collectParamDiffs(orig, curr, prefixName);
-  const perParamArg = `--params ${quoteIfNeeded(perPairs.join(','))}`;
+  const items = diffModel || [];
+  const selectedKey = externalSelectedKey || (items[0] && items[0].key);
+  const selectedItem = items.find((i) => i.key === selectedKey) || items[0];
+  const orig = selectedItem ? selectedItem.original : undefined;
+  const curr = selectedItem ? selectedItem.edited : undefined;
+  const perParamArg = `--params ${quoteIfNeeded((selectedItem?.pairs || []).join(','))}`;
   const combinedParamsArg = `--params ${quoteIfNeeded(paramsArgString || '')}`;
   const argCodeStyle = { fontFamily: 'monospace', fontSize: '12px', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', wordBreak: 'break-word', lineBreak: 'anywhere' };
   return (
@@ -99,8 +33,8 @@ const ParameterDialog = ({
             <div style={{ marginTop: '10px', border: '1px solid var(--runner-border)', background: 'var(--runner-subpanel-bg)', borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: '12px', padding: '10px 12px', borderBottom: '1px solid var(--runner-border)', background: 'var(--runner-subpanel-header-bg)' }}>
                 <div style={{ fontWeight: 700 }}>Selected parameter</div>
-                <select id="param-changes-select" aria-label="Selected parameter" value={selectedKey} onChange={(e) => onSelectParamKey(e.target.value)} style={{ width: '100%' }}>
-                  {paramItems.map((item) => (<option key={item.id} value={item.id}>{item.name || item.id}</option>))}
+                <select id="param-changes-select" aria-label="Selected parameter" value={selectedKey} onChange={(e) => onSelectKey(e.target.value)} style={{ width: '100%' }}>
+                  {items.map((item) => (<option key={item.key} value={item.key}>{item.name || item.key}</option>))}
                 </select>
               </div>
               <div style={{ padding: '12px' }}>

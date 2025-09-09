@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 // Reuse existing metadata panel styles
 import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
+import ParamMetadataEditor from './metadata/ParamMetadataEditor';
 import ControlPanel from './control-panel';
 import WatchPanel from './watch-panel';
 import WatchListDialog from './watch-list-dialog';
@@ -42,26 +43,19 @@ function KedroRunManager(props) {
     removeFromWatchList,
     updateWatchList,
     clearWatchList,
-    saveWatchToStorageDebounced,
-
-    // Parameter editor interactions
     paramOriginals,
     paramEdits,
     resetParamInEditor,
     editParamInEditor,
-  getParamValueFromKey,
+    getParamValueFromKey,
     toYamlString,
     parseYamlishValue,
-  ensureOriginalsFor,
-    // exposed helpers
     getParamValue,
-    saveParamsToStorageDebounced,
   } = useWatchList(props);
 
   // State
   const [kedroEnvOverride, setKedroEnvOverride] = useState(null); // optional external override
   const [mounted, setMounted] = useState(false);
-  const [watchTab, setWatchTab] = useState('parameters');
 
   // Toast and transient UI state
   const toastTimer = useRef();
@@ -69,13 +63,10 @@ function KedroRunManager(props) {
   const [toastMessage, setToastMessage] = useState('');
 
   // Metadata / parameter editor UI state
-  const [metaEditText, setMetaEditText] = useState('');
-  const [yamlText, setYamlText] = useState('');
+  // (moved metaEditText state into ParamMetadataEditor component)
   const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
-  const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null);
-  const [params, setParams] = useState({});
-  const [editedParameters, setEditedParameters] = useState({});
-  const [selectedParamKey, setSelectedParamKey] = useState(null);
+  const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null); // for dialog
+  const [activeParamKey, setActiveParamKey] = useState(null); // for metadata editor
   const [selectedDataset, setSelectedDataset] = useState(null);
   const [showMetadata, setShowMetadata] = useState(false);
   const [metadataMode, setMetadataMode] = useState(null);
@@ -90,6 +81,7 @@ function KedroRunManager(props) {
     kedroEnv: kedroEnvDerived,
     commandString,
     paramsArgString,
+  diffModel,
   } = useCommandBuilder({
     activePipeline: props?.activePipeline,
     selectedTags: props?.selectedTags,
@@ -183,12 +175,7 @@ function KedroRunManager(props) {
   }, []);
 
   // --- Metadata editor handlers --- (Move to metadata parameter editor UI)
-  const onMetaEditChange = (e) => setMetaEditText(e.target.value);
-  const onMetaEditSave = () => {
-    setYamlText(metaEditText || '');
-    saveParamYaml();
-  };
-  const onMetaEditReset = () => resetParamYaml();
+  // (moved onMetaEditChange/onMetaEditSave/onMetaEditReset into ParamMetadataEditor)
 
   // Control panel helpers (Move to control panel component)
   const getCurrentCommandString = useCallback(() => commandString, [commandString]);
@@ -214,118 +201,18 @@ function KedroRunManager(props) {
   }, [commandInputRef, getCurrentCommandString, showToast]);
 
   const openParamsDialog = useCallback(() => {
-    try {
-      const paramItems = (watchList || []).filter((i) => i.kind === 'param');
-      const keys = paramItems.map((i) => i.id);
-      ensureOriginalsFor(keys);
-      const changedKeys = Object.keys(strictlyChanged || {}).filter((k) =>
-        keys.includes(k)
-      );
-      const initial = changedKeys[0] || keys[0] || null;
-      setIsParamsModalOpen(true);
-      setParamsDialogSelectedKey(initial);
-    } catch {
-      setIsParamsModalOpen(true);
-    }
-  }, [watchList, ensureOriginalsFor, strictlyChanged]);
+    const paramItems = (watchList || []).filter((i) => i.kind === 'param');
+    const keys = paramItems.map((i) => i.id);
+    const changedKeys = Object.keys(strictlyChanged || {}).filter((k) =>
+      keys.includes(k)
+    );
+    const initial = changedKeys[0] || keys[0] || null;
+    setIsParamsModalOpen(true);
+    setParamsDialogSelectedKey(initial);
+  }, [watchList, strictlyChanged]);
 
   // Parameter editing helpers adapted from legacy implementation
-  const resetParamKey = useCallback(
-    (paramKey) => {
-      if (!paramKey) {
-        return undefined;
-      }
-      const originals = paramOriginals || {};
-      const orig = Object.prototype.hasOwnProperty.call(originals, paramKey)
-        ? originals[paramKey]
-        : getParamValue(paramKey);
-
-      setEditedParameters((prev) => {
-        const next = { ...(prev || {}) };
-        if (typeof orig === 'undefined') {
-          delete next[paramKey];
-        } else {
-          next[paramKey] = orig;
-        }
-        return next;
-      });
-      setParams((prev) => {
-        const next = { ...(prev || {}) };
-        if (typeof orig === 'undefined') {
-          delete next[paramKey];
-        } else {
-          next[paramKey] = orig;
-        }
-        return next;
-      });
-
-      try {
-        editParamInEditor(paramKey, orig);
-      } catch {}
-
-      saveParamsToStorageDebounced();
-      return orig;
-    },
-    [
-      paramOriginals,
-      getParamValue,
-      editParamInEditor,
-      saveParamsToStorageDebounced,
-    ]
-  );
-
-  const updateEditedParam = useCallback(
-    (paramKey, value) => {
-      if (!paramKey) {
-        return;
-      }
-      setEditedParameters((prev) => ({ ...(prev || {}), [paramKey]: value }));
-      setParams((prev) => ({ ...(prev || {}), [paramKey]: value }));
-      try {
-        editParamInEditor(paramKey, value);
-      } catch {}
-      updateCommandFromProps();
-  saveParamsToStorageDebounced();
-    },
-  [editParamInEditor, saveParamsToStorageDebounced, updateCommandFromProps]
-  );
-
-  const saveParamYaml = useCallback(() => {
-    if (!selectedParamKey) {
-      return;
-    }
-    try {
-      ensureOriginalsFor(selectedParamKey);
-    } catch {}
-    const parsed = parseYamlishValue(yamlText);
-    updateEditedParam(selectedParamKey, parsed);
-    showToast('Parameter updated');
-  }, [
-    selectedParamKey,
-    yamlText,
-    ensureOriginalsFor,
-    parseYamlishValue,
-    updateEditedParam,
-    showToast,
-  ]);
-
-  const resetParamYaml = useCallback(() => {
-    if (!selectedParamKey) {
-      return;
-    }
-    const orig = resetParamKey(selectedParamKey);
-    const origYaml = toYamlString(orig);
-    setYamlText(origYaml);
-    setMetaEditText(origYaml);
-  updateCommandFromProps();
-    showToast('Reset to original');
-  }, [
-    selectedParamKey,
-    resetParamKey,
-    toYamlString,
-    updateCommandFromProps,
-    showToast,
-  ]);
+  // Legacy reset/edit YAML handlers removed (handled centrally by parameter editor hook now)
 
   const setSidInUrl = useCallback((nodeId) => {
     if (!nodeId) {
@@ -363,53 +250,20 @@ function KedroRunManager(props) {
     [updateWatchList]
   );
 
-  const openParamEditor = useCallback(
-    (paramKey) => {
-      let value = Object.prototype.hasOwnProperty.call(
-        editedParameters || {},
-        paramKey
-      )
-        ? editedParameters[paramKey]
-        : getParamValue(paramKey);
-      try {
-        if (
-          typeof value === 'function' ||
-          (typeof value === 'object' &&
-            value !== null &&
-            Object.getPrototypeOf(value) !== Object.prototype &&
-            !Array.isArray(value))
-        ) {
-          value = '';
-        }
-      } catch {
-        value = '';
-      }
-      if (props.dispatch) {
-        props.dispatch(loadNodeData(paramKey));
-        props.dispatch(toggleNodeClicked(paramKey));
-      }
-      const text = toYamlString(value) || 'default text';
-      setShowMetadata(true);
-      setMetadataMode('param');
-      setSelectedParamKey(paramKey);
-      setYamlText(text);
-      setMetaEditText(text);
-      setEditedParameters((prev) =>
-        Object.prototype.hasOwnProperty.call(prev || {}, paramKey)
-          ? prev
-          : { ...(prev || {}), [paramKey]: value }
-      );
-      setSidInUrl(paramKey);
-    },
-    [
-      ensureOriginalsFor,
-      editedParameters,
-      getParamValue,
-      props,
-      toYamlString,
-      setSidInUrl,
-    ]
-  );
+  const openParamEditor = useCallback((paramKey) => {
+    if (!paramKey) {
+      return;
+    }
+    if (props.dispatch) {
+      props.dispatch(loadNodeData(paramKey));
+      props.dispatch(toggleNodeClicked(paramKey));
+    }
+    setActiveParamKey(paramKey);
+    setShowMetadata(true);
+    setMetadataMode('param');
+  // ParamMetadataEditor will load YAML internally
+    setSidInUrl(paramKey);
+  }, [props, paramOriginals, getParamValue, toYamlString, setSidInUrl]);
 
   const onWatchItemClick = useCallback(
     (item) => {
@@ -540,28 +394,17 @@ function KedroRunManager(props) {
     }
     if (metadataMode === 'param') {
       const extra = (
-        <div style={{ margin: '0 36px 24px' }}>
-          <h3
-            className="pipeline-metadata__title pipeline-metadata__title--small"
-            style={{ margin: '0 0 8px' }}
-          >
-            Edit parameters
-          </h3>
-          <textarea
-            className="runner-meta-editor"
-            value={metaEditText}
-            onChange={onMetaEditChange}
-            spellCheck={false}
-          />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-            <button className="btn btn--primary" onClick={onMetaEditSave}>
-              Save
-            </button>
-            <button className="btn" onClick={onMetaEditReset}>
-              Reset
-            </button>
-          </div>
-        </div>
+        <ParamMetadataEditor
+          isOpen={true}
+          activeParamKey={activeParamKey}
+          paramOriginals={paramOriginals}
+          getParamValue={getParamValue}
+          toYamlString={toYamlString}
+          parseYamlishValue={parseYamlishValue}
+          editParamInEditor={editParamInEditor}
+          resetParamInEditor={resetParamInEditor}
+          showToast={showToast}
+        />
       );
       return <MetaData extraComponent={extra} />;
     }
@@ -680,16 +523,13 @@ function KedroRunManager(props) {
           onOpenParamsDialog={openParamsDialog}
           isParamsModalOpen={isParamsModalOpen}
           onCloseParamsModal={() => setIsParamsModalOpen(false)}
-          paramItems={(watchList || []).filter((i) => i.kind === 'param')}
           paramsDialogSelectedKey={paramsDialogSelectedKey}
           onSelectParamKey={setParamsDialogSelectedKey}
-          paramOriginals={paramOriginals}
-          getParamValue={getParamValue}
-          getEditedParamValue={getParamValueFromKey}
           toYamlString={toYamlString}
           renderHighlightedYamlLines={renderHighlightedYamlLines}
           paramsArgString={paramsArgString}
           kedroEnv={kedroEnvDerived}
+          diffModel={diffModel}
         />
 
         <section className="runner-manager__jobs-panel" ref={jobsPanelRef}>
