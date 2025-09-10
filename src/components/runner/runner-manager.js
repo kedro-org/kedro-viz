@@ -18,6 +18,7 @@ import { startKedroCommand } from '../../utils/runner-api';
 import { PIPELINE } from '../../config';
 import useCommandBuilder from './command-builder/useCommandBuilder';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
+import useRunnerUrlSelection from './hooks/useRunnerUrlSelection';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 
 /**
@@ -29,8 +30,14 @@ function KedroRunManager(props) {
   // Refs
   const commandInputRef = useRef();
   const jobsPanelRef = useRef();
-  const lastSid = useRef();
-  const pendingSid = useRef(null);
+  // URL selection management
+  const {
+    pendingSid,
+    syncFromUrl,
+    setSidInUrl,
+    removeSidFromUrl,
+    markSidProcessed,
+  } = useRunnerUrlSelection();
 
   // Job management hook
   const { jobs, logRefs, clearJob, terminateJob, addJob } = useJobs();
@@ -99,53 +106,24 @@ function KedroRunManager(props) {
   // Fetch kedro environment info from backend
   // (fetching handled inside useCommandBuilder when not provided)
 
-  // Helper to read sid from URL (placed before syncMetadataFromSid to avoid TDZ)
-  const getSidFromUrl = useCallback(() => {
-    try {
-      const searchParams = new URLSearchParams(window.location.search || '');
-      return searchParams.get('sid') || searchParams.get('selected_id') || '';
-    } catch (e) {
-      return '';
-    }
-  }, []);
+  // Directly use syncFromUrl (previous wrapper removed)
 
-  // Sync metadata panel from sid in URL (minimal implementation to avoid undefined errors before editors defined)
-  const syncMetadataFromSid = useCallback(() => {
-    const sid = getSidFromUrl();
-    if (!sid || sid === lastSid.current) {
-      return;
-    }
-    // Defer actual open until callbacks definitely initialised
-    pendingSid.current = sid;
-  }, [getSidFromUrl]);
-
-  // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
+  // Initialise on mount, cleanup on unmount
   useEffect(() => {
-    updateCommandFromProps(); // initial
-    // commandBuilder.paramsArgString now derived inside useCommandBuilder
-    syncMetadataFromSid();
-    window.addEventListener('popstate', syncMetadataFromSid);
-    return () => {
-      window.removeEventListener('popstate', syncMetadataFromSid);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // componentDidUpdate logic for prop/state changes
-  useEffect(() => {
-    // pipeline/tags/env changes
     updateCommandFromProps();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    props.activePipeline,
-    props.selectedTags,
-    commandBuilder.kedroEnv,
-    watchList,
-    commandBuilder.commandString,
-  ]);
+    syncFromUrl();
+    window.addEventListener('popstate', syncFromUrl);
+    return () => {
+      window.removeEventListener('popstate', syncFromUrl);
+    };
+  }, []);
+
+  // Sync command when relevant props change
+  useEffect(() => {
+    updateCommandFromProps();
+  }, [commandBuilder]);
 
   // Visual components used by run manager (stays here for now)
-  // Toast helpers
   const showToast = useCallback((message, duration = 2000) => {
     if (toastTimer.current) {
       clearTimeout(toastTimer.current);
@@ -166,14 +144,19 @@ function KedroRunManager(props) {
   }, []);
 
   // Control panel helpers (Move to control panel component)
-  const getCurrentCommandString = useCallback(
-    () => commandBuilder.commandString,
-    [commandBuilder.commandString]
-  );
+  const getCurrentCommandString = useCallback(() => {
+    const cmd = commandInputRef.current?.value;
+    if (cmd) {
+      return cmd;
+    }
+    // Fallback is to sync again
+    updateCommandFromProps();
+    return commandBuilder.commandString();
+  }, [commandBuilder.commandString]);
 
   const copyCommandToClipboard = useCallback(async () => {
     try {
-      const text = commandInputRef.current?.value || getCurrentCommandString();
+      const text = getCurrentCommandString();
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
@@ -197,29 +180,7 @@ function KedroRunManager(props) {
     setParamsDialogSelectedKey(initial);
   }, [commandBuilder]);
 
-  const setSidInUrl = useCallback((nodeId) => {
-    if (!nodeId) {
-      return;
-    }
-    try {
-      const current = new URL(window.location.href);
-      current.searchParams.set('sid', nodeId);
-      current.searchParams.delete('sn');
-      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
-      window.history.pushState({}, '', nextUrl);
-      lastSid.current = nodeId;
-    } catch {}
-  }, []);
-
-  const removeSidFromUrl = useCallback(() => {
-    try {
-      const current = new URL(window.location.href);
-      current.searchParams.delete('sid');
-      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
-      window.history.pushState({}, '', nextUrl);
-      lastSid.current = null;
-    } catch {}
-  }, []);
+  // setSidInUrl & removeSidFromUrl now from hook
 
   const openDatasetDetails = useCallback((dataset) => {
     setShowMetadata(true);
@@ -303,44 +264,41 @@ function KedroRunManager(props) {
 
   // Process any deferred sid (from initial URL) after editors are defined
   useEffect(() => {
-    const sid = pendingSid.current;
-    if (!sid || sid === lastSid.current) {
+    const sid = pendingSid;
+    if (!sid) {
       return;
     }
-    // Attempt to find param node first
     const paramNode = (paramNodes || []).find((node) => node.id === sid);
     if (paramNode) {
-      lastSid.current = sid;
       if (dispatch) {
         dispatch(loadNodeData(sid));
         dispatch(toggleNodeClicked(sid));
       }
-      try {
-        openParamEditor(sid);
-      } catch (e) {
-        /* ignore */
-      }
-      pendingSid.current = null;
+      openParamEditor(sid);
+      markSidProcessed();
       return;
     }
     const datasetNode = (datasets || []).find((node) => node.id === sid);
     if (datasetNode) {
-      lastSid.current = sid;
       if (dispatch) {
         dispatch(loadNodeData(sid));
         dispatch(toggleNodeClicked(sid));
       }
-      try {
-        openDatasetDetails(datasetNode);
-      } catch (e) {}
-      pendingSid.current = null;
+      openDatasetDetails(datasetNode);
+      markSidProcessed();
     }
-  }, [paramNodes, datasets, openParamEditor, openDatasetDetails, dispatch]);
+  }, [
+    pendingSid,
+    paramNodes,
+    datasets,
+    openParamEditor,
+    openDatasetDetails,
+    dispatch,
+    markSidProcessed,
+  ]);
 
   const onStartRun = useCallback(() => {
-    const command = commandInputRef.current
-      ? commandInputRef.current.value
-      : getCurrentCommandString();
+    const command = getCurrentCommandString();
     // eslint-disable-next-line no-console
     console.log('[Runner] Start run clicked', command);
     startKedroCommand(command)
