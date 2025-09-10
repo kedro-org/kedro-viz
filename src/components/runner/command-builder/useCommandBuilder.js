@@ -36,15 +36,41 @@ function useCommandBuilder({
       const orig = Object.prototype.hasOwnProperty.call(originals, key)
         ? originals[key]
         : getParamValue?.(key);
-      const curr = getParamValueFromKey ? getParamValueFromKey(key) : paramEdits[key];
+      const curr = getParamValueFromKey
+        ? getParamValueFromKey(key)
+        : paramEdits[key];
       return buildParamDiffModel(key, item.name || key, orig, curr);
     });
-  }, [watchList, paramOriginals, paramEdits, getParamValue, getParamValueFromKey]);
+  }, [
+    watchList,
+    paramOriginals,
+    paramEdits,
+    getParamValue,
+    getParamValueFromKey,
+  ]);
 
   // Derive parameter change pairs & paramsArgString
-  const paramPairs = useMemo(() => diffModel.flatMap((d) => d.pairs), [diffModel]);
+  const paramPairs = useMemo(
+    () => diffModel.flatMap((d) => d.pairs),
+    [diffModel]
+  );
 
   const paramsArgString = useMemo(() => paramPairs.join(','), [paramPairs]);
+
+  // Flag for any param changes
+  const hasParamChanges = useMemo(
+    () => diffModel.some((d) => d.pairs.length > 0),
+    [diffModel]
+  );
+
+  // Compute an initial param selection (prioritise first changed, else first item)
+  const initialParamSelection = useMemo(() => {
+    const changed = diffModel.find((d) => d.pairs.length > 0);
+    if (changed) {
+      return changed.key;
+    }
+    return diffModel.length ? diffModel[0].key : null;
+  }, [diffModel]);
 
   // Build base command (without --params)
   const buildRunCommand = useCallback(() => {
@@ -68,13 +94,15 @@ function useCommandBuilder({
 
   const commandString = useMemo(() => {
     const base = buildRunCommand();
-    return paramsArgString ? `${base} --params ${quoteIfNeeded(paramsArgString)}` : base;
+    return paramsArgString
+      ? `${base} --params ${quoteIfNeeded(paramsArgString)}`
+      : base;
   }, [buildRunCommand, paramsArgString, quoteIfNeeded]);
 
   // Fetch kedro env once (if not provided)
   useEffect(() => {
     if (kedroEnvProp) {
-      return; // controlled externally
+      return;
     }
     let mounted = true;
     (async () => {
@@ -83,9 +111,7 @@ function useCommandBuilder({
         if (mounted && env && env !== kedroEnv) {
           setKedroEnv(env);
         }
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     })();
     return () => {
       mounted = false;
@@ -98,8 +124,10 @@ function useCommandBuilder({
     commandString,
     paramsArgString,
     paramPairs,
-  buildRunCommand,
-  diffModel,
+    buildRunCommand,
+    diffModel,
+    hasParamChanges,
+    initialParamSelection,
   };
 }
 

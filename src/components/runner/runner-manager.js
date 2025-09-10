@@ -74,12 +74,7 @@ function KedroRunManager(props) {
   const { paramNodes = [], datasets = [], dispatch } = props || {};
 
   // --- Command builder hook ---
-  const {
-    kedroEnv: kedroEnvDerived,
-    commandString,
-    paramsArgString,
-    diffModel,
-  } = useCommandBuilder({
+  const commandBuilder = useCommandBuilder({
     activePipeline: props?.activePipeline,
     selectedTags: props?.selectedTags,
     kedroEnv: props?.kedroEnv || kedroEnvOverride,
@@ -99,11 +94,11 @@ function KedroRunManager(props) {
 
   // Keep command input ref updated
   const updateCommandFromProps = useCallback(() => {
-    const cmd = commandString;
+    const cmd = commandBuilder.commandString;
     if (commandInputRef?.current && commandInputRef.current.value !== cmd) {
       commandInputRef.current.value = cmd;
     }
-  }, [commandString]);
+  }, [commandBuilder.commandString]);
 
   // Fetch kedro environment info from backend
   // (fetching handled inside useCommandBuilder when not provided)
@@ -119,22 +114,19 @@ function KedroRunManager(props) {
   }, []);
 
   // Sync metadata panel from sid in URL (minimal implementation to avoid undefined errors before editors defined)
-  const syncMetadataFromSid = useCallback(
-    (props) => {
-      const sid = getSidFromUrl();
-      if (!sid || sid === lastSid.current) {
-        return;
-      }
-      // Defer actual open until callbacks definitely initialised
-      pendingSid.current = sid;
-    },
-    [getSidFromUrl]
-  );
+  const syncMetadataFromSid = useCallback(() => {
+    const sid = getSidFromUrl();
+    if (!sid || sid === lastSid.current) {
+      return;
+    }
+    // Defer actual open until callbacks definitely initialised
+    pendingSid.current = sid;
+  }, [getSidFromUrl]);
 
   // --- Lifecycle: componentDidMount, componentWillUnmount, componentDidUpdate ---
   useEffect(() => {
     updateCommandFromProps(); // initial
-    // paramsArgString now derived inside useCommandBuilder
+    // commandBuilder.paramsArgString now derived inside useCommandBuilder
     syncMetadataFromSid();
     window.addEventListener('popstate', syncMetadataFromSid);
     return () => {
@@ -151,9 +143,9 @@ function KedroRunManager(props) {
   }, [
     props.activePipeline,
     props.selectedTags,
-    kedroEnvDerived,
+    commandBuilder.kedroEnv,
     watchList,
-    commandString,
+    commandBuilder.commandString,
   ]);
 
   // Visual components used by run manager (stays here for now)
@@ -179,8 +171,8 @@ function KedroRunManager(props) {
 
   // Control panel helpers (Move to control panel component)
   const getCurrentCommandString = useCallback(
-    () => commandString,
-    [commandString]
+    () => commandBuilder.commandString,
+    [commandBuilder.commandString]
   );
 
   const copyCommandToClipboard = useCallback(async () => {
@@ -204,15 +196,10 @@ function KedroRunManager(props) {
   }, [commandInputRef, getCurrentCommandString, showToast]);
 
   const openParamsDialog = useCallback(() => {
-    const paramItems = (watchList || []).filter((i) => i.kind === 'param');
-    const keys = paramItems.map((i) => i.id);
-    const changedKeys = Object.keys(strictlyChanged || {}).filter((k) =>
-      keys.includes(k)
-    );
-    const initial = changedKeys[0] || keys[0] || null;
+    const initial = commandBuilder?.initialParamSelection || null;
     setIsParamsModalOpen(true);
     setParamsDialogSelectedKey(initial);
-  }, [watchList, strictlyChanged]);
+  }, [commandBuilder]);
 
   // Parameter editing helpers adapted from legacy implementation
   // Legacy reset/edit YAML handlers removed (handled centrally by parameter editor hook now)
@@ -551,7 +538,7 @@ function KedroRunManager(props) {
     );
   };
   // --- Main render ---
-  const hasParamChanges = !!Object.keys(strictlyChanged || {}).length;
+  // hasParamChanges now provided by commandBuilder
   const containerClass = classnames('runner-manager', {
     'runner-manager--with-sidebar': props.displaySidebar,
     'runner-manager--sidebar-open':
@@ -571,7 +558,7 @@ function KedroRunManager(props) {
           onStartRun={onStartRun}
           commandInputRef={commandInputRef}
           onCopyCommand={copyCommandToClipboard}
-          hasParamChanges={hasParamChanges}
+          hasParamChanges={commandBuilder?.hasParamChanges}
           activePipeline={props.activePipeline || PIPELINE.DEFAULT}
           selectedTags={props.selectedTags || []}
           onOpenParamsDialog={openParamsDialog}
@@ -581,9 +568,9 @@ function KedroRunManager(props) {
           onSelectParamKey={setParamsDialogSelectedKey}
           toYamlString={toYamlString}
           renderHighlightedYamlLines={renderHighlightedYamlLines}
-          paramsArgString={paramsArgString}
-          kedroEnv={kedroEnvDerived}
-          diffModel={diffModel}
+          paramsArgString={commandBuilder.paramsArgString}
+          kedroEnv={commandBuilder.kedroEnv}
+          diffModel={commandBuilder.diffModel}
         />
 
         <section className="runner-manager__jobs-panel" ref={jobsPanelRef}>
