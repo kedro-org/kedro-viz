@@ -25,6 +25,124 @@ function useWatchList(props) {
     loadParamsFromStorage,
   } = useParameterEditor();
 
+  const getBaseParamValue = useCallback(
+    (paramKey) => {
+      // First check if there's metadata available from the clicked node
+      try {
+        const meta = props?.clickedNodeMetaData;
+        if (
+          meta?.parameters &&
+          Object.prototype.hasOwnProperty.call(meta.parameters, paramKey)
+        ) {
+          const metaVal = meta.parameters[paramKey];
+          if (typeof metaVal !== 'undefined') {
+            return metaVal;
+          }
+        }
+      } catch {}
+
+      // Fallback to the redux store
+      const reduxMap = props?.nodeParameters || {};
+      if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
+        const val = reduxMap[paramKey];
+
+        if (val && typeof val === 'object' && !Array.isArray(val)) {
+          if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
+            return val[paramKey];
+          }
+          const keys = Object.keys(val);
+          if (keys.length === 1) {
+            return val[keys[0]];
+          }
+        }
+      }
+      return undefined;
+    },
+    [props]
+  );
+
+  const setParamValueForKey = useCallback(
+    (paramKey, newValue) => {
+      editParamInEditor(paramKey, newValue);
+    },
+    [editParamInEditor]
+  );
+
+  const getParamValueFromKey = useCallback(
+    (paramKey) => {
+      if (Object.prototype.hasOwnProperty.call(paramEdits, paramKey)) {
+        const val = paramEdits[paramKey];
+        if (typeof val !== 'undefined') {
+          return val;
+        }
+        return undefined;
+      }
+      // Seed editor with base value if not present
+      const val = getBaseParamValue(paramKey);
+      setParamValueForKey(paramKey, val);
+      return val;
+    },
+    [paramEdits, getBaseParamValue, setParamValueForKey]
+  );
+
+  const addToWatchList = useCallback(
+    (item) => {
+      if (!item || !item.kind || !item.id) {
+        return;
+      }
+
+      setWatchList((prev) => {
+        const exists = prev.some(
+          (wlItem) => wlItem.kind === item.kind && wlItem.id === item.id
+        );
+        if (exists) {
+          return prev;
+        }
+
+        return [...prev, item];
+      });
+    },
+    [setWatchList]
+  );
+
+  const removeFromWatchList = useCallback(
+    (itemId) => {
+      if (!itemId) {
+        return;
+      }
+
+      // Remove from watch list
+      setWatchList((prev) => prev.filter((wlItem) => !(wlItem.id === itemId)));
+    },
+    [setWatchList]
+  );
+
+  const updateWatchList = useCallback(
+    (newWatchList) => {
+      // Iterate through all parameter keys
+      if (!Array.isArray(newWatchList)) {
+        return;
+      }
+
+      const currentIds = (newWatchList || []).map((item) => item.id);
+      currentIds.forEach((itemId) => {
+        if (dispatch) {
+          dispatch(loadNodeData(itemId));
+          dispatch(toggleNodeClicked(itemId));
+        }
+      });
+
+      // Save watch list
+      setWatchList(newWatchList);
+    },
+    [setWatchList, dispatch]
+  );
+
+  const clearWatchList = useCallback(() => {
+    setWatchList([]);
+    clearParamsInEditor();
+  }, [setWatchList, clearParamsInEditor]);
+
   // --- Watch list persistence/helpers ---
   const saveWatchToStorage = useCallback(
     (list = watchList) => {
@@ -78,7 +196,7 @@ function useWatchList(props) {
     if ((storedWatchList || []).length) {
       updateWatchList(storedWatchList);
     }
-  }, [loadWatchFromStorage]);
+  }, [loadWatchFromStorage, loadParamsFromStorage, updateWatchList]);
 
   // hydrate once on mount
   useEffect(() => {
@@ -89,85 +207,6 @@ function useWatchList(props) {
   useEffect(() => {
     saveWatchToStorageDebounced();
   }, [watchList]);
-
-  const getBaseParamValue = useCallback(
-    (paramKey) => {
-      // First check if there's metadata available from the clicked node
-      try {
-        const meta = props?.clickedNodeMetaData;
-        if (
-          meta?.parameters &&
-          Object.prototype.hasOwnProperty.call(meta.parameters, paramKey)
-        ) {
-          const metaVal = meta.parameters[paramKey];
-          if (typeof metaVal !== 'undefined') {
-            return metaVal;
-          }
-        }
-      } catch {}
-
-      // Fallback to the redux store
-      const reduxMap = props?.nodeParameters || {};
-      if (Object.prototype.hasOwnProperty.call(reduxMap, paramKey)) {
-        const val = reduxMap[paramKey];
-
-        if (val && typeof val === 'object' && !Array.isArray(val)) {
-          if (Object.prototype.hasOwnProperty.call(val, paramKey)) {
-            return val[paramKey];
-          }
-          const keys = Object.keys(val);
-          if (keys.length === 1) {
-            return val[keys[0]];
-          }
-        }
-      }
-      return undefined;
-    },
-    [props]
-  );
-
-  const setParamValueForKey = useCallback(
-    (paramKey, newValue) => {
-      editParamInEditor(paramKey, newValue);
-    },
-    [editParamInEditor]
-  );
-
-  const getParamValueFromKey = useCallback(
-    (paramKey) => {
-      if (Object.prototype.hasOwnProperty.call(paramEdits, paramKey)) {
-        const val = paramEdits[paramKey];
-        if (typeof val !== 'undefined') {
-          return val;
-        }
-        return undefined;
-      }
-      const val = getBaseParamValue(paramKey);
-      setParamValueForKey(paramKey, val);
-      return val;
-    },
-    [paramEdits, getBaseParamValue]
-  );
-
-  const addToWatchList = useCallback(
-    (item) => {
-      if (!item || !item.kind || !item.id) {
-        return;
-      }
-
-      setWatchList((prev) => {
-        const exists = prev.some(
-          (wlItem) => wlItem.kind === item.kind && wlItem.id === item.id
-        );
-        if (exists) {
-          return prev;
-        }
-
-        return [...prev, item];
-      });
-    },
-    [getBaseParamValue, setWatchList]
-  );
 
   // Sync watch list with parameter editor originals/edits
   useEffect(() => {
@@ -212,45 +251,6 @@ function useWatchList(props) {
     addParamsInEditor,
     removeParamInEditor,
   ]);
-
-  const removeFromWatchList = useCallback(
-    (itemId) => {
-      if (!itemId) {
-        return;
-      }
-
-      // Remove from watch list
-      setWatchList((prev) => prev.filter((wlItem) => !(wlItem.id === itemId)));
-    },
-    [setWatchList, watchList]
-  );
-
-  const updateWatchList = useCallback(
-    (newWatchList) => {
-      // Iterate through all parameter keys
-      if (!Array.isArray(newWatchList)) {
-        return;
-      }
-
-      const currentIds = (newWatchList || []).map((item) => item.id);
-      currentIds.forEach((itemId) => {
-        if (dispatch) {
-          dispatch(loadNodeData(itemId));
-          dispatch(toggleNodeClicked(itemId));
-        }
-      });
-
-      // Save watch list
-      setWatchList(newWatchList);
-    },
-    [setWatchList]
-  );
-
-  const clearWatchList = useCallback(() => {
-    debugger;
-    setWatchList([]);
-    clearParamsInEditor();
-  }, [setWatchList, clearParamsInEditor]);
 
   return {
     // Direct watch list interactions

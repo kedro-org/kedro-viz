@@ -77,54 +77,61 @@ function ParamMetadataEditor({
   }, [disabled, onReset, paramValue, toYamlString, showToast]);
 
   return (
-    <div style={{ margin: '0 36px 24px' }}>
-      <h3
-        className="pipeline-metadata__title pipeline-metadata__title--small"
-        style={{ margin: '0 0 8px' }}
-      >
-        Edit parameters
-      </h3>
-      <textarea
-        className="runner-meta-editor"
-        value={draft}
-        onChange={onChange}
-        spellCheck={false}
-        disabled={disabled || draft === null}
-        aria-label="Parameter YAML editor"
-      />
-      <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-        <button
-          className="btn btn--primary"
-          onClick={handleSave}
-          disabled={disabled || draft === null || (!dirty && !error)}
+    <article
+      key={key}
+      className={`param-metadata-editor__${key} ${
+        disabled ? '--disabled' : ''
+      }`}
+    >
+      <div style={{ margin: '0 36px 24px' }}>
+        <h3
+          className="pipeline-metadata__title pipeline-metadata__title--small"
+          style={{ margin: '0 0 8px' }}
         >
-          Save
-        </button>
-        <button
-          className="btn"
-          onClick={handleReset}
+          Edit parameters
+        </h3>
+        <textarea
+          className="runner-meta-editor"
+          value={draft}
+          onChange={onChange}
+          spellCheck={false}
           disabled={disabled || draft === null}
-        >
-          Reset
-        </button>
-        {dirty && !error && (
-          <span style={{ fontSize: 12, alignSelf: 'center', opacity: 0.8 }}>
-            Unsaved changes
-          </span>
-        )}
-        {error && (
-          <span
-            style={{
-              fontSize: 12,
-              color: 'var(--color-danger)',
-              alignSelf: 'center',
-            }}
+          aria-label="Parameter YAML editor"
+        />
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          <button
+            className="btn btn--primary"
+            onClick={handleSave}
+            disabled={disabled || draft === null || (!dirty && !error)}
           >
-            {error}
-          </span>
-        )}
+            Save
+          </button>
+          <button
+            className="btn"
+            onClick={handleReset}
+            disabled={disabled || draft === null}
+          >
+            Reset
+          </button>
+          {dirty && !error && (
+            <span style={{ fontSize: 12, alignSelf: 'center', opacity: 0.8 }}>
+              Unsaved changes
+            </span>
+          )}
+          {error && (
+            <span
+              style={{
+                fontSize: 12,
+                color: 'var(--color-danger)',
+                alignSelf: 'center',
+              }}
+            >
+              {error}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
 

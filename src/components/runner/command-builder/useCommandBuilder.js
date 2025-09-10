@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { PIPELINE } from '../../../config';
 import { fetchKedroEnv } from '../../../utils/runner-api';
-import {
-  quoteIfNeeded,
-  normalizeParamPrefix,
-  collectParamDiffs,
-  buildParamDiffModel,
-} from '../utils/paramsDiff';
+import { quoteIfNeeded, buildParamDiffModel } from '../utils/paramsDiff';
 
 /**
  * useCommandBuilder
@@ -128,6 +123,8 @@ function useCommandBuilder({
     diffModel,
     hasParamChanges,
     initialParamSelection,
+    activePipeline,
+    selectedTags,
   };
 }
 

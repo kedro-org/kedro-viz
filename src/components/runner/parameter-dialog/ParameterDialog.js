@@ -1,21 +1,32 @@
-import React from 'react';
+import { useState } from 'react';
 import { quoteIfNeeded } from '../utils/paramsDiff';
 import { toYamlString } from '../utils/yamlUtils';
 
-const ParameterDialog = ({
-  isOpen,
-  onClose,
-  diffModel = [],
-  paramsArgString,
-  selectedKey: externalSelectedKey,
-  onSelectKey,
-  renderHighlightedYamlLines,
-}) => {
-  if (!isOpen) {
-    return null;
-  }
+function renderHighlightedYamlLines(text, otherText) {
+  const a = String(text == null ? '' : text).split(/\r?\n/);
+  const b = String(otherText == null ? '' : otherText).split(/\r?\n/);
+  const max = Math.max(a.length, b.length);
+  const highlightStyle = {
+    background: 'var(--runner-hover-bg)',
+    borderLeft: '2px solid var(--parameter-accent)',
+    paddingLeft: '6px',
+    marginLeft: '-6px',
+  };
+  return Array.from({ length: max }).map((_, i) => {
+    const line = a[i] ?? '';
+    const changed = (a[i] ?? '') !== (b[i] ?? '');
+    return (
+      <div key={i} style={changed ? highlightStyle : undefined}>
+        {line || ' '}
+      </div>
+    );
+  });
+}
+
+const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
+  const [selectedKey, onSelectKey] = useState(null);
+
   const items = diffModel || [];
-  const selectedKey = externalSelectedKey || (items[0] && items[0].key);
   const selectedItem = items.find((i) => i.key === selectedKey) || items[0];
   const orig = selectedItem ? selectedItem.original : undefined;
   const curr = selectedItem ? selectedItem.edited : undefined;

@@ -1,31 +1,60 @@
-import React from 'react';
+import { useRef, useCallback, useState } from 'react';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
-import { toYamlString } from '../utils/yamlUtils';
 
-const ControlPanel = ({
-  currentCommand,
-  onStartRun,
-  commandInputRef,
-  onCopyCommand,
-  hasParamChanges,
-  activePipeline,
-  selectedTags,
-  onOpenParamsDialog,
-  // Param dialog props
-  isParamsModalOpen,
-  onCloseParamsModal,
-  diffModel,
-  paramsDialogSelectedKey,
-  onSelectParamKey,
-  renderHighlightedYamlLines,
-  paramsArgString,
-  kedroEnv,
-}) => {
-  const selectedKey =
-    paramsDialogSelectedKey || (diffModel && diffModel[0] && diffModel[0].key);
+const ControlPanel = ({ commandBuilder, onStartRun }) => {
+  const inputRef = useRef();
+  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
+
+  const onOpenParamsDialog = useCallback(() => {
+    setIsParamsModalOpen(true);
+  }, []);
+
+  const onCloseParamsModal = useCallback(() => {
+    setIsParamsModalOpen(false);
+  }, []);
+
+  const {
+    commandString,
+    hasParamChanges,
+    activePipeline,
+    selectedTags,
+    kedroEnv,
+    diffModel,
+    paramsArgString,
+  } = commandBuilder || {};
+
+  const handleCopy = useCallback(async () => {
+    try {
+      const text = inputRef.current?.value || commandString;
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+        document.execCommand('copy');
+        inputRef.current.setSelectionRange(
+          inputRef.current.value.length,
+          inputRef.current.value.length
+        );
+      }
+    } catch {}
+  }, [commandString]);
+
+  function renderParameterDialog() {
+    if (!isParamsModalOpen) {
+      return null;
+    }
+    return (
+      <ParameterDialog
+        onClose={onCloseParamsModal}
+        diffModel={diffModel}
+        paramsArgString={paramsArgString}
+      />
+    );
+  }
 
   return (
-    <section className="runner-manager__control-panel">
+    <>
       <div className="control-panel__header">
         <h3 className="section-title">Run command</h3>
         <button className="btn btn--primary" onClick={onStartRun}>
@@ -38,14 +67,14 @@ const ControlPanel = ({
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input
               className="control-row__input"
-              ref={commandInputRef}
-              defaultValue="kedro run"
-              title={currentCommand}
+              ref={inputRef}
+              defaultValue={commandString || 'kedro run'}
+              title={commandString}
               style={{ flex: '1 1 auto', minWidth: 0 }}
             />
             <button
               className="btn"
-              onClick={onCopyCommand}
+              onClick={handleCopy}
               title="Copy full command"
               aria-label="Copy full command"
               style={{
@@ -116,18 +145,8 @@ const ControlPanel = ({
           </small>
         </div>
       </div>
-
-      <ParameterDialog
-        isOpen={!!isParamsModalOpen}
-        onClose={onCloseParamsModal}
-        diffModel={diffModel}
-        paramsArgString={paramsArgString}
-        selectedKey={paramsDialogSelectedKey}
-        onSelectKey={onSelectParamKey}
-        toYamlString={toYamlString}
-        renderHighlightedYamlLines={renderHighlightedYamlLines}
-      />
-    </section>
+      {renderParameterDialog()}
+    </>
   );
 };
 

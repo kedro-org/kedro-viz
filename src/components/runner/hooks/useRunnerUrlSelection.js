@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 
 // Hook to manage ?sid= URL parameter lifecycle (selection of param/dataset)
-export default function useRunnerUrlSelection() {
+function useRunnerUrlSelection() {
   const lastSidRef = useRef(null);
   const [pendingSid, setPendingSid] = useState(null);
 
@@ -14,19 +14,29 @@ export default function useRunnerUrlSelection() {
     }
   }, []);
 
-  const setSidInUrl = useCallback((nodeId) => {
-    if (!nodeId) {
-      return;
-    }
-    try {
-      const current = new URL(window.location.href);
-      current.searchParams.set('sid', nodeId);
-      current.searchParams.delete('sn');
-      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
-      window.history.pushState({}, '', nextUrl);
-      lastSidRef.current = nodeId;
-    } catch {}
-  }, []);
+  const setSidInUrl = useCallback(
+    (nodeId) => {
+      if (!nodeId) {
+        return;
+      }
+      // Noop is sid in url already matches
+      const sid = getSidFromUrl();
+      if (lastSidRef.current === nodeId || sid === nodeId) {
+        return;
+      }
+      try {
+        const current = new URL(window.location.href);
+        current.searchParams.set('sid', nodeId);
+        current.searchParams.delete('sn');
+        const nextUrl = `${
+          current.pathname
+        }?${current.searchParams.toString()}`;
+        window.history.pushState({}, '', nextUrl);
+        // lastSidRef.current = nodeId;
+      } catch {}
+    },
+    [getSidFromUrl]
+  );
 
   const removeSidFromUrl = useCallback(() => {
     try {
@@ -34,7 +44,7 @@ export default function useRunnerUrlSelection() {
       current.searchParams.delete('sid');
       const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
       window.history.pushState({}, '', nextUrl);
-      lastSidRef.current = null;
+      // lastSidRef.current = null;
     } catch {}
   }, []);
 
@@ -67,3 +77,5 @@ export default function useRunnerUrlSelection() {
     getSidFromUrl, // exported in case consumer wants direct read
   };
 }
+
+export default useRunnerUrlSelection;

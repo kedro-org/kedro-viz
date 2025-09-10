@@ -9,13 +9,12 @@ import '../metadata/styles/metadata.scss';
 import MetaData from '../metadata/metadata';
 import ParamMetadataEditor from './metadata/ParamMetadataEditor';
 import ControlPanel from './control-panel';
-import WatchPanel from './watch-panel';
+import WatchPanel from './watch-panel/watch-panel';
 import WatchListDialog from './watch-list-dialog';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { startKedroCommand } from '../../utils/runner-api';
-import { PIPELINE } from '../../config';
 import useCommandBuilder from './command-builder/useCommandBuilder';
 import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import useRunnerUrlSelection from './hooks/useRunnerUrlSelection';
@@ -27,17 +26,14 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
  * No functional wiring — purely presentational scaffolding you can hook up later.
  */
 function KedroRunManager(props) {
-  // Refs
-  const commandInputRef = useRef();
-  const jobsPanelRef = useRef();
-  // URL selection management
-  const {
-    pendingSid,
-    syncFromUrl,
-    setSidInUrl,
-    removeSidFromUrl,
-    markSidProcessed,
-  } = useRunnerUrlSelection();
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.assert(
+      typeof WatchPanel === 'function',
+      'WatchPanel import not a function:',
+      WatchPanel
+    );
+  }
 
   // Job management hook
   const { jobs, logRefs, clearJob, terminateJob, addJob } = useJobs();
@@ -46,7 +42,6 @@ function KedroRunManager(props) {
   const {
     watchList,
     strictlyChanged,
-    addToWatchList,
     removeFromWatchList,
     updateWatchList,
     clearWatchList,
@@ -58,6 +53,14 @@ function KedroRunManager(props) {
     getBaseParamValue,
   } = useWatchList(props);
 
+  const {
+    pendingSid,
+    syncFromUrl,
+    setSidInUrl,
+    removeSidFromUrl,
+    markSidProcessed,
+  } = useRunnerUrlSelection();
+
   // State
   const [kedroEnvOverride, setKedroEnvOverride] = useState(null); // optional external override
 
@@ -65,8 +68,6 @@ function KedroRunManager(props) {
   const toastTimer = useRef();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
-  const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null); // for dialog
   const [activeParamKey, setActiveParamKey] = useState(null); // for metadata editor
   const [selectedDataset, setSelectedDataset] = useState(null);
   const [showMetadata, setShowMetadata] = useState(false);
@@ -95,33 +96,14 @@ function KedroRunManager(props) {
     }
   }, [props?.kedroEnv]);
 
-  // Keep command input ref updated
-  const updateCommandFromProps = useCallback(() => {
-    const cmd = commandBuilder.commandString;
-    if (commandInputRef?.current && commandInputRef.current.value !== cmd) {
-      commandInputRef.current.value = cmd;
-    }
-  }, [commandBuilder.commandString]);
-
-  // Fetch kedro environment info from backend
-  // (fetching handled inside useCommandBuilder when not provided)
-
-  // Directly use syncFromUrl (previous wrapper removed)
-
   // Initialise on mount, cleanup on unmount
   useEffect(() => {
-    updateCommandFromProps();
     syncFromUrl();
     window.addEventListener('popstate', syncFromUrl);
     return () => {
       window.removeEventListener('popstate', syncFromUrl);
     };
   }, []);
-
-  // Sync command when relevant props change
-  useEffect(() => {
-    updateCommandFromProps();
-  }, [commandBuilder]);
 
   // Visual components used by run manager (stays here for now)
   const showToast = useCallback((message, duration = 2000) => {
@@ -142,45 +124,6 @@ function KedroRunManager(props) {
     }
     setToastVisible(false);
   }, []);
-
-  // Control panel helpers (Move to control panel component)
-  const getCurrentCommandString = useCallback(() => {
-    const cmd = commandInputRef.current?.value;
-    if (cmd) {
-      return cmd;
-    }
-    // Fallback is to sync again
-    updateCommandFromProps();
-    return commandBuilder.commandString();
-  }, [commandBuilder.commandString]);
-
-  const copyCommandToClipboard = useCallback(async () => {
-    try {
-      const text = getCurrentCommandString();
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const input = commandInputRef.current;
-        if (input) {
-          input.focus();
-          input.select();
-          document.execCommand('copy');
-          input.setSelectionRange(input.value.length, input.value.length);
-        }
-      }
-      showToast('Copied command to clipboard successfully');
-    } catch {
-      showToast('Copy failed');
-    }
-  }, [commandInputRef, getCurrentCommandString, showToast]);
-
-  const openParamsDialog = useCallback(() => {
-    const initial = commandBuilder?.initialParamSelection || null;
-    setIsParamsModalOpen(true);
-    setParamsDialogSelectedKey(initial);
-  }, [commandBuilder]);
-
-  // setSidInUrl & removeSidFromUrl now from hook
 
   const openDatasetDetails = useCallback((dataset) => {
     setShowMetadata(true);
@@ -224,11 +167,10 @@ function KedroRunManager(props) {
   const closeParamEditor = useCallback(() => {
     setActiveParamKey(null);
     setShowMetadata(false);
-    // setMetadataMode(null);
     removeSidFromUrl();
   }, []);
 
-  const onWatchItemClick = useCallback(
+  const onClickWatchItem = useCallback(
     (item) => {
       if (item.kind === 'param') {
         if (props.dispatch) {
@@ -238,7 +180,6 @@ function KedroRunManager(props) {
         try {
           openParamEditor(item.id);
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.error('Failed to open parameter editor for', item.id, e);
 
           if (showToast) {
@@ -262,7 +203,28 @@ function KedroRunManager(props) {
     [props, setSidInUrl, openParamEditor, showToast, openDatasetDetails]
   );
 
+  const onRemoveFromWatchList = useCallback(
+    (itemId) => {
+      const isClose = watchList.length <= 1 || itemId === activeParamKey;
+      removeFromWatchList(itemId);
+      if (isClose) {
+        closeParamEditor();
+      }
+    },
+    [watchList, activeParamKey, removeFromWatchList, closeParamEditor]
+  );
+
+  const onRemoveAllFromWatchList = useCallback(() => {
+    clearWatchList();
+    closeParamEditor();
+  }, [clearWatchList, closeParamEditor]);
+
+  const onWatchItemAdd = useCallback(() => {
+    openWatchModal();
+  }, [openWatchModal]);
+
   // Process any deferred sid (from initial URL) after editors are defined
+  // TODO: Fix this problematic code. The causes the page to crash when there is a a render
   useEffect(() => {
     const sid = pendingSid;
     if (!sid) {
@@ -298,8 +260,7 @@ function KedroRunManager(props) {
   ]);
 
   const onStartRun = useCallback(() => {
-    const command = getCurrentCommandString();
-    // eslint-disable-next-line no-console
+    const command = commandBuilder.commandString;
     console.log('[Runner] Start run clicked', command);
     startKedroCommand(command)
       .then(({ jobId, status }) => {
@@ -315,33 +276,15 @@ function KedroRunManager(props) {
         });
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error('Failed to start run', err);
       });
-  }, [commandInputRef, getCurrentCommandString, addJob]);
-
-  const renderHighlightedYamlLines = useCallback((text, otherText) => {
-    const a = String(text == null ? '' : text).split(/\r?\n/);
-    const b = String(otherText == null ? '' : otherText).split(/\r?\n/);
-    const max = Math.max(a.length, b.length);
-    const highlightStyle = {
-      background: 'var(--runner-hover-bg)',
-      borderLeft: '2px solid var(--parameter-accent)',
-      paddingLeft: '6px',
-      marginLeft: '-6px',
-    };
-    return Array.from({ length: max }).map((_, i) => {
-      const line = a[i] ?? '';
-      const changed = (a[i] ?? '') !== (b[i] ?? '');
-      return (
-        <div key={i} style={changed ? highlightStyle : undefined}>
-          {line || ' '}
-        </div>
-      );
-    });
-  }, []);
+  }, [commandBuilder.commandString, addJob]);
 
   // --- Render helpers (converted from class) ---
+  const renderControlPanel = () => (
+    <ControlPanel commandBuilder={commandBuilder} onStartRun={onStartRun} />
+  );
+
   const renderMetadataPanel = () => {
     if (!showMetadata) {
       return null;
@@ -387,75 +330,24 @@ function KedroRunManager(props) {
     />
   );
 
-  const renderWatchListPanel = () => (
-    <WatchPanel
-      watchList={watchList}
-      strictlyChanged={strictlyChanged}
-      getEditedParamValue={getParamValueFromKey}
-      onWatchItemClick={onWatchItemClick}
-      removeFromWatchList={(itemId) => {
-        const isClose = watchList.length <= 1 || itemId === activeParamKey;
-        removeFromWatchList(itemId);
-        if (isClose) {
-          closeParamEditor();
-        }
-      }}
-    />
-  );
+  const renderWatchListPanel = () => {
+    if (!Array.isArray(watchList)) {
+      console.warn('[RunnerManager] watchList not array', watchList);
+      return null;
+    }
 
-  const renderWatchListDeveloper = () => (
-    <details
-      className="runner-data-panel__developer"
-      style={{ margin: '12px 0' }}
-    >
-      <summary
-        style={{
-          cursor: 'pointer',
-          padding: '8px 12px',
-          fontWeight: 600,
-          listStyle: 'none',
-        }}
-      >
-        Developer view (toggle)
-      </summary>
-
-      <div
-        style={{
-          maxHeight: '240px',
-          overflow: 'auto',
-          padding: '8px 12px',
-        }}
-      >
-        <div>
-          <strong>Parameter Value</strong>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-            {JSON.stringify(getParamValueFromKey(activeParamKey), null, 2)}
-          </pre>
-        </div>
-
-        <div style={{ marginBottom: 8 }}>
-          <strong>Watch List</strong>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-            {JSON.stringify(watchList, null, 2)}
-          </pre>
-        </div>
-
-        <div>
-          <strong>Param Originals</strong>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-            {JSON.stringify(paramOriginals, null, 2)}
-          </pre>
-        </div>
-
-        <div>
-          <strong>Param Edits</strong>
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-            {JSON.stringify(paramEdits, null, 2)}
-          </pre>
-        </div>
-      </div>
-    </details>
-  );
+    return (
+      <WatchPanel
+        watchList={watchList}
+        strictlyChanged={strictlyChanged}
+        getEditedParamValue={getParamValueFromKey}
+        onClickItem={onClickWatchItem}
+        onRemoveItem={onRemoveFromWatchList}
+        onClear={onRemoveAllFromWatchList}
+        onAdd={onWatchItemAdd}
+      />
+    );
+  };
 
   const renderToast = () => {
     return (
@@ -483,6 +375,7 @@ function KedroRunManager(props) {
       )
     );
   };
+
   // --- Main render ---
   // hasParamChanges now provided by commandBuilder
   const containerClass = classnames('runner-manager', {
@@ -499,56 +392,23 @@ function KedroRunManager(props) {
       </header>
 
       <main className="runner-manager__main">
-        <ControlPanel
-          currentCommand={getCurrentCommandString()}
-          onStartRun={onStartRun}
-          commandInputRef={commandInputRef}
-          onCopyCommand={copyCommandToClipboard}
-          hasParamChanges={commandBuilder?.hasParamChanges}
-          activePipeline={props.activePipeline || PIPELINE.DEFAULT}
-          selectedTags={props.selectedTags || []}
-          onOpenParamsDialog={openParamsDialog}
-          isParamsModalOpen={isParamsModalOpen}
-          onCloseParamsModal={() => setIsParamsModalOpen(false)}
-          paramsDialogSelectedKey={paramsDialogSelectedKey}
-          onSelectParamKey={setParamsDialogSelectedKey}
-          renderHighlightedYamlLines={renderHighlightedYamlLines}
-          paramsArgString={commandBuilder.paramsArgString}
-          kedroEnv={commandBuilder.kedroEnv}
-          diffModel={commandBuilder.diffModel}
-        />
+        <section className="runner-manager__control-panel">
+          {renderControlPanel()}
+        </section>
 
-        <section className="runner-manager__jobs-panel" ref={jobsPanelRef}>
+        <section className="runner-manager__jobs-panel">
           {renderJobListPanel()}
         </section>
 
         <section className="runner-manager__editor">
-          <div className="editor__header">
-            <h3 className="section-title">Watch list</h3>
-            <div className="editor__actions">
-              <button className="btn btn--secondary" onClick={openWatchModal}>
-                Add
-              </button>
-              <button
-                className="btn btn--secondary"
-                onClick={() => {
-                  clearWatchList();
-                  closeParamEditor();
-                }}
-                disabled={!(watchList || []).length}
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-          <div className="runner-data-panel">{renderWatchListPanel()}</div>
+          {renderWatchListPanel()}
         </section>
       </main>
 
       <footer className="runner-manager__footer">
         <small>UI draft — not all features implemented.</small>
       </footer>
-      {renderWatchListDeveloper()}
+
       {renderMetadataPanel()}
       {renderWatchModal()}
       {renderToast()}
