@@ -1,6 +1,6 @@
 import React from 'react';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
-
+import { toYamlString } from '../utils/yamlUtils';
 
 const ControlPanel = ({
   currentCommand,
@@ -17,12 +17,12 @@ const ControlPanel = ({
   diffModel,
   paramsDialogSelectedKey,
   onSelectParamKey,
-  toYamlString,
   renderHighlightedYamlLines,
   paramsArgString,
   kedroEnv,
 }) => {
-  const selectedKey = paramsDialogSelectedKey || (diffModel && diffModel[0] && diffModel[0].key);
+  const selectedKey =
+    paramsDialogSelectedKey || (diffModel && diffModel[0] && diffModel[0].key);
 
   return (
     <section className="runner-manager__control-panel">

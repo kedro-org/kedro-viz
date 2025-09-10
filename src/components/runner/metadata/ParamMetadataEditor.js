@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { toYamlString, parseYamlishValue } from '../utils/yamlUtils';
 
 /**
  * ParamMetadataEditor
@@ -7,8 +8,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 function ParamMetadataEditor({
   key, // Added key prop to force remount on param change
   paramValue,
-  toYamlString,
-  parseYamlishValue,
   onSave,
   onReset,
   showToast,

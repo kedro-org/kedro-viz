@@ -1,34 +1,7 @@
 // Utility functions extracted from KedroRunManager
 // Place this file in a shared utils directory, e.g. src/components/runner/runner-utils.js
 
-import { yamlParse, stringify as yamlStringify } from 'yaml';
-
-export function toYamlString(value) {
-  try {
-    return yamlStringify(value, { indent: 2, lineWidth: 0 });
-  } catch (error) {
-    return String(value);
-  }
-}
-
-export function parseYamlishValue(text) {
-  if (text == null) {
-    return '';
-  }
-  const str = String(text);
-  if (!str.trim()) {
-    return '';
-  }
-  try {
-    return yamlParse(str);
-  } catch (error) {
-    try {
-      return JSON.parse(str);
-    } catch (error2) {
-      return str;
-    }
-  }
-}
+// NOTE: YAML helpers (toYamlString, parseYamlishValue) moved to utils/yamlUtils.js
 
 export function formatParamValueForCli(value) {
   if (

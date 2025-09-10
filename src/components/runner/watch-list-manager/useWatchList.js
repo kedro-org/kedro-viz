@@ -1,12 +1,13 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import useParameterEditor from './useParameterEditor';
-import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import { loadNodeData, toggleNodeClicked } from '../../../actions/nodes'; // ensure path is correct
-import { current } from '@reduxjs/toolkit';
 
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
 
+/**
+ * useWatchList: Manages a watch list of nodes and parameters, integrating with a parameter editor.
+ */
 function useWatchList(props) {
   const { dispatch } = props || {};
   const saveWatchTimer = useRef();
@@ -251,58 +252,11 @@ function useWatchList(props) {
     clearParamsInEditor();
   }, [setWatchList, clearParamsInEditor]);
 
-  const ensureOriginalsFor = useCallback(
-    (keys) => {
-      if (!keys) {
-        return;
-      }
-      const arr = Array.isArray(keys) ? keys : [keys];
-      const additions = {};
-      arr.forEach((key) => {
-        if (!Object.prototype.hasOwnProperty.call(paramOriginals, key)) {
-          const currentVal = getBaseParamValue(key);
-          additions[key] = currentVal;
-        }
-      });
-      if (Object.keys(additions).length > 0) {
-        try {
-          addParamsInEditor(additions);
-        } catch {}
-      }
-    },
-    [paramOriginals, getBaseParamValue, addParamsInEditor]
-  );
-
-  const toYamlString = useCallback((value) => {
-    try {
-      return yamlStringify(value, { indent: 2, lineWidth: 0 });
-    } catch {
-      return String(value);
-    }
-  }, []);
-
-  const parseYamlishValue = useCallback((text) => {
-    if (text == null) {
-      return '';
-    }
-    const str = String(text);
-    if (!str.trim()) {
-      return '';
-    }
-    try {
-      return yamlParse(str);
-    } catch {
-      try {
-        return JSON.parse(str);
-      } catch {
-        return str;
-      }
-    }
-  }, []);
-
   return {
     // Direct watch list interactions
+    // (Viewing)
     watchList,
+    // (Editing)
     addToWatchList,
     removeFromWatchList,
     updateWatchList,
@@ -310,20 +264,16 @@ function useWatchList(props) {
     saveWatchToStorageDebounced,
 
     // Parameter editor interactions
+    // (Viewing)
     paramOriginals,
     paramEdits,
     strictlyChanged,
+    getBaseParamValue,
+    getParamValueFromKey,
+    // (Editing)
     resetParamInEditor,
     editParamInEditor,
-    // expose helpers
-    getBaseParamValue,
-    // Param helpers
-    getParamValueFromKey,
     setParamValueForKey,
-    toYamlString,
-    parseYamlishValue,
-    // paramsArgString & update handled in command builder now
-    ensureOriginalsFor,
   };
 }
 

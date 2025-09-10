@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { toYamlString } from '../utils/yamlUtils';
 
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
   'kedro_viz_runner_watch_custom_order';
@@ -7,7 +8,6 @@ function WatchPanel({
   watchList,
   strictlyChanged,
   getEditedParamValue,
-  toYamlString,
   onWatchItemClick,
   removeFromWatchList,
 }) {

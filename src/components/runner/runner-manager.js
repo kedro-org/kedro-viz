@@ -25,7 +25,6 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
  * A visual draft page for starting and monitoring Kedro runs.
  * No functional wiring — purely presentational scaffolding you can hook up later.
  */
-
 function KedroRunManager(props) {
   // Refs
   const commandInputRef = useRef();
@@ -33,10 +32,11 @@ function KedroRunManager(props) {
   const lastSid = useRef();
   const pendingSid = useRef(null);
 
+  // Job management hook
   const { jobs, logRefs, clearJob, terminateJob, addJob } = useJobs();
 
+  // Used for parameter and dataset interactions
   const {
-    // Direct watch list interactions
     watchList,
     strictlyChanged,
     addToWatchList,
@@ -48,8 +48,6 @@ function KedroRunManager(props) {
     resetParamInEditor,
     editParamInEditor,
     getParamValueFromKey,
-    toYamlString,
-    parseYamlishValue,
     getBaseParamValue,
   } = useWatchList(props);
 
@@ -60,14 +58,12 @@ function KedroRunManager(props) {
   const toastTimer = useRef();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  // Metadata panel state
   const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
   const [paramsDialogSelectedKey, setParamsDialogSelectedKey] = useState(null); // for dialog
   const [activeParamKey, setActiveParamKey] = useState(null); // for metadata editor
   const [selectedDataset, setSelectedDataset] = useState(null);
   const [showMetadata, setShowMetadata] = useState(false);
   const [metadataMode, setMetadataMode] = useState(null);
-  // Watch modal state
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
 
   // Destructure frequently used props to satisfy exhaustive-deps and avoid adding entire props object
@@ -201,9 +197,6 @@ function KedroRunManager(props) {
     setParamsDialogSelectedKey(initial);
   }, [commandBuilder]);
 
-  // Parameter editing helpers adapted from legacy implementation
-  // Legacy reset/edit YAML handlers removed (handled centrally by parameter editor hook now)
-
   const setSidInUrl = useCallback((nodeId) => {
     if (!nodeId) {
       return;
@@ -264,7 +257,7 @@ function KedroRunManager(props) {
       setMetadataMode('param');
       setSidInUrl(paramKey);
     },
-    [props, paramOriginals, getBaseParamValue, toYamlString, setSidInUrl]
+    [props, paramOriginals, getBaseParamValue, setSidInUrl]
   );
 
   const closeParamEditor = useCallback(() => {
@@ -339,9 +332,7 @@ function KedroRunManager(props) {
       }
       try {
         openDatasetDetails(datasetNode);
-      } catch (e) {
-        /* ignore */
-      }
+      } catch (e) {}
       pendingSid.current = null;
     }
   }, [paramNodes, datasets, openParamEditor, openDatasetDetails, dispatch]);
@@ -402,8 +393,6 @@ function KedroRunManager(props) {
         <ParamMetadataEditor
           key={activeParamKey}
           paramValue={getParamValueFromKey(activeParamKey)}
-          toYamlString={toYamlString}
-          parseYamlishValue={parseYamlishValue}
           onSave={(val) => editParamInEditor(activeParamKey, val)}
           onReset={() => resetParamInEditor(activeParamKey)}
           showToast={showToast}
@@ -445,7 +434,6 @@ function KedroRunManager(props) {
       watchList={watchList}
       strictlyChanged={strictlyChanged}
       getEditedParamValue={getParamValueFromKey}
-      toYamlString={toYamlString}
       onWatchItemClick={onWatchItemClick}
       removeFromWatchList={(itemId) => {
         const isClose = watchList.length <= 1 || itemId === activeParamKey;
@@ -566,7 +554,6 @@ function KedroRunManager(props) {
           onCloseParamsModal={() => setIsParamsModalOpen(false)}
           paramsDialogSelectedKey={paramsDialogSelectedKey}
           onSelectParamKey={setParamsDialogSelectedKey}
-          toYamlString={toYamlString}
           renderHighlightedYamlLines={renderHighlightedYamlLines}
           paramsArgString={commandBuilder.paramsArgString}
           kedroEnv={commandBuilder.kedroEnv}

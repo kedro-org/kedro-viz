@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ControlPanel from '../control-panel';
+import toYamlString from '../utils/yamlUtils';
 
 describe('ControlPanel', () => {
   const baseProps = {
@@ -22,7 +23,6 @@ describe('ControlPanel', () => {
     getEditedParamValue: jest.fn(),
     normalizeParamPrefix: (value) => value,
     collectParamDiffs: () => [],
-    toYamlString: (val) => String(val ?? ''),
     renderHighlightedYamlLines: (text) => text,
     quoteIfNeeded: (str) => str,
     paramsArgString: '',
