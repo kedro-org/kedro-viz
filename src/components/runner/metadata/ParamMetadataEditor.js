@@ -6,13 +6,15 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
  */
 function ParamMetadataEditor({
   key, // Added key prop to force remount on param change
-  getParamValue,
+  // getParamValue,
+  paramValue,
   toYamlString,
   parseYamlishValue,
   onSave,
   onReset,
   showToast,
   disabled,
+  developerView = false,
 }) {
   const isInitialized = useRef(true); // Track if component is mounted
   const [draft, setDraft] = useState(null);
@@ -27,7 +29,7 @@ function ParamMetadataEditor({
     }
 
     try {
-      const base = getParamValue();
+      const base = paramValue;
       if (typeof base === 'undefined') {
         setDraft(null);
         return;
@@ -40,7 +42,7 @@ function ParamMetadataEditor({
       setDraft(e);
       setError('Failed to load parameter');
     }
-  }, [isInitialized, getParamValue, toYamlString]);
+  }, [key, isInitialized, paramValue, toYamlString]);
 
   const onChange = useCallback((e) => {
     setDraft(e.target.value);
@@ -70,13 +72,13 @@ function ParamMetadataEditor({
     try {
       onReset();
     } finally {
-      const yaml = toYamlString(getParamValue());
+      const yaml = toYamlString(paramValue);
       setDraft(yaml);
       setDirty(false);
       setError(null);
       showToast && showToast('Reset to original');
     }
-  }, [disabled, onReset, getParamValue, toYamlString, showToast]);
+  }, [disabled, onReset, paramValue, toYamlString, showToast]);
 
   return (
     <div style={{ margin: '0 36px 24px' }}>
@@ -86,16 +88,36 @@ function ParamMetadataEditor({
       >
         Edit parameters
       </h3>
-      {
-        // Developer view of internal state
-        <pre>
-          {`paramValue = ${JSON.stringify(getParamValue(), null, 2)}
-          draft = ${JSON.stringify(draft, null, 2)}
-          dirty = ${JSON.stringify(dirty, null, 2)}
-          error = ${JSON.stringify(error, null, 2)}`}
-        </pre>
-      }
-
+      {() => {
+        if (developerView) {
+          // Developer view of internal state
+          return (
+            <div>
+              <h4>Internal State</h4>
+              <div>
+                {' '}
+                <pre>{`paramValue = ${JSON.stringify(
+                  paramValue,
+                  null,
+                  2
+                )}`}</pre>
+              </div>
+              <div>
+                {' '}
+                <pre>{`draft = ${JSON.stringify(draft, null, 2)}`}</pre>
+              </div>
+              <div>
+                {' '}
+                <pre>{`dirty = ${JSON.stringify(dirty, null, 2)}`}</pre>
+              </div>
+              <div>
+                {' '}
+                <pre>{`error = ${JSON.stringify(error, null, 2)}`}</pre>
+              </div>
+            </div>
+          );
+        }
+      }}
       <textarea
         className="runner-meta-editor"
         value={draft}

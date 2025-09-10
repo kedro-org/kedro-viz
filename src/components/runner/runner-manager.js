@@ -50,7 +50,7 @@ function KedroRunManager(props) {
     getParamValueFromKey,
     toYamlString,
     parseYamlishValue,
-    getParamValue,
+    getBaseParamValue,
   } = useWatchList(props);
 
   // State
@@ -87,7 +87,7 @@ function KedroRunManager(props) {
     watchList,
     paramOriginals,
     paramEdits,
-    getParamValue,
+    getBaseParamValue,
     getParamValueFromKey,
   });
 
@@ -268,7 +268,7 @@ function KedroRunManager(props) {
       setMetadataMode('param');
       setSidInUrl(paramKey);
     },
-    [props, paramOriginals, getParamValue, toYamlString, setSidInUrl]
+    [props, paramOriginals, getBaseParamValue, toYamlString, setSidInUrl]
   );
 
   const onWatchItemClick = useCallback(
@@ -402,18 +402,14 @@ function KedroRunManager(props) {
       const extra = (
         <ParamMetadataEditor
           key={activeParamKey}
-          getParamValue={() => getParamValue(activeParamKey)}
+          // getParamValue={() => getParamValueFromKey(activeParamKey)}
+          paramValue={getParamValueFromKey(activeParamKey)}
           toYamlString={toYamlString}
           parseYamlishValue={parseYamlishValue}
-          onSave={(val) => {
-            editParamInEditor(activeParamKey, val);
-            getParamValue(activeParamKey); // Refresh editor content
-          }}
-          onReset={() => {
-            resetParamInEditor(activeParamKey);
-            getParamValue(activeParamKey); // Refresh editor content
-          }}
+          onSave={(val) => editParamInEditor(activeParamKey, val)}
+          onReset={() => resetParamInEditor(activeParamKey)}
           showToast={showToast}
+          developerView={true}
         />
       );
       return <MetaData extraComponent={extra} />;
@@ -481,6 +477,13 @@ function KedroRunManager(props) {
           padding: '8px 12px',
         }}
       >
+        <div>
+          <strong>Parameter Value</strong>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {JSON.stringify(getParamValueFromKey(activeParamKey), null, 2)}
+          </pre>
+        </div>
+
         <div style={{ marginBottom: 8 }}>
           <strong>Watch List</strong>
           <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>

@@ -89,7 +89,7 @@ function useWatchList(props) {
     saveWatchToStorageDebounced();
   }, [watchList]);
 
-  const getParamValue = useCallback(
+  const getBaseParamValue = useCallback(
     (paramKey) => {
       // First check if there's metadata available from the clicked node
       try {
@@ -141,11 +141,11 @@ function useWatchList(props) {
         }
         return undefined;
       }
-      const val = getParamValue(paramKey);
+      const val = getBaseParamValue(paramKey);
       setParamValueForKey(paramKey, val);
       return val;
     },
-    [paramEdits, getParamValue]
+    [paramEdits, getBaseParamValue]
   );
 
   const addToWatchList = useCallback(
@@ -165,7 +165,7 @@ function useWatchList(props) {
         return [...prev, item];
       });
     },
-    [getParamValue, setWatchList]
+    [getBaseParamValue, setWatchList]
   );
 
   // Sync watch list with parameter editor originals/edits
@@ -197,7 +197,7 @@ function useWatchList(props) {
         !Object.prototype.hasOwnProperty.call(paramOriginals, item.id) ||
         !Object.prototype.hasOwnProperty.call(paramEdits, item.id);
       if (isMissingInEditor) {
-        const currentVal = getParamValue(item.id);
+        const currentVal = getBaseParamValue(item.id);
         if (typeof currentVal !== 'undefined') {
           addParamsInEditor({ [item.id]: currentVal });
         }
@@ -207,7 +207,7 @@ function useWatchList(props) {
     watchList,
     paramOriginals,
     paramEdits,
-    getParamValue,
+    getBaseParamValue,
     addParamsInEditor,
     removeParamInEditor,
   ]);
@@ -260,7 +260,7 @@ function useWatchList(props) {
       const additions = {};
       arr.forEach((key) => {
         if (!Object.prototype.hasOwnProperty.call(paramOriginals, key)) {
-          const currentVal = getParamValue(key);
+          const currentVal = getBaseParamValue(key);
           additions[key] = currentVal;
         }
       });
@@ -270,7 +270,7 @@ function useWatchList(props) {
         } catch {}
       }
     },
-    [paramOriginals, getParamValue, addParamsInEditor]
+    [paramOriginals, getBaseParamValue, addParamsInEditor]
   );
 
   const toYamlString = useCallback((value) => {
@@ -316,7 +316,7 @@ function useWatchList(props) {
     resetParamInEditor,
     editParamInEditor,
     // expose helpers
-    getParamValue,
+    getBaseParamValue,
     // Param helpers
     getParamValueFromKey,
     setParamValueForKey,
