@@ -55,7 +55,6 @@ function KedroRunManager(props) {
 
   // State
   const [kedroEnvOverride, setKedroEnvOverride] = useState(null); // optional external override
-  const [mounted, setMounted] = useState(false);
 
   // Toast and transient UI state
   const toastTimer = useRef();
@@ -232,6 +231,16 @@ function KedroRunManager(props) {
     } catch {}
   }, []);
 
+  const removeSidFromUrl = useCallback(() => {
+    try {
+      const current = new URL(window.location.href);
+      current.searchParams.delete('sid');
+      const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
+      window.history.pushState({}, '', nextUrl);
+      lastSid.current = null;
+    } catch {}
+  }, []);
+
   const openDatasetDetails = useCallback((dataset) => {
     setShowMetadata(true);
     setMetadataMode('dataset');
@@ -270,6 +279,13 @@ function KedroRunManager(props) {
     },
     [props, paramOriginals, getBaseParamValue, toYamlString, setSidInUrl]
   );
+
+  const closeParamEditor = useCallback(() => {
+    setActiveParamKey(null);
+    setShowMetadata(false);
+    // setMetadataMode(null);
+    removeSidFromUrl();
+  }, []);
 
   const onWatchItemClick = useCallback(
     (item) => {
@@ -389,27 +405,21 @@ function KedroRunManager(props) {
     });
   }, []);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // --- Render helpers (converted from class) ---
   const renderMetadataPanel = () => {
-    if (!showMetadata || !mounted) {
+    if (!showMetadata) {
       return null;
     }
     if (metadataMode === 'param' && activeParamKey) {
       const extra = (
         <ParamMetadataEditor
           key={activeParamKey}
-          // getParamValue={() => getParamValueFromKey(activeParamKey)}
           paramValue={getParamValueFromKey(activeParamKey)}
           toYamlString={toYamlString}
           parseYamlishValue={parseYamlishValue}
           onSave={(val) => editParamInEditor(activeParamKey, val)}
           onReset={() => resetParamInEditor(activeParamKey)}
           showToast={showToast}
-          developerView={true}
         />
       );
       return <MetaData extraComponent={extra} />;
@@ -450,7 +460,13 @@ function KedroRunManager(props) {
       getEditedParamValue={getParamValueFromKey}
       toYamlString={toYamlString}
       onWatchItemClick={onWatchItemClick}
-      removeFromWatchList={removeFromWatchList}
+      removeFromWatchList={(itemId) => {
+        const isClose = watchList.length <= 1 || itemId === activeParamKey;
+        removeFromWatchList(itemId);
+        if (isClose) {
+          closeParamEditor();
+        }
+      }}
     />
   );
 
@@ -508,6 +524,32 @@ function KedroRunManager(props) {
     </details>
   );
 
+  const renderToast = () => {
+    return (
+      toastVisible && (
+        <div
+          className="runner-toast"
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            right: '16px',
+            bottom: '16px',
+            background: 'var(--color-bg-alt)',
+            color: 'var(--color-text-alt)',
+            padding: '10px 12px',
+            borderRadius: '6px',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+            zIndex: 9999,
+            maxWidth: '50vw',
+          }}
+          onClick={hideToast}
+        >
+          {toastMessage || 'Saved'}
+        </div>
+      )
+    );
+  };
   // --- Main render ---
   const hasParamChanges = !!Object.keys(strictlyChanged || {}).length;
   const containerClass = classnames('runner-manager', {
@@ -557,7 +599,10 @@ function KedroRunManager(props) {
               </button>
               <button
                 className="btn btn--secondary"
-                onClick={clearWatchList}
+                onClick={() => {
+                  clearWatchList();
+                  closeParamEditor();
+                }}
                 disabled={!(watchList || []).length}
               >
                 Clear
@@ -569,37 +614,12 @@ function KedroRunManager(props) {
       </main>
 
       <footer className="runner-manager__footer">
-        <small>
-          UI draft — not wired to backend. Connect API endpoints for parameters,
-          datasets and runs to make it live.
-        </small>
+        <small>UI draft — not all features implemented.</small>
       </footer>
-
       {renderWatchListDeveloper()}
       {renderMetadataPanel()}
       {renderWatchModal()}
-      {toastVisible && (
-        <div
-          className="runner-toast"
-          role="status"
-          aria-live="polite"
-          style={{
-            position: 'fixed',
-            right: '16px',
-            bottom: '16px',
-            background: 'var(--color-bg-alt)',
-            color: 'var(--color-text-alt)',
-            padding: '10px 12px',
-            borderRadius: '6px',
-            boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
-            zIndex: 9999,
-            maxWidth: '50vw',
-          }}
-          onClick={hideToast}
-        >
-          {toastMessage || 'Saved'}
-        </div>
-      )}
+      {renderToast()}
     </div>
   );
 }
