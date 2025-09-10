@@ -1,3 +1,4 @@
+import React from 'react';
 import exportGraph from './export-graph';
 
 describe('exportGraph', () => {

@@ -1,3 +1,4 @@
+import React from 'react';
 import { getValueRegex, getHighlightedText } from './search-utils';
 
 test('getValueRegex should return a regular expression', () => {

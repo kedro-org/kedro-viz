@@ -38,7 +38,7 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
                 key={i}
                 onClick={onClick}
               >
-                {content}
+                {String(content)}
               </td>
             ))}
           </tr>

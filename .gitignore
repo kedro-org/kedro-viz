@@ -25,6 +25,7 @@ cypress/downloads/
 
 # production
 /build/
+/dist/
 lib/
 
 # misc

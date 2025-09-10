@@ -55,7 +55,7 @@ ignore = [
 "package/kedro_viz/data_access/repositories/registered_pipelines.py" = ["D"]
 "package/kedro_viz/api/rest/responses.py" = ["D"]
 "package/kedro_viz/data_access/repositories/graph.py" = ["D"]
-"demo-project/*.py" = ["D", "ARG", "PLW0603"] # Allow unused arguments in node functions for them to generate constant outputs, but mimic the DAG and technically have inputs.
+"demo-project/*.py" = ["D", "ARG", "PLW0603", "N999"] # Allow unused arguments in node functions for them to generate constant outputs, but mimic the DAG and technically have inputs.
 
 [lint.mccabe]
 max-complexity = 18

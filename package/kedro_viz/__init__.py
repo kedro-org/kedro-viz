@@ -7,7 +7,7 @@ from packaging.version import Version
 
 from kedro_viz.constants import KEDRO_VERSION
 
-__version__ = "12.0.0"
+__version__ = "12.1.0"
 
 
 class KedroVizPythonVersionWarning(UserWarning):
