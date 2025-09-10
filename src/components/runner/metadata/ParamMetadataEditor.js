@@ -6,7 +6,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
  */
 function ParamMetadataEditor({
   key, // Added key prop to force remount on param change
-  // getParamValue,
   paramValue,
   toYamlString,
   parseYamlishValue,
@@ -14,17 +13,15 @@ function ParamMetadataEditor({
   onReset,
   showToast,
   disabled,
-  developerView = false,
 }) {
-  const isInitialized = useRef(true); // Track if component is mounted
   const [draft, setDraft] = useState(null);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState(null);
 
   // Ensure draft is in sync with paramValue changes
   useEffect(() => {
-    if (!isInitialized.current || draft !== null || dirty) {
-      // Do not overwrite unsaved user edits
+    // Do not overwrite unsaved user edits
+    if (draft !== null || dirty) {
       return;
     }
 
@@ -42,7 +39,7 @@ function ParamMetadataEditor({
       setDraft(e);
       setError('Failed to load parameter');
     }
-  }, [key, isInitialized, paramValue, toYamlString]);
+  }, [key, paramValue, toYamlString]);
 
   const onChange = useCallback((e) => {
     setDraft(e.target.value);
@@ -88,36 +85,6 @@ function ParamMetadataEditor({
       >
         Edit parameters
       </h3>
-      {() => {
-        if (developerView) {
-          // Developer view of internal state
-          return (
-            <div>
-              <h4>Internal State</h4>
-              <div>
-                {' '}
-                <pre>{`paramValue = ${JSON.stringify(
-                  paramValue,
-                  null,
-                  2
-                )}`}</pre>
-              </div>
-              <div>
-                {' '}
-                <pre>{`draft = ${JSON.stringify(draft, null, 2)}`}</pre>
-              </div>
-              <div>
-                {' '}
-                <pre>{`dirty = ${JSON.stringify(dirty, null, 2)}`}</pre>
-              </div>
-              <div>
-                {' '}
-                <pre>{`error = ${JSON.stringify(error, null, 2)}`}</pre>
-              </div>
-            </div>
-          );
-        }
-      }}
       <textarea
         className="runner-meta-editor"
         value={draft}
