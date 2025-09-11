@@ -1,10 +1,9 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 
-// Hook to manage ?sid= URL parameter lifecycle (selection of param/dataset)
+// Lean hook: expose currentSid reflecting the ?sid= query param.
+// Provides helpers to set/remove/sync without pending/processed ceremony.
 function useRunnerUrlSelection() {
-  const lastSidRef = useRef(null);
-  const [pendingSid, setPendingSid] = useState(null);
-
+  // Helper first so we can use it inside lazy initializer
   const getSidFromUrl = useCallback(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search || '');
@@ -14,15 +13,25 @@ function useRunnerUrlSelection() {
     }
   }, []);
 
+  // Seed initial state from URL immediately (avoids a blank frame before sync effect)
+  const [currentSid, setCurrentSid] = useState(() => {
+    try {
+      const initial = getSidFromUrl();
+      return initial || null;
+    } catch {
+      return null;
+    }
+  });
+  // Note: getSidFromUrl defined above (order swapped due to lazy init need)
+
   const setSidInUrl = useCallback(
     (nodeId) => {
       if (!nodeId) {
         return;
       }
-      // Noop is sid in url already matches
       const sid = getSidFromUrl();
-      if (lastSidRef.current === nodeId || sid === nodeId) {
-        return;
+      if (sid === nodeId) {
+        return; // already selected
       }
       try {
         const current = new URL(window.location.href);
@@ -31,9 +40,12 @@ function useRunnerUrlSelection() {
         const nextUrl = `${
           current.pathname
         }?${current.searchParams.toString()}`;
+        // Use pushState so back button walks selection history; could switch to replaceState if undesired
         window.history.pushState({}, '', nextUrl);
-        // lastSidRef.current = nodeId;
-      } catch {}
+        setCurrentSid(nodeId);
+      } catch {
+        setCurrentSid(nodeId);
+      }
     },
     [getSidFromUrl]
   );
@@ -44,37 +56,27 @@ function useRunnerUrlSelection() {
       current.searchParams.delete('sid');
       const nextUrl = `${current.pathname}?${current.searchParams.toString()}`;
       window.history.pushState({}, '', nextUrl);
-      // lastSidRef.current = null;
-    } catch {}
+      setCurrentSid(null);
+    } catch {
+      setCurrentSid(null);
+    }
   }, []);
 
   const syncFromUrl = useCallback(() => {
     const sid = getSidFromUrl();
-    if (!sid || sid === lastSidRef.current) {
-      return;
+    if (sid) {
+      setCurrentSid(sid);
+    } else {
+      setCurrentSid(null);
     }
-    setPendingSid(sid);
   }, [getSidFromUrl]);
 
-  const markSidProcessed = useCallback(() => {
-    if (pendingSid) {
-      lastSidRef.current = pendingSid;
-      setPendingSid(null);
-    }
-  }, [pendingSid]);
-
-  // Optional: keep in sync with popstate outside consumer if wanted
-  useEffect(() => {
-    // nothing automatic here; consumer decides when to call syncFromUrl
-  }, []);
-
   return {
-    pendingSid,
+    currentSid,
     syncFromUrl,
     setSidInUrl,
     removeSidFromUrl,
-    markSidProcessed,
-    getSidFromUrl, // exported in case consumer wants direct read
+    getSidFromUrl,
   };
 }
 

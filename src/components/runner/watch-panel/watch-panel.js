@@ -48,7 +48,7 @@ function WatchPanel({
       );
     }
     setItemsToShow(newItemsToShow);
-  }, [watchTab, parameterItems, datasetItems, customOrder]);
+  }, [watchTab, parameterItems, datasetItems, customOrder, setItemsToShow]);
 
   const getParamPreview = useCallback(
     (key) => {

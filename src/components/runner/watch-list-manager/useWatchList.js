@@ -1,6 +1,28 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import useParameterEditor from './useParameterEditor';
-import { loadNodeData, toggleNodeClicked } from '../../../actions/nodes'; // ensure path is correct
+import { addNodeMetadata, toggleNodeDataLoading } from '../../../actions/nodes'; // ensure path is correct
+import loadJsonData from '../../../store/load-data';
+import { getUrl } from '../../../utils';
+
+function fetchNodeMetadataIfNeeded(nodeID) {
+  return async function (dispatch, getState) {
+    if (!nodeID) {
+      return;
+    }
+    const { dataSource, node } = getState();
+    if (dataSource !== 'json' || node.fetched[nodeID]) {
+      return;
+    }
+    dispatch(toggleNodeDataLoading(true));
+    try {
+      const url = getUrl('nodes', nodeID);
+      const data = await loadJsonData(url);
+      dispatch(addNodeMetadata({ id: nodeID, data }));
+    } finally {
+      dispatch(toggleNodeDataLoading(false));
+    }
+  };
+}
 
 // Keys for persisting Watch list and custom order
 const RUNNER_WATCHLIST_STORAGE_KEY = 'kedro_viz_runner_watch_list';
@@ -12,6 +34,7 @@ function useWatchList(props) {
   const { dispatch } = props || {};
   const saveWatchTimer = useRef();
   const [watchList, setWatchList] = useState([]);
+  const [hydrated, setHydrated] = useState(false);
 
   const {
     paramOriginals,
@@ -24,6 +47,20 @@ function useWatchList(props) {
     editParam: editParamInEditor,
     loadParamsFromStorage,
   } = useParameterEditor();
+
+  const ensureItemMetadata = useCallback(
+    (itemId) => {
+      const cached =
+        props.clickedNodeMetaData?.id === itemId
+          ? props.clickedNodeMetaData
+          : props.nodeParameters?.[itemId];
+
+      if (dispatch && !cached) {
+        dispatch(fetchNodeMetadataIfNeeded(itemId));
+      }
+    },
+    [props, dispatch]
+  );
 
   const getBaseParamValue = useCallback(
     (paramKey) => {
@@ -90,6 +127,7 @@ function useWatchList(props) {
       if (!item || !item.kind || !item.id) {
         return;
       }
+      ensureItemMetadata(item.id);
 
       setWatchList((prev) => {
         const exists = prev.some(
@@ -126,10 +164,7 @@ function useWatchList(props) {
 
       const currentIds = (newWatchList || []).map((item) => item.id);
       currentIds.forEach((itemId) => {
-        if (dispatch) {
-          dispatch(loadNodeData(itemId));
-          dispatch(toggleNodeClicked(itemId));
-        }
+        ensureItemMetadata(itemId);
       });
 
       // Save watch list
@@ -198,6 +233,26 @@ function useWatchList(props) {
     }
   }, [loadWatchFromStorage, loadParamsFromStorage, updateWatchList]);
 
+  // One-time hydration guard
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { watchList: storedWatchList } = loadWatchFromStorage?.() || {};
+        if (Array.isArray(storedWatchList) && storedWatchList.length) {
+          setWatchList(storedWatchList);
+        }
+      } finally {
+        if (!cancelled) {
+          setHydrated(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // hydrate once on mount
   useEffect(() => {
     hydrateWatchFromStorage();
@@ -256,6 +311,7 @@ function useWatchList(props) {
     // Direct watch list interactions
     // (Viewing)
     watchList,
+    hydrated,
     // (Editing)
     addToWatchList,
     removeFromWatchList,

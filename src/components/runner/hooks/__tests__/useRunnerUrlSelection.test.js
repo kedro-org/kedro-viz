@@ -2,7 +2,7 @@ import { renderHook, act } from '@testing-library/react';
 import useRunnerUrlSelection from '../useRunnerUrlSelection';
 
 // Helper to manipulate window.location without full reload
-describe('useRunnerUrlSelection', () => {
+describe('useRunnerUrlSelection (lean currentSid API)', () => {
   const originalHref = window.location.href;
 
   const setSearch = (query) => {
@@ -15,62 +15,58 @@ describe('useRunnerUrlSelection', () => {
     window.history.replaceState({}, '', originalHref);
   });
 
-  it('captures pendingSid from URL on syncFromUrl', () => {
+  it('captures currentSid from URL on syncFromUrl', () => {
     setSearch('?sid=test_param');
     const { result } = renderHook(() => useRunnerUrlSelection());
     act(() => {
       result.current.syncFromUrl();
     });
-    expect(result.current.pendingSid).toBe('test_param');
+    expect(result.current.currentSid).toBe('test_param');
   });
 
-  it('does not re-set pendingSid if same sid processed', () => {
+  it('re-sync with same sid leaves currentSid unchanged', () => {
     setSearch('?sid=abc');
     const { result } = renderHook(() => useRunnerUrlSelection());
     act(() => {
       result.current.syncFromUrl();
     });
-    expect(result.current.pendingSid).toBe('abc');
-    // mark processed
-    act(() => {
-      result.current.markSidProcessed();
-    });
-    // call again with same sid
+    expect(result.current.currentSid).toBe('abc');
+    // call again with same sid (no change expected)
     act(() => {
       result.current.syncFromUrl();
     });
-    // pendingSid should remain null after processing if unchanged
-    expect(result.current.pendingSid).toBe(null);
+    expect(result.current.currentSid).toBe('abc');
   });
 
-  it('sets and removes sid in URL', () => {
+  it('sets and removes sid in URL updating currentSid', () => {
     const { result } = renderHook(() => useRunnerUrlSelection());
     act(() => {
       result.current.setSidInUrl('node123');
     });
     expect(window.location.search).toContain('sid=node123');
+    expect(result.current.currentSid).toBe('node123');
     act(() => {
       result.current.removeSidFromUrl();
     });
     expect(window.location.search).not.toContain('sid=');
+    expect(result.current.currentSid).toBe(null);
   });
 
-  it('updates pendingSid when sid changes to a new value', () => {
+  it('updates currentSid when sid changes to a new value', () => {
     setSearch('?sid=first');
     const { result } = renderHook(() => useRunnerUrlSelection());
     act(() => result.current.syncFromUrl());
-    expect(result.current.pendingSid).toBe('first');
-    act(() => result.current.markSidProcessed());
+    expect(result.current.currentSid).toBe('first');
     // change sid
     setSearch('?sid=second');
     act(() => result.current.syncFromUrl());
-    expect(result.current.pendingSid).toBe('second');
+    expect(result.current.currentSid).toBe('second');
   });
 
   it('ignores sync when no sid present', () => {
     setSearch('');
     const { result } = renderHook(() => useRunnerUrlSelection());
     act(() => result.current.syncFromUrl());
-    expect(result.current.pendingSid).toBe(null);
+    expect(result.current.currentSid).toBe(null);
   });
 });
