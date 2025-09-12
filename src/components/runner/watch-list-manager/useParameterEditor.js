@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-} from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 
 // Keys for persisting parameter edits and originals
 const RUNNER_PARAM_STATES_STORAGE_KEY = 'kedro_viz_runner_param_states';
@@ -152,7 +146,7 @@ function useParameterEditor() {
       });
       saveParamsToStorage();
     },
-    [setEntries]
+    [setEntries, saveParamsToStorage]
   );
 
   const resetParam = useCallback(

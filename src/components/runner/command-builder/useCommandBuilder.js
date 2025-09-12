@@ -83,14 +83,14 @@ function useCommandBuilder({
     } catch {
       return 'kedro run';
     }
-  }, [activePipeline, selectedTags, kedroEnv, kedroEnvProp, quoteIfNeeded]);
+  }, [activePipeline, selectedTags, kedroEnv, kedroEnvProp]);
 
   const commandString = useMemo(() => {
     const base = buildRunCommand();
     return paramsArgString
       ? `${base} --params ${quoteIfNeeded(paramsArgString)}`
       : base;
-  }, [buildRunCommand, paramsArgString, quoteIfNeeded]);
+  }, [buildRunCommand, paramsArgString]);
 
   // Fetch kedro env once (if not provided)
   useEffect(() => {

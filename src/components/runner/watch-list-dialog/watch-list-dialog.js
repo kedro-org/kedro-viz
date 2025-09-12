@@ -17,12 +17,11 @@ function onSelectNodeClickImpl({
   const isParam = (paramNodes || []).some(
     (paramNode) => paramNode.id === nodeId
   );
-  const isDataset = (datasets || []).some(
-    (dataset) => dataset.id === nodeId
-  );
+  const isDataset = (datasets || []).some((dataset) => dataset.id === nodeId);
 
   if (isParam || isDataset) {
-    toggleSelectToAdd && toggleSelectToAdd(isParam ? 'param' : 'dataset', nodeId, node.name);
+    toggleSelectToAdd &&
+      toggleSelectToAdd(isParam ? 'param' : 'dataset', nodeId, node.name);
   }
 }
 
@@ -69,7 +68,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       if (next[id]) {
         delete next[id];
       } else {
-        next[id] = { kind, id, name};
+        next[id] = { kind, id, name };
       }
       return next;
     });
@@ -145,7 +144,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
         toggleSelectToAdd,
       });
     },
-    [props]
+    [props, toggleSelectToAdd]
   );
 
   return (
@@ -267,7 +266,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
             </button>
             <button
               className="btn btn--primary"
-              onClick={({}) =>
+              onClick={() =>
                 onConfirm(Object.values(tempModalSelections || {}))
               }
               disabled={!allowConfirm}

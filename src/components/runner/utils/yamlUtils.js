@@ -28,7 +28,5 @@ export const parseYamlishValue = (text) => {
   }
 };
 
-export default {
-  toYamlString,
-  parseYamlishValue,
-};
+const yamlUtils = { toYamlString, parseYamlishValue };
+export default yamlUtils;

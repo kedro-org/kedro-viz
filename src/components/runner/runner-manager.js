@@ -92,9 +92,9 @@ function KedroRunManager(props) {
   }, []);
 
   const closeParamEditor = useCallback(() => {
-    dispatch && dispatch(toggleNodeClicked(null));
+    if (dispatch) {dispatch(toggleNodeClicked(null));}
     toSelectedPipeline();
-  }, [dispatch, toggleNodeClicked]);
+  }, [dispatch, toSelectedPipeline]);
 
   const onClickWatchItem = useCallback(
     (item) => {
@@ -111,7 +111,7 @@ function KedroRunManager(props) {
         }
       }
     },
-    [showToast, toSelectedNode, dispatch, loadNodeData, toggleNodeClicked]
+    [showToast, toSelectedNode, dispatch, loadNodeData]
   );
 
   const onRemoveFromWatchList = useCallback(
@@ -133,7 +133,7 @@ function KedroRunManager(props) {
 
   const onWatchItemAdd = useCallback(() => {
     setIsWatchModalOpen(true);
-  }, [watchList]);
+  }, []);
 
   const closeWatchModal = useCallback(() => {
     setIsWatchModalOpen(false);

@@ -12,7 +12,7 @@ function useJobs() {
   const logRefs = useRef({});
 
   const [jobs, setJobs] = useState([]);
-  const [clearJobModalJobId, setClearJobModalJobId] = useState(null);
+  const [clearJobModalJobId] = useState(null);
 
   // --- Jobs: persistence and polling ---
   const sanitizeJobForStorage = useCallback((job) => {
@@ -212,7 +212,7 @@ function useJobs() {
       addOrUpdateJob(job);
       startJobPolling(job.jobId);
     },
-    [startJobPolling]
+    [startJobPolling, addOrUpdateJob]
   );
 
   const clearJob = useCallback(

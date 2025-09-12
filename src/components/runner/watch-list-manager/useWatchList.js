@@ -59,7 +59,7 @@ function useWatchList(props) {
         dispatch(fetchNodeMetadataIfNeeded(itemId));
       }
     },
-    [props, dispatch]
+    [props, dispatch, paramEdits, getBaseParamValue, setParamValueForKey]
   );
 
   const getBaseParamValue = useCallback(
@@ -95,7 +95,7 @@ function useWatchList(props) {
       }
       return undefined;
     },
-    [props]
+    [props, paramEdits]
   );
 
   const setParamValueForKey = useCallback(
@@ -167,7 +167,7 @@ function useWatchList(props) {
 
       setWatchList(newWatchList);
     },
-    [setWatchList, dispatch]
+    [setWatchList, dispatch, ensureItemMetadata]
   );
 
   const clearWatchList = useCallback(() => {
@@ -185,7 +185,7 @@ function useWatchList(props) {
         );
       } catch {}
     },
-    [watchList]
+    [watchList, saveWatchToStorageDebounced]
   );
 
   const saveWatchToStorageDebounced = useCallback(

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import './watch-panel.css';
 import { toYamlString } from '../utils/yamlUtils';
 
@@ -61,7 +61,7 @@ function WatchPanel({
       const firstLine = String(text).split(/\r?\n/)[0];
       return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
     },
-    [getEditedParamValue, toYamlString]
+    [getEditedParamValue]
   );
 
   const startDragWatch = useCallback((kind, id) => {
@@ -96,17 +96,16 @@ function WatchPanel({
       const reordered = [...kindItems];
       const [moved] = reordered.splice(fromIndex, 1);
       reordered.splice(toIndex, 0, moved);
-      let i = 0;
       const nextCustom = { ...(customOrder || {}), [kind]: true };
       setCustomOrder(nextCustom);
       setDraggingWatch(null);
     },
-    [draggingWatch, watchList, customOrder, saveCustomOrderToStorage]
+    [draggingWatch, watchList, customOrder]
   );
 
   useEffect(() => {
     saveCustomOrderToStorage();
-  }, [customOrder, saveCustomOrderToStorage]);
+  }, [customOrder]);
 
   if (process.env.NODE_ENV !== 'production' && !Array.isArray(watchList)) {
     // eslint-disable-next-line no-console

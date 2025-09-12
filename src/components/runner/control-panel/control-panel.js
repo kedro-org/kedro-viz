@@ -63,8 +63,8 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
   const handleReset = useCallback(() => {
     setDraftCommand(baseCommand);
     setIsDirtyCommand(false);
-    showToast && showToast('Command reset!');
-  }, [baseCommand]);
+    if (showToast) {showToast('Command reset!');}
+  }, [baseCommand, showToast]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -82,7 +82,7 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
     } finally {
       showToast && showToast('Command copied to clipboard!');
     }
-  }, [draftCommand]);
+  }, [draftCommand, showToast]);
 
   function renderParameterDialog() {
     if (!isParamsModalOpen) {
@@ -108,9 +108,9 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
       <div className="runner-manager__control-body">
         <div className="control-row">
           <label className="control-row__label">Command</label>
-      <div className="control-panel__command-controls">
+          <div className="control-panel__command-controls">
             <input
-        className="control-row__input control-panel__command-input"
+              className="control-row__input control-panel__command-input"
               type="text"
               value={draftCommand}
               title={draftCommand}
@@ -120,7 +120,7 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
               }}
             />
             <button
-        className="btn control-panel__small-btn"
+              className="btn control-panel__small-btn"
               onClick={handleReset}
               title="Reset command"
               aria-label="Reset command"
@@ -128,7 +128,7 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
               Reset
             </button>
             <button
-        className="btn control-panel__small-btn"
+              className="btn control-panel__small-btn"
               onClick={handleCopy}
               title="Copy full command"
               aria-label="Copy full command"

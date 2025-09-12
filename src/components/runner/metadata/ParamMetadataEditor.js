@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toYamlString, parseYamlishValue } from '../utils/yamlUtils';
 import './ParamMetadataEditor.css';
 
@@ -39,7 +39,7 @@ function ParamMetadataEditor({
       setDraft(e);
       setError('Failed to load parameter');
     }
-  }, [key, paramValue, toYamlString]);
+  }, [key, paramValue, draft, dirty]);
 
   const onChange = useCallback((e) => {
     setDraft(e.target.value);
@@ -60,7 +60,7 @@ function ParamMetadataEditor({
       setError('Invalid YAML');
       showToast && showToast('Failed to update');
     }
-  }, [draft, disabled, parseYamlishValue, onSave, showToast]);
+  }, [draft, disabled, onSave, showToast]);
 
   const handleReset = useCallback(() => {
     if (disabled || draft === null) {
@@ -75,7 +75,7 @@ function ParamMetadataEditor({
       setError(null);
       showToast && showToast('Reset to original');
     }
-  }, [disabled, onReset, paramValue, toYamlString, showToast]);
+  }, [disabled, onReset, paramValue, showToast]);
 
   return (
     <article
