@@ -7,13 +7,15 @@
 .watchmodal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgb(0 0 0 / 50%);
+  background: rgb(0 0 0 / 30%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 .watchmodal__content {
   position: absolute;
   inset: 10% 12% auto;
-  background: var(--runner-panel-bg);
+  background: var(--runner-modal-bg);
   border: 1px solid var(--runner-border-strong);
   border-radius: 8px;
   display: flex;
@@ -22,15 +24,14 @@
   overflow: hidden;
 }
 
-.watchmodal__header,
-.watchmodal__footer {
+.watchmodal__header{
   padding: 12px 16px;
-  border-bottom: 1px solid var(--runner-border);
+  border: none;
 }
 
 .watchmodal__footer {
-  border-top: 1px solid var(--runner-border);
-  border-bottom: none;
+  padding: 12px 16px;
+  border: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -56,7 +57,7 @@
   position: relative;
   height: 60vh;
   min-height: 360px;
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-panel-bg);
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   overflow: hidden;
@@ -97,7 +98,7 @@
 }
 
 .watchmodal__search {
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-panel-bg);
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   padding: 10px;
@@ -108,6 +109,7 @@
 .watchmodal__search-input {
   width: 100%;
   background: transparent;
+  border: none;
 }
 
 .watchmodal__header {
@@ -151,10 +153,14 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  background: var(--runner-modal-panel-bg);
+  border-radius: 6px;
+  border: 1px solid var(--runner-border);
 }
 
 .watchmodal__results-title {
   margin: 8px 0 6px;
+  padding: 8px 10px;
 }
 
 .watchmodal__results-list {
@@ -166,10 +172,8 @@
   flex: 1 1 0;
   min-height: 0;
   overflow: auto;
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
   padding: 8px;
-  background: var(--runner-subpanel-bg);
+  background: transparent
 }
 
 .watchmodal__result-item {
@@ -180,16 +184,16 @@
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   cursor: pointer;
-  background: var(--runner-panel-bg);
+  background: var(--runner-modal-subpanel-bg);
 }
 
 .watchmodal__result-item--selected {
-  background: color-mix(in srgb, #1db954 18%, var(--runner-panel-bg));
-  border-color: #1db954;
+  background: color-mix(in srgb, var(--parameter-accent) 18%, var(--runner-modal-subpanel-bg));
+  border-color: 1px solid var(--parameter-accent);
 }
 
 .watchmodal__staged {
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-subpanel-bg);
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   padding: 10px;
@@ -197,7 +201,7 @@
 }
 
 .watchmodal__pending {
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-subpanel-bg);
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   padding: 10px;
@@ -215,7 +219,7 @@
   padding: 8px;
   border-radius: 4px;
   border: 1px solid var(--runner-border);
-  background: var(--runner-panel-bg);
+  background: var(--runner-modal-panel-bg);
   color: inherit;
 }
 
@@ -242,7 +246,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--runner-panel-bg);
+  background: var(--runner-modal-panel-bg);
   border: 1px solid var(--runner-border);
   border-radius: 6px;
   padding: 6px 8px;
@@ -253,14 +257,12 @@
 }
 
 .watchmodal__badge--param,
-.watchmodal__badge--dataset {
-  background: var(--runner-stdout-bg);
-}
+.watchmodal__badge--dataset,
 
 .watchmodal__flowchart-placeholder {
   height: 100%;
   min-height: 320px;
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-subpanel-bg);
   border: 2px dashed var(--runner-border);
   border-radius: 6px;
   display: flex;
@@ -281,7 +283,7 @@
 }
 
 .watchmodal__tile {
-  background: var(--runner-subpanel-bg);
+  background: var(--runner-modal-subpanel-bg);
   border: 2px solid transparent;
   border-radius: 6px;
   padding: 8px;

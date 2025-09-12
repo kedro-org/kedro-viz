@@ -187,7 +187,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
                 className="watchmodal__results-col"
                 aria-label="Parameters column"
               >
-                <h5 className="watchmodal__results-title">Parameters</h5>
+                <h2 className="watchmodal__results-title">Parameters</h2>
                 <ul className="watchmodal__results-list">
                   {paramResults.length ? (
                     paramResults.map((item) => (
@@ -219,7 +219,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
                 className="watchmodal__results-col"
                 aria-label="Datasets column"
               >
-                <h5 className="watchmodal__results-title">Datasets</h5>
+                <h2 className="watchmodal__results-title">Datasets</h2>
                 <ul className="watchmodal__results-list">
                   {datasetResults.length ? (
                     datasetResults.map((item) => (

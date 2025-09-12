@@ -11,10 +11,17 @@
   /* Runner theme tokens aligned to global theme variables */
   --runner-text: var(--color-text);
   --runner-muted: var(--color-text-faded);
-  --runner-panel-bg: var(--color-bg-3);
-  --runner-subpanel-header-bg: var(--color-bg-4);
-  --runner-subpanel-bg: var(--color-bg-5);
-  --runner-stdout-bg: var(--color-bg-5);
+  
+  --runner-modal-bg: var(--color-bg-2);
+  --runner-modal-panel-bg: var(--color-bg-3);
+  --runner-modal-subpanel-bg: var(--color-bg-1);
+  --runner-modal-card-bg: var(--color-bg-5);
+
+  --runner-panel-bg: var(--color-bg-2);
+  --runner-subpanel-header-bg: var(--color-bg-3);
+  --runner-subpanel-bg: var(--color-bg-4);
+  --runner-subpanel-body-bg: var(--color-bg-3);
+  --runner-card-bg: var(--color-bg-4);
   --runner-border-strong: var(--color-border-line);
   --runner-border: var(--color-border-line);
   --runner-button-border: var(--color-border-line);
