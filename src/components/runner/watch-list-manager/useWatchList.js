@@ -59,7 +59,7 @@ function useWatchList(props) {
         dispatch(fetchNodeMetadataIfNeeded(itemId));
       }
     },
-    [props, dispatch, paramEdits, getBaseParamValue, setParamValueForKey]
+    [props.clickedNodeMetaData, dispatch]
   );
 
   const getBaseParamValue = useCallback(
@@ -185,7 +185,7 @@ function useWatchList(props) {
         );
       } catch {}
     },
-    [watchList, saveWatchToStorageDebounced]
+    [watchList]
   );
 
   const saveWatchToStorageDebounced = useCallback(
