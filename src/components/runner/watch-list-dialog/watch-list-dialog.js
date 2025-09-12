@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
+import IconButton from '../../ui/icon-button';
+import CloseIcon from '../../icons/close';
 import './watch-list-dialog.css';
 import FlowChart from '../../flowchart';
 
@@ -153,13 +155,12 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       <div className="watchmodal__content">
         <div className="watchmodal__header">
           <h3>Select items to watch</h3>
-          <button
+          <IconButton
             className="watchmodal__close"
-            onClick={onClose}
             aria-label="Close"
-          >
-            ×
-          </button>
+            onClick={onClose}
+            icon={CloseIcon}
+          />
         </div>
         <div className="watchmodal__body">
           <div className="watchmodal__flowcol">

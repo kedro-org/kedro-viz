@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import IconButton from '../../../components/ui/icon-button';
+import CloseIcon from '../../icons/close';
 import './watch-panel.css';
 import { toYamlString } from '../utils/yamlUtils';
 
@@ -184,13 +186,12 @@ function WatchPanel({
                     </span>
                   )}
                 </button>
-                <button
-                  className="watchlist-item__remove"
+                <IconButton
+                  className={`watchlist-item__remove--{item.id}`}
                   aria-label="Remove from watch list"
                   onClick={() => onRemoveItem(item.id)}
-                >
-                  ×
-                </button>
+                  icon={CloseIcon}
+                />
               </li>
             ))}
           </ul>

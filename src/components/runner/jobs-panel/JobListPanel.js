@@ -1,4 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
+import IconButton from '../../ui/icon-button';
+import CloseIcon from '../../icons/close';
 import './JobListPanel.css';
 
 function renderConfirmationModal({
@@ -23,13 +25,12 @@ function renderConfirmationModal({
       <div className="runner-logs-modal__content">
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
-          <button
+          <IconButton
             className="runner-logs-modal__close"
             aria-label="Close"
             onClick={onCancel}
-          >
-            ×
-          </button>
+            icon={CloseIcon}
+          />
         </div>
         <div className="runner-logs-modal__body">
           <p>{message}</p>
@@ -67,13 +68,12 @@ function renderLogsModal({
       <div className="runner-logs-modal__content">
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
-          <button
+          <IconButton
             className="runner-logs-modal__close"
             aria-label="Close"
             onClick={onClose}
-          >
-            ×
-          </button>
+            icon={CloseIcon}
+          />
         </div>
         <div className="runner-logs-modal__body">
           <pre>{logMessage || 'No logs available.'}</pre>
@@ -123,7 +123,7 @@ function renderJobMetadata({
         <div className="job-card__time">
           started {new Date(job.startedAt).toLocaleTimeString()}
         </div>
-  <div className="job-card__actions">
+        <div className="job-card__actions">
           {canTerminate && (
             <button
               className="btn btn--danger"
@@ -181,7 +181,9 @@ function renderJobMetadata({
           </div>
         </div>
         <div
-          className={`job-card__stdout ${expanded ? 'job-card__stdout--expanded' : ''}`}
+          className={`job-card__stdout ${
+            expanded ? 'job-card__stdout--expanded' : ''
+          }`}
           ref={(el) => {
             if (logRefs) {
               logRefs[job.jobId] = el;
