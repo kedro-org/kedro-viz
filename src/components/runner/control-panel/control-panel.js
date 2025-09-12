@@ -1,8 +1,37 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
 
-const ControlPanel = ({ commandBuilder, onStartRun }) => {
-  const inputRef = useRef();
+const STORAGE_KEY = 'kedro-viz.runner.customCommand';
+
+const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
+  const {
+    commandString: baseCommand,
+    hasParamChanges,
+    activePipeline,
+    selectedTags,
+    kedroEnv,
+    diffModel,
+    paramsArgString,
+  } = commandBuilder || {};
+
+  const [draftCommand, setDraftCommand] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        return stored;
+      }
+    } catch {}
+    return baseCommand;
+  });
+  const [isDirtyCommand, setIsDirtyCommand] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && stored !== baseCommand) {
+        return true;
+      }
+    } catch {}
+    return false;
+  });
   const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
 
   const onOpenParamsDialog = useCallback(() => {
@@ -13,32 +42,46 @@ const ControlPanel = ({ commandBuilder, onStartRun }) => {
     setIsParamsModalOpen(false);
   }, []);
 
-  const {
-    commandString,
-    hasParamChanges,
-    activePipeline,
-    selectedTags,
-    kedroEnv,
-    diffModel,
-    paramsArgString,
-  } = commandBuilder || {};
+  useEffect(() => {
+    if (!isDirtyCommand) {
+      setDraftCommand(baseCommand);
+    }
+  }, [baseCommand, isDirtyCommand]);
+
+  // Persist or clear the custom command
+  useEffect(() => {
+    try {
+      if (isDirtyCommand) {
+        localStorage.setItem(STORAGE_KEY, draftCommand);
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch {}
+  }, [draftCommand, isDirtyCommand]);
+
+  const handleReset = useCallback(() => {
+    setDraftCommand(baseCommand);
+    setIsDirtyCommand(false);
+    showToast && showToast('Command reset!');
+  }, [baseCommand]);
 
   const handleCopy = useCallback(async () => {
     try {
-      const text = inputRef.current?.value || commandString;
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else if (inputRef.current) {
-        inputRef.current.focus();
-        inputRef.current.select();
+        await navigator.clipboard.writeText(draftCommand);
+      } else if (draftCommand) {
+        draftCommand.focus();
+        draftCommand.select();
         document.execCommand('copy');
-        inputRef.current.setSelectionRange(
-          inputRef.current.value.length,
-          inputRef.current.value.length
+        draftCommand.setSelectionRange(
+          draftCommand.value.length,
+          draftCommand.value.length
         );
       }
-    } catch {}
-  }, [commandString]);
+    } finally {
+      showToast && showToast('Command copied to clipboard!');
+    }
+  }, [draftCommand]);
 
   function renderParameterDialog() {
     if (!isParamsModalOpen) {
@@ -67,11 +110,29 @@ const ControlPanel = ({ commandBuilder, onStartRun }) => {
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input
               className="control-row__input"
-              ref={inputRef}
-              defaultValue={commandString || 'kedro run'}
-              title={commandString}
+              type="text"
+              value={draftCommand}
+              title={draftCommand}
+              onChange={(e) => {
+                setDraftCommand(e.target.value);
+                setIsDirtyCommand(e.target.value !== baseCommand);
+              }}
               style={{ flex: '1 1 auto', minWidth: 0 }}
             />
+            <button
+              className="btn"
+              onClick={handleReset}
+              title="Reset command"
+              aria-label="Reset command"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '6px 8px',
+              }}
+            >
+              Reset
+            </button>
             <button
               className="btn"
               onClick={handleCopy}
@@ -141,7 +202,7 @@ const ControlPanel = ({ commandBuilder, onStartRun }) => {
         <div className="runner-manager__actions" />
         <div className="runner-manager__hints">
           <small>
-            Pro tip: use <code>kedro run -n</code> to run a single node.
+            Pro tip: Watch your parameters closely to avoid unexpected behavior.
           </small>
         </div>
       </div>

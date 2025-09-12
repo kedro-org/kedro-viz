@@ -169,7 +169,11 @@ function KedroRunManager(props) {
   }, [commandBuilder.commandString, addJob]);
 
   const renderControlPanel = () => (
-    <ControlPanel commandBuilder={commandBuilder} onStartRun={onStartRun} />
+    <ControlPanel
+      commandBuilder={commandBuilder}
+      onStartRun={onStartRun}
+      showToast={showToast}
+    />
   );
 
   const renderMetadataPanel = () => {

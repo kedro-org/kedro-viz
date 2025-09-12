@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import useParameterEditor from './useParameterEditor';
-import { addNodeMetadata, toggleNodeDataLoading } from '../../../actions/nodes'; // ensure path is correct
+import { addNodeMetadata, toggleNodeDataLoading } from '../../../actions/nodes';
 import loadJsonData from '../../../store/load-data';
 import { getUrl } from '../../../utils';
 
@@ -149,7 +149,6 @@ function useWatchList(props) {
         return;
       }
 
-      // Remove from watch list
       setWatchList((prev) => prev.filter((wlItem) => !(wlItem.id === itemId)));
     },
     [setWatchList]
@@ -157,7 +156,6 @@ function useWatchList(props) {
 
   const updateWatchList = useCallback(
     (newWatchList) => {
-      // Iterate through all parameter keys
       if (!Array.isArray(newWatchList)) {
         return;
       }
@@ -167,7 +165,6 @@ function useWatchList(props) {
         ensureItemMetadata(itemId);
       });
 
-      // Save watch list
       setWatchList(newWatchList);
     },
     [setWatchList, dispatch]
@@ -225,7 +222,7 @@ function useWatchList(props) {
   }, []);
 
   const hydrateWatchFromStorage = useCallback(() => {
-    loadParamsFromStorage(); // Load params first
+    loadParamsFromStorage(); // Load params first to prevent the watchlist update from changing them
 
     const { watchList: storedWatchList } = loadWatchFromStorage();
     if ((storedWatchList || []).length) {

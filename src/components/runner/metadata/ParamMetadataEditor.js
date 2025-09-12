@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { toYamlString, parseYamlishValue } from '../utils/yamlUtils';
+import './ParamMetadataEditor.css';
 
 /**
  * ParamMetadataEditor
@@ -83,11 +84,8 @@ function ParamMetadataEditor({
         disabled ? '--disabled' : ''
       }`}
     >
-      <div style={{ margin: '0 36px 24px' }}>
-        <h3
-          className="pipeline-metadata__title pipeline-metadata__title--small"
-          style={{ margin: '0 0 8px' }}
-        >
+      <div className="param-meta-editor__inner">
+        <h3 className="pipeline-metadata__title pipeline-metadata__title--small param-meta-editor__heading">
           Edit parameters
         </h3>
         <textarea
@@ -98,7 +96,7 @@ function ParamMetadataEditor({
           disabled={disabled || draft === null}
           aria-label="Parameter YAML editor"
         />
-        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+        <div className="param-meta-editor__actions">
           <button
             className="btn btn--primary"
             onClick={handleSave}
@@ -114,18 +112,12 @@ function ParamMetadataEditor({
             Reset
           </button>
           {dirty && !error && (
-            <span style={{ fontSize: 12, alignSelf: 'center', opacity: 0.8 }}>
+            <span className="param-meta-editor__status param-meta-editor__status--dirty">
               Unsaved changes
             </span>
           )}
           {error && (
-            <span
-              style={{
-                fontSize: 12,
-                color: 'var(--color-danger)',
-                alignSelf: 'center',
-              }}
-            >
+            <span className="param-meta-editor__status param-meta-editor__status--error">
               {error}
             </span>
           )}
