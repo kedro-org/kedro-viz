@@ -1,0 +1,85 @@
+.param-dialog__arg-code {
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-break: anywhere;
+}
+
+.param-dialog__arg-code-inner {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.param-dialog__arg-code-inner--spaced {
+  margin-bottom: 10px;
+}
+
+.param-dialog__panel {
+  margin-top: 10px;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-subpanel-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.param-dialog__panel-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--runner-border);
+  background: var(--runner-subpanel-header-bg);
+}
+
+.param-dialog__panel-header-label {
+  font-weight: 700;
+}
+
+.param-dialog__select {
+  width: 100%;
+}
+
+.param-dialog__panel-body {
+  padding: 12px;
+}
+
+.param-dialog__per-param-arg {
+  font-family: monospace;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.param-dialog__diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.param-dialog__diff-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.param-dialog__yaml-pre {
+  background: var(--runner-panel-bg);
+  color: var(--runner-text);
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 40vh;
+  overflow: auto;
+  border: 1px solid var(--runner-border);
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.param-dialog__yaml-line--changed {
+  background: var(--runner-hover-bg);
+  border-left: 2px solid var(--parameter-accent);
+  padding-left: 6px;
+  margin-left: -6px;
+}

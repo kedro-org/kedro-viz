@@ -116,39 +116,28 @@
   font-weight: 700;
 }
 
-/* Two-column top area: maintain ratio via fr units with sensible minimums */
 .runner-manager__main {
-  /* Occupy remaining height under header/footer */
   flex: 1 1 auto;
-  min-height: 0; /* allow children to size/scroll */
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(240px, 3fr) minmax(360px, 7fr);
-
-  /* Control panel grows to fit content; capped below. Watch list fills rest */
   grid-template-rows: auto 1fr;
   gap: 24px;
   transition: grid-template-columns 200ms ease;
 }
 
-/* Editor spans full width on a new row */
 .runner-manager__editor {
-  /* Lives in the left column, below control panel */
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
   min-height: 0;
-
-  /* Keep the editor fixed; let inner list region handle scrolling */
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
-  /* Explicit placement: left column, second row */
   grid-column: 1;
   grid-row: 2;
 }
 
-/* Themed textarea for the MetaData extra editor block */
 .runner-meta-editor {
   width: 100%;
   height: 30vh;
@@ -172,7 +161,6 @@
   resize: vertical;
 }
 
-/* Stack everything on narrow screens */
 @media (width <= 1100px) {
   .runner-manager__main {
     display: flex;
@@ -180,11 +168,9 @@
   }
 
   .runner-manager--metadata-open {
-    padding-right: 24px; /* treat metadata as overlay on small screens */
+    padding-right: 24px;
   }
 
-  /* On small screens, .runner-manager__main is flex; allow the jobs panel
-     to take remaining space and be the scroll container */
   .runner-manager__jobs-panel {
     flex: 1 1 auto;
     min-height: 0;
@@ -192,36 +178,30 @@
 }
 
 .runner-manager__control-panel {
-  /* Allow grid to resize this panel proportionally; avoid fixed width */
   min-width: 0;
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
-  max-height: 50vh; /* never exceed half of the viewport */
-  overflow: hidden; /* contain internal scroll in control body */
-  display: flex; /* enable footer pinning */
-  flex-direction: column; /* stack body and footer */
-
-  /* Explicit placement: left column, first row */
+  max-height: 50vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   grid-column: 1;
   grid-row: 1;
 }
 
-/* Scrollable body so footer can stay pinned at the bottom */
 .runner-manager__control-body {
   flex: 1 1 auto;
-  min-height: 0; /* required for proper overflow behavior in flex containers */
+  min-height: 0;
   overflow: auto;
 }
 
-/* Compact single-line argument list */
 .arglist {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr; /* stack on smaller areas */
-  gap: 6px;
+  grid-template-columns: 1fr;
   font-size: 12px;
 }
 
@@ -292,9 +272,8 @@
   font-size: 12px;
 }
 
-/* Footer pinned to bottom, with slight elevation and sticky behavior if body scrolls */
 .runner-manager__control-footer {
-  margin-top: auto; /* push to bottom if content shorter than container */
+  margin-top: auto;
   position: sticky;
   bottom: 0;
   background: var(--runner-footer-gradient);
@@ -356,7 +335,6 @@
   opacity: 0.7;
 }
 
-/* Subtle secondary button for actions like "Add to watch list" */
 .btn--secondary {
   background: var(--runner-subpanel-bg);
   border-color: var(--runner-button-border);
@@ -368,24 +346,17 @@
 }
 
 .runner-manager__jobs-panel {
-  /* Right column should occupy full grid height across both rows */
   min-width: 0;
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
   grid-row: 1 / span 2;
-
-  /* Make inner list scroll while header stays visible */
   display: flex;
   flex-direction: column;
   min-height: 0;
-
-  /* Explicit placement: right column covering both rows */
   grid-column: 2;
   max-height: 100%;
   height: 100%;
-
-  /* The header is sticky; only the inner body should scroll */
   overflow: hidden;
 }
 
@@ -407,8 +378,8 @@
 
 .jobs-panel__body {
   flex: 1 1 auto;
-  min-height: 0; /* allow child to size and scroll */
-  overflow: auto; /* scrolls independently under sticky header */
+  min-height: 0;
+  overflow: auto;
   max-height: 100%;
 }
 
@@ -416,8 +387,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  /* Let content define height so the panel (parent) becomes the scroll container */
   flex: 0 0 auto;
   overflow: visible;
 }
@@ -428,12 +397,10 @@
   border-radius: 6px;
   border: 1px solid var(--runner-border-strong);
   position: relative;
-
-  /* Max-height is computed in JS to respect sticky header; keep CSS flexible */
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow: auto; /* scroll inside the card if needed */
+  overflow: auto;
 }
 
 .job-card__meta {
@@ -477,10 +444,8 @@
   background: var(--runner-stdout-bg);
   padding: 8px;
   border-radius: 4px;
-  max-height: 200px; /* collapsed default; overridden inline when expanded */
+  max-height: 200px;
   overflow: auto;
-
-  /* Allow logs to take remaining space within the job card while respecting max-height */
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -667,8 +632,6 @@
   justify-content: space-between;
   margin-bottom: 12px;
 }
-
-
 
 .runner-panel__list {
   flex: 1 1 auto;

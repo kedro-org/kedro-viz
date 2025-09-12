@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
-import './ControlPanel.css';
+import './ControlPanel.scss';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
 
 const STORAGE_KEY = 'kedro-viz.runner.customCommand';
@@ -63,7 +63,9 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
   const handleReset = useCallback(() => {
     setDraftCommand(baseCommand);
     setIsDirtyCommand(false);
-    if (showToast) {showToast('Command reset!');}
+    if (showToast) {
+      showToast('Command reset!');
+    }
   }, [baseCommand, showToast]);
 
   const handleCopy = useCallback(async () => {

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import IconButton from '../../../components/ui/icon-button';
 import CloseIcon from '../../icons/close';
-import './watch-panel.css';
+import './watch-panel.scss';
 import { toYamlString } from '../utils/yamlUtils';
 
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
@@ -187,7 +187,7 @@ function WatchPanel({
                   )}
                 </button>
                 <IconButton
-                  className={`watchlist-item__remove--{item.id}`}
+                  className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
                   aria-label="Remove from watch list"
                   onClick={() => onRemoveItem(item.id)}
                   icon={CloseIcon}

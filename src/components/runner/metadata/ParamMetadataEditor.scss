@@ -1,0 +1,29 @@
+/* Extracted styles from inline JSX in ParamMetadataEditor */
+.param-meta-editor__inner {
+  margin: 0 36px 24px;
+}
+
+.param-meta-editor__heading {
+  margin: 0 0 8px;
+}
+
+.param-meta-editor__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.param-meta-editor__status {
+  font-size: 12px;
+  align-self: center;
+}
+
+.param-meta-editor__status--dirty {
+  opacity: 0.8;
+}
+
+.param-meta-editor__status--error {
+  color: var(--color-danger);
+}

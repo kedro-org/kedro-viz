@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 import IconButton from '../../ui/icon-button';
 import CloseIcon from '../../icons/close';
-import './JobListPanel.css';
+import './JobListPanel.scss';
 
 function renderConfirmationModal({
   isOpen,
@@ -26,7 +26,8 @@ function renderConfirmationModal({
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
           <IconButton
-            className="runner-logs-modal__close"
+            className="runner-logs-modal__close runner-logs-modal__close--confirm"
+            container="div"
             aria-label="Close"
             onClick={onCancel}
             icon={CloseIcon}

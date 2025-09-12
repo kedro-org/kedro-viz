@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { toYamlString, parseYamlishValue } from '../utils/yamlUtils';
-import './ParamMetadataEditor.css';
+import './ParamMetadataEditor.scss';
 
 /**
  * ParamMetadataEditor

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { quoteIfNeeded } from '../utils/paramsDiff';
 import { toYamlString } from '../utils/yamlUtils';
-import './ParameterDialog.css';
+import './ParameterDialog.scss';
 
 function renderHighlightedYamlLines(text, otherText) {
   const a = String(text == null ? '' : text).split(/\r?\n/);
@@ -13,7 +13,11 @@ function renderHighlightedYamlLines(text, otherText) {
     const lineClass = changed
       ? 'param-dialog__yaml-line param-dialog__yaml-line--changed'
       : 'param-dialog__yaml-line';
-    return <div key={i} className={lineClass}>{line || ' '}</div>;
+    return (
+      <div key={i} className={lineClass}>
+        {line || ' '}
+      </div>
+    );
   });
 }
 
@@ -49,11 +53,15 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
         <div className="runner-logs-modal__body">
           <div>
             <div className="param-dialog__arg-code">
-              <code className="param-dialog__arg-code-inner">{combinedParamsArg}</code>
+              <code className="param-dialog__arg-code-inner">
+                {combinedParamsArg}
+              </code>
             </div>
             <div className="param-dialog__panel">
               <div className="param-dialog__panel-header">
-                <div className="param-dialog__panel-header-label">Selected parameter</div>
+                <div className="param-dialog__panel-header-label">
+                  Selected parameter
+                </div>
                 <select
                   id="param-changes-select"
                   aria-label="Selected parameter"
@@ -70,7 +78,9 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
               </div>
               <div className="param-dialog__panel-body">
                 <div className="param-dialog__per-param-arg">
-                  <code className="param-dialog__arg-code-inner param-dialog__arg-code-inner--spaced">{perParamArg}</code>
+                  <code className="param-dialog__arg-code-inner param-dialog__arg-code-inner--spaced">
+                    {perParamArg}
+                  </code>
                 </div>
                 <div className="param-dialog__diff-grid">
                   <div>

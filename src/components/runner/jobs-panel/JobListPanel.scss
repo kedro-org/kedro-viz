@@ -1,0 +1,25 @@
+.job-card__actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.job-card__stdout {
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease;
+}
+
+.job-card__stdout--expanded {
+  display: block;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.runner-logs-modal__close--confirm svg {
+  width: 14px;
+  height: 14px;
+}

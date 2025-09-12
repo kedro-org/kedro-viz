@@ -1,0 +1,75 @@
+.runner-panel--watchlist .watchlist-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.watchlist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watchlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.watchlist-item.watchlist-item--edited {
+  border: 2px solid var(--parameter-accent);
+}
+
+.watchlist-item__main {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.watchlist-item__badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--runner-border);
+}
+
+.watchlist-item__badge--param {
+  background: var(--runner-stdout-bg);
+}
+
+.watchlist-item__badge--dataset {
+  background: var(--runner-stdout-bg);
+}
+
+.watchlist-item__remove {
+  background: transparent;
+  border: 1px solid var(--runner-border);
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 8px;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.watchlist-item__remove.watchlist-item__remove--sm button svg,
+.watchlist-item__remove.watchlist-item__remove--sm svg {
+  width: 12px;
+  height: 12px;
+}

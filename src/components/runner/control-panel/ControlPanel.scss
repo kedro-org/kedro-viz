@@ -1,0 +1,17 @@
+.control-panel__command-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.control-panel__command-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.control-panel__small-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+}
