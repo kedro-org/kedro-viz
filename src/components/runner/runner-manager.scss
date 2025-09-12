@@ -468,14 +468,13 @@
   gap: 12px;
 }
 
-/* Reduce margin above the collapse/expand toggle specifically */
 .job-card__toggle.pipeline-toggle {
   margin-top: 8px;
   margin-bottom: 8px;
 }
 
 .job-card__controls--bottom {
-  justify-content: flex-start; /* bottom-left */
+  justify-content: flex-start;
 }
 
 .job-card__details {
@@ -485,22 +484,18 @@
   margin-bottom: 6px;
 }
 
-/* Let the job body fill available space and arrange its sections in a column */
 .job-card__body {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1 1 auto;
-  min-height: 0; /* allow .job-card__stdout to shrink/grow */
+  min-height: 0;
 }
-
-/* Removed .job-card__terminate (button now lives in header actions) */
 
 .runner-manager__footer {
   margin-top: 16px;
   color: var(--runner-muted);
 
-  /* Legend at the bottom of the watch list */
   .watchlist-legend {
     display: flex;
     align-items: center;
@@ -524,7 +519,6 @@
   }
 }
 
-/* Simple modal for full logs */
 .runner-logs-modal {
   position: fixed;
   inset: 0;
@@ -572,13 +566,11 @@
   overflow: auto;
 }
 
-/* Make full log text more readable */
 .runner-logs-modal__body pre {
   font-size: 14px;
   line-height: 1.5;
 }
 
-/* Ensure the Parameter changes select uses the theme text color */
 .runner-logs-modal #param-changes-select {
   color: var(--color-text);
   background: transparent;
@@ -593,7 +585,6 @@
   gap: 8px;
 }
 
-/* Responsive adjustments: when the sidebar is hidden by layout breakpoints, fall back to small padding */
 @media (width <= 900px) {
   .runner-manager,
   .runner-manager--with-sidebar,
@@ -624,7 +615,6 @@
   margin-bottom: 12px;
 }
 
-/* Editor inner panel: toolbar fixed, list scrolls */
 .runner-panel {
   display: flex;
   flex-direction: column;
@@ -638,6 +628,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  border-bottom: 1px solid var(--runner-button-border);
 }
 
 .runner-panel__list {
@@ -646,7 +637,6 @@
   overflow: auto;
 }
 
-/* Subtle scrollbars across runner page */
 .runner-manager *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -669,17 +659,15 @@
 
 .runner-tab {
   padding: 6px 10px;
-  border-radius: 4px;
+  border: none;
   background: transparent;
-  color: inherit;
-  border: 1px solid var(--runner-button-border);
+  color: var(--runner-muted);
   cursor: pointer;
 }
 
 .runner-tab--active {
-  background: var(--runner-primary-gradient);
   color: var(--runner-primary-on);
-  border: none;
+  border-bottom: 1px solid var(--parameter-accent);
 }
 
 .runner-panel__tabs {
@@ -688,29 +676,9 @@
   align-items: center;
 }
 
-/* Muted tabs by default, only active is bright */
 .runner-panel__tabs .runner-tab {
   opacity: 0.7;
   color: var(--runner-muted);
-}
-
-.runner-panel__tabs .runner-tab.runner-tab--active {
-  opacity: 1;
-  background: var(--runner-subpanel-bg);
-  color: inherit;
-  border: 1px solid var(--runner-button-border);
-}
-
-.watchlist-item__preview {
-  font-size: 12px;
-  color: var(--runner-muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
-  max-width: 100%;
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .runner-filter-input {
@@ -770,7 +738,6 @@
   color: var(--runner-muted);
 }
 
-/* Make param items behave like dataset items: clickable with hover */
 .param-item {
   padding: 6px 8px;
   cursor: pointer;
@@ -814,7 +781,6 @@
   color: var(--runner-muted);
 }
 
-/* Right-side metadata editor tweaks */
 .runner-yaml-editor {
   width: 100%;
   box-sizing: border-box;
@@ -834,7 +800,6 @@
   margin-top: 8px;
 }
 
-/* Added header rows for control panel and watch list */
 .control-panel__header,
 .editor__header {
   display: flex;

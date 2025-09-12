@@ -75,7 +75,7 @@ function ParamMetadataEditor({
       setError(null);
       showToast && showToast('Reset to original');
     }
-  }, [disabled, onReset, paramValue, showToast]);
+  }, [disabled, onReset, paramValue, showToast, draft]);
 
   return (
     <article

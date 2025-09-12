@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import IconButton from '../../../components/ui/icon-button';
 import CloseIcon from '../../icons/close';
+import ResetIcon from '../../icons/reset';
+import PlusIcon from '../../icons/plus';
 import './watch-panel.scss';
 import { toYamlString } from '../utils/yamlUtils';
 
@@ -120,16 +122,23 @@ function WatchPanel({
       <div className="editor__header">
         <h3 className="section-title">Watch list</h3>
         <div className="editor__actions">
-          <button className="btn btn--secondary" onClick={onAdd}>
-            Add
-          </button>
-          <button
-            className="btn btn--secondary"
+          <IconButton
+            aria-label="Add watch item"
+            className="watchlist-add-btn"
+            container="div"
+            icon={PlusIcon}
+            labelText="Add watch item"
+            onClick={onAdd}
+          />
+          <IconButton
+            aria-label="Clear watch list"
+            className="watchlist-clear-btn"
+            container="div"
+            icon={ResetIcon}
+            labelText="Clear watch list"
             onClick={onClear}
             disabled={!(watchList || []).length}
-          >
-            Clear
-          </button>
+          />
         </div>
       </div>
       <div className="runner-panel runner-panel--watchlist">

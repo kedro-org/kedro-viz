@@ -189,7 +189,7 @@
 
 .watchmodal__result-item--selected {
   background: color-mix(in srgb, var(--parameter-accent) 18%, var(--runner-modal-subpanel-bg));
-  border-color: 1px solid var(--parameter-accent);
+  border: 1px solid var(--parameter-accent);
 }
 
 .watchmodal__staged {
@@ -306,4 +306,10 @@
 .watchmodal__name {
   display: block;
   margin-top: 6px;
+}
+
+.pipeline-node--temp-selected .pipeline-node__bg {
+  stroke: var(--parameter---node-stroke-success); 
+  fill: color-mix(in srgb, var(--parameter-accent) 18%, var(--runner-modal-subpanel-bg));
+  stroke-width: 3px;
 }
