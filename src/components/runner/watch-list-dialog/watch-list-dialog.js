@@ -155,13 +155,7 @@ function WatchListDialog({ watchList, props, onClose, onConfirm }) {
       <div className="watchmodal__content">
         <div className="watchmodal__header">
           <h3>Select items to watch</h3>
-          <IconButton
-            className="watchmodal__close watchmodal__close--sm"
-            container="div"
-            aria-label="Close"
-            onClick={onClose}
-            icon={CloseIcon}
-          />
+          <IconButton aria-label="Close" onClick={onClose} icon={CloseIcon} />
         </div>
         <div className="watchmodal__body">
           <div className="watchmodal__flowcol">

@@ -113,19 +113,29 @@
 .watchmodal__header {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
-.watchmodal__close {
-  margin-left: auto;
+.watchmodal__header .pipeline-icon--container {
+  list-style: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.watchmodal__header .pipeline-icon-toolbar__button {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
   background: transparent;
   border: none;
   color: inherit;
   cursor: pointer;
-  padding: 4px 6px;
-  line-height: 1;
 }
 
-.watchmodal__close.watchmodal__close--sm .pipeline-icon {
+.watchmodal__header .pipeline-icon-toolbar__button .pipeline-icon {
   width: 14px;
   height: 14px;
 }
