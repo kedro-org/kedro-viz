@@ -1,4 +1,5 @@
-import React, { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
+import './JobListPanel.css';
 
 function renderConfirmationModal({
   isOpen,
@@ -99,11 +100,7 @@ function renderJobMetadata({
 }) {
   const isTerminal = ['finished', 'error', 'terminated'].includes(job.status);
   const expanded = typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
-  const stdoutStyle = {
-    display: expanded ? 'block' : 'none',
-    maxHeight: expanded ? '70vh' : '0px',
-    overflow: 'auto',
-  };
+  // stdout expanded/collapsed handled via CSS classes now
   const bodyHeight = jobsPanelBodyRef.current?.clientHeight || 0;
   const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
   const status = job.status;
@@ -126,16 +123,7 @@ function renderJobMetadata({
         <div className="job-card__time">
           started {new Date(job.startedAt).toLocaleTimeString()}
         </div>
-        <div
-          className="job-card__actions"
-          style={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
-            display: 'flex',
-            gap: '8px',
-          }}
-        >
+  <div className="job-card__actions">
           {canTerminate && (
             <button
               className="btn btn--danger"
@@ -193,8 +181,7 @@ function renderJobMetadata({
           </div>
         </div>
         <div
-          className="job-card__stdout"
-          style={stdoutStyle}
+          className={`job-card__stdout ${expanded ? 'job-card__stdout--expanded' : ''}`}
           ref={(el) => {
             if (logRefs) {
               logRefs[job.jobId] = el;

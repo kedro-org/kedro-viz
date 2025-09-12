@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import './watch-panel.css';
 import { toYamlString } from '../utils/yamlUtils';
 
 const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =

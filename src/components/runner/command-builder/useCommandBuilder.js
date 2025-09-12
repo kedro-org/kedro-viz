@@ -44,7 +44,6 @@ function useCommandBuilder({
     getParamValueFromKey,
   ]);
 
-  // Derive parameter change pairs & paramsArgString
   const paramPairs = useMemo(
     () => diffModel.flatMap((d) => d.pairs),
     [diffModel]
@@ -52,7 +51,6 @@ function useCommandBuilder({
 
   const paramsArgString = useMemo(() => paramPairs.join(','), [paramPairs]);
 
-  // Flag for any param changes
   const hasParamChanges = useMemo(
     () => diffModel.some((d) => d.pairs.length > 0),
     [diffModel]

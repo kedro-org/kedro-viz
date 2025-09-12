@@ -1,4 +1,5 @@
-import { useRef, useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import './ControlPanel.css';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
 
 const STORAGE_KEY = 'kedro-viz.runner.customCommand';
@@ -107,9 +108,9 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
       <div className="runner-manager__control-body">
         <div className="control-row">
           <label className="control-row__label">Command</label>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div className="control-panel__command-controls">
             <input
-              className="control-row__input"
+        className="control-row__input control-panel__command-input"
               type="text"
               value={draftCommand}
               title={draftCommand}
@@ -117,33 +118,20 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
                 setDraftCommand(e.target.value);
                 setIsDirtyCommand(e.target.value !== baseCommand);
               }}
-              style={{ flex: '1 1 auto', minWidth: 0 }}
             />
             <button
-              className="btn"
+        className="btn control-panel__small-btn"
               onClick={handleReset}
               title="Reset command"
               aria-label="Reset command"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6px 8px',
-              }}
             >
               Reset
             </button>
             <button
-              className="btn"
+        className="btn control-panel__small-btn"
               onClick={handleCopy}
               title="Copy full command"
               aria-label="Copy full command"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6px 8px',
-              }}
             >
               Copy
             </button>

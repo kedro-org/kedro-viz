@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import JobListPanel from './JobListPanel';
+import JobListPanel from './jobs-panel';
 import useJobs from './job-manager/useJobs';
 import useWatchList from './watch-list-manager/useWatchList';
 import classnames from 'classnames';
@@ -9,7 +9,7 @@ import MetaData from '../metadata/metadata';
 import ParamMetadataEditor from './metadata/ParamMetadataEditor';
 import ControlPanel from './control-panel';
 import WatchPanel from './watch-panel/watch-panel';
-import WatchListDialog from './watch-list-dialog';
+import WatchListDialog from './watch-list-dialog/watch-list-dialog';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';

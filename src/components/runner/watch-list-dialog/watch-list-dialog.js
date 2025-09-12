@@ -1,7 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import FlowChart from '../flowchart';
-import { use } from 'react';
-import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
+import { useState, useCallback, useEffect } from 'react';
+import './watch-list-dialog.css';
+import FlowChart from '../../flowchart';
 
 // Helper: processing node selection
 function onSelectNodeClickImpl({

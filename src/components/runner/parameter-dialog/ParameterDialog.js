@@ -1,25 +1,19 @@
 import { useState } from 'react';
 import { quoteIfNeeded } from '../utils/paramsDiff';
 import { toYamlString } from '../utils/yamlUtils';
+import './ParameterDialog.css';
 
 function renderHighlightedYamlLines(text, otherText) {
   const a = String(text == null ? '' : text).split(/\r?\n/);
   const b = String(otherText == null ? '' : otherText).split(/\r?\n/);
   const max = Math.max(a.length, b.length);
-  const highlightStyle = {
-    background: 'var(--runner-hover-bg)',
-    borderLeft: '2px solid var(--parameter-accent)',
-    paddingLeft: '6px',
-    marginLeft: '-6px',
-  };
   return Array.from({ length: max }).map((_, i) => {
     const line = a[i] ?? '';
     const changed = (a[i] ?? '') !== (b[i] ?? '');
-    return (
-      <div key={i} style={changed ? highlightStyle : undefined}>
-        {line || ' '}
-      </div>
-    );
+    const lineClass = changed
+      ? 'param-dialog__yaml-line param-dialog__yaml-line--changed'
+      : 'param-dialog__yaml-line';
+    return <div key={i} className={lineClass}>{line || ' '}</div>;
   });
 }
 
@@ -34,14 +28,6 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
     (selectedItem?.pairs || []).join(',')
   )}`;
   const combinedParamsArg = `--params ${quoteIfNeeded(paramsArgString || '')}`;
-  const argCodeStyle = {
-    fontFamily: 'monospace',
-    fontSize: '12px',
-    whiteSpace: 'pre-wrap',
-    overflowWrap: 'anywhere',
-    wordBreak: 'break-word',
-    lineBreak: 'anywhere',
-  };
   return (
     <div
       className="runner-logs-modal"
@@ -62,36 +48,18 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
         </div>
         <div className="runner-logs-modal__body">
           <div>
-            <div style={argCodeStyle}>
-              <code>{combinedParamsArg}</code>
+            <div className="param-dialog__arg-code">
+              <code className="param-dialog__arg-code-inner">{combinedParamsArg}</code>
             </div>
-            <div
-              style={{
-                marginTop: '10px',
-                border: '1px solid var(--runner-border)',
-                background: 'var(--runner-subpanel-bg)',
-                borderRadius: '8px',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'auto 1fr',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '10px 12px',
-                  borderBottom: '1px solid var(--runner-border)',
-                  background: 'var(--runner-subpanel-header-bg)',
-                }}
-              >
-                <div style={{ fontWeight: 700 }}>Selected parameter</div>
+            <div className="param-dialog__panel">
+              <div className="param-dialog__panel-header">
+                <div className="param-dialog__panel-header-label">Selected parameter</div>
                 <select
                   id="param-changes-select"
                   aria-label="Selected parameter"
                   value={selectedKey}
                   onChange={(e) => onSelectKey(e.target.value)}
-                  style={{ width: '100%' }}
+                  className="param-dialog__select"
                 >
                   {items.map((item) => (
                     <option key={item.key} value={item.key}>
@@ -100,47 +68,14 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
                   ))}
                 </select>
               </div>
-              <div style={{ padding: '12px' }}>
-                <div
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    marginBottom: '10px',
-                  }}
-                >
-                  <code style={{ ...argCodeStyle, marginBottom: '10px' }}>
-                    {perParamArg}
-                  </code>
+              <div className="param-dialog__panel-body">
+                <div className="param-dialog__per-param-arg">
+                  <code className="param-dialog__arg-code-inner param-dialog__arg-code-inner--spaced">{perParamArg}</code>
                 </div>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '12px',
-                  }}
-                >
+                <div className="param-dialog__diff-grid">
                   <div>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        marginBottom: '6px',
-                        fontSize: '12px',
-                        opacity: 0.9,
-                      }}
-                    >
-                      Original
-                    </div>
-                    <pre
-                      style={{
-                        background: 'var(--runner-panel-bg)',
-                        color: 'var(--runner-text)',
-                        padding: '8px',
-                        borderRadius: '4px',
-                        maxHeight: '40vh',
-                        overflow: 'auto',
-                        border: '1px solid var(--runner-border)',
-                      }}
-                    >
+                    <div className="param-dialog__diff-title">Original</div>
+                    <pre className="param-dialog__yaml-pre">
                       {renderHighlightedYamlLines(
                         toYamlString(orig) || '',
                         toYamlString(curr) || ''
@@ -148,27 +83,8 @@ const ParameterDialog = ({ onClose, diffModel = [], paramsArgString }) => {
                     </pre>
                   </div>
                   <div>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        marginBottom: '6px',
-                        fontSize: '12px',
-                        opacity: 0.9,
-                      }}
-                    >
-                      Current
-                    </div>
-                    <pre
-                      style={{
-                        background: 'var(--runner-panel-bg)',
-                        color: 'var(--runner-text)',
-                        padding: '8px',
-                        borderRadius: '4px',
-                        maxHeight: '40vh',
-                        overflow: 'auto',
-                        border: '1px solid var(--runner-border)',
-                      }}
-                    >
+                    <div className="param-dialog__diff-title">Current</div>
+                    <pre className="param-dialog__yaml-pre">
                       {renderHighlightedYamlLines(
                         toYamlString(curr) || '',
                         toYamlString(orig) || ''
