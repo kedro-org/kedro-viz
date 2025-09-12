@@ -15,24 +15,11 @@ import { getTagData } from '../../selectors/tags';
 import './runner-manager.scss';
 import { startKedroCommand } from '../../utils/runner-api';
 import useCommandBuilder from './command-builder/useCommandBuilder';
-import {
-  onToggleNodeSelected,
-  toggleNodeClicked,
-  loadNodeData,
-} from '../../actions/nodes';
-import useRunnerUrlSelection from './hooks/useRunnerUrlSelection';
+import { toggleNodeClicked, loadNodeData } from '../../actions/nodes';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 
 function KedroRunManager(props) {
-  if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
-    console.assert(
-      typeof WatchPanel === 'function',
-      'WatchPanel import not a function:',
-      WatchPanel
-    );
-  }
-
   const { jobs, logRefs, clearJob, terminateJob, addJob } = useJobs();
   const {
     watchList,
@@ -49,15 +36,6 @@ function KedroRunManager(props) {
     getBaseParamValue,
   } = useWatchList(props);
 
-  const { currentSid, syncFromUrl, setSidInUrl, removeSidFromUrl } =
-    useRunnerUrlSelection();
-
-  // const lastAppliedSidRef = useRef(null);
-  // // Derive fast lookup for whether currentSid already “selected”
-  // const isAlreadySelected = props.clickedNodeMetaData
-  //   ? props.clickedNodeMetaData.id === currentSid
-  //   : false;
-
   // State
   const [kedroEnvOverride, setKedroEnvOverride] = useState(null); // optional external override
 
@@ -66,17 +44,14 @@ function KedroRunManager(props) {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
-  // Unified selection state: { id, kind, data? }
-  const [selectedEntity, setSelectedEntity] = useState(null);
-  const activeParamKey =
-    selectedEntity?.kind === 'param' ? selectedEntity.id : null;
-  const selectedDataset =
-    selectedEntity?.kind === 'dataset' ? selectedEntity.data : null;
-  const showMetadata = !!selectedEntity;
-  const metadataMode = selectedEntity?.kind || null;
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
 
-  const { paramNodes = [], datasets = [], dispatch } = props || {};
+  const {
+    paramNodes = [],
+    datasets = [],
+    dispatch,
+    clickedNodeMetaData,
+  } = props || {};
 
   const commandBuilder = useCommandBuilder({
     activePipeline: props?.activePipeline,
@@ -89,17 +64,13 @@ function KedroRunManager(props) {
     getParamValueFromKey,
   });
 
+  const { toSelectedNode, toSelectedPipeline } = useGeneratePathname();
+
   useEffect(() => {
     if (props?.kedroEnv) {
       setKedroEnvOverride(props.kedroEnv);
     }
   }, [props?.kedroEnv]);
-
-  // useEffect(() => {
-  //   syncFromUrl();
-  //   window.addEventListener('popstate', syncFromUrl);
-  //   return () => window.removeEventListener('popstate', syncFromUrl);
-  // }, [syncFromUrl]);
 
   const showToast = useCallback((message, duration = 2000) => {
     if (toastTimer.current) {
@@ -121,8 +92,9 @@ function KedroRunManager(props) {
   }, []);
 
   const closeParamEditor = useCallback(() => {
-    toggleNodeClicked(null);
-  }, []);
+    dispatch && dispatch(toggleNodeClicked(null));
+    toSelectedPipeline();
+  }, [dispatch, toggleNodeClicked]);
 
   const onClickWatchItem = useCallback(
     (item) => {
@@ -131,6 +103,7 @@ function KedroRunManager(props) {
           dispatch(loadNodeData(item.id));
           dispatch(toggleNodeClicked(item.id));
         }
+        toSelectedNode({ id: item.id });
       } catch (e) {
         console.error('Failed selecting', item.id, e);
         if (showToast) {
@@ -138,18 +111,19 @@ function KedroRunManager(props) {
         }
       }
     },
-    [setSidInUrl, showToast]
+    [showToast, toSelectedNode, dispatch, loadNodeData, toggleNodeClicked]
   );
 
   const onRemoveFromWatchList = useCallback(
     (itemId) => {
-      const isClose = watchList.length <= 1 || selectedEntity?.id === itemId;
+      const isClose =
+        watchList.length <= 1 || clickedNodeMetaData?.id === itemId;
       removeFromWatchList(itemId);
       if (isClose) {
         closeParamEditor();
       }
     },
-    [watchList, selectedEntity, removeFromWatchList, closeParamEditor]
+    [watchList, removeFromWatchList, closeParamEditor, clickedNodeMetaData]
   );
 
   const onRemoveAllFromWatchList = useCallback(() => {
@@ -160,6 +134,7 @@ function KedroRunManager(props) {
   const onWatchItemAdd = useCallback(() => {
     setIsWatchModalOpen(true);
   }, [watchList]);
+
   const closeWatchModal = useCallback(() => {
     setIsWatchModalOpen(false);
   }, []);
@@ -171,56 +146,6 @@ function KedroRunManager(props) {
     },
     [updateWatchList]
   );
-
-  // If sid is just removed, toggle the node click
-  // useEffect(() => {
-  //   if (!currentSid && lastAppliedSidRef.current) {
-  //     dispatch && dispatch(toggleNodeClicked(lastAppliedSidRef.current));
-
-  //     setSelectedEntity(null);
-  //   }
-  // }, [currentSid]);
-
-  // useEffect(() => {
-  //   if (!currentSid) {
-  //     if (
-  //       lastAppliedSidRef.current &&
-  //       dispatch &&
-  //       props.clickedNodeMetaData?.id === lastAppliedSidRef.current
-  //     ) {
-  //       // Untoggle previously selected node
-  //       dispatch(toggleNodeClicked(lastAppliedSidRef.current));
-  //     }
-
-  //     lastAppliedSidRef.current = null;
-  //     setSelectedEntity(null); // ensure we clear selection when sid removed
-  //     return;
-  //   }
-
-  //   // If we have already handled this sid, skip
-  //   if (lastAppliedSidRef.current === currentSid) {
-  //     return;
-  //   }
-
-  //   const sid = currentSid;
-  //   const paramNode = (paramNodes || []).find((node) => node.id === sid);
-  //   const datasetNode = (datasets || []).find((node) => node.id === sid);
-
-  //   if (dispatch && !isAlreadySelected && (paramNode || datasetNode)) {
-  //     dispatch(loadNodeData(sid));
-  //     dispatch(toggleNodeClicked(sid));
-  //   }
-
-  //   if (paramNode) {
-  //     setSelectedEntity({ id: sid, kind: 'param' });
-  //     return;
-  //   }
-  //   if (datasetNode) {
-  //     setSelectedEntity({ id: sid, kind: 'dataset', data: datasetNode });
-  //     return;
-  //   }
-  //   setSelectedEntity(null);
-  // }, [currentSid, paramNodes, datasets, dispatch]);
 
   const onStartRun = useCallback(() => {
     const command = commandBuilder.commandString;
@@ -248,8 +173,6 @@ function KedroRunManager(props) {
   );
 
   const renderMetadataPanel = () => {
-    const { clickedNodeMetaData } = props;
-
     if (
       !isWatchListHydrated ||
       !clickedNodeMetaData ||
