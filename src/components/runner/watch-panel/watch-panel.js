@@ -18,6 +18,7 @@ function WatchPanel({
   onClear = () => {},
   onAdd = () => {},
 } = {}) {
+  const [activeId, setActiveId] = useState(null);
   const [customOrder, setCustomOrder] = useState({
     param: false,
     dataset: false,
@@ -107,6 +108,24 @@ function WatchPanel({
     [draggingWatch, watchList, customOrder]
   );
 
+  const onHandleClickItem = useCallback(
+    (item) => {
+      setActiveId(item.id);
+      onClickItem(item);
+    },
+    [onClickItem]
+  );
+
+  const onHandleRemoveItem = useCallback(
+    (id) => {
+      onRemoveItem(id);
+      if (activeId === id) {
+        setActiveId(null);
+      }
+    },
+    [onRemoveItem, activeId]
+  );
+
   useEffect(() => {
     saveCustomOrderToStorage();
   }, [customOrder]);
@@ -117,6 +136,42 @@ function WatchPanel({
     return null;
   }
 
+  function renderItem(item) {
+    const isActive = item.id === activeId;
+    return (
+              <li
+                key={`${item.name}`}
+                className={`watchlist-item ${
+                  item.kind === 'param' && strictlyChanged?.[item.id]
+                    ? 'watchlist-item--edited'
+                    : ''
+                } ${isActive ? 'watchlist-item--active' : ''} `}
+                draggable
+                onDragStart={() => startDragWatch(item.kind, item.id)}
+                onDragOver={allowDropWatch}
+                onDrop={() => dropWatch(item.kind, item.id)}
+              >
+                <button
+                  className="watchlist-item__main"
+                  onClick={() => onHandleClickItem(item)}
+                >
+                  <span className="watchlist-item__name">{`${item.name}`}</span>
+                  {watchTab === 'param' && (
+                    <span className="watchlist-item__preview">
+                      {getParamPreview(item.id)}
+                    </span>
+                  )}
+                </button>
+                <IconButton
+                  className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
+                  aria-label="Remove from watch list"
+                  onClick={() => onHandleRemoveItem(item.id)}
+                  icon={CloseIcon}
+                />
+              </li>
+            );
+  }
+
   return (
     <>
       <div className="editor__header">
@@ -124,18 +179,18 @@ function WatchPanel({
         <div className="editor__actions">
           <IconButton
             aria-label="Add watch item"
-            className="watchlist-add-btn"
+            className="header-action-btn"
             container="div"
             icon={PlusIcon}
-            labelText="Add watch item"
+            title="Add watch item"
             onClick={onAdd}
           />
           <IconButton
             aria-label="Clear watch list"
-            className="watchlist-clear-btn"
+            className="header-action-btn"
             container="div"
             icon={ResetIcon}
-            labelText="Clear watch list"
+            title="Clear watch list"
             onClick={onClear}
             disabled={!(watchList || []).length}
           />
@@ -171,38 +226,7 @@ function WatchPanel({
             <div className="watchlist-empty">No items in your watch list.</div>
           )}
           <ul className="watchlist-list">
-            {itemsToShow.map((item) => (
-              <li
-                key={`${item.name}`}
-                className={`watchlist-item ${
-                  item.kind === 'param' && strictlyChanged?.[item.id]
-                    ? 'watchlist-item--edited'
-                    : ''
-                }`}
-                draggable
-                onDragStart={() => startDragWatch(item.kind, item.id)}
-                onDragOver={allowDropWatch}
-                onDrop={() => dropWatch(item.kind, item.id)}
-              >
-                <button
-                  className="watchlist-item__main"
-                  onClick={() => onClickItem(item)}
-                >
-                  <span className="watchlist-item__name">{`${item.name}`}</span>
-                  {watchTab === 'param' && (
-                    <span className="watchlist-item__preview">
-                      {getParamPreview(item.id)}
-                    </span>
-                  )}
-                </button>
-                <IconButton
-                  className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
-                  aria-label="Remove from watch list"
-                  onClick={() => onRemoveItem(item.id)}
-                  icon={CloseIcon}
-                />
-              </li>
-            ))}
+            {itemsToShow.map((item) => renderItem(item))}
           </ul>
         </div>
       </div>
