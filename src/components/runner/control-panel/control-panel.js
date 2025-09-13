@@ -1,6 +1,9 @@
 import { useCallback, useState, useEffect } from 'react';
 import './ControlPanel.scss';
 import ParameterDialog from '../parameter-dialog/ParameterDialog';
+import IconButton from '../../../components/ui/icon-button';
+import ResetIcon from '../../icons/reset';
+import CopyIcon from '../../icons/copy';
 
 const STORAGE_KEY = 'kedro-viz.runner.customCommand';
 
@@ -110,7 +113,7 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
       <div className="runner-manager__control-body">
         <div className="control-row">
           <label className="control-row__label">Command</label>
-          <div className="control-panel__command-controls">
+          <div className="control-panel__command-controls editor__actions">
             <input
               className="control-row__input control-panel__command-input"
               type="text"
@@ -121,22 +124,22 @@ const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
                 setIsDirtyCommand(e.target.value !== baseCommand);
               }}
             />
-            <button
-              className="btn control-panel__small-btn"
-              onClick={handleReset}
-              title="Reset command"
-              aria-label="Reset command"
-            >
-              Reset
-            </button>
-            <button
-              className="btn control-panel__small-btn"
-              onClick={handleCopy}
-              title="Copy full command"
+            <IconButton
               aria-label="Copy full command"
-            >
-              Copy
-            </button>
+              className="header-action-btn"
+              container="div"
+              icon={CopyIcon}
+              title="Copy Command"
+              onClick={handleCopy}
+            />
+            <IconButton
+              aria-label="Reset command"
+              className="header-action-btn"
+              container="div"
+              icon={ResetIcon}
+              title="Reset Command"
+              onClick={handleReset}
+            />
           </div>
         </div>
         <div className="control-row">

@@ -1,14 +1,12 @@
 @use '../../styles/variables' as variables;
 
 .runner-manager {
-  /* Base padding ensures space for global toolbar */
   padding: 24px 24px 24px calc(#{variables.$global-toolbar-width} + 24px);
   box-sizing: border-box;
   transition: padding-left 200ms ease, padding-right 200ms ease;
   font-family: var(--font-family, Inter, Arial, sans-serif);
   color: var(--runner-text);
 
-  /* Runner theme tokens aligned to global theme variables */
   --runner-text: var(--color-text);
   --runner-muted: var(--color-text-faded);
   
@@ -32,7 +30,6 @@
     var(--runner-panel-bg) 24px
   );
 
-  /* Brand/status tokens: keep local until global brand tokens exist */
   --runner-primary-gradient: linear-gradient(
     90deg,
     #{variables.$blue-300},
@@ -49,17 +46,12 @@
   --runner-chip-finished-text: #{variables.$black-900};
   --runner-chip-pending-bg: #{variables.$yellow-300};
   --runner-chip-pending-text: #{variables.$black-900};
-
-  /* Constrain to viewport so inner panels can scroll instead of the page */
   height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* No explicit light override block needed; global --color-* tokens switch with theme */
-
-/* When the shared pipeline sidebar is rendered, reserve the closed sidebar width */
 .runner-manager--with-sidebar {
   padding-left: calc(
     #{variables.$global-toolbar-width} + #{variables.$sidebar-width-closed} +
@@ -67,19 +59,16 @@
   );
 }
 
-/* When the sidebar is open, reserve the full open width */
 .runner-manager--sidebar-open {
   padding-left: calc(
     #{variables.$global-toolbar-width} + #{variables.$sidebar-width-open} + 24px
   );
 }
 
-/* If global toolbar is hidden, remove its offset */
 .runner-manager--no-global-toolbar {
   padding-left: 24px;
 }
 
-/* If global toolbar is hidden but sidebar is present/open, offset by sidebar only */
 .runner-manager--no-global-toolbar.runner-manager--with-sidebar {
   padding-left: calc(#{variables.$sidebar-width-closed} + 24px);
 }
@@ -201,54 +190,6 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-}
-
-.arglist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  font-size: 12px;
-}
-
-.arglist__item {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.arglist__label {
-  color: var(--runner-muted);
-}
-
-.arglist__flag {
-  font-family: var(
-    --font-family-mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    'Liberation Mono',
-    'Courier New',
-    monospace
-  );
-  color: var(--runner-muted);
-}
-
-.arglist__sep {
-  color: var(--runner-muted);
-}
-
-.arglist__value {
-  display: inline-flex;
-  gap: 6px;
-  min-width: 0;
-  overflow: hidden;
 }
 
 .muted {
@@ -523,17 +464,16 @@
 }
 
 .runner-manager *::-webkit-scrollbar-track {
-  background: var(--runner-panel-bg);
+  background: transparent; //var(--runner-panel-bg);
 }
 
 .runner-manager *::-webkit-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--runner-border) 60%, transparent);
+  background-color: transparent; //color-mix(in srgb, var(--runner-border) 60%, transparent);
   border-radius: 6px;
 }
 
 .runner-manager * {
-  scrollbar-color: color-mix(in srgb, var(--runner-border) 60%, transparent)
-    var(--runner-panel-bg);
+  scrollbar-color: var(--runner-text) transparent;
   scrollbar-width: thin;
 }
 
@@ -693,11 +633,11 @@
 .editor__actions {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .runner-manager .header-action-btn {
-  margin: 0;
-  margin-left: 6px;
+  margin: 0; /* spacing handled by parent gap */
 }
 
 .runner-manager .pipeline-icon-toolbar__button {

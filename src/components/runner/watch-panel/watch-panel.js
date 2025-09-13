@@ -139,37 +139,37 @@ function WatchPanel({
   function renderItem(item) {
     const isActive = item.id === activeId;
     return (
-              <li
-                key={`${item.name}`}
-                className={`watchlist-item ${
-                  item.kind === 'param' && strictlyChanged?.[item.id]
-                    ? 'watchlist-item--edited'
-                    : ''
-                } ${isActive ? 'watchlist-item--active' : ''} `}
-                draggable
-                onDragStart={() => startDragWatch(item.kind, item.id)}
-                onDragOver={allowDropWatch}
-                onDrop={() => dropWatch(item.kind, item.id)}
-              >
-                <button
-                  className="watchlist-item__main"
-                  onClick={() => onHandleClickItem(item)}
-                >
-                  <span className="watchlist-item__name">{`${item.name}`}</span>
-                  {watchTab === 'param' && (
-                    <span className="watchlist-item__preview">
-                      {getParamPreview(item.id)}
-                    </span>
-                  )}
-                </button>
-                <IconButton
-                  className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
-                  aria-label="Remove from watch list"
-                  onClick={() => onHandleRemoveItem(item.id)}
-                  icon={CloseIcon}
-                />
-              </li>
-            );
+      <li
+        key={`${item.name}`}
+        className={`watchlist-item ${
+          item.kind === 'param' && strictlyChanged?.[item.id]
+            ? 'watchlist-item--edited'
+            : ''
+        } ${isActive ? 'watchlist-item--active' : ''} `}
+        draggable
+        onDragStart={() => startDragWatch(item.kind, item.id)}
+        onDragOver={allowDropWatch}
+        onDrop={() => dropWatch(item.kind, item.id)}
+      >
+        <button
+          className="watchlist-item__main"
+          onClick={() => onHandleClickItem(item)}
+        >
+          <span className="watchlist-item__name">{`${item.name}`}</span>
+          {watchTab === 'param' && (
+            <span className="watchlist-item__preview">
+              {getParamPreview(item.id)}
+            </span>
+          )}
+        </button>
+        <IconButton
+          className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
+          aria-label="Remove from watch list"
+          onClick={() => onHandleRemoveItem(item.id)}
+          icon={CloseIcon}
+        />
+      </li>
+    );
   }
 
   return (

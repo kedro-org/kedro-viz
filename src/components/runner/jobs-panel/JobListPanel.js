@@ -70,8 +70,9 @@ function renderLogsModal({
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
           <IconButton
-            className="runner-logs-modal__close"
+            className="runner-logs-modal__close header-action-btn"
             aria-label="Close"
+            container="div"
             onClick={onClose}
             icon={CloseIcon}
           />
