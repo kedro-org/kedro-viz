@@ -11,6 +11,21 @@
   border-bottom: 1px solid var(--runner-border);
 }
 
+.runner-manager__jobs-panel {
+  min-width: 0;
+  background: var(--runner-panel-bg);
+  padding: 16px;
+  border-radius: 6px;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  grid-column: 2;
+  max-height: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .jobs-panel__body {
   flex: 1 1 auto;
   min-height: 0;
@@ -25,6 +40,8 @@
   flex: 0 0 auto;
   overflow: visible;
 }
+
+.jobs-list { margin-top: 12px; }
 
 .job-card {
   background: var(--runner-subpanel-bg);
@@ -43,6 +60,7 @@
   gap: 12px;
   align-items: center;
   margin-bottom: 8px;
+  color: var(--runner-muted);
 }
 
 .job-card__id {
@@ -145,3 +163,5 @@
   width: 14px;
   height: 14px;
 }
+
+.muted-text { color: var(--runner-muted); }

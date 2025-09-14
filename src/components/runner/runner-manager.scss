@@ -38,14 +38,15 @@
   --runner-primary-on: #{variables.$black-900};
   --runner-danger-bg: #{variables.$red-0};
   --runner-on-danger: #{variables.$white-0};
-  --runner-chip-running-bg: #{variables.$green-900};
-  --runner-chip-running-text: #{variables.$white-0};
-  --runner-chip-error-bg: #{variables.$red-100};
-  --runner-chip-error-text: #{variables.$white-0};
-  --runner-chip-finished-bg: #{variables.$green-300};
-  --runner-chip-finished-text: #{variables.$black-900};
-  --runner-chip-pending-bg: #{variables.$yellow-300};
-  --runner-chip-pending-text: #{variables.$black-900};
+  --runner-chip-running-bg: color-mix(in srgb, #{variables.$green-300} 40%, var(--color-bg) 60%);
+  --runner-chip-running-text: var(--color-text);
+  --runner-chip-error-bg: color-mix(in srgb, #{variables.$red-100} 40%, var(--color-bg) 60%);
+  --runner-chip-error-text: var(--color-text);
+  --runner-chip-finished-bg: color-mix(in srgb, #{variables.$green-300} 40%, var(--color-bg) 60%);
+  --runner-chip-finished-text: var(--color-text);
+  --runner-chip-pending-bg: color-mix(in srgb, #{variables.$yellow-300} 40%, var(--color-bg) 60%);
+  --runner-chip-pending-text: var(--color-text);
+
   height: 100vh;
   overflow: hidden;
   display: flex;
@@ -293,24 +294,6 @@
   background: var(--runner-hover-bg);
 }
 
-.runner-manager__jobs-panel {
-  min-width: 0;
-  background: var(--runner-panel-bg);
-  padding: 16px;
-  border-radius: 6px;
-  grid-row: 1 / span 2;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  grid-column: 2;
-  max-height: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.runner-manager__jobs-panel .jobs-list {
-  margin-top: 12px;
-}
 
 
 .runner-manager__footer {
@@ -468,7 +451,7 @@
 }
 
 .runner-manager *::-webkit-scrollbar-thumb {
-  background-color: transparent; //color-mix(in srgb, var(--runner-border) 60%, transparent);
+  background-color: transparent;
   border-radius: 6px;
 }
 

@@ -1,6 +1,8 @@
 import { useRef, useState, useCallback } from 'react';
 import IconButton from '../../ui/icon-button';
 import CloseIcon from '../../icons/close';
+import VisibleIcon from '../../icons/visible';
+import RubbishIcon from '../../icons/rubbish';
 import './JobListPanel.scss';
 
 function renderConfirmationModal({
@@ -102,7 +104,6 @@ function renderJobMetadata({
 }) {
   const isTerminal = ['finished', 'error', 'terminated'].includes(job.status);
   const expanded = typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
-  // stdout expanded/collapsed handled via CSS classes now
   const bodyHeight = jobsPanelBodyRef.current?.clientHeight || 0;
   const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
   const status = job.status;
@@ -135,16 +136,22 @@ function renderJobMetadata({
               Terminate
             </button>
           )}
-          <button className="btn" onClick={() => openLogsModal(job.jobId)}>
-            View full logs
-          </button>
-          <button
-            className="btn"
-            onClick={() => openClearJobConfirm(job.jobId)}
+          <IconButton
+            aria-label="View full logs"
+            title="View full logs"
+            className="header-action-btn"
+            container="div"
+            icon={VisibleIcon}
+            onClick={() => openLogsModal(job.jobId)}
+          />
+          <IconButton
+            aria-label="Remove this job from the list"
             title="Remove this job from the list"
-          >
-            Remove
-          </button>
+            className="header-action-btn"
+            container="div"
+            icon={CloseIcon}
+            onClick={() => openClearJobConfirm(job.jobId)}
+          />
         </div>
       </div>
       <div className="job-card__body">
@@ -271,23 +278,27 @@ function JobListPanel({
     <>
       <div className="jobs-panel__header">
         <h3 className="section-title">Jobs</h3>
-        <button
-          className="btn btn--secondary"
-          onClick={openClearAllJobsConfirm}
-          disabled={jobs.length === 0}
-        >
-          Clear jobs
-        </button>
+        <div className="editor__actions">
+          <IconButton
+            aria-label="Reset view"
+            labelText="Reset"
+            className="header-action-btn"
+            container="div"
+            icon={RubbishIcon}
+            onClick={openClearAllJobsConfirm}
+            disabled={jobs.length === 0}
+          />
+        </div>
       </div>
       <div className="jobs-panel__body" ref={jobsPanelBodyRef}>
         <div className="jobs-list">
           {jobs.length === 0 && (
-            <div className="job-card">
+            <div className="job-card job-card--empty">
               <div className="job-card__meta">
-                <div className="job-card__id">No jobs</div>
+                <div className="job-card__id job-card__id--empty muted-text">No jobs</div>
               </div>
               <div className="job-card__body">
-                <div className="job-card__stdout">
+                <div className="job-card__stdout muted-text">
                   <pre>Click "Start run" to create a job.</pre>
                 </div>
               </div>
