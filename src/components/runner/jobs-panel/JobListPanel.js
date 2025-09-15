@@ -280,8 +280,8 @@ function JobListPanel({
         <h3 className="section-title">Jobs</h3>
         <div className="editor__actions">
           <IconButton
-            aria-label="Reset view"
-            labelText="Reset"
+            aria-label="Remove all jobs"
+            title="Remove all jobs"
             className="header-action-btn"
             container="div"
             icon={RubbishIcon}
@@ -295,7 +295,9 @@ function JobListPanel({
           {jobs.length === 0 && (
             <div className="job-card job-card--empty">
               <div className="job-card__meta">
-                <div className="job-card__id job-card__id--empty muted-text">No jobs</div>
+                <div className="job-card__id job-card__id--empty muted-text">
+                  No jobs
+                </div>
               </div>
               <div className="job-card__body">
                 <div className="job-card__stdout muted-text">
