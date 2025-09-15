@@ -1,184 +1,237 @@
-import React from 'react';
-import { toggleNodeClicked } from '../../../actions/nodes';
+import { useState, useCallback, useEffect } from 'react';
+import IconButton from '../../../components/ui/icon-button';
+import CloseIcon from '../../icons/close';
+import ResetIcon from '../../icons/reset';
+import PlusIcon from '../../icons/plus';
+import './watch-panel.scss';
+import { toYamlString } from '../utils/yamlUtils';
 
-const WatchPanel = ({
-  watchList,
-  watchTab,
-  customOrder,
-  strictlyChanged,
-  setWatchTab,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onItemClick,
-  onRemove,
-  getEditedParamValue,
-  toYamlString,
-}) => {
+const RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY =
+  'kedro_viz_runner_watch_custom_order';
+
+function WatchPanel({
+  watchList = [],
+  strictlyChanged = {},
+  getEditedParamValue = () => {},
+  onClickItem = () => {},
+  onRemoveItem = () => {},
+  onClear = () => {},
+  onAdd = () => {},
+} = {}) {
+  const [activeId, setActiveId] = useState(null);
+  const [customOrder, setCustomOrder] = useState({
+    param: false,
+    dataset: false,
+  });
+  const [watchTab, setWatchTab] = useState('param');
+  const [draggingWatch, setDraggingWatch] = useState(null);
+  const [itemsToShow, setItemsToShow] = useState([]);
+
+  const saveCustomOrderToStorage = useCallback(() => {
+    try {
+      window.localStorage.setItem(
+        RUNNER_WATCH_CUSTOM_ORDER_STORAGE_KEY,
+        JSON.stringify(customOrder || {})
+      );
+    } catch {}
+  }, [customOrder]);
+
   const parameterItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'param'
   );
   const datasetItems = (watchList || []).filter(
     (watchItem) => watchItem.kind === 'dataset'
   );
-  let itemsToShow = watchTab === 'parameters' ? parameterItems : datasetItems;
-  const kindKey = watchTab === 'parameters' ? 'param' : 'dataset';
-  if (!customOrder?.[kindKey]) {
-    itemsToShow = [...itemsToShow].sort((a, b) =>
-      (a.name || a.id).localeCompare(b.name || b.id, undefined, {
-        sensitivity: 'base',
-      })
+
+  useEffect(() => {
+    let newItemsToShow = watchTab === 'param' ? parameterItems : datasetItems;
+
+    if (!customOrder?.[watchTab]) {
+      newItemsToShow = [...newItemsToShow].sort((a, b) =>
+        (a.name || a.id).localeCompare(b.name || b.id, undefined, {
+          sensitivity: 'base',
+        })
+      );
+    }
+    setItemsToShow(newItemsToShow);
+  }, [watchTab, parameterItems, datasetItems, customOrder, setItemsToShow]);
+
+  const getParamPreview = useCallback(
+    (key) => {
+      const value = getEditedParamValue(key);
+      if (typeof value === 'undefined') {
+        return '—';
+      }
+      const text = toYamlString(value) || '';
+      const firstLine = String(text).split(/\r?\n/)[0];
+      return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
+    },
+    [getEditedParamValue]
+  );
+
+  const startDragWatch = useCallback((kind, id) => {
+    setDraggingWatch({ kind, id });
+  }, []);
+
+  const allowDropWatch = useCallback((e) => {
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
+  }, []);
+
+  const dropWatch = useCallback(
+    (targetKind, targetId) => {
+      if (
+        !draggingWatch ||
+        draggingWatch.kind !== targetKind ||
+        draggingWatch.id === targetId
+      ) {
+        setDraggingWatch(null);
+        return;
+      }
+      const kind = targetKind;
+      const kindItems = watchList.filter((item) => item.kind === kind);
+      const fromIndex = kindItems.findIndex(
+        (item) => item.id === draggingWatch.id
+      );
+      const toIndex = kindItems.findIndex((item) => item.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) {
+        setDraggingWatch(null);
+      }
+      const reordered = [...kindItems];
+      const [moved] = reordered.splice(fromIndex, 1);
+      reordered.splice(toIndex, 0, moved);
+      const nextCustom = { ...(customOrder || {}), [kind]: true };
+      setCustomOrder(nextCustom);
+      setDraggingWatch(null);
+    },
+    [draggingWatch, watchList, customOrder]
+  );
+
+  const onHandleClickItem = useCallback(
+    (item) => {
+      setActiveId(item.id);
+      onClickItem(item);
+    },
+    [onClickItem]
+  );
+
+  const onHandleRemoveItem = useCallback(
+    (id) => {
+      onRemoveItem(id);
+      if (activeId === id) {
+        setActiveId(null);
+      }
+    },
+    [onRemoveItem, activeId]
+  );
+
+  useEffect(() => {
+    saveCustomOrderToStorage();
+  }, [customOrder]);
+
+  if (process.env.NODE_ENV !== 'production' && !Array.isArray(watchList)) {
+    // eslint-disable-next-line no-console
+    console.warn('[WatchPanel] Invalid watchList value', watchList);
+    return null;
+  }
+
+  function renderItem(item) {
+    const isActive = item.id === activeId;
+    return (
+      <li
+        key={`${item.name}`}
+        className={`watchlist-item ${
+          item.kind === 'param' && strictlyChanged?.[item.id]
+            ? 'watchlist-item--edited'
+            : ''
+        } ${isActive ? 'watchlist-item--active' : ''} `}
+        draggable
+        onDragStart={() => startDragWatch(item.kind, item.id)}
+        onDragOver={allowDropWatch}
+        onDrop={() => dropWatch(item.kind, item.id)}
+      >
+        <button
+          className="watchlist-item__main"
+          onClick={() => onHandleClickItem(item)}
+        >
+          <span className="watchlist-item__name">{`${item.name}`}</span>
+          {watchTab === 'param' && (
+            <span className="watchlist-item__preview">
+              {getParamPreview(item.id)}
+            </span>
+          )}
+        </button>
+        <IconButton
+          className={`watchlist-item__remove watchlist-item__remove--sm watchlist-item__remove--${item.id}`}
+          aria-label="Remove from watch list"
+          onClick={() => onHandleRemoveItem(item.id)}
+          icon={CloseIcon}
+        />
+      </li>
     );
   }
 
-  const getParamPreview = (key) => {
-    const value = getEditedParamValue(key);
-    if (typeof value === 'undefined') {
-      return '—';
-    }
-    const text = toYamlString(value) || '';
-    const firstLine = String(text).split(/\r?\n/)[0];
-    return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine;
-  };
-
   return (
-    <div className="runner-panel runner-panel--watchlist">
-      <div className="runner-panel__toolbar">
-        <div className="runner-panel__tabs">
-          <button
-            className={`runner-tab ${
-              watchTab === 'parameters' ? 'runner-tab--active' : ''
-            }`}
-            onClick={() => setWatchTab('parameters')}
-          >
-            Parameters ({parameterItems.length})
-          </button>
-          <button
-            className={`runner-tab ${
-              watchTab === 'datasets' ? 'runner-tab--active' : ''
-            }`}
-            onClick={() => setWatchTab('datasets')}
-          >
-            Datasets ({datasetItems.length})
-          </button>
+    <>
+      <div className="editor__header">
+        <h3 className="section-title">Watch list</h3>
+        <div className="editor__actions">
+          <IconButton
+            aria-label="Add watch item"
+            className="header-action-btn"
+            container="div"
+            icon={PlusIcon}
+            title="Add watch item"
+            onClick={onAdd}
+          />
+          <IconButton
+            aria-label="Clear watch list"
+            className="header-action-btn"
+            container="div"
+            icon={ResetIcon}
+            title="Clear watch list"
+            onClick={onClear}
+            disabled={!(watchList || []).length}
+          />
         </div>
       </div>
-      <div className="runner-panel__list" role="region" aria-label="Watch list">
-        {!watchList?.length && (
-          <div className="watchlist-empty">No items in your watch list.</div>
-        )}
-        <ul className="watchlist-list">
-          {itemsToShow.map((item) => (
-            <li
-              key={`${item.kind}:${item.id}`}
-              className={`watchlist-item ${
-                item.kind === 'param' && strictlyChanged?.[item.id]
-                  ? 'watchlist-item--edited'
-                  : ''
+      <div className="runner-panel runner-panel--watchlist">
+        <div className="runner-panel__toolbar">
+          <div className="runner-panel__tabs">
+            <button
+              className={`runner-tab ${
+                watchTab === 'param' ? 'runner-tab--active' : ''
               }`}
-              draggable
-              onDragStart={() => onDragStart(item.kind, item.id)}
-              onDragOver={onDragOver}
-              onDrop={() => onDrop(item.kind, item.id)}
+              onClick={() => setWatchTab('param')}
             >
-              <button
-                className="watchlist-item__main"
-                onClick={() => onItemClick(item)}
-              >
-                <span className="watchlist-item__name">{item.name}</span>
-                {watchTab === 'parameters' && (
-                  <span className="watchlist-item__preview">
-                    {getParamPreview(item.id)}
-                  </span>
-                )}
-              </button>
-              <button
-                className="watchlist-item__remove"
-                aria-label="Remove from watch list"
-                onClick={() => onRemove(item.kind, item.id)}
-              >
-                ×
-              </button>
-            </li>
-          ))}
-        </ul>
+              Parameters ({parameterItems.length})
+            </button>
+            <button
+              className={`runner-tab ${
+                watchTab === 'datasets' ? 'runner-tab--active' : ''
+              }`}
+              onClick={() => setWatchTab('datasets')}
+            >
+              Datasets ({datasetItems.length})
+            </button>
+          </div>
+        </div>
+        <div
+          className="runner-panel__list"
+          role="region"
+          aria-label="Watch list"
+        >
+          {!watchList?.length && (
+            <div className="watchlist-empty">No items in your watch list.</div>
+          )}
+          <ul className="watchlist-list">
+            {itemsToShow.map((item) => renderItem(item))}
+          </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
-};
-
-// Helper: handle single-click on a flowchart node within the watch modal
-// Moves selection logic here so Runner manager can delegate.
-export function onFlowchartNodeClickImpl({
-  nodeId,
-  paramNodes = [],
-  datasets = [],
-  dispatch,
-  toggleSelectToAdd,
-}) {
-  if (!nodeId) {
-    return;
-  }
-  const isParam = (paramNodes || []).some(
-    (paramNode) => paramNode.id === nodeId
-  );
-  const datasetItem = (datasets || []).find((d) => d.id === nodeId);
-  if (isParam) {
-    toggleSelectToAdd && toggleSelectToAdd('param', nodeId);
-  } else if (datasetItem) {
-    toggleSelectToAdd && toggleSelectToAdd('dataset', datasetItem.id);
-  }
-  if (dispatch) {
-    try {
-      dispatch(toggleNodeClicked(nodeId));
-    } catch (e) {
-      // ignore
-    }
-  }
-}
-
-// Helper: handle double-click on a flowchart/search result item to stage selection
-export function onFlowchartNodeDoubleClickImpl({
-  node,
-  paramNodes = [],
-  datasets = [],
-  toggleSelectToAdd,
-  setTempModalSelections, // function: (updater) => void
-}) {
-  const nodeId = node && node.id;
-  if (!nodeId) {
-    return;
-  }
-  const isParam = (paramNodes || []).some(
-    (paramNode) => paramNode.id === nodeId
-  );
-  let entry;
-  if (isParam) {
-    entry = { kind: 'param', id: nodeId, name: node.name || nodeId };
-    toggleSelectToAdd && toggleSelectToAdd('param', nodeId);
-  } else {
-    const datasetItem = (datasets || []).find((d) => d.id === nodeId);
-    if (!datasetItem) {
-      return;
-    }
-    entry = {
-      kind: 'dataset',
-      id: datasetItem.id,
-      name: datasetItem.name || datasetItem.id,
-    };
-    toggleSelectToAdd && toggleSelectToAdd('dataset', datasetItem.id);
-  }
-  if (typeof setTempModalSelections === 'function') {
-    setTempModalSelections((prevMap = {}) => {
-      const next = { ...prevMap };
-      if (next[nodeId]) {
-        delete next[nodeId];
-      } else {
-        next[nodeId] = entry;
-      }
-      return next;
-    });
-  }
 }
 
 export default WatchPanel;

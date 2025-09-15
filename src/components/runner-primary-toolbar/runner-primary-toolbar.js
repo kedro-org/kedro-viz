@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import PrimaryToolbar from '../primary-toolbar';
 import IconButton from '../ui/icon-button';

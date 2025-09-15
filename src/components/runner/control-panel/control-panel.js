@@ -1,184 +1,109 @@
-import React from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import './ControlPanel.scss';
+import ParameterDialog from '../parameter-dialog/ParameterDialog';
+import IconButton from '../../../components/ui/icon-button';
+import ResetIcon from '../../icons/reset';
+import CopyIcon from '../../icons/copy';
 
-const ControlPanel = ({
-  currentCommand,
-  onStartRun,
-  commandInputRef,
-  onCopyCommand,
-  hasParamChanges,
-  activePipeline,
-  selectedTags,
-  onOpenParamsDialog,
-  // Param dialog props
-  isParamsModalOpen,
-  onCloseParamsModal,
-  paramItems,
-  paramsDialogSelectedKey,
-  onSelectParamKey,
-  paramOriginals,
-  getParamValue,
-  getEditedParamValue,
-  normalizeParamPrefix,
-  collectParamDiffs,
-  toYamlString,
-  renderHighlightedYamlLines,
-  quoteIfNeeded,
-  paramsArgString,
-  kedroEnv,
-}) => {
-  const selectedKey =
-    paramsDialogSelectedKey ||
-    (paramItems && paramItems[0] && paramItems[0].id);
-  let dialogBody = null;
-  if (paramItems && paramItems.length) {
-    const selectedItem =
-      paramItems.find((i) => i.id === selectedKey) || paramItems[0];
-    const originals = paramOriginals || {};
-    const orig = Object.prototype.hasOwnProperty.call(originals, selectedKey)
-      ? originals[selectedKey]
-      : getParamValue(selectedKey);
-    const curr = getEditedParamValue(selectedKey);
-    const prefixName = normalizeParamPrefix(
-      (selectedItem && selectedItem.name) || selectedKey
-    );
-    const perPairs = collectParamDiffs(orig, curr, prefixName);
-    const perParamArg = `--params ${quoteIfNeeded(perPairs.join(','))}`;
-    const combinedParamsArg = `--params ${quoteIfNeeded(
-      paramsArgString || ''
-    )}`;
-    // Shared style to safely wrap long --params strings without affecting copy
-    const argCodeStyle = {
-      fontFamily: 'monospace',
-      fontSize: '12px',
-      whiteSpace: 'pre-wrap',
-      overflowWrap: 'anywhere',
-      wordBreak: 'break-word',
-      lineBreak: 'anywhere',
-    };
-    dialogBody = (
-      <div>
-        <div style={argCodeStyle}>
-          <code>{combinedParamsArg}</code>
-        </div>
-        <div
-          style={{
-            marginTop: '10px',
-            border: '1px solid var(--runner-border)',
-            background: 'var(--runner-subpanel-bg)',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'auto 1fr',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '10px 12px',
-              borderBottom: '1px solid var(--runner-border)',
-              background: 'var(--runner-subpanel-header-bg)',
-            }}
-          >
-            <div style={{ fontWeight: 700 }}>Selected parameter</div>
-            <select
-              id="param-changes-select"
-              aria-label="Selected parameter"
-              value={selectedKey}
-              onChange={(e) => onSelectParamKey(e.target.value)}
-              style={{ width: '100%' }}
-            >
-              {paramItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name || item.id}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ padding: '12px' }}>
-            <div
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '12px',
-                marginBottom: '10px',
-              }}
-            >
-              <code style={{ ...argCodeStyle, marginBottom: '10px' }}>
-                {perParamArg}
-              </code>
-            </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '12px',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    marginBottom: '6px',
-                    fontSize: '12px',
-                    opacity: 0.9,
-                  }}
-                >
-                  Original
-                </div>
-                <pre
-                  style={{
-                    background: 'var(--runner-panel-bg)',
-                    color: 'var(--runner-text)',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    maxHeight: '40vh',
-                    overflow: 'auto',
-                    border: '1px solid var(--runner-border)',
-                  }}
-                >
-                  {renderHighlightedYamlLines(
-                    toYamlString(orig) || '',
-                    toYamlString(curr) || ''
-                  )}
-                </pre>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    marginBottom: '6px',
-                    fontSize: '12px',
-                    opacity: 0.9,
-                  }}
-                >
-                  Current
-                </div>
-                <pre
-                  style={{
-                    background: 'var(--runner-panel-bg)',
-                    color: 'var(--runner-text)',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    maxHeight: '40vh',
-                    overflow: 'auto',
-                    border: '1px solid var(--runner-border)',
-                  }}
-                >
-                  {renderHighlightedYamlLines(
-                    toYamlString(curr) || '',
-                    toYamlString(orig) || ''
-                  )}
-                </pre>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+const STORAGE_KEY = 'kedro-viz.runner.customCommand';
+
+const ControlPanel = ({ commandBuilder, onStartRun, showToast }) => {
+  const {
+    commandString: baseCommand,
+    hasParamChanges,
+    activePipeline,
+    selectedTags,
+    kedroEnv,
+    diffModel,
+    paramsArgString,
+  } = commandBuilder || {};
+
+  const [draftCommand, setDraftCommand] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        return stored;
+      }
+    } catch {}
+    return baseCommand;
+  });
+  const [isDirtyCommand, setIsDirtyCommand] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && stored !== baseCommand) {
+        return true;
+      }
+    } catch {}
+    return false;
+  });
+  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
+
+  const onOpenParamsDialog = useCallback(() => {
+    setIsParamsModalOpen(true);
+  }, []);
+
+  const onCloseParamsModal = useCallback(() => {
+    setIsParamsModalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isDirtyCommand) {
+      setDraftCommand(baseCommand);
+    }
+  }, [baseCommand, isDirtyCommand]);
+
+  // Persist or clear the custom command
+  useEffect(() => {
+    try {
+      if (isDirtyCommand) {
+        localStorage.setItem(STORAGE_KEY, draftCommand);
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch {}
+  }, [draftCommand, isDirtyCommand]);
+
+  const handleReset = useCallback(() => {
+    setDraftCommand(baseCommand);
+    setIsDirtyCommand(false);
+    if (showToast) {
+      showToast('Command reset!');
+    }
+  }, [baseCommand, showToast]);
+
+  const handleCopy = useCallback(async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(draftCommand);
+      } else if (draftCommand) {
+        draftCommand.focus();
+        draftCommand.select();
+        document.execCommand('copy');
+        draftCommand.setSelectionRange(
+          draftCommand.value.length,
+          draftCommand.value.length
+        );
+      }
+    } finally {
+      showToast && showToast('Command copied to clipboard!');
+    }
+  }, [draftCommand, showToast]);
+
+  function renderParameterDialog() {
+    if (!isParamsModalOpen) {
+      return null;
+    }
+    return (
+      <ParameterDialog
+        onClose={onCloseParamsModal}
+        diffModel={diffModel}
+        paramsArgString={paramsArgString}
+      />
     );
   }
 
   return (
-    <section className="runner-manager__control-panel">
+    <>
       <div className="control-panel__header">
         <h3 className="section-title">Run command</h3>
         <button className="btn btn--primary" onClick={onStartRun}>
@@ -188,28 +113,33 @@ const ControlPanel = ({
       <div className="runner-manager__control-body">
         <div className="control-row">
           <label className="control-row__label">Command</label>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div className="control-panel__command-controls editor__actions">
             <input
-              className="control-row__input"
-              ref={commandInputRef}
-              defaultValue="kedro run"
-              title={currentCommand}
-              style={{ flex: '1 1 auto', minWidth: 0 }}
-            />
-            <button
-              className="btn"
-              onClick={onCopyCommand}
-              title="Copy full command"
-              aria-label="Copy full command"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6px 8px',
+              className="control-row__input control-panel__command-input"
+              type="text"
+              value={draftCommand}
+              title={draftCommand}
+              onChange={(e) => {
+                setDraftCommand(e.target.value);
+                setIsDirtyCommand(e.target.value !== baseCommand);
               }}
-            >
-              Copy
-            </button>
+            />
+            <IconButton
+              aria-label="Copy full command"
+              className="header-action-btn"
+              container="div"
+              icon={CopyIcon}
+              title="Copy Command"
+              onClick={handleCopy}
+            />
+            <IconButton
+              aria-label="Reset command"
+              className="header-action-btn"
+              container="div"
+              icon={ResetIcon}
+              title="Reset Command"
+              onClick={handleReset}
+            />
           </div>
         </div>
         <div className="control-row">
@@ -265,39 +195,12 @@ const ControlPanel = ({
         <div className="runner-manager__actions" />
         <div className="runner-manager__hints">
           <small>
-            Pro tip: use <code>kedro run -n</code> to run a single node.
+            Pro tip: Watch your parameters closely to avoid unexpected behavior.
           </small>
         </div>
       </div>
-
-      {isParamsModalOpen && (
-        <div
-          className="runner-logs-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Parameter changes dialog"
-        >
-          <div className="runner-logs-modal__content">
-            <div className="runner-logs-modal__header">
-              <h3 className="runner-logs-modal__title">Parameter changes</h3>
-              <button
-                className="runner-logs-modal__close"
-                aria-label="Close"
-                onClick={onCloseParamsModal}
-              >
-                ×
-              </button>
-            </div>
-            <div className="runner-logs-modal__body">{dialogBody}</div>
-            <div className="runner-logs-modal__footer">
-              <button className="btn" onClick={onCloseParamsModal}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
+      {renderParameterDialog()}
+    </>
   );
 };
 

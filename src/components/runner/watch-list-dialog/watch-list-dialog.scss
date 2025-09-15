@@ -1,0 +1,315 @@
+.watchmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.watchmodal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 30%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.watchmodal__content {
+  position: absolute;
+  inset: 10% 12% auto;
+  background: var(--runner-modal-bg);
+  border: 1px solid var(--runner-border-strong);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.watchmodal__header{
+  padding: 12px 16px;
+  border: none;
+}
+
+.watchmodal__footer {
+  padding: 12px 16px;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.watchmodal__body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.watchmodal__flowcol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.watchmodal__flowchart {
+  position: relative;
+  height: 60vh;
+  min-height: 360px;
+  background: var(--runner-modal-panel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.watchmodal__flow-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--runner-muted);
+}
+
+.watchmodal__footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.watchmodal__flowchart .pipeline-flowchart {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.watchmodal__flowchart .pipeline-flowchart__graph {
+  width: 100%;
+  height: 100%;
+}
+
+.watchmodal__flowchart .pipeline-flowchart__layer-names {
+  left: 0;
+  transform: translateX(8px) !important;
+}
+
+.watchmodal__selector {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.watchmodal__search {
+  background: var(--runner-modal-panel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.watchmodal__search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+}
+
+.watchmodal__header {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.watchmodal__header .pipeline-icon--container {
+  list-style: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.watchmodal__header .pipeline-icon-toolbar__button {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.watchmodal__header .pipeline-icon-toolbar__button .pipeline-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.watchmodal__results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.watchmodal__results-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--runner-modal-panel-bg);
+  border-radius: 6px;
+  border: 1px solid var(--runner-border);
+}
+
+.watchmodal__results-title {
+  margin: 8px 0 6px;
+  padding: 8px 10px;
+}
+
+.watchmodal__results-list {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px;
+  background: transparent
+}
+
+.watchmodal__result-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--runner-modal-subpanel-bg);
+}
+
+.watchmodal__result-item--selected {
+  background: color-mix(in srgb, var(--parameter-accent) 18%, var(--runner-modal-subpanel-bg));
+  border: 1px solid var(--parameter-accent);
+}
+
+.watchmodal__staged {
+  background: var(--runner-modal-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+}
+
+.watchmodal__pending {
+  background: var(--runner-modal-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.watchmodal__pending-label {
+  display: block;
+  font-size: 12px;
+  color: var(--runner-muted);
+  margin-bottom: 6px;
+}
+
+.watchmodal__pending-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--runner-border);
+  background: var(--runner-modal-panel-bg);
+  color: inherit;
+}
+
+.watchmodal__staged-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.watchmodal__staged-title {
+  margin: 0 0 6px;
+}
+
+.watchmodal__staged-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watchmodal__staged-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--runner-modal-panel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.watchmodal__staged-empty {
+  color: var(--runner-muted);
+}
+
+.watchmodal__badge--param,
+.watchmodal__badge--dataset,
+
+.watchmodal__flowchart-placeholder {
+  height: 100%;
+  min-height: 320px;
+  background: var(--runner-modal-subpanel-bg);
+  border: 2px dashed var(--runner-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--runner-muted);
+}
+
+.watchmodal__picker h4 {
+  margin: 0 0 8px;
+}
+
+.watchmodal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.watchmodal__tile {
+  background: var(--runner-modal-subpanel-bg);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.watchmodal__tile--selected {
+  border-color: var(--runner-border);
+}
+
+.watchmodal__badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--runner-border);
+  border-radius: 10px;
+}
+
+.watchmodal__name {
+  display: block;
+  margin-top: 6px;
+}
+
+.pipeline-node--temp-selected .pipeline-node__bg {
+  stroke: var(--parameter---node-stroke-success); 
+  fill: color-mix(in srgb, var(--parameter-accent) 18%, var(--runner-modal-subpanel-bg));
+  stroke-width: 3px;
+}

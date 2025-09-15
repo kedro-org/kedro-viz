@@ -1,0 +1,63 @@
+.control-panel__command-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.control-panel__command-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.control-panel__small-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+}
+
+.arglist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  font-size: 12px;
+}
+
+.arglist__item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 0;
+}
+
+.arglist__label,
+.arglist__flag,
+.arglist__sep {
+  color: var(--runner-muted);
+}
+
+.arglist__flag {
+  font-family: var(
+    --font-family-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace
+  );
+}
+
+.arglist__value {
+  display: inline-flex;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}

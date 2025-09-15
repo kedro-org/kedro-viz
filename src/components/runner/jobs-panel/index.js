@@ -1,1 +1,1 @@
-export { default } from './jobs-list.impl';
+export { default } from './JobListPanel';

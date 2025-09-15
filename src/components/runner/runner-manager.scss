@@ -1,20 +1,25 @@
 @use '../../styles/variables' as variables;
 
 .runner-manager {
-  /* Base padding ensures space for global toolbar */
   padding: 24px 24px 24px calc(#{variables.$global-toolbar-width} + 24px);
   box-sizing: border-box;
   transition: padding-left 200ms ease, padding-right 200ms ease;
   font-family: var(--font-family, Inter, Arial, sans-serif);
   color: var(--runner-text);
 
-  /* Runner theme tokens aligned to global theme variables */
   --runner-text: var(--color-text);
   --runner-muted: var(--color-text-faded);
-  --runner-panel-bg: var(--color-bg-3);
-  --runner-subpanel-header-bg: var(--color-bg-4);
-  --runner-subpanel-bg: var(--color-bg-5);
-  --runner-stdout-bg: var(--color-bg-5);
+  
+  --runner-modal-bg: var(--color-bg-2);
+  --runner-modal-panel-bg: var(--color-bg-3);
+  --runner-modal-subpanel-bg: var(--color-bg-1);
+  --runner-modal-card-bg: var(--color-bg-5);
+
+  --runner-panel-bg: var(--color-bg-2);
+  --runner-subpanel-header-bg: var(--color-bg-3);
+  --runner-subpanel-bg: var(--color-bg-3);
+  --runner-subpanel-body-bg: var(--color-bg-3);
+  --runner-card-bg: var(--color-bg-4);
   --runner-border-strong: var(--color-border-line);
   --runner-border: var(--color-border-line);
   --runner-button-border: var(--color-border-line);
@@ -25,7 +30,6 @@
     var(--runner-panel-bg) 24px
   );
 
-  /* Brand/status tokens: keep local until global brand tokens exist */
   --runner-primary-gradient: linear-gradient(
     90deg,
     #{variables.$blue-300},
@@ -34,25 +38,21 @@
   --runner-primary-on: #{variables.$black-900};
   --runner-danger-bg: #{variables.$red-0};
   --runner-on-danger: #{variables.$white-0};
-  --runner-chip-running-bg: #{variables.$green-900};
-  --runner-chip-running-text: #{variables.$white-0};
-  --runner-chip-error-bg: #{variables.$red-100};
-  --runner-chip-error-text: #{variables.$white-0};
-  --runner-chip-finished-bg: #{variables.$green-300};
-  --runner-chip-finished-text: #{variables.$black-900};
-  --runner-chip-pending-bg: #{variables.$yellow-300};
-  --runner-chip-pending-text: #{variables.$black-900};
+  --runner-chip-running-bg: color-mix(in srgb, #{variables.$green-300} 40%, var(--color-bg) 60%);
+  --runner-chip-running-text: var(--color-text);
+  --runner-chip-error-bg: color-mix(in srgb, #{variables.$red-100} 40%, var(--color-bg) 60%);
+  --runner-chip-error-text: var(--color-text);
+  --runner-chip-finished-bg: color-mix(in srgb, #{variables.$green-300} 40%, var(--color-bg) 60%);
+  --runner-chip-finished-text: var(--color-text);
+  --runner-chip-pending-bg: color-mix(in srgb, #{variables.$yellow-300} 40%, var(--color-bg) 60%);
+  --runner-chip-pending-text: var(--color-text);
 
-  /* Constrain to viewport so inner panels can scroll instead of the page */
   height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* No explicit light override block needed; global --color-* tokens switch with theme */
-
-/* When the shared pipeline sidebar is rendered, reserve the closed sidebar width */
 .runner-manager--with-sidebar {
   padding-left: calc(
     #{variables.$global-toolbar-width} + #{variables.$sidebar-width-closed} +
@@ -60,19 +60,16 @@
   );
 }
 
-/* When the sidebar is open, reserve the full open width */
 .runner-manager--sidebar-open {
   padding-left: calc(
     #{variables.$global-toolbar-width} + #{variables.$sidebar-width-open} + 24px
   );
 }
 
-/* If global toolbar is hidden, remove its offset */
 .runner-manager--no-global-toolbar {
   padding-left: 24px;
 }
 
-/* If global toolbar is hidden but sidebar is present/open, offset by sidebar only */
 .runner-manager--no-global-toolbar.runner-manager--with-sidebar {
   padding-left: calc(#{variables.$sidebar-width-closed} + 24px);
 }
@@ -116,39 +113,28 @@
   font-weight: 700;
 }
 
-/* Two-column top area: maintain ratio via fr units with sensible minimums */
 .runner-manager__main {
-  /* Occupy remaining height under header/footer */
   flex: 1 1 auto;
-  min-height: 0; /* allow children to size/scroll */
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(240px, 3fr) minmax(360px, 7fr);
-
-  /* Control panel grows to fit content; capped below. Watch list fills rest */
   grid-template-rows: auto 1fr;
   gap: 24px;
   transition: grid-template-columns 200ms ease;
 }
 
-/* Editor spans full width on a new row */
 .runner-manager__editor {
-  /* Lives in the left column, below control panel */
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
   min-height: 0;
-
-  /* Keep the editor fixed; let inner list region handle scrolling */
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
-  /* Explicit placement: left column, second row */
   grid-column: 1;
   grid-row: 2;
 }
 
-/* Themed textarea for the MetaData extra editor block */
 .runner-meta-editor {
   width: 100%;
   height: 30vh;
@@ -172,7 +158,6 @@
   resize: vertical;
 }
 
-/* Stack everything on narrow screens */
 @media (width <= 1100px) {
   .runner-manager__main {
     display: flex;
@@ -180,11 +165,9 @@
   }
 
   .runner-manager--metadata-open {
-    padding-right: 24px; /* treat metadata as overlay on small screens */
+    padding-right: 24px;
   }
 
-  /* On small screens, .runner-manager__main is flex; allow the jobs panel
-     to take remaining space and be the scroll container */
   .runner-manager__jobs-panel {
     flex: 1 1 auto;
     min-height: 0;
@@ -192,76 +175,22 @@
 }
 
 .runner-manager__control-panel {
-  /* Allow grid to resize this panel proportionally; avoid fixed width */
   min-width: 0;
   background: var(--runner-panel-bg);
   padding: 16px;
   border-radius: 6px;
-  max-height: 50vh; /* never exceed half of the viewport */
-  overflow: hidden; /* contain internal scroll in control body */
-  display: flex; /* enable footer pinning */
-  flex-direction: column; /* stack body and footer */
-
-  /* Explicit placement: left column, first row */
+  max-height: 50vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   grid-column: 1;
   grid-row: 1;
 }
 
-/* Scrollable body so footer can stay pinned at the bottom */
 .runner-manager__control-body {
   flex: 1 1 auto;
-  min-height: 0; /* required for proper overflow behavior in flex containers */
+  min-height: 0;
   overflow: auto;
-}
-
-/* Compact single-line argument list */
-.arglist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr; /* stack on smaller areas */
-  gap: 6px;
-  font-size: 12px;
-}
-
-.arglist__item {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.arglist__label {
-  color: var(--runner-muted);
-}
-
-.arglist__flag {
-  font-family: var(
-    --font-family-mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    'Liberation Mono',
-    'Courier New',
-    monospace
-  );
-  color: var(--runner-muted);
-}
-
-.arglist__sep {
-  color: var(--runner-muted);
-}
-
-.arglist__value {
-  display: inline-flex;
-  gap: 6px;
-  min-width: 0;
-  overflow: hidden;
 }
 
 .muted {
@@ -292,9 +221,8 @@
   font-size: 12px;
 }
 
-/* Footer pinned to bottom, with slight elevation and sticky behavior if body scrolls */
 .runner-manager__control-footer {
-  margin-top: auto; /* push to bottom if content shorter than container */
+  margin-top: auto;
   position: sticky;
   bottom: 0;
   background: var(--runner-footer-gradient);
@@ -302,7 +230,7 @@
 }
 
 .section-title {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 14px;
 }
 
@@ -356,7 +284,6 @@
   opacity: 0.7;
 }
 
-/* Subtle secondary button for actions like "Add to watch list" */
 .btn--secondary {
   background: var(--runner-subpanel-bg);
   border-color: var(--runner-button-border);
@@ -367,168 +294,12 @@
   background: var(--runner-hover-bg);
 }
 
-.runner-manager__jobs-panel {
-  /* Right column should occupy full grid height across both rows */
-  min-width: 0;
-  background: var(--runner-panel-bg);
-  padding: 16px;
-  border-radius: 6px;
-  grid-row: 1 / span 2;
 
-  /* Make inner list scroll while header stays visible */
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-
-  /* Explicit placement: right column covering both rows */
-  grid-column: 2;
-  max-height: 100%;
-  height: 100%;
-
-  /* The header is sticky; only the inner body should scroll */
-  overflow: hidden;
-}
-
-.runner-manager__jobs-panel .jobs-list {
-  margin-top: 12px;
-}
-
-.jobs-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--runner-panel-bg);
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--runner-border);
-}
-
-.jobs-panel__body {
-  flex: 1 1 auto;
-  min-height: 0; /* allow child to size and scroll */
-  overflow: auto; /* scrolls independently under sticky header */
-  max-height: 100%;
-}
-
-.jobs-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  /* Let content define height so the panel (parent) becomes the scroll container */
-  flex: 0 0 auto;
-  overflow: visible;
-}
-
-.job-card {
-  background: var(--runner-subpanel-bg);
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid var(--runner-border-strong);
-  position: relative;
-
-  /* Max-height is computed in JS to respect sticky header; keep CSS flexible */
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: auto; /* scroll inside the card if needed */
-}
-
-.job-card__meta {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.job-card__id {
-  font-weight: 700;
-}
-
-.job-card__status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.job-card__status--running {
-  background: var(--runner-chip-running-bg);
-  color: var(--runner-chip-running-text);
-}
-
-.job-card__status--error {
-  background: var(--runner-chip-error-bg);
-  color: var(--runner-chip-error-text);
-}
-
-.job-card__status--finished {
-  background: var(--runner-chip-finished-bg);
-  color: var(--runner-chip-finished-text);
-}
-
-.job-card__status--pending {
-  background: var(--runner-chip-pending-bg);
-  color: var(--runner-chip-pending-text);
-}
-
-.job-card__stdout {
-  background: var(--runner-stdout-bg);
-  padding: 8px;
-  border-radius: 4px;
-  max-height: 200px; /* collapsed default; overridden inline when expanded */
-  overflow: auto;
-
-  /* Allow logs to take remaining space within the job card while respecting max-height */
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.job-card__controls {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.job-card__controls--top {
-  align-items: center;
-  gap: 12px;
-}
-
-/* Reduce margin above the collapse/expand toggle specifically */
-.job-card__toggle.pipeline-toggle {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.job-card__controls--bottom {
-  justify-content: flex-start; /* bottom-left */
-}
-
-.job-card__details {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  margin-bottom: 6px;
-}
-
-/* Let the job body fill available space and arrange its sections in a column */
-.job-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1 1 auto;
-  min-height: 0; /* allow .job-card__stdout to shrink/grow */
-}
-
-/* Removed .job-card__terminate (button now lives in header actions) */
 
 .runner-manager__footer {
   margin-top: 16px;
   color: var(--runner-muted);
 
-  /* Legend at the bottom of the watch list */
   .watchlist-legend {
     display: flex;
     align-items: center;
@@ -552,7 +323,6 @@
   }
 }
 
-/* Simple modal for full logs */
 .runner-logs-modal {
   position: fixed;
   inset: 0;
@@ -600,13 +370,11 @@
   overflow: auto;
 }
 
-/* Make full log text more readable */
 .runner-logs-modal__body pre {
   font-size: 14px;
   line-height: 1.5;
 }
 
-/* Ensure the Parameter changes select uses the theme text color */
 .runner-logs-modal #param-changes-select {
   color: var(--color-text);
   background: transparent;
@@ -621,7 +389,6 @@
   gap: 8px;
 }
 
-/* Responsive adjustments: when the sidebar is hidden by layout breakpoints, fall back to small padding */
 @media (width <= 900px) {
   .runner-manager,
   .runner-manager--with-sidebar,
@@ -652,7 +419,6 @@
   margin-bottom: 12px;
 }
 
-/* Editor inner panel: toolbar fixed, list scrolls */
 .runner-panel {
   display: flex;
   flex-direction: column;
@@ -666,384 +432,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-}
-
-/* Watch list styles */
-.runner-panel--watchlist .watchlist-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.watchlist-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.watchlist-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: var(--runner-subpanel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 8px;
-}
-
-.watchlist-item.watchlist-item--edited {
-  border: 2px solid var(--parameter-accent);
-}
-
-.watchlist-item__main {
-  background: transparent;
-  border: none;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0; /* enable ellipsis in children */
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-
-.watchlist-item__badge {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  border: 1px solid var(--runner-border);
-}
-
-.watchlist-item__badge--param {
-  background: var(--runner-stdout-bg);
-}
-
-.watchlist-item__badge--dataset {
-  background: var(--runner-stdout-bg);
-}
-
-.watchlist-item__remove {
-  background: transparent;
-  border: 1px solid var(--runner-border);
-  border-radius: 4px;
-  color: inherit;
-  cursor: pointer;
-  padding: 0 8px;
-  flex: 0 0 auto;
-  align-self: center;
-}
-
-/* Watch modal */
-.watchmodal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-}
-
-.watchmodal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgb(0 0 0 / 50%);
-}
-
-.watchmodal__content {
-  position: absolute;
-  inset: 10% 12% auto;
-  background: var(--runner-panel-bg);
-  border: 1px solid var(--runner-border-strong);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  max-height: 80vh;
-
-  /* Ensure inner content (flowchart, etc.) is visually contained */
-  overflow: hidden;
-}
-
-.watchmodal__header,
-.watchmodal__footer {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--runner-border);
-}
-
-.watchmodal__footer {
-  border-top: 1px solid var(--runner-border);
-  border-bottom: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.watchmodal__body {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* flowchart | selector */
-  grid-template-rows: 1fr; /* selector manages its own internal rows */
-  gap: 12px;
-  padding: 12px 16px;
-  min-height: 0;
-  flex: 1 1 auto; /* fill between header and footer */
-}
-
-.watchmodal__flowcol {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-/* Flowchart container inside the modal: constrain size and contain overflow */
-.watchmodal__flowchart {
-  position: relative; /* anchor absolutely-positioned layer list */
-  height: 60vh; /* scale with viewport while fitting inside modal max-height */
-  min-height: 360px; /* provide a sensible minimum */
-  background: var(--runner-subpanel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  overflow: hidden; /* contain zoom/pan content */
-}
-
-.watchmodal__flow-hint {
-  margin-top: 8px;
-  font-size: 12px;
-  color: var(--runner-muted);
-}
-
-.watchmodal__footer-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Make the embedded flowchart fill the container */
-.watchmodal__flowchart .pipeline-flowchart {
-  position: relative; /* make layer-name list position relative to this box */
-  width: 100%;
-  height: 100%;
-}
-
-.watchmodal__flowchart .pipeline-flowchart__graph {
-  width: 100%;
-  height: 100%;
-}
-
-/* Pin layer labels to the left edge of the modal column, not the app sidebar */
-.watchmodal__flowchart .pipeline-flowchart__layer-names {
-  left: 0;
-  transform: translateX(
-    8px
-  ) !important; /* override JS-applied transform that offsets by sidebar width */
-}
-
-/* Right-side staged list (legacy class removed) */
-
-.watchmodal__selector {
-  display: grid;
-  grid-template-rows: auto 1fr; /* search on top, results fill */
-  gap: 12px;
-  min-height: 0; /* allow nested results to size/scroll */
-}
-
-.watchmodal__search {
-  background: var(--runner-subpanel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 10px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Make the search input span the whole container */
-.watchmodal__search-input {
-  width: 100%;
-  background: transparent;
-}
-
-.watchmodal__header {
-  display: flex;
-  align-items: center;
-}
-
-.watchmodal__close {
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 4px 6px;
-  line-height: 1;
-}
-
-.watchmodal__results {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* parameters | datasets */
-  gap: 12px;
-  min-height: 0; /* ensure columns can stretch */
-}
-
-.watchmodal__results-col {
-  display: flex;
-  flex-direction: column;
-  min-height: 0; /* allow child to manage overflow */
-}
-
-.watchmodal__results-title {
-  margin: 8px 0 6px;
-}
-
-.watchmodal__results-list {
-  list-style: none;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1 1 0; /* grow to fill column height */
-  min-height: 0; /* enable proper overflow */
-  overflow: auto;
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 8px;
-  background: var(--runner-subpanel-bg);
-}
-
-.watchmodal__result-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  cursor: pointer;
-  background: var(--runner-panel-bg);
-}
-
-.watchmodal__result-item--selected {
-  background: color-mix(in srgb, #1db954 18%, var(--runner-panel-bg));
-  border-color: #1db954;
-}
-
-.watchmodal__staged {
-  background: var(--runner-subpanel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 10px;
-  overflow: auto;
-}
-
-.watchmodal__pending {
-  background: var(--runner-subpanel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 10px;
-}
-
-.watchmodal__pending-label {
-  display: block;
-  font-size: 12px;
-  color: var(--runner-muted);
-  margin-bottom: 6px;
-}
-
-.watchmodal__pending-input {
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--runner-border);
-  background: var(--runner-panel-bg);
-  color: inherit;
-}
-
-.watchmodal__staged-groups {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.watchmodal__staged-title {
-  margin: 0 0 6px;
-}
-
-.watchmodal__staged-list {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.watchmodal__staged-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--runner-panel-bg);
-  border: 1px solid var(--runner-border);
-  border-radius: 6px;
-  padding: 6px 8px;
-}
-
-.watchmodal__staged-empty {
-  color: var(--runner-muted);
-}
-
-/* Badge reuse */
-
-.watchmodal__badge--param,
-.watchmodal__badge--dataset {
-  background: var(--runner-stdout-bg);
-}
-
-.watchmodal__flowchart-placeholder {
-  height: 100%;
-  min-height: 320px;
-  background: var(--runner-subpanel-bg);
-  border: 2px dashed var(--runner-border);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--runner-muted);
-}
-
-.watchmodal__picker h4 {
-  margin: 0 0 8px;
-}
-
-.watchmodal__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.watchmodal__tile {
-  background: var(--runner-subpanel-bg);
-  border: 2px solid transparent;
-  border-radius: 6px;
-  padding: 8px;
-  text-align: left;
-  cursor: pointer;
-  color: inherit;
-}
-
-.watchmodal__tile--selected {
-  border-color: #{variables.$blue-300};
-}
-
-.watchmodal__badge {
-  font-size: 10px;
-  padding: 2px 6px;
-  border: 1px solid var(--runner-border);
-  border-radius: 10px;
-}
-
-.watchmodal__name {
-  display: block;
-  margin-top: 6px;
+  border-bottom: 1px solid var(--runner-button-border);
 }
 
 .runner-panel__list {
@@ -1052,40 +441,36 @@
   overflow: auto;
 }
 
-/* Subtle scrollbars across runner page */
 .runner-manager *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 .runner-manager *::-webkit-scrollbar-track {
-  background: var(--runner-panel-bg);
+  background: transparent; //var(--runner-panel-bg);
 }
 
 .runner-manager *::-webkit-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--runner-border) 60%, transparent);
+  background-color: transparent;
   border-radius: 6px;
 }
 
 .runner-manager * {
-  scrollbar-color: color-mix(in srgb, var(--runner-border) 60%, transparent)
-    var(--runner-panel-bg);
+  scrollbar-color: var(--runner-text) transparent;
   scrollbar-width: thin;
 }
 
 .runner-tab {
   padding: 6px 10px;
-  border-radius: 4px;
+  border: none;
   background: transparent;
-  color: inherit;
-  border: 1px solid var(--runner-button-border);
+  color: var(--runner-muted);
   cursor: pointer;
 }
 
 .runner-tab--active {
-  background: var(--runner-primary-gradient);
   color: var(--runner-primary-on);
-  border: none;
+  border-bottom: 1px solid var(--parameter-accent);
 }
 
 .runner-panel__tabs {
@@ -1094,29 +479,9 @@
   align-items: center;
 }
 
-/* Muted tabs by default, only active is bright */
 .runner-panel__tabs .runner-tab {
   opacity: 0.7;
   color: var(--runner-muted);
-}
-
-.runner-panel__tabs .runner-tab.runner-tab--active {
-  opacity: 1;
-  background: var(--runner-subpanel-bg);
-  color: inherit;
-  border: 1px solid var(--runner-button-border);
-}
-
-.watchlist-item__preview {
-  font-size: 12px;
-  color: var(--runner-muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
-  max-width: 100%;
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .runner-filter-input {
@@ -1176,7 +541,6 @@
   color: var(--runner-muted);
 }
 
-/* Make param items behave like dataset items: clickable with hover */
 .param-item {
   padding: 6px 8px;
   cursor: pointer;
@@ -1220,7 +584,6 @@
   color: var(--runner-muted);
 }
 
-/* Right-side metadata editor tweaks */
 .runner-yaml-editor {
   width: 100%;
   box-sizing: border-box;
@@ -1240,17 +603,40 @@
   margin-top: 8px;
 }
 
-/* Added header rows for control panel and watch list */
 .control-panel__header,
-.editor__header {
+.editor__header,
+.jobs-panel__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 0px;
+  border-bottom: var(--runner-border);
 }
 
 .editor__actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.runner-manager .header-action-btn {
+  margin: 0; /* spacing handled by parent gap */
+}
+
+.runner-manager .pipeline-icon-toolbar__button {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+}
+
+.runner-manager .pipeline-icon-toolbar__button .pipeline-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.runner-manager .header-action-btn .pipeline-icon {
+  width: 24px;
+  height: 24px;
 }

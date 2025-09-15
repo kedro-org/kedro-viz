@@ -1,0 +1,279 @@
+import { useState, useCallback, useEffect } from 'react';
+import IconButton from '../../ui/icon-button';
+import CloseIcon from '../../icons/close';
+import './watch-list-dialog.scss';
+import FlowChart from '../../flowchart';
+
+// Helper: processing node selection
+function onSelectNodeClickImpl({
+  node,
+  paramNodes = [],
+  datasets = [],
+  toggleSelectToAdd,
+}) {
+  const nodeId = node && node.id;
+  if (!nodeId) {
+    return;
+  }
+  // Check if it's a param or dataset node
+  const isParam = (paramNodes || []).some(
+    (paramNode) => paramNode.id === nodeId
+  );
+  const isDataset = (datasets || []).some((dataset) => dataset.id === nodeId);
+
+  if (isParam || isDataset) {
+    toggleSelectToAdd &&
+      toggleSelectToAdd(isParam ? 'param' : 'dataset', nodeId, node.name);
+  }
+}
+
+// Presentational dialog for selecting parameters/datasets for the watch list
+function WatchListDialog({ watchList, props, onClose, onConfirm }) {
+  const [watchSearch, setWatchSearch] = useState('');
+  const [tempModalSelections, setTempModalSelections] = useState({}); // { id: {kind, id, name} }
+  const [tempSelectedMap, setTempSelectedMap] = useState({}); // { id: true }
+  const [allowConfirm, setAllowConfirm] = useState(false);
+  const [paramCount, setParamCount] = useState(0);
+  const [datasetCount, setDatasetCount] = useState(0);
+  const [paramResults, setParamResults] = useState([]);
+  const [datasetResults, setDatasetResults] = useState([]);
+
+  useEffect(() => {
+    const originalKeys = Object.keys(watchList || {});
+    const currentKeys = Object.keys(tempModalSelections || {});
+
+    if (
+      originalKeys.length === currentKeys.length &&
+      originalKeys.every((key) => currentKeys.includes(key))
+    ) {
+      setAllowConfirm(false);
+    } else {
+      setAllowConfirm(true);
+    }
+  }, [watchList, tempModalSelections]);
+
+  useEffect(() => {
+    const tempSelections = {};
+    (watchList || []).forEach((item) => {
+      tempSelections[item.id] = {
+        kind: item.kind,
+        id: item.id,
+        name: item.name,
+      };
+    });
+    setTempModalSelections(tempSelections);
+  }, [watchList]);
+
+  const toggleSelectToAdd = useCallback((kind, id, name) => {
+    setTempModalSelections((prev) => {
+      const next = { ...(prev || {}) };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = { kind, id, name };
+      }
+      return next;
+    });
+  }, []);
+
+  // Pending counts for footer caption
+  useEffect(() => {
+    const stagedValues = Object.values(tempModalSelections || {});
+    const paramCount = stagedValues.filter(
+      (item) => item.kind === 'param'
+    ).length;
+    setParamCount(paramCount);
+
+    const datasetCount = stagedValues.filter(
+      (item) => item.kind === 'dataset'
+    ).length;
+    setDatasetCount(datasetCount);
+  }, [tempModalSelections]);
+
+  const getSearchResults = useCallback(() => {
+    const query = (watchSearch || '').trim().toLowerCase();
+    const makeMatch = (text) =>
+      text && String(text).toLowerCase().includes(query);
+
+    const paramResults = (props.paramNodes || [])
+      .map((node) => ({
+        kind: 'param',
+        id: node.id,
+        name: node.name,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    const datasetResults = (props.datasets || [])
+      .map((dataset) => ({
+        kind: 'dataset',
+        id: dataset.id,
+        name: dataset.name,
+      }))
+      .filter((item) => !query || makeMatch(item.id) || makeMatch(item.name))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      );
+
+    return { paramResults, datasetResults };
+  }, [watchSearch, props]);
+
+  useEffect(() => {
+    const { paramResults, datasetResults } = getSearchResults();
+    setParamResults(paramResults);
+    setDatasetResults(datasetResults);
+  }, [getSearchResults]);
+
+  useEffect(() => {
+    const newTempSelectedMap = Object.keys(tempModalSelections || {}).reduce(
+      (acc, id) => {
+        acc[id] = true;
+        return acc;
+      },
+      {}
+    );
+    setTempSelectedMap(newTempSelectedMap);
+  }, [tempModalSelections]);
+
+  const onSelectNodeClick = useCallback(
+    (node) => {
+      onSelectNodeClickImpl({
+        node,
+        paramNodes: props.paramNodes,
+        datasets: props.datasets,
+        toggleSelectToAdd,
+      });
+    },
+    [props, toggleSelectToAdd]
+  );
+
+  return (
+    <div className="watchmodal" role="dialog" aria-label="Add to watch list">
+      <div className="watchmodal__backdrop" onClick={onClose} />
+      <div className="watchmodal__content">
+        <div className="watchmodal__header">
+          <h3>Select items to watch</h3>
+          <IconButton aria-label="Close" onClick={onClose} icon={CloseIcon} />
+        </div>
+        <div className="watchmodal__body">
+          <div className="watchmodal__flowcol">
+            <div className="watchmodal__flowchart">
+              <FlowChart
+                displayMetadataPanel={false}
+                onToggleNodeClicked={onSelectNodeClick}
+                onLoadNodeData={() => {}}
+                onNodeDoubleClick={onSelectNodeClick}
+                tempSelectedMap={tempSelectedMap}
+              />
+            </div>
+            <div className="watchmodal__flow-hint" aria-live="polite">
+              Tip: Double-click a node to select it.
+            </div>
+          </div>
+          <aside className="watchmodal__selector">
+            <div className="watchmodal__search">
+              <input
+                className="watchmodal__search-input"
+                type="text"
+                placeholder="Search parameters and datasets..."
+                value={watchSearch}
+                onChange={(e) => setWatchSearch(e.target.value)}
+              />
+            </div>
+            <div className="watchmodal__results">
+              <div
+                className="watchmodal__results-col"
+                aria-label="Parameters column"
+              >
+                <h2 className="watchmodal__results-title">Parameters</h2>
+                <ul className="watchmodal__results-list">
+                  {paramResults.length ? (
+                    paramResults.map((item) => (
+                      <li
+                        key={`result-${item.kind}:${item.id}`}
+                        className={`watchmodal__result-item ${
+                          (tempModalSelections || {})[item.id]
+                            ? 'watchmodal__result-item--selected'
+                            : ''
+                        }`}
+                        onClick={() =>
+                          onSelectNodeClick({
+                            id: item.id,
+                            name: item.name,
+                          })
+                        }
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="watchmodal__name">{item.name}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="watchmodal__results-empty">No parameters</li>
+                  )}
+                </ul>
+              </div>
+              <div
+                className="watchmodal__results-col"
+                aria-label="Datasets column"
+              >
+                <h2 className="watchmodal__results-title">Datasets</h2>
+                <ul className="watchmodal__results-list">
+                  {datasetResults.length ? (
+                    datasetResults.map((item) => (
+                      <li
+                        key={`result-${item.kind}:${item.id}`}
+                        className={`watchmodal__result-item ${
+                          (tempModalSelections || {})[item.id]
+                            ? 'watchmodal__result-item--selected'
+                            : ''
+                        }`}
+                        onClick={() =>
+                          onSelectNodeClick({
+                            id: item.id,
+                            name: item.name,
+                          })
+                        }
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="watchmodal__name">{item.name}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="watchmodal__results-empty">No datasets</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div className="watchmodal__footer">
+          <div className="watchmodal__pending-caption" aria-live="polite">
+            Pending additions: {paramCount} parameter
+            {paramCount === 1 ? '' : 's'}, {datasetCount} dataset
+            {datasetCount === 1 ? '' : 's'}
+          </div>
+          <div className="watchmodal__footer-actions">
+            <button className="btn" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              className="btn btn--primary"
+              onClick={() =>
+                onConfirm(Object.values(tempModalSelections || {}))
+              }
+              disabled={!allowConfirm}
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default WatchListDialog;

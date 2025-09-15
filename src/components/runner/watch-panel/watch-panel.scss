@@ -1,0 +1,116 @@
+.runner-panel--watchlist .watchlist-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.watchlist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.watchlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--runner-subpanel-bg);
+  border: 1px solid var(--runner-border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.watchlist-item__name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--runner-muted);
+}
+
+.watchlist-item--active {
+  background: color-mix(in srgb, var(--runner-subpanel-bg) 95%, var(--parameter-accent) 5%);
+  border: 1px solid var(--color-border-line);
+}
+
+.watchlist-item--active .watchlist-item__main {
+  background: transparent;
+}
+
+.watchlist-item--active .watchlist-item__name {
+  color: var(--color-text);
+}
+
+.watchlist-item.watchlist-item--edited {
+  border: 1px solid var(--parameter-accent);
+}
+
+.watchlist-item__main {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.watchlist-item__badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--runner-border);
+}
+
+.watchlist-item__badge--param {
+  background: var(--runner-card-bg);
+}
+
+.watchlist-item__badge--dataset {
+  background: var(--runner-card-bg);
+}
+
+.watchlist-item__remove {
+  background: transparent;
+  border-radius: 4px;
+  color: inherit;
+  cursor: pointer;
+  flex: 0 0 auto;
+  align-self: center;
+  border: none;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// .watchlist-item__remove.watchlist-item__remove--sm button svg,
+// .watchlist-item__remove.watchlist-item__remove--sm svg {
+//   width: 12px;
+//   height: 12px;
+// }
+
+
+.watchlist-item__preview {
+  font-size: 12px;
+  color: var(--runner-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  max-width: 100%;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+

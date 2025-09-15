@@ -1,4 +1,9 @@
-import React, { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
+import IconButton from '../../ui/icon-button';
+import CloseIcon from '../../icons/close';
+import VisibleIcon from '../../icons/visible';
+import RubbishIcon from '../../icons/rubbish';
+import './JobListPanel.scss';
 
 function renderConfirmationModal({
   isOpen,
@@ -22,13 +27,13 @@ function renderConfirmationModal({
       <div className="runner-logs-modal__content">
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
-          <button
-            className="runner-logs-modal__close"
+          <IconButton
+            className="runner-logs-modal__close runner-logs-modal__close--confirm"
+            container="div"
             aria-label="Close"
             onClick={onCancel}
-          >
-            ×
-          </button>
+            icon={CloseIcon}
+          />
         </div>
         <div className="runner-logs-modal__body">
           <p>{message}</p>
@@ -66,13 +71,13 @@ function renderLogsModal({
       <div className="runner-logs-modal__content">
         <div className="runner-logs-modal__header">
           <h3 className="runner-logs-modal__title">{title}</h3>
-          <button
-            className="runner-logs-modal__close"
+          <IconButton
+            className="runner-logs-modal__close header-action-btn"
             aria-label="Close"
+            container="div"
             onClick={onClose}
-          >
-            ×
-          </button>
+            icon={CloseIcon}
+          />
         </div>
         <div className="runner-logs-modal__body">
           <pre>{logMessage || 'No logs available.'}</pre>
@@ -99,11 +104,6 @@ function renderJobMetadata({
 }) {
   const isTerminal = ['finished', 'error', 'terminated'].includes(job.status);
   const expanded = typeof isExpanded === 'boolean' ? isExpanded : !isTerminal;
-  const stdoutStyle = {
-    display: expanded ? 'block' : 'none',
-    maxHeight: expanded ? '70vh' : '0px',
-    overflow: 'auto',
-  };
   const bodyHeight = jobsPanelBodyRef.current?.clientHeight || 0;
   const cardMax = bodyHeight > 0 ? bodyHeight - 24 : 0;
   const status = job.status;
@@ -126,16 +126,7 @@ function renderJobMetadata({
         <div className="job-card__time">
           started {new Date(job.startedAt).toLocaleTimeString()}
         </div>
-        <div
-          className="job-card__actions"
-          style={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
-            display: 'flex',
-            gap: '8px',
-          }}
-        >
+        <div className="job-card__actions">
           {canTerminate && (
             <button
               className="btn btn--danger"
@@ -145,16 +136,22 @@ function renderJobMetadata({
               Terminate
             </button>
           )}
-          <button className="btn" onClick={() => openLogsModal(job.jobId)}>
-            View full logs
-          </button>
-          <button
-            className="btn"
-            onClick={() => openClearJobConfirm(job.jobId)}
+          <IconButton
+            aria-label="View full logs"
+            title="View full logs"
+            className="header-action-btn"
+            container="div"
+            icon={VisibleIcon}
+            onClick={() => openLogsModal(job.jobId)}
+          />
+          <IconButton
+            aria-label="Remove this job from the list"
             title="Remove this job from the list"
-          >
-            Remove
-          </button>
+            className="header-action-btn"
+            container="div"
+            icon={CloseIcon}
+            onClick={() => openClearJobConfirm(job.jobId)}
+          />
         </div>
       </div>
       <div className="job-card__body">
@@ -193,8 +190,9 @@ function renderJobMetadata({
           </div>
         </div>
         <div
-          className="job-card__stdout"
-          style={stdoutStyle}
+          className={`job-card__stdout ${
+            expanded ? 'job-card__stdout--expanded' : ''
+          }`}
           ref={(el) => {
             if (logRefs) {
               logRefs[job.jobId] = el;
@@ -280,23 +278,29 @@ function JobListPanel({
     <>
       <div className="jobs-panel__header">
         <h3 className="section-title">Jobs</h3>
-        <button
-          className="btn btn--secondary"
-          onClick={openClearAllJobsConfirm}
-          disabled={jobs.length === 0}
-        >
-          Clear jobs
-        </button>
+        <div className="editor__actions">
+          <IconButton
+            aria-label="Remove all jobs"
+            title="Remove all jobs"
+            className="header-action-btn"
+            container="div"
+            icon={RubbishIcon}
+            onClick={openClearAllJobsConfirm}
+            disabled={jobs.length === 0}
+          />
+        </div>
       </div>
       <div className="jobs-panel__body" ref={jobsPanelBodyRef}>
         <div className="jobs-list">
           {jobs.length === 0 && (
-            <div className="job-card">
+            <div className="job-card job-card--empty">
               <div className="job-card__meta">
-                <div className="job-card__id">No jobs</div>
+                <div className="job-card__id job-card__id--empty muted-text">
+                  No jobs
+                </div>
               </div>
               <div className="job-card__body">
-                <div className="job-card__stdout">
+                <div className="job-card__stdout muted-text">
                   <pre>Click "Start run" to create a job.</pre>
                 </div>
               </div>
