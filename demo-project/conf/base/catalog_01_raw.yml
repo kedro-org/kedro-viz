@@ -29,14 +29,6 @@ shuttles:
         nrows: 15
 
 # Test markdown dataset for Kedro-Viz preview functionality
-readme:
-  type: demo_project.extras.datasets.markdown_text_dataset.CustomTextDataset
-  filepath: ${_base_location}/01_raw/sample_markdown.md
-  metadata:
-    kedro-viz:
-      layer: raw
-
-# Namespaced version for the ingestion pipeline
 ingestion.readme:
   type: demo_project.extras.datasets.markdown_text_dataset.CustomTextDataset
   filepath: ${_base_location}/01_raw/sample_markdown.md
