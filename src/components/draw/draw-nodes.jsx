@@ -149,10 +149,10 @@ export function DrawNodes({
       .attr('dx', (node) => node.textOffset);
 
     enterNodes.each(function (node) {
-      if (node.style && Object.keys(node.style).length > 0) {
+      if (node.styles && Object.keys(node.styles).length > 0) {
         const nodeGroup = select(this);
 
-        Object.entries(node.style).forEach(([key, value]) => {
+        Object.entries(node.styles).forEach(([key, value]) => {
           const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
 
           // Background properties
