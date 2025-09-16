@@ -21,6 +21,12 @@
   --color-button-text: #{variables.$white-0};
 }
 
+%metadata-preview-container {
+  background: var(--color-metadata-preview-bg);
+  height: 300px;
+  position: relative;
+}
+
 .pipeline-metadata {
   @extend %sidebar;
 
@@ -282,15 +288,12 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__preview {
-  background: var(--color-metadata-preview-bg);
-  height: 300px;
-  position: relative;
+  @extend %metadata-preview-container;
 }
 
 .pipeline-metadata__preview-json {
-  background: var(--color-metadata-preview-bg);
-  height: 300px;
-  position: relative;
+  @extend %metadata-preview-container;
+
   padding: 10px 0 0 20px;
 
   .scrollable-container {
@@ -299,9 +302,8 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__preview-markdown {
-  background: var(--color-metadata-preview-bg);
-  height: 300px;
-  position: relative;
+  @extend %metadata-preview-container;
+
   padding: 10px 0 0 20px;
 
   .scrollable-container {
@@ -309,11 +311,9 @@ $list-inline-spacing: 0.2em;
   }
 
   .pipeline-metadata__markdown-content {
-    font-family: monospace;
     font-size: 12px;
-    line-height: 1.5;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     white-space: pre-wrap;
     word-wrap: break-word;
   }
