@@ -50,7 +50,7 @@ dist/
 __pycache__/
 .pytest_cache/
 
-package/*/html/
+# package/*/html/ (TODO: temp change for testing)
 package/*.log
 
 # Unit test / coverage reports
