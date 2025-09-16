@@ -148,6 +148,45 @@ export function DrawNodes({
       .attr('dy', 5)
       .attr('dx', (node) => node.textOffset);
 
+    enterNodes.each(function (node) {
+      if (node.style && Object.keys(node.style).length > 0) {
+        const nodeGroup = select(this);
+
+        Object.entries(node.style).forEach(([key, value]) => {
+          const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+
+          // Background properties
+          if (
+            key.toLowerCase().includes('background') ||
+            ['fill', 'stroke', 'strokeWidth', 'opacity'].includes(key)
+          ) {
+            const bgElement = nodeGroup.select('.pipeline-node__bg');
+            bgElement.style(cssProperty, value, 'important');
+          }
+
+          // Text properties
+          else if (
+            key.toLowerCase().includes('text') ||
+            key.toLowerCase().includes('font') ||
+            ['color'].includes(key)
+          ) {
+            const textElement = nodeGroup.select('.pipeline-node__text');
+            const iconElement = nodeGroup.select('.pipeline-node__icon');
+
+            [textElement, iconElement].forEach((element) => {
+              if (key === 'color') {
+                element.style('fill', value, 'important');
+              } else {
+                element.style(cssProperty, value, 'important');
+              }
+            });
+          }
+        });
+
+        nodeGroup.classed('kedro-viz-custom-styled', true);
+      }
+    });
+
     exitNodes
       .transition('exit-nodes')
       .duration(DURATION)
