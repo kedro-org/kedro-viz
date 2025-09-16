@@ -298,6 +298,27 @@ $list-inline-spacing: 0.2em;
   }
 }
 
+.pipeline-metadata__preview-markdown {
+  background: var(--color-metadata-preview-bg);
+  height: 300px;
+  position: relative;
+  padding: 10px 0 0 20px;
+
+  .scrollable-container {
+    padding-bottom: 10px;
+  }
+
+  .pipeline-metadata__markdown-content {
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
 .scrollable-container {
   overflow: scroll;
   max-width: 400px;

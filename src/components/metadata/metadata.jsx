@@ -71,6 +71,8 @@ const MetaData = ({
   const hasTablePreview =
     hasPreview && metadata?.previewType === 'TablePreview';
   const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
+  const hasMarkdownPreview =
+    hasPreview && metadata?.previewType === 'MarkdownPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -397,6 +399,28 @@ const MetaData = ({
                         style={{ background: 'transparent', fontSize: '14px' }}
                         collapsed={3}
                       />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasMarkdownPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-markdown">
+                    <div className="scrollable-container">
+                      <pre className="pipeline-metadata__markdown-content">
+                        {metadata.preview}
+                      </pre>
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

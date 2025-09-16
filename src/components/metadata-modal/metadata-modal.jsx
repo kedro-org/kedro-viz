@@ -15,7 +15,9 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
-  const hasMetadataContent = hasPlot || hasImage || hasTable || hasJSON;
+  const hasMarkdown = metadata?.previewType === 'MarkdownPreview';
+  const hasMetadataContent =
+    hasPlot || hasImage || hasTable || hasJSON || hasMarkdown;
 
   if (!visible.metadataModal || !hasMetadataContent) {
     return null;
@@ -86,6 +88,13 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             style={{ background: 'transparent', fontSize: '15px' }}
             collapsed={3}
           />
+        </div>
+      )}
+      {hasMarkdown && (
+        <div className="pipeline-metadata-modal__preview-markdown">
+          <pre className="pipeline-metadata-modal__markdown-content">
+            {metadata.preview}
+          </pre>
         </div>
       )}
     </div>
