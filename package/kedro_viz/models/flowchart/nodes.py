@@ -40,6 +40,7 @@ class GraphNode(BaseModel, ABC):
                 node belongs to. Defaults to `set()`.
         modular_pipelines (Optional[Set(str)]): A set of modular pipeline names
                 this node belongs to.
+        styles (Optional[Dict]): Styles for the Graph node. Defaults to `None`.
 
     """
 
@@ -61,17 +62,20 @@ class GraphNode(BaseModel, ABC):
         validate_default=True,
         description="The modular_pipelines this node belongs to",
     )
+    styles: Optional[Dict] = Field(None, description="The styles for the graph node.")
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
     def create_task_node(
-        cls, node: KedroNode, node_id: str, modular_pipelines: Optional[Set[str]]
+        cls, node: KedroNode, node_id: str, modular_pipelines: Optional[Set[str]], styles: Optional[Dict],
     ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
             node_id: Id of the task node.
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
+            styles: The dictionary of node styles, e.g.
+                {"fill":"#ff6b6b", "color":"black"}
         Returns:
             An instance of TaskNode.
         """
@@ -82,6 +86,7 @@ class GraphNode(BaseModel, ABC):
             tags=set(node.tags),
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
+            styles=styles
         )
 
     @classmethod
@@ -93,6 +98,7 @@ class GraphNode(BaseModel, ABC):
         tags: Set[str],
         dataset: Optional[AbstractDataset],
         stats: Optional[Dict],
+        styles: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
@@ -107,6 +113,8 @@ class GraphNode(BaseModel, ABC):
             dataset: A dataset in a Kedro pipeline.
             stats: The dictionary of dataset statistics, e.g.
                 {"rows":2, "columns":3, "file_size":100}
+            styles: The dictionary of node styles, e.g.
+                {"fill":"#ff6b6b", "color":"black"}
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
@@ -122,6 +130,7 @@ class GraphNode(BaseModel, ABC):
                 layer=layer,
                 is_free_input=is_free_input,
                 stats=stats,
+                styles=styles,
                 modular_pipelines=modular_pipelines,
             )
 
@@ -133,6 +142,7 @@ class GraphNode(BaseModel, ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
+            styles=styles,
             modular_pipelines=modular_pipelines,
         )
 
@@ -144,6 +154,7 @@ class GraphNode(BaseModel, ABC):
         layer: Optional[str],
         tags: Set[str],
         parameters: Optional[AbstractDataset],
+        styles: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
@@ -155,6 +166,8 @@ class GraphNode(BaseModel, ABC):
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             parameters: A parameters dataset in a Kedro pipeline.
+            styles: The dictionary of node styles, e.g.
+                {"fill":"#ff6b6b", "color":"black"}
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
         Returns:
             An instance of ParametersNode.
@@ -165,17 +178,20 @@ class GraphNode(BaseModel, ABC):
             tags=tags,
             layer=layer,
             kedro_obj=parameters,
+            styles=styles,
             modular_pipelines=modular_pipelines,
         )
 
     @classmethod
     def create_modular_pipeline_node(
-        cls, modular_pipeline_id: str
+        cls, modular_pipeline_id: str, styles: Optional[Dict] = None
     ) -> "ModularPipelineNode":
         """Create a graph node of type modularPipeline for a given modular pipeline ID.
         This is used to visualise all modular pipelines in a Kedro project on the graph.
         Args:
             modular_pipeline_id: The ID of the modular pipeline to convert into a graph node.
+            styles: The dictionary of node styles, e.g.
+                {"fill":"#ff6b6b", "color":"black"}
         Returns:
             An instance of ModularPipelineNode.
         Example:
@@ -184,7 +200,8 @@ class GraphNode(BaseModel, ABC):
             >>> assert node.name == "pipeline.data_science"
             >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
-        return ModularPipelineNode(id=modular_pipeline_id, name=modular_pipeline_id)
+        # TODO: Need to add styles and remove the default None
+        return ModularPipelineNode(id=modular_pipeline_id, name=modular_pipeline_id, styles=styles)
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""

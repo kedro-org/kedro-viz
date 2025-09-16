@@ -27,6 +27,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
         type (str): The type of the graph node.
         modular_pipelines (Optional[List[str]]): A list of modular pipelines associated with the graph node.
                                                  This value will be None if the node is a ModularPipeline node.
+        styles (Optional[Dict]): A dictionary of styles to be applied for the graph node.
     """
 
     id: str
@@ -37,6 +38,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
     modular_pipelines: Optional[List[str]] = None
+    styles: Optional[Dict] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):

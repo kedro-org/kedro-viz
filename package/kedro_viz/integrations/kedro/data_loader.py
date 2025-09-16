@@ -51,6 +51,30 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         )
         return {}
 
+def _get_node_styles(project_path: Path) -> Dict:
+    """Return the styles saved at styles.json as a dictionary if found.
+    If not, return an empty dictionary
+
+    Args:
+        project_path: the path where the Kedro project is located.
+    """
+    try:
+        styles_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/styles.json"
+
+        if not styles_file_path.exists():
+            return {}
+
+        with open(styles_file_path, encoding="utf8") as styles_file:
+            styles = json.load(styles_file)
+            return styles
+
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(
+            "Unable to get node styles from project path %s : %s",
+            project_path,
+            exc,
+        )
+        return {}
 
 def _load_data_helper(
     project_path: Path,
@@ -72,7 +96,8 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary, dataset stats 
+            and node styles dictionary.
     """
 
     kedro_session = KedroSession.create(
@@ -103,7 +128,9 @@ def _load_data_helper(
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
         stats_dict = _get_dataset_stats(project_path)
-    return catalog, pipelines_dict, stats_dict
+        styles_dict = _get_node_styles(project_path)
+
+    return catalog, pipelines_dict, stats_dict, styles_dict
 
 
 def load_data(
@@ -113,7 +140,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict, Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
@@ -127,7 +154,8 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary,and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline, dataset stats 
+            and node styles dictionary.
     """
     if package_name:
         configure_project(package_name)

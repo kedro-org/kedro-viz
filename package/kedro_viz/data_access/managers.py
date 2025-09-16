@@ -63,6 +63,7 @@ class DataAccessManager:
             lambda: defaultdict(set)
         )
         self.dataset_stats = {}
+        self._node_styles = {}
 
     def reset_fields(self):
         """Reset all instance variables."""
@@ -121,6 +122,25 @@ class DataAccessManager:
         """
 
         self.dataset_stats = stats_dict
+
+    def get_styles_for_graph_node(self, node_name: str) -> Union[Dict, None]:
+        """Returns the styles for the graph node if found
+
+        Args:
+            The kedro node name for which we need the styles
+        """
+
+        return self._node_styles.get(node_name, None)
+    
+    def add_node_styles(self, styles_dict: Dict):
+        """Add node styles (eg. fill, color, stroke) as a dictionary.
+        This will help in showing the node styles on the flowchart
+
+        Args:
+            styles_dict: A dictionary object loaded from styles.json file in the kedro project
+        """
+
+        self._node_styles = styles_dict
 
     def get_stats_for_data_node(self, data_node_name: str) -> Union[Dict, None]:
         """Returns the dataset statistics for the data node if found
@@ -217,7 +237,7 @@ class DataAccessManager:
             modular_pipeline_ids,
         ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(node, node_id, modular_pipeline_ids)
+            GraphNode.create_task_node(node=node, node_id=node_id, modular_pipelines=modular_pipeline_ids, styles=self.get_styles_for_graph_node(node._name or node._func_name))
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -351,6 +371,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=dataset_obj,
+                styles=self.get_styles_for_graph_node(dataset_name),
                 modular_pipelines=None,
             )
         else:
@@ -361,6 +382,7 @@ class DataAccessManager:
                 tags=set(),
                 dataset=dataset_obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
+                styles=self.get_styles_for_graph_node(_strip_transcoding(dataset_name)),
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
             )
