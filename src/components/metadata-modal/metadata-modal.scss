@@ -156,3 +156,32 @@
     margin: 10px;
   }
 }
+
+%modal-text-preview-base {
+  padding: 20px;
+  overflow: auto;
+  height: 100%;
+}
+
+%modal-text-content-base {
+  font-size: 14px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.pipeline-metadata-modal__preview-markdown {
+  @extend %modal-text-preview-base;
+
+  .pipeline-metadata-modal__markdown-content {
+    @extend %modal-text-content-base;
+  }
+}
+
+.pipeline-metadata-modal__preview-yaml {
+  @extend %modal-text-preview-base;
+
+  .pipeline-metadata-modal__yaml-content {
+    @extend %modal-text-content-base;
+  }
+}
