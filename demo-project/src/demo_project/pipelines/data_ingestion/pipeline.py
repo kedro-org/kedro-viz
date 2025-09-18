@@ -31,7 +31,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
             node(
                 func=apply_types_to_shuttles,
-                inputs="shuttles",
+                inputs=["shuttles", "config"],
                 outputs="int_typed_shuttles@pandas1",
                 name="apply_types_to_shuttles",
                 tags="shuttles",

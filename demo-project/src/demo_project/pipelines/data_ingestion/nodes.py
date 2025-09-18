@@ -25,15 +25,19 @@ def apply_types_to_companies(companies: pd.DataFrame, readme: str) -> pd.DataFra
     return companies
 
 
-def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
+def apply_types_to_shuttles(shuttles: pd.DataFrame, config: dict) -> pd.DataFrame:
     """Preprocesses the data for shuttles.
 
     Args:
         shuttles: Raw data.
+        config: Configuration data from YAML file.
     Returns:
         Preprocessed data, with `price` converted to a float and `d_check_complete`,
         `moon_clearance_complete` converted to boolean.
     """
+    # You can use config here for any configuration-driven processing
+    # For example: timeout = config.get('settings', {}).get('timeout', 30)
+    
     shuttles["d_check_complete"] = _is_true(shuttles["d_check_complete"])
     shuttles["moon_clearance_complete"] = _is_true(shuttles["moon_clearance_complete"])
     shuttles["price"] = (
