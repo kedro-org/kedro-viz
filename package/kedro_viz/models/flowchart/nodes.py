@@ -16,6 +16,7 @@ from pydantic import (
     model_validator,
 )
 
+from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
@@ -40,6 +41,8 @@ class GraphNode(BaseModel, ABC):
                 node belongs to. Defaults to `set()`.
         modular_pipelines (Optional[Set(str)]): A set of modular pipeline names
                 this node belongs to.
+        node_extras (Optional[NodeExtras]): Extra visualization properties for this node
+                including styles, stats, etc. Defaults to `None`.
 
     """
 
@@ -61,17 +64,26 @@ class GraphNode(BaseModel, ABC):
         validate_default=True,
         description="The modular_pipelines this node belongs to",
     )
+    node_extras: Optional[NodeExtras] = Field(
+        None,
+        description="Extra visualization properties for this node including styles, stats, etc.",
+    )
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
     def create_task_node(
-        cls, node: KedroNode, node_id: str, modular_pipelines: Optional[Set[str]]
+        cls,
+        node: KedroNode,
+        node_id: str,
+        modular_pipelines: Optional[Set[str]],
+        node_extras: Optional[NodeExtras] = None,
     ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
             node_id: Id of the task node.
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
+            node_extras: Extra visualization properties for this node including styles, stats, etc.
         Returns:
             An instance of TaskNode.
         """
@@ -82,6 +94,7 @@ class GraphNode(BaseModel, ABC):
             tags=set(node.tags),
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
+            node_extras=node_extras,
         )
 
     @classmethod
@@ -92,8 +105,8 @@ class GraphNode(BaseModel, ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: Optional[AbstractDataset],
-        stats: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
+        node_extras: Optional[NodeExtras] = None,
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
@@ -105,9 +118,8 @@ class GraphNode(BaseModel, ABC):
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             dataset: A dataset in a Kedro pipeline.
-            stats: The dictionary of dataset statistics, e.g.
-                {"rows":2, "columns":3, "file_size":100}
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
+            node_extras: Extra visualization properties for this node including styles, stats, etc.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
@@ -121,8 +133,8 @@ class GraphNode(BaseModel, ABC):
                 tags=tags,
                 layer=layer,
                 is_free_input=is_free_input,
-                stats=stats,
                 modular_pipelines=modular_pipelines,
+                node_extras=node_extras,
             )
 
         return DataNode(
@@ -132,8 +144,8 @@ class GraphNode(BaseModel, ABC):
             layer=layer,
             kedro_obj=dataset,
             is_free_input=is_free_input,
-            stats=stats,
             modular_pipelines=modular_pipelines,
+            node_extras=node_extras,
         )
 
     @classmethod
@@ -145,6 +157,7 @@ class GraphNode(BaseModel, ABC):
         tags: Set[str],
         parameters: Optional[AbstractDataset],
         modular_pipelines: Optional[Set[str]],
+        node_extras: Optional[NodeExtras] = None,
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
@@ -156,6 +169,7 @@ class GraphNode(BaseModel, ABC):
                 of this dataset. N.B. currently it's derived from the node's tags.
             parameters: A parameters dataset in a Kedro pipeline.
             modular_pipelines: A set of modular_pipeline_ids the node belongs to.
+            node_extras: Extra visualization properties for this node including styles, stats, etc.
         Returns:
             An instance of ParametersNode.
         """
@@ -166,16 +180,20 @@ class GraphNode(BaseModel, ABC):
             layer=layer,
             kedro_obj=parameters,
             modular_pipelines=modular_pipelines,
+            node_extras=node_extras,
         )
 
     @classmethod
     def create_modular_pipeline_node(
-        cls, modular_pipeline_id: str
+        cls,
+        modular_pipeline_id: str,
+        node_extras: Optional[NodeExtras] = None,
     ) -> "ModularPipelineNode":
         """Create a graph node of type modularPipeline for a given modular pipeline ID.
         This is used to visualise all modular pipelines in a Kedro project on the graph.
         Args:
             modular_pipeline_id: The ID of the modular pipeline to convert into a graph node.
+            node_extras: Extra visualization properties for this node including styles, stats, etc.
         Returns:
             An instance of ModularPipelineNode.
         Example:
@@ -184,7 +202,12 @@ class GraphNode(BaseModel, ABC):
             >>> assert node.name == "pipeline.data_science"
             >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
-        return ModularPipelineNode(id=modular_pipeline_id, name=modular_pipeline_id)
+        # TODO: Need to add styles and remove the default None
+        return ModularPipelineNode(
+            id=modular_pipeline_id,
+            name=modular_pipeline_id,
+            node_extras=node_extras,
+        )
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
@@ -254,7 +277,6 @@ class DataNode(GraphNode):
     Args:
         layer (Optional[str]): The layer that this data node belongs to. Defaults to `None`.
         is_free_input (bool): Determines whether the data node is a free input. Defaults to `False`.
-        stats (Optional[Dict]): Statistics for the data node. Defaults to `None`.
 
     Raises:
         AssertionError: If kedro_obj, name are not supplied during instantiation
@@ -266,7 +288,6 @@ class DataNode(GraphNode):
     is_free_input: bool = Field(
         False, description="Determines whether the data node is a free input"
     )
-    stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
     dataset_type: Optional[str] = Field(
         default=None,
@@ -326,7 +347,6 @@ class TranscodedDataNode(GraphNode):
                 node belongs to. Defaults to `None`.
         is_free_input (bool): Determines whether the transcoded data
                 node is a free input. Defaults to `False`.
-        stats (Optional[Dict]): Statistics for the data node
 
     Raises:
         AssertionError: If name is not supplied during instantiation
@@ -339,7 +359,6 @@ class TranscodedDataNode(GraphNode):
     is_free_input: bool = Field(
         False, description="Determines whether the transcoded data node is a free input"
     )
-    stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
     original_version: Optional[AbstractDataset] = Field(
         None,
         description="The original Kedro's AbstractDataset for this transcoded data node",

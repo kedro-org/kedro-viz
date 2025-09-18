@@ -3,7 +3,7 @@ and utility functions for the `/main` and `/pipelines/* REST endpoints"""
 
 import json
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
@@ -13,6 +13,13 @@ from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.data_access import data_access_manager
 
 logger = logging.getLogger(__name__)
+
+
+class NodeExtrasAPIResponse(BaseAPIResponse):
+    """Model an API field that has stats and styles dictionary."""
+
+    stats: Optional[Dict[str, Any]] = None
+    styles: Optional[Dict[str, Any]] = None
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
@@ -27,6 +34,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
         type (str): The type of the graph node.
         modular_pipelines (Optional[List[str]]): A list of modular pipelines associated with the graph node.
                                                  This value will be None if the node is a ModularPipeline node.
+        node_extras (Optional[NodeExtrasAPIResponse]): Extra visualization properties for this node including styles, stats, etc.
     """
 
     id: str
@@ -37,6 +45,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
     modular_pipelines: Optional[List[str]] = None
+    node_extras: Optional[NodeExtrasAPIResponse] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
@@ -83,12 +92,10 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
     Attributes:
         layer (Optional[str]): The layer to which the data node belongs. Default is None.
         dataset_type (Optional[str]): The type of dataset. Default is None.
-        stats (Optional[Dict]): Statistics related to the dataset, such as number of rows, columns, and file size. Default is None.
     """
 
     layer: Optional[str] = None
     dataset_type: Optional[str] = None
-    stats: Optional[Dict] = None
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -100,7 +107,6 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
                 "type": "data",
                 "layer": "primary",
                 "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
-                "stats": {"rows": 10, "columns": 2, "file_size": 2300},
             }
         }
     )
