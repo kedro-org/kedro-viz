@@ -1,3 +1,22 @@
 {
-  "companies": { "fill": "red", "color": "white" }
+  "companies": {
+    "fill": "red",
+    "color": "white"
+  },
+  "shuttles": {
+    "fill": "green",
+    "color": "white"
+  },
+  "reviews": {
+    "fill": "blue",
+    "color": "white"
+  },
+  "prm_spine_table": {
+    "fill": "orange",
+    "stroke": "blue",
+    "color": "black"
+  },
+  "combine_step": {
+    "fill": "blue"
+  }
 }
