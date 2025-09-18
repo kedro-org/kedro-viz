@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
+import MarkdownRenderer from '../markdown-renderer';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
@@ -93,9 +94,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasMarkdown && (
         <div className="pipeline-metadata-modal__preview-markdown">
-          <pre className="pipeline-metadata-modal__markdown-content">
-            {metadata.preview}
-          </pre>
+          <MarkdownRenderer content={metadata.preview} size="large" />
         </div>
       )}
       {hasYAML && (

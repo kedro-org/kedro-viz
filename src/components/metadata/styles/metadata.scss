@@ -309,14 +309,6 @@ $list-inline-spacing: 0.2em;
   .scrollable-container {
     padding-bottom: 10px;
   }
-
-  .pipeline-metadata__markdown-content {
-    font-size: 12px;
-    margin: 0;
-    padding: 10px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
 }
 
 .pipeline-metadata__preview-yaml {
@@ -334,6 +326,7 @@ $list-inline-spacing: 0.2em;
     padding: 10px;
     white-space: pre-wrap;
     word-wrap: break-word;
+    color: var(--color-text);
   }
 }
 
