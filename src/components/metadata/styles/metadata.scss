@@ -301,7 +301,7 @@ $list-inline-spacing: 0.2em;
   }
 }
 
-.pipeline-metadata__preview-markdown {
+.pipeline-metadata__preview-html {
   @extend %metadata-preview-container;
 
   padding: 10px 0 0 20px;

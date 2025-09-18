@@ -5,7 +5,7 @@ import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
 import PreviewTable from '../../components/preview-table';
 import JSONObject from '../../components/json-object';
-import MarkdownRenderer from '../markdown-renderer';
+import HTMLRenderer from '../html-renderer';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -72,8 +72,7 @@ const MetaData = ({
   const hasTablePreview =
     hasPreview && metadata?.previewType === 'TablePreview';
   const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
-  const hasMarkdownPreview =
-    hasPreview && metadata?.previewType === 'MarkdownPreview';
+  const hasHTMLPreview = hasPreview && metadata?.previewType === 'HTMLPreview';
   const hasYAMLPreview = hasPreview && metadata?.previewType === 'YAMLPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -416,14 +415,11 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasMarkdownPreview && (
+              {hasHTMLPreview && (
                 <>
-                  <div className="pipeline-metadata__preview-markdown">
+                  <div className="pipeline-metadata__preview-html">
                     <div className="scrollable-container">
-                      <MarkdownRenderer
-                        content={metadata.preview}
-                        size="small"
-                      />
+                      <HTMLRenderer content={metadata.preview} size="small" />
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

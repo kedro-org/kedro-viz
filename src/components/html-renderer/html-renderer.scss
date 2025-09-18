@@ -1,0 +1,245 @@
+@use '../../styles/variables' as variables;
+
+.html-renderer {
+  line-height: 1.6;
+  color: var(--color-text);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 16px 0 8px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 24px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 6px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  h5,
+  h6 {
+    font-size: 14px;
+  }
+
+  p {
+    margin: 8px 0;
+  }
+
+  ul,
+  ol {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+
+  li {
+    margin: 4px 0;
+  }
+
+  code {
+    background-color: rgb(127 127 127 / 10%);
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background-color: rgb(127 127 127 / 10%);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+
+    code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid var(--color-border);
+    margin: 12px 0;
+    padding: 0 16px;
+    color: var(--color-text-secondary);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-border);
+    text-align: left;
+    padding: 8px 12px;
+  }
+
+  th {
+    background-color: rgb(127 127 127 / 10%);
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgb(127 127 127 / 5%);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 16px 0;
+  }
+
+  // Size variants
+  &--small {
+    font-size: 12px;
+    padding: 10px;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 8px 0 4px;
+    }
+
+    h1 {
+      font-size: 18px;
+    }
+
+    h2 {
+      font-size: 16px;
+    }
+
+    h3 {
+      font-size: 14px;
+    }
+
+    p {
+      margin: 5px 0;
+    }
+
+    ul,
+    ol {
+      margin: 5px 0;
+      padding-left: 15px;
+    }
+
+    li {
+      margin: 2px 0;
+    }
+
+    pre {
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    table {
+      margin: 5px 0;
+      font-size: 0.9em;
+    }
+
+    th,
+    td {
+      padding: 6px 10px;
+    }
+  }
+
+  &--large {
+    font-size: 16px;
+    padding: 0;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 20px 0 10px;
+    }
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+
+    h3 {
+      font-size: 20px;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    ul,
+    ol {
+      margin: 12px 0;
+      padding-left: 32px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    pre {
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    table {
+      margin: 16px 0;
+      font-size: 0.95em;
+    }
+
+    th,
+    td {
+      padding: 12px 16px;
+    }
+  }
+
+  &--default {
+    font-size: 14px;
+  }
+}

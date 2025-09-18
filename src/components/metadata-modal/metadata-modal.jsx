@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
-import MarkdownRenderer from '../markdown-renderer';
+import HTMLRenderer from '../html-renderer';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
@@ -16,10 +16,10 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
-  const hasMarkdown = metadata?.previewType === 'MarkdownPreview';
+  const hasHTML = metadata?.previewType === 'HTMLPreview';
   const hasYAML = metadata?.previewType === 'YAMLPreview';
   const hasMetadataContent =
-    hasPlot || hasImage || hasTable || hasJSON || hasMarkdown || hasYAML;
+    hasPlot || hasImage || hasTable || hasJSON || hasHTML || hasYAML;
 
   if (!visible.metadataModal || !hasMetadataContent) {
     return null;
@@ -92,9 +92,9 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
           />
         </div>
       )}
-      {hasMarkdown && (
+      {hasHTML && (
         <div className="pipeline-metadata-modal__preview-markdown">
-          <MarkdownRenderer content={metadata.preview} size="large" />
+          <HTMLRenderer content={metadata.preview} size="large" />
         </div>
       )}
       {hasYAML && (
