@@ -23,6 +23,8 @@ from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata
 
+from kedro_viz.models.metadata import NodeExtras
+
 logger = logging.getLogger(__name__)
 
 
@@ -76,6 +78,40 @@ def _get_node_styles(project_path: Path) -> Dict:
         )
         return {}
 
+def _create_node_extras_mapping(
+    project_path: Path
+) -> Dict[str, NodeExtras]:
+    """Create a mapping from node names to NodeExtras objects.
+    
+    Args:
+        project_path: the path where the Kedro project is located.
+        
+    Returns:
+        Dictionary mapping node names to NodeExtras objects
+    """
+    
+    stats_dict = _get_dataset_stats(project_path)
+    styles_dict = _get_node_styles(project_path)
+    node_extras_map = {}
+    
+    # Get all unique node names from both stats and styles
+    all_node_names = set(stats_dict.keys()) | set(styles_dict.keys())
+    
+    # Create NodeExtras objects for each node
+    for node_name in all_node_names:
+        stats = stats_dict.get(node_name)
+        styles = styles_dict.get(node_name)
+        
+        node_extras = NodeExtras.create_node_extras(
+            stats=stats,
+            styles=styles
+        )
+        
+        if node_extras:
+            node_extras_map[node_name] = node_extras
+    
+    return node_extras_map
+
 def _load_data_helper(
     project_path: Path,
     env: Optional[str] = None,
@@ -96,8 +132,7 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, dataset stats 
-            and node styles dictionary.
+        A tuple containing the data catalog, pipeline and NodeExtras dictionary.
     """
 
     kedro_session = KedroSession.create(
@@ -127,11 +162,9 @@ def _load_data_helper(
         # in case user doesn't have an active session down the line when it's first accessed.
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
-        stats_dict = _get_dataset_stats(project_path)
-        styles_dict = _get_node_styles(project_path)
+        node_extras = _create_node_extras_mapping(project_path)
 
-    return catalog, pipelines_dict, stats_dict, styles_dict
-
+    return catalog, pipelines_dict, node_extras
 
 def load_data(
     project_path: Path,
@@ -140,7 +173,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict[str, NodeExtras]]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
@@ -154,8 +187,8 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline, dataset stats 
-            and node styles dictionary.
+        A tuple containing the data catalog, pipeline and NodeExtras dictionary.
+
     """
     if package_name:
         configure_project(package_name)

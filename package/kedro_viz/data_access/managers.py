@@ -2,7 +2,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetError
@@ -25,6 +25,7 @@ from kedro_viz.models.flowchart.nodes import (
 )
 from kedro_viz.services import layers_services
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
+from kedro_viz.models.metadata import NodeExtras
 
 from .repositories import (
     CatalogRepository,
@@ -62,8 +63,7 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.dataset_stats = {}
-        self._node_styles = {}
+        self.node_extras: Dict[str, NodeExtras] = {}
 
     def reset_fields(self):
         """Reset all instance variables."""
@@ -113,44 +113,25 @@ class DataAccessManager:
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
-    def add_dataset_stats(self, stats_dict: Dict):
-        """Add dataset statistics (eg. rows, columns, file_size) as a dictionary.
-        This will help in showing the relevant stats in the metadata panel
-
+    def add_node_extras(self, node_extras_mapping: Dict[str, NodeExtras]):
+        """Add all node extras at once.
+        
         Args:
-            stats_dict: A dictionary object loaded from stats.json file in the kedro project
+            node_extras_mapping: Dictionary mapping node names to NodeExtras objects
         """
+        self.node_extras = node_extras_mapping
 
-        self.dataset_stats = stats_dict
-
-    def get_styles_for_graph_node(self, node_name: str) -> Union[Dict, None]:
-        """Returns the styles for the graph node if found
-
+    def get_extras_for_node(self, node_name: str) -> Optional[NodeExtras]:
+        """Get NodeExtras instance for a node.
+        
         Args:
-            The kedro node name for which we need the styles
+            node_name: The name of the node
+            
+        Returns:
+            NodeExtras object or None
         """
-
-        return self._node_styles.get(node_name, None)
+        return self.node_extras.get(node_name)
     
-    def add_node_styles(self, styles_dict: Dict):
-        """Add node styles (eg. fill, color, stroke) as a dictionary.
-        This will help in showing the node styles on the flowchart
-
-        Args:
-            styles_dict: A dictionary object loaded from styles.json file in the kedro project
-        """
-
-        self._node_styles = styles_dict
-
-    def get_stats_for_data_node(self, data_node_name: str) -> Union[Dict, None]:
-        """Returns the dataset statistics for the data node if found
-
-        Args:
-            The data node name for which we need the statistics
-        """
-
-        return self.dataset_stats.get(data_node_name, None)
-
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
         and add them to relevant repositories. Take care of extracting other relevant information
@@ -237,7 +218,7 @@ class DataAccessManager:
             modular_pipeline_ids,
         ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(node=node, node_id=node_id, modular_pipelines=modular_pipeline_ids, styles=self.get_styles_for_graph_node(node._name or node._func_name))
+            GraphNode.create_task_node(node=node, node_id=node_id, modular_pipelines=modular_pipeline_ids, node_extras=self.get_extras_for_node(node._name or node._func_name))
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -371,8 +352,8 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=dataset_obj,
-                styles=self.get_styles_for_graph_node(dataset_name),
                 modular_pipelines=None,
+                node_extras=self.get_extras_for_node(dataset_name)
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -381,10 +362,9 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 dataset=dataset_obj,
-                stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
-                styles=self.get_styles_for_graph_node(_strip_transcoding(dataset_name)),
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
+                node_extras=self.get_extras_for_node(_strip_transcoding(dataset_name))
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)
