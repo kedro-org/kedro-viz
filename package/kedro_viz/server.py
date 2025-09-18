@@ -2,7 +2,7 @@
 for Kedro pipeline visualisation."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline

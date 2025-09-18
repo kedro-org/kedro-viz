@@ -2,7 +2,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Set, Union
 
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetError
