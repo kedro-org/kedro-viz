@@ -23,9 +23,9 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.services import layers_services
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
-from kedro_viz.models.metadata import NodeExtras
 
 from .repositories import (
     CatalogRepository,
@@ -115,7 +115,7 @@ class DataAccessManager:
 
     def add_node_extras(self, node_extras_mapping: Dict[str, NodeExtras]):
         """Add all node extras at once.
-        
+
         Args:
             node_extras_mapping: Dictionary mapping node names to NodeExtras objects
         """
@@ -123,15 +123,15 @@ class DataAccessManager:
 
     def get_extras_for_node(self, node_name: str) -> Optional[NodeExtras]:
         """Get NodeExtras instance for a node.
-        
+
         Args:
             node_name: The name of the node
-            
+
         Returns:
             NodeExtras object or None
         """
         return self.node_extras.get(node_name)
-    
+
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
         and add them to relevant repositories. Take care of extracting other relevant information
@@ -218,7 +218,12 @@ class DataAccessManager:
             modular_pipeline_ids,
         ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(node=node, node_id=node_id, modular_pipelines=modular_pipeline_ids, node_extras=self.get_extras_for_node(node._name or node._func_name))
+            GraphNode.create_task_node(
+                node=node,
+                node_id=node_id,
+                modular_pipelines=modular_pipeline_ids,
+                node_extras=self.get_extras_for_node(node._name or node._func_name),
+            )
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -353,7 +358,7 @@ class DataAccessManager:
                 tags=set(),
                 parameters=dataset_obj,
                 modular_pipelines=None,
-                node_extras=self.get_extras_for_node(dataset_name)
+                node_extras=self.get_extras_for_node(dataset_name),
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -364,7 +369,7 @@ class DataAccessManager:
                 dataset=dataset_obj,
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
-                node_extras=self.get_extras_for_node(_strip_transcoding(dataset_name))
+                node_extras=self.get_extras_for_node(_strip_transcoding(dataset_name)),
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)

@@ -14,11 +14,13 @@ from kedro_viz.data_access import data_access_manager
 
 logger = logging.getLogger(__name__)
 
+
 class NodeExtrasAPIResponse(BaseAPIResponse):
     """Model an API field that has stats and styles dictionary."""
 
     stats: Optional[Dict[str, Any]] = None
     styles: Optional[Dict[str, Any]] = None
+
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
     """
@@ -136,6 +138,7 @@ class NamedEntityAPIResponse(BaseAPIResponse):
 
     id: str
     name: Optional[str] = None
+
 
 class ModularPipelineChildAPIResponse(BaseAPIResponse):
     """Model a child in a modular pipeline's children field in the API response."""

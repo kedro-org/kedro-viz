@@ -21,7 +21,7 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    node_extras_dict: Dict[str, NodeExtras]
+    node_extras_dict: Dict[str, NodeExtras],
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
@@ -32,7 +32,7 @@ def populate_data(
     # add node_extras like dataset stats, styles before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines
     data_access_manager.add_node_extras(node_extras_dict)
-    
+
     data_access_manager.add_pipelines(pipelines)
 
 

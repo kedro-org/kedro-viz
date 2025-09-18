@@ -21,9 +21,7 @@ from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
-from kedro_viz.models.metadata import Metadata
-
-from kedro_viz.models.metadata import NodeExtras
+from kedro_viz.models.metadata import Metadata, NodeExtras
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +51,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         )
         return {}
 
+
 def _get_node_styles(project_path: Path) -> Dict:
     """Return the styles saved at styles.json as a dictionary if found.
     If not, return an empty dictionary
@@ -78,39 +77,36 @@ def _get_node_styles(project_path: Path) -> Dict:
         )
         return {}
 
-def _create_node_extras_mapping(
-    project_path: Path
-) -> Dict[str, NodeExtras]:
+
+def _create_node_extras_mapping(project_path: Path) -> Dict[str, NodeExtras]:
     """Create a mapping from node names to NodeExtras objects.
-    
+
     Args:
         project_path: the path where the Kedro project is located.
-        
+
     Returns:
         Dictionary mapping node names to NodeExtras objects
     """
-    
+
     stats_dict = _get_dataset_stats(project_path)
     styles_dict = _get_node_styles(project_path)
     node_extras_map = {}
-    
+
     # Get all unique node names from both stats and styles
     all_node_names = set(stats_dict.keys()) | set(styles_dict.keys())
-    
+
     # Create NodeExtras objects for each node
     for node_name in all_node_names:
         stats = stats_dict.get(node_name)
         styles = styles_dict.get(node_name)
-        
-        node_extras = NodeExtras.create_node_extras(
-            stats=stats,
-            styles=styles
-        )
-        
+
+        node_extras = NodeExtras.create_node_extras(stats=stats, styles=styles)
+
         if node_extras:
             node_extras_map[node_name] = node_extras
-    
+
     return node_extras_map
+
 
 def _load_data_helper(
     project_path: Path,
@@ -165,6 +161,7 @@ def _load_data_helper(
         node_extras = _create_node_extras_mapping(project_path)
 
     return catalog, pipelines_dict, node_extras
+
 
 def load_data(
     project_path: Path,

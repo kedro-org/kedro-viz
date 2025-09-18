@@ -45,33 +45,32 @@ class Metadata(BaseModel):
     def set_has_missing_dependencies(cls, value: bool):
         cls.has_missing_dependencies = value
 
+
 class NodeExtras(BaseModel):
     """Extra visualization properties for graph nodes.
-    
-    This class contains additional properties that are only needed for kedro-viz 
+
+    This class contains additional properties that are only needed for kedro-viz
     visualization and not part of core Kedro functionality.
     """
+
     stats: Optional[Dict[str, Any]] = Field(
-        None, 
-        description="Dataset statistics like rows, columns, file_size (primarily for DataNode)"
+        None,
+        description="Dataset statistics like rows, columns, file_size (primarily for DataNode)",
     )
-    
+
     styles: Optional[Dict[str, Any]] = Field(
-        None, 
-        description="Node styling properties like fill, stroke, color (for all GraphNodes)"
+        None,
+        description="Node styling properties like fill, stroke, color (for all GraphNodes)",
     )
 
     def has_any_extras(self) -> bool:
         """Check if this object contains any non-None values."""
-        return any([
-            self.stats,
-            self.styles
-        ])
-    
+        return any([self.stats, self.styles])
+
     def get_stats_for_data_node(self) -> Dict[str, Any]:
         """Get stats specifically for DataNode types."""
         return self.stats or {}
-    
+
     def get_styles_for_graph_node(self) -> Dict[str, Any]:
         """Get styles for any GraphNode type."""
         return self.styles or {}
@@ -83,11 +82,11 @@ class NodeExtras(BaseModel):
         styles: Optional[Dict[str, Any]] = None,
     ) -> Optional["NodeExtras"]:
         """Create NodeExtras object from individual components.
-        
+
         Args:
             stats: Dataset statistics dictionary
-            styles: Node styling properties dictionary  
-            
+            styles: Node styling properties dictionary
+
         Returns:
             NodeExtras object or None if no extras provided
         """
@@ -95,5 +94,5 @@ class NodeExtras(BaseModel):
             stats=stats,
             styles=styles,
         )
-        
+
         return extras_obj if extras_obj.has_any_extras() else None

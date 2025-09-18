@@ -16,10 +16,9 @@ from pydantic import (
     model_validator,
 )
 
+from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
-
-from kedro_viz.models.metadata import NodeExtras
 
 from .model_utils import GraphNodeType
 
@@ -42,7 +41,7 @@ class GraphNode(BaseModel, ABC):
                 node belongs to. Defaults to `set()`.
         modular_pipelines (Optional[Set(str)]): A set of modular pipeline names
                 this node belongs to.
-        node_extras (Optional[NodeExtras]): Extra visualization properties for this node 
+        node_extras (Optional[NodeExtras]): Extra visualization properties for this node
                 including styles, stats, etc. Defaults to `None`.
 
     """
@@ -66,14 +65,18 @@ class GraphNode(BaseModel, ABC):
         description="The modular_pipelines this node belongs to",
     )
     node_extras: Optional[NodeExtras] = Field(
-        None, 
-        description="Extra visualization properties for this node including styles, stats, etc."
+        None,
+        description="Extra visualization properties for this node including styles, stats, etc.",
     )
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    
+
     @classmethod
     def create_task_node(
-        cls, node: KedroNode, node_id: str, modular_pipelines: Optional[Set[str]], node_extras: Optional[NodeExtras] = None,
+        cls,
+        node: KedroNode,
+        node_id: str,
+        modular_pipelines: Optional[Set[str]],
+        node_extras: Optional[NodeExtras] = None,
     ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
@@ -91,7 +94,7 @@ class GraphNode(BaseModel, ABC):
             tags=set(node.tags),
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
-            node_extras=node_extras
+            node_extras=node_extras,
         )
 
     @classmethod
@@ -182,7 +185,9 @@ class GraphNode(BaseModel, ABC):
 
     @classmethod
     def create_modular_pipeline_node(
-        cls, modular_pipeline_id: str, node_extras: Optional[NodeExtras] = None,
+        cls,
+        modular_pipeline_id: str,
+        node_extras: Optional[NodeExtras] = None,
     ) -> "ModularPipelineNode":
         """Create a graph node of type modularPipeline for a given modular pipeline ID.
         This is used to visualise all modular pipelines in a Kedro project on the graph.
@@ -198,7 +203,11 @@ class GraphNode(BaseModel, ABC):
             >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
         # TODO: Need to add styles and remove the default None
-        return ModularPipelineNode(id=modular_pipeline_id, name=modular_pipeline_id, node_extras=node_extras,)
+        return ModularPipelineNode(
+            id=modular_pipeline_id,
+            name=modular_pipeline_id,
+            node_extras=node_extras,
+        )
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
@@ -279,7 +288,7 @@ class DataNode(GraphNode):
     is_free_input: bool = Field(
         False, description="Determines whether the data node is a free input"
     )
-    
+
     dataset_type: Optional[str] = Field(
         default=None,
         validate_default=True,
