@@ -93,7 +93,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasHTML && (
         <div className="pipeline-metadata-modal__preview-markdown">
-          <HTMLRenderer content={metadata.preview} size="large" />
+          <HTMLRenderer content={metadata.preview} fontSize="15px" />
         </div>
       )}
     </div>

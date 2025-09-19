@@ -418,7 +418,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview-html">
                     <div className="scrollable-container">
-                      <HTMLRenderer content={metadata.preview} size="small" />
+                      <HTMLRenderer content={metadata.preview} />
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
