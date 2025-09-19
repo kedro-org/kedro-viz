@@ -1,29 +1,38 @@
 @use '../../styles/variables' as variables;
 
-.html-renderer {
-  line-height: 1.6;
-  color: var(--color-text);
+.kui-theme--light {
+  --color-text: #{variables.$grey-900};
+  --color-table-header-bg: #{variables.$white-300};
+  --color-border: #{variables.$grey-400};
+  --color-hr-border: #{variables.$grey-400};
+  --admonition-bg-color: #{variables.$white-300};
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 16px 0 8px;
-    font-weight: 600;
-    line-height: 1.25;
-  }
+.kui-theme--dark {
+  --color-text: #{variables.$white-0};
+  --color-table-header-bg: #{variables.$slate-500};
+  --color-border: #{variables.$white-900-30};
+  --color-hr-border: #{variables.$white-900-30};
+  --admonition-bg-color: #{variables.$slate-500};
+}
+
+.html-renderer {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--color-text);
+  width: 60vw;
+  max-height: 90vh;
+  overflow: hidden auto;
 
   h1 {
     font-size: 24px;
-    border-bottom: 1px solid var(--color-border);
     padding-bottom: 8px;
   }
 
   h2 {
     font-size: 20px;
-    border-bottom: 1px solid var(--color-border);
     padding-bottom: 6px;
   }
 
@@ -40,30 +49,15 @@
     font-size: 14px;
   }
 
-  p {
-    margin: 8px 0;
-  }
-
-  ul,
-  ol {
-    margin: 8px 0;
-    padding-left: 24px;
-  }
-
-  li {
-    margin: 4px 0;
-  }
-
   code {
-    background-color: rgb(127 127 127 / 10%);
+    background-color: var(--admonition-bg-color);
     border-radius: 3px;
     padding: 2px 4px;
-    font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
     font-size: 0.9em;
   }
 
   pre {
-    background-color: rgb(127 127 127 / 10%);
+    background-color: var(--admonition-bg-color);
     border-radius: 6px;
     padding: 12px;
     overflow-x: auto;
@@ -97,12 +91,8 @@
   }
 
   th {
-    background-color: rgb(127 127 127 / 10%);
+    background-color: var(--color-table-header-bg);
     font-weight: 600;
-  }
-
-  tr:nth-child(even) {
-    background-color: rgb(127 127 127 / 5%);
   }
 
   a {
@@ -124,122 +114,7 @@
 
   hr {
     border: none;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-hr-border);
     margin: 16px 0;
-  }
-
-  // Size variants
-  &--small {
-    font-size: 12px;
-    padding: 10px;
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 8px 0 4px;
-    }
-
-    h1 {
-      font-size: 18px;
-    }
-
-    h2 {
-      font-size: 16px;
-    }
-
-    h3 {
-      font-size: 14px;
-    }
-
-    p {
-      margin: 5px 0;
-    }
-
-    ul,
-    ol {
-      margin: 5px 0;
-      padding-left: 15px;
-    }
-
-    li {
-      margin: 2px 0;
-    }
-
-    pre {
-      padding: 8px;
-      margin: 5px 0;
-    }
-
-    table {
-      margin: 5px 0;
-      font-size: 0.9em;
-    }
-
-    th,
-    td {
-      padding: 6px 10px;
-    }
-  }
-
-  &--large {
-    font-size: 16px;
-    padding: 0;
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 20px 0 10px;
-    }
-
-    h1 {
-      font-size: 28px;
-    }
-
-    h2 {
-      font-size: 24px;
-    }
-
-    h3 {
-      font-size: 20px;
-    }
-
-    p {
-      margin: 12px 0;
-    }
-
-    ul,
-    ol {
-      margin: 12px 0;
-      padding-left: 32px;
-    }
-
-    li {
-      margin: 6px 0;
-    }
-
-    pre {
-      padding: 16px;
-      margin: 16px 0;
-    }
-
-    table {
-      margin: 16px 0;
-      font-size: 0.95em;
-    }
-
-    th,
-    td {
-      padding: 12px 16px;
-    }
-  }
-
-  &--default {
-    font-size: 14px;
   }
 }

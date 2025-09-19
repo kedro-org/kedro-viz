@@ -291,16 +291,7 @@ $list-inline-spacing: 0.2em;
   @extend %metadata-preview-container;
 }
 
-.pipeline-metadata__preview-json {
-  @extend %metadata-preview-container;
-
-  padding: 10px 0 0 20px;
-
-  .scrollable-container {
-    padding-bottom: 10px;
-  }
-}
-
+.pipeline-metadata__preview-json,
 .pipeline-metadata__preview-html {
   @extend %metadata-preview-container;
 
