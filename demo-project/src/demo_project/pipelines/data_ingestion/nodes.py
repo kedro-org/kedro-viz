@@ -25,7 +25,7 @@ def apply_types_to_companies(companies: pd.DataFrame, readme: str) -> pd.DataFra
     return companies
 
 
-def apply_types_to_shuttles(shuttles: pd.DataFrame, config: dict) -> pd.DataFrame:
+def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the data for shuttles.
 
     Args:
