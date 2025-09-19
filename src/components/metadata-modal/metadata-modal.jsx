@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
+import HTMLRenderer from '../html-renderer';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
@@ -15,7 +16,9 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
-  const hasMetadataContent = hasPlot || hasImage || hasTable || hasJSON;
+  const hasHTML = metadata?.previewType === 'HTMLPreview';
+  const hasMetadataContent =
+    hasPlot || hasImage || hasTable || hasJSON || hasHTML;
 
   if (!visible.metadataModal || !hasMetadataContent) {
     return null;
@@ -86,6 +89,11 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             style={{ background: 'transparent', fontSize: '15px' }}
             collapsed={3}
           />
+        </div>
+      )}
+      {hasHTML && (
+        <div className="pipeline-metadata-modal__preview-markdown">
+          <HTMLRenderer content={metadata.preview} fontSize="15px" />
         </div>
       )}
     </div>

@@ -8,11 +8,12 @@ def _is_true(column: pd.Series) -> pd.Series:
     return column == "t"
 
 
-def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:
+def apply_types_to_companies(companies: pd.DataFrame, readme: str) -> pd.DataFrame:
     """Preprocesses the data for companies.
 
     Args:
         companies: Raw data.
+        readme: readme file content
     Returns:
         Preprocessed data, with `company_rating` converted to a float and
         `iata_approved` converted to boolean.
@@ -29,6 +30,7 @@ def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
 
     Args:
         shuttles: Raw data.
+        config: Configuration data from YAML file.
     Returns:
         Preprocessed data, with `price` converted to a float and `d_check_complete`,
         `moon_clearance_complete` converted to boolean.
