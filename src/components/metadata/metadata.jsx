@@ -73,7 +73,6 @@ const MetaData = ({
     hasPreview && metadata?.previewType === 'TablePreview';
   const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
   const hasHTMLPreview = hasPreview && metadata?.previewType === 'HTMLPreview';
-  const hasYAMLPreview = hasPreview && metadata?.previewType === 'YAMLPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -420,28 +419,6 @@ const MetaData = ({
                   <div className="pipeline-metadata__preview-html">
                     <div className="scrollable-container">
                       <HTMLRenderer content={metadata.preview} size="small" />
-                    </div>
-                    <div className="pipeline-metadata__preview-shadow-box-right" />
-                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
-                  </div>
-                  <button
-                    className="pipeline-metadata__link"
-                    onClick={onExpandMetaDataClick}
-                  >
-                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__link-text">
-                      Expand preview
-                    </span>
-                  </button>
-                </>
-              )}
-              {hasYAMLPreview && (
-                <>
-                  <div className="pipeline-metadata__preview-yaml">
-                    <div className="scrollable-container">
-                      <pre className="pipeline-metadata__yaml-content">
-                        {metadata.preview}
-                      </pre>
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

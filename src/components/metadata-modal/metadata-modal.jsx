@@ -17,9 +17,8 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
   const hasHTML = metadata?.previewType === 'HTMLPreview';
-  const hasYAML = metadata?.previewType === 'YAMLPreview';
   const hasMetadataContent =
-    hasPlot || hasImage || hasTable || hasJSON || hasHTML || hasYAML;
+    hasPlot || hasImage || hasTable || hasJSON || hasHTML;
 
   if (!visible.metadataModal || !hasMetadataContent) {
     return null;
@@ -95,13 +94,6 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       {hasHTML && (
         <div className="pipeline-metadata-modal__preview-markdown">
           <HTMLRenderer content={metadata.preview} size="large" />
-        </div>
-      )}
-      {hasYAML && (
-        <div className="pipeline-metadata-modal__preview-yaml">
-          <pre className="pipeline-metadata-modal__yaml-content">
-            {metadata.preview}
-          </pre>
         </div>
       )}
     </div>

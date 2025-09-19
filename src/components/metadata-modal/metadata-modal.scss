@@ -174,17 +174,3 @@
 .pipeline-metadata-modal__preview-markdown {
   @extend %modal-text-preview-base;
 }
-
-.pipeline-metadata-modal__preview-yaml {
-  @extend %modal-text-preview-base;
-
-  .pipeline-metadata-modal__yaml-content {
-    font-size: 16px;
-    margin: 0;
-    padding: 10px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
-    color: var(--color-text);
-  }
-}

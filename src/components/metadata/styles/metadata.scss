@@ -311,25 +311,6 @@ $list-inline-spacing: 0.2em;
   }
 }
 
-.pipeline-metadata__preview-yaml {
-  @extend %metadata-preview-container;
-
-  padding: 10px 0 0 20px;
-
-  .scrollable-container {
-    padding-bottom: 10px;
-  }
-
-  .pipeline-metadata__yaml-content {
-    font-size: 12px;
-    margin: 0;
-    padding: 10px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    color: var(--color-text);
-  }
-}
-
 .scrollable-container {
   overflow: scroll;
   max-width: 400px;
