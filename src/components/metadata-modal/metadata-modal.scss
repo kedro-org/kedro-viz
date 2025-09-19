@@ -156,21 +156,3 @@
     margin: 10px;
   }
 }
-
-%modal-text-preview-base {
-  padding: 20px;
-  overflow: auto;
-  height: 100%;
-  width: 850px;
-}
-
-%modal-text-content-base {
-  font-size: 14px;
-  margin: 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.pipeline-metadata-modal__preview-markdown {
-  @extend %modal-text-preview-base;
-}
