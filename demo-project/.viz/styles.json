@@ -1,7 +1,14 @@
 {
   "companies": {
-    "fill": "red",
-    "color": "white"
+    "color": "white",
+    "themes": {
+      "dark": {
+        "fill": "red"
+      },
+      "light": {
+        "fill": "green"
+      }
+    }
   },
   "shuttles": {
     "fill": "green",
