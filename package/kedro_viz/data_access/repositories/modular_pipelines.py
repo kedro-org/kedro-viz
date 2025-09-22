@@ -28,7 +28,6 @@ class ModularPipelinesRepository:
         an empty parameters set.
         """
         self.tree: Dict[str, ModularPipelineNode] = {
-            # TODO: Need to add styles
             ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
                 ROOT_MODULAR_PIPELINE_ID
             )
@@ -116,7 +115,7 @@ class ModularPipelinesRepository:
         """
 
         if modular_pipeline_id not in self.tree:
-            # TODO: Need to add styles
+            # TODO: Need to add node_extras
             modular_pipeline_node = GraphNode.create_modular_pipeline_node(
                 modular_pipeline_id
             )
