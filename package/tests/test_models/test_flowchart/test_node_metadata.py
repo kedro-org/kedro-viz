@@ -15,6 +15,7 @@ from kedro_viz.models.flowchart.node_metadata import (
     TranscodedDataNodeMetadata,
 )
 from kedro_viz.models.flowchart.nodes import GraphNode
+from kedro_viz.models.metadata import NodeExtras
 
 
 def identity(x):
@@ -78,7 +79,7 @@ class TestGraphNodeMetadata:
             layer=None,
             tags=set(),
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.has_metadata() == has_metadata
@@ -227,7 +228,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats={"rows": 10, "columns": 2},
+            node_extras=NodeExtras(stats={"rows": 10, "columns": 2}),
             modular_pipelines=set(),
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
@@ -247,7 +248,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.get_preview_args() == {"nrows": 3}
@@ -261,7 +262,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.is_preview_enabled() is False
@@ -298,7 +299,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=empty_dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
 
@@ -340,7 +341,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats={"rows": 10, "columns": 2},
+            node_extras=NodeExtras(stats={"rows": 10, "columns": 2}),
             modular_pipelines=set(),
         )
         transcoded_data_node.original_name = "dataset"
@@ -372,7 +373,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)

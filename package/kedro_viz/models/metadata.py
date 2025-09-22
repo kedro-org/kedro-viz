@@ -50,7 +50,7 @@ class NodeExtras(BaseModel):
     """Extra visualization properties for graph nodes.
 
     This class contains additional properties that are only needed for kedro-viz
-    visualization and not part of core Kedro functionality.
+    visualization (e.g., stats, styles etc.) and are not part of core Kedro functionality.
     """
 
     stats: Optional[Dict[str, Any]] = Field(
