@@ -6,8 +6,9 @@ import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
 import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
 import { workFlowStatuses } from '../../config';
-
+import { processNodeStyles } from './utils/draw-utils';
 import './styles/index.scss';
+import { connect } from 'react-redux';
 
 /**
  * Functional React component for drawing nodes using D3
@@ -39,6 +40,7 @@ export function DrawNodes({
   showRunStatus = false,
   tasksStatus = {},
   datasetsStatus = {},
+  theme = 'dark',
 }) {
   const groupRef = useRef();
 
@@ -147,45 +149,6 @@ export function DrawNodes({
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
       .attr('dx', (node) => node.textOffset);
-
-    enterNodes.each(function (node) {
-      if (node.styles && Object.keys(node.styles).length > 0) {
-        const nodeGroup = select(this);
-
-        Object.entries(node.styles).forEach(([key, value]) => {
-          const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-
-          // Background properties
-          if (
-            key.toLowerCase().includes('background') ||
-            ['fill', 'stroke', 'strokeWidth', 'opacity'].includes(key)
-          ) {
-            const bgElement = nodeGroup.select('.pipeline-node__bg');
-            bgElement.style(cssProperty, value, 'important');
-          }
-
-          // Text properties
-          else if (
-            key.toLowerCase().includes('text') ||
-            key.toLowerCase().includes('font') ||
-            ['color'].includes(key)
-          ) {
-            const textElement = nodeGroup.select('.pipeline-node__text');
-            const iconElement = nodeGroup.select('.pipeline-node__icon');
-
-            [textElement, iconElement].forEach((element) => {
-              if (key === 'color') {
-                element.style('fill', value, 'important');
-              } else {
-                element.style(cssProperty, value, 'important');
-              }
-            });
-          }
-        });
-
-        nodeGroup.classed('kedro-viz-custom-styled', true);
-      }
-    });
 
     exitNodes
       .transition('exit-nodes')
@@ -335,7 +298,64 @@ export function DrawNodes({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, orientation]);
 
+  // --- Apply theme-based node styling ---
+  useEffect(() => {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
+      return;
+    }
+    const { allNodes } = selections;
+    allNodes.each(function (node) {
+      if (
+        node.extras &&
+        node.extras.styles &&
+        Object.keys(node.extras.styles).length > 0
+      ) {
+        const nodeGroup = select(this);
+        const processedStyles = processNodeStyles(node.extras.styles, theme);
+
+        if (processedStyles) {
+          Object.entries(processedStyles).forEach(([key, value]) => {
+            const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+
+            // Background properties
+            if (
+              key.toLowerCase().includes('background') ||
+              ['fill', 'stroke', 'strokeWidth', 'opacity'].includes(key)
+            ) {
+              const bgElement = nodeGroup.select('.pipeline-node__bg');
+              bgElement.style(cssProperty, value, 'important');
+            }
+
+            // Text properties
+            else if (
+              key.toLowerCase().includes('text') ||
+              key.toLowerCase().includes('font') ||
+              ['color'].includes(key)
+            ) {
+              const textElement = nodeGroup.select('.pipeline-node__text');
+              const iconElement = nodeGroup.select('.pipeline-node__icon');
+
+              [textElement, iconElement].forEach((element) => {
+                if (key === 'color') {
+                  element.style('fill', value, 'important');
+                } else {
+                  element.style(cssProperty, value, 'important');
+                }
+              });
+            }
+          });
+        }
+        nodeGroup.classed('kedro-viz-custom-styled', true);
+      }
+    });
+  }, [theme, nodes]);
+
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
 
-export default DrawNodes;
+const mapStateToProps = (state) => ({
+  theme: state.theme,
+});
+
+export default connect(mapStateToProps)(DrawNodes);

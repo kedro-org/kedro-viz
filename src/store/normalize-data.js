@@ -47,7 +47,7 @@ export const createInitialPipelineState = () => ({
     transcodedTypes: {},
     runCommand: {},
     modularPipelines: {},
-    styles: {},
+    extras: {},
   },
   nodeType: {
     ids: ['task', 'data', 'parameters', 'modularPipeline'],
@@ -162,7 +162,7 @@ const addNode = (state) => (node) => {
   state.node.transcodedTypes[id] = node.transcoded_types;
   state.node.runCommand[id] = node.runCommand;
   state.node.modularPipelines[id] = node.modular_pipelines || [];
-  state.node.styles[id] = node.styles || {};
+  state.node.extras[id] = node.node_extras || {};
 };
 
 /**
