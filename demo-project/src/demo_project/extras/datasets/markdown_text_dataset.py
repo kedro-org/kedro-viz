@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 class HTMLPreview:
     """Preview type for HTML content."""
+
     def __init__(self, data: str):
         self.data = data
 
