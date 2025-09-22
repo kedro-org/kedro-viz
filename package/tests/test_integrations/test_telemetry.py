@@ -4,12 +4,17 @@ from unittest import mock
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 
-def test_get_heap_app_id_no_telemetry_file():
-    # Testing telemetry failures
+@mock.patch("kedro_viz.integrations.kedro.telemetry._check_for_telemetry_consent")
+def test_get_heap_app_id_no_telemetry_file(mock_check_for_telemetry_consent):
+    mock_check_for_telemetry_consent.return_value = True
     assert kedro_telemetry.get_heap_app_id(Path.cwd()) is not None
 
 
-def test_get_heap_app_id_invalid_telemetry_file(tmpdir):
+@mock.patch("kedro_viz.integrations.kedro.telemetry._check_for_telemetry_consent")
+def test_get_heap_app_id_invalid_telemetry_file(
+    mock_check_for_telemetry_consent, tmpdir
+):
+    mock_check_for_telemetry_consent.return_value = True
     telemetry_file = tmpdir / ".telemetry"
     telemetry_file.write_text("foo", encoding="utf-8")
     assert kedro_telemetry.get_heap_app_id(tmpdir) is not None
