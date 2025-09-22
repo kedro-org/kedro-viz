@@ -5,6 +5,7 @@ from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 
 def test_get_heap_app_id_no_telemetry_file():
+    # Testing telemetry failures
     assert kedro_telemetry.get_heap_app_id(Path.cwd()) is not None
 
 
