@@ -15,21 +15,3 @@ export const toSinglePoint = (value) => parseFloat(value).toFixed(1);
  */
 export const limitPrecision = (path) =>
   path.replace(matchFloats, toSinglePoint);
-
-export const processNodeStyles = (nodeStyles, currentTheme) => {
-  const processedStyles = {};
-
-  // Apply root-level styles first (common styles)
-  Object.keys(nodeStyles).forEach((key) => {
-    if (key !== 'themes') {
-      processedStyles[key] = nodeStyles[key];
-    }
-  });
-
-  // Apply theme-specific styles (overwrites common if conflicts)
-  if (nodeStyles.themes && nodeStyles.themes[currentTheme]) {
-    Object.assign(processedStyles, nodeStyles.themes[currentTheme]);
-  }
-
-  return Object.keys(processedStyles).length > 0 ? processedStyles : null;
-};
