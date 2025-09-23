@@ -1,6 +1,8 @@
 # Customize node styling in Kedro-Viz
 
-Kedro-Viz allows you to customize the visual appearance of nodes in your pipeline flowchart. You can apply custom colors, styling, and theme-specific appearances to individual nodes to help distinguish different types of operations, highlight important components, or create visual groupings in your pipeline.
+From Kedro-Viz version 12.2.0, you can customize the visual appearance of nodes in your pipeline flowchart. You can apply custom colors, styling, and theme-specific appearances to individual nodes to help distinguish different types of operations, highlight important components, or create visual groupings in your pipeline.
+
+![Custom styles for nodes](./images/custom_node_color.png)
 
 ## Overview
 
