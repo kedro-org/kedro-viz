@@ -282,7 +282,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("stats")
     @classmethod
     def set_stats(cls, _):
-        return cls.data_node.node_extras.stats
+        return cls.data_node.node_extras and cls.data_node.node_extras.stats
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
@@ -362,7 +362,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     @field_validator("stats")
     @classmethod
     def set_stats(cls, _):
-        return cls.transcoded_data_node.stats
+        return (
+            cls.transcoded_data_node.node_extras
+            and cls.transcoded_data_node.node_extras.stats
+        )
 
 
 class ParametersNodeMetadata(GraphNodeMetadata):

@@ -12,6 +12,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.models.metadata import NodeExtras
 
 
 def identity(x):
@@ -71,7 +72,9 @@ class TestGraphNodeCreation:
             ),
         ],
     )
-    def test_create_data_node(self, dataset_name, expected_modular_pipelines):
+    def test_create_data_node(
+        self, dataset_name, expected_modular_pipelines, example_node_extras
+    ):
         kedro_dataset = CSVDataset(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             dataset_id=dataset_name,
@@ -79,7 +82,7 @@ class TestGraphNodeCreation:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
-            stats={"rows": 10, "columns": 5, "file_size": 1024},
+            node_extras=example_node_extras,
             modular_pipelines=set(expected_modular_pipelines),
         )
         assert isinstance(data_node, DataNode)
@@ -90,9 +93,11 @@ class TestGraphNodeCreation:
         assert data_node.tags == set()
         assert data_node.pipelines == set()
         assert data_node.modular_pipelines == expected_modular_pipelines
-        assert data_node.stats["rows"] == 10
-        assert data_node.stats["columns"] == 5
-        assert data_node.stats["file_size"] == 1024
+        assert data_node.node_extras.stats["rows"] == 10
+        assert data_node.node_extras.stats["columns"] == 5
+        assert data_node.node_extras.stats["file_size"] == 1024
+        assert data_node.node_extras.styles["color"] == "white"
+        assert len(data_node.node_extras.styles["themes"]) == 2
 
     @pytest.mark.parametrize(
         "transcoded_dataset_name, original_name",
@@ -104,7 +109,9 @@ class TestGraphNodeCreation:
             ),
         ],
     )
-    def test_create_transcoded_data_node(self, transcoded_dataset_name, original_name):
+    def test_create_transcoded_data_node(
+        self, transcoded_dataset_name, original_name, example_node_extras
+    ):
         kedro_dataset = CSVDataset(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             dataset_id=original_name,
@@ -112,7 +119,7 @@ class TestGraphNodeCreation:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
-            stats={"rows": 10, "columns": 2, "file_size": 1048},
+            node_extras=example_node_extras,
             modular_pipelines=set(),
         )
         assert isinstance(data_node, TranscodedDataNode)
@@ -121,9 +128,11 @@ class TestGraphNodeCreation:
         assert data_node.layer == "raw"
         assert data_node.tags == set()
         assert data_node.pipelines == set()
-        assert data_node.stats["rows"] == 10
-        assert data_node.stats["columns"] == 2
-        assert data_node.stats["file_size"] == 1048
+        assert data_node.node_extras.stats["rows"] == 10
+        assert data_node.node_extras.stats["columns"] == 5
+        assert data_node.node_extras.stats["file_size"] == 1024
+        assert data_node.node_extras.styles["color"] == "white"
+        assert len(data_node.node_extras.styles["themes"]) == 2
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataset(
