@@ -1,6 +1,6 @@
-# Customize node styling in Kedro-Viz
+# Customise node styling in Kedro-Viz
 
-From Kedro-Viz version 12.2.0, you can customize the visual appearance of nodes in your pipeline flowchart. You can apply custom colors, styling, and theme-specific appearances to individual nodes to help distinguish different types of operations, highlight important components, or create visual groupings in your pipeline.
+From Kedro-Viz version 12.2.0, you can customise the visual appearance of nodes in your pipeline flowchart. You can apply custom colors, styling, and theme-specific appearances to individual nodes to help distinguish different types of operations, highlight important components, or create visual groupings in your pipeline.
 
 ![Custom styles for nodes](./images/custom_node_color.png)
 
@@ -16,7 +16,7 @@ Node styling enables you to:
 
 ## Setting up node styles
 
-To customize node styling, create a `styles.json` file in your project's `.viz` directory:
+To customise node styling, create a `styles.json` file in your project's `.viz` directory:
 
 ```
 your-kedro-project/
@@ -32,7 +32,7 @@ your-kedro-project/
 
 ## Basic styling configuration
 
-The `styles.json` file uses a simple JSON structure where each node name maps to its styling properties:
+The `styles.json` file uses a JSON structure where each node name maps to its styling properties:
 
 ```json
 {
@@ -202,13 +202,13 @@ Use colors to indicate node status or importance:
 
 To style a specific node, you need its exact name as it appears in your Kedro pipeline. You can find node names by:
 
-1. **In Kedro-Viz**: Hover over nodes to see their names in tooltips
+1. **In Kedro-Viz**: Hover over nodes to see their names in tooltip
 2. **In your code**: Check your pipeline definitions in Python files
 3. **Using Kedro CLI**: Run `kedro catalog describe-datasets` to see dataset names
 4. **In the node list**: Use the expandable node list panel in Kedro-Viz
 
 !!! tip
-    Node names in `styles.json` must exactly match the names shown in Kedro-Viz. They are case-sensitive and should include any namespace prefixes (e.g., `data_processing.clean_data`).
+    Node names in `styles.json` must match the names shown in Kedro-Viz. They are case-sensitive and should include any namespace prefixes (e.g., `data_processing.clean_data`).
 
 ## Applying your styles
 
@@ -226,7 +226,7 @@ To style a specific node, you need its exact name as it appears in your Kedro pi
 
 - **Check file location**: Ensure `styles.json` is in the `.viz` directory at your project root
 - **Verify JSON syntax**: Use a JSON validator to check for syntax errors
-- **Match node names exactly**: Node names are case-sensitive and must match exactly
+- **Match node names**: Node names are case-sensitive and must match
 - **Restart Kedro-Viz**: Changes require a server restart to take effect
 
 ### Invalid styling properties
@@ -237,4 +237,4 @@ To style a specific node, you need its exact name as it appears in your Kedro pi
 ### Theme switching issues
 
 - **Define both themes**: Include both `light` and `dark` theme objects
-- **Test both modes**: Switch themes in Kedro-Viz to verify both work correctly
+- **Test both modes**: Switch themes in Kedro-Viz to verify both styles work
