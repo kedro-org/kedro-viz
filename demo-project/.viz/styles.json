@@ -1,29 +1,321 @@
 {
   "companies": {
     "color": "white",
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "stroke": "#2563eb",
     "themes": {
       "dark": {
-        "fill": "red"
+        "fill": "#ef4444",
+        "stroke": "#3b82f6",
+        "color": "#f8fafc"
       },
       "light": {
-        "fill": "green"
+        "fill": "#22c55e",
+        "stroke": "#1d4ed8",
+        "color": "#ffffff"
       }
     }
   },
   "shuttles": {
-    "fill": "green",
-    "color": "white"
+    "color": "white",
+    "opacity": "0.9",
+    "strokeWidth": "2px",
+    "stroke": "#059669",
+    "themes": {
+      "dark": {
+        "fill": "#10b981",
+        "stroke": "#047857",
+        "color": "#f0fdf4"
+      },
+      "light": {
+        "fill": "#16a34a",
+        "stroke": "#15803d",
+        "color": "#ffffff"
+      }
+    }
   },
   "reviews": {
-    "fill": "blue",
-    "color": "white"
+    "color": "white",
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "stroke": "#7c3aed",
+    "themes": {
+      "dark": {
+        "fill": "#8b5cf6",
+        "stroke": "#6d28d9",
+        "color": "#faf5ff"
+      },
+      "light": {
+        "fill": "#a855f7",
+        "stroke": "#7c2d12",
+        "color": "#ffffff"
+      }
+    }
   },
   "prm_spine_table": {
-    "fill": "orange",
-    "stroke": "blue",
-    "color": "black"
+    "color": "white",
+    "opacity": "0.9",
+    "strokeWidth": "3px",
+    "stroke": "#dc2626",
+    "themes": {
+      "dark": {
+        "fill": "#f97316",
+        "stroke": "#ea580c",
+        "color": "#fef3c7"
+      },
+      "light": {
+        "fill": "#fb923c",
+        "stroke": "#c2410c",
+        "color": "#000000"
+      }
+    }
   },
   "combine_step": {
-    "fill": "blue"
+    "color": "white",
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "stroke": "#0891b2",
+    "themes": {
+      "dark": {
+        "fill": "#06b6d4",
+        "stroke": "#0e7490",
+        "color": "#ecfdf5"
+      },
+      "light": {
+        "fill": "#0284c7",
+        "stroke": "#075985",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "train_evaluation.linear_regression.regressor": {
+    "color": "white",
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "stroke": "#be185d",
+    "themes": {
+      "dark": {
+        "fill": "#ec4899",
+        "stroke": "#9d174d",
+        "color": "#fdf2f8"
+      },
+      "light": {
+        "fill": "#f472b6",
+        "stroke": "#831843",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "train_evaluation.random_forest.regressor": {
+    "color": "white",
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "stroke": "#7c2d12",
+    "themes": {
+      "dark": {
+        "fill": "#ea580c",
+        "stroke": "#c2410c",
+        "color": "#fff7ed"
+      },
+      "light": {
+        "fill": "#fb923c",
+        "stroke": "#9a3412",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "apply_types_to_companies": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#22c55e",
+        "stroke": "#16a34a",
+        "color": "#f0fdf4"
+      },
+      "light": {
+        "fill": "#4ade80",
+        "stroke": "#166534",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "apply_types_to_shuttles": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#10b981",
+        "stroke": "#059669",
+        "color": "#ecfdf5"
+      },
+      "light": {
+        "fill": "#34d399",
+        "stroke": "#047857",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "apply_types_to_reviews": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#8b5cf6",
+        "stroke": "#7c3aed",
+        "color": "#faf5ff"
+      },
+      "light": {
+        "fill": "#a78bfa",
+        "stroke": "#6d28d9",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "split_data": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#06b6d4",
+        "stroke": "#0891b2",
+        "color": "#cffafe"
+      },
+      "light": {
+        "fill": "#22d3ee",
+        "stroke": "#0e7490",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "create_derived_features": {
+    "opacity": "0.85",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#3b82f6",
+        "stroke": "#2563eb",
+        "color": "#dbeafe"
+      },
+      "light": {
+        "fill": "#60a5fa",
+        "stroke": "#1d4ed8",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "joiner": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#06b6d4",
+        "stroke": "#0891b2",
+        "color": "#cffafe"
+      },
+      "light": {
+        "fill": "#67e8f9",
+        "stroke": "#155e75",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "X_train": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#dc2626",
+        "stroke": "#b91c1c",
+        "color": "#fee2e2"
+      },
+      "light": {
+        "fill": "#ef4444",
+        "stroke": "#991b1b",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "X_test": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#ea580c",
+        "stroke": "#dc2626",
+        "color": "#fed7aa"
+      },
+      "light": {
+        "fill": "#fb923c",
+        "stroke": "#c2410c",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "y_train": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#e11d48",
+        "stroke": "#be123c",
+        "color": "#ffe4e6"
+      },
+      "light": {
+        "fill": "#f43f5e",
+        "stroke": "#9f1239",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "y_test": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#f97316",
+        "stroke": "#ea580c",
+        "color": "#ffedd5"
+      },
+      "light": {
+        "fill": "#fb923c",
+        "stroke": "#c2410c",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "model_input_table": {
+    "opacity": "0.9",
+    "strokeWidth": "3px",
+    "stroke": "#1e40af",
+    "themes": {
+      "dark": {
+        "fill": "#3b82f6",
+        "stroke": "#1d4ed8",
+        "color": "#dbeafe"
+      },
+      "light": {
+        "fill": "#60a5fa",
+        "stroke": "#1e3a8a",
+        "color": "#ffffff"
+      }
+    }
+  },
+  "feature_importance_output": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#8b5cf6",
+        "stroke": "#7c3aed",
+        "color": "#ede9fe"
+      },
+      "light": {
+        "fill": "#a78bfa",
+        "stroke": "#6d28d9",
+        "color": "#ffffff"
+      }
+    }
   }
 }
