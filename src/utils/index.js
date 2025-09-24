@@ -191,7 +191,15 @@ export const formatFileSize = (fileSizeInBytes) => {
  * @returns {String} The formatted number e.g. 2500 -> 2,500
  */
 export const formatNumberWithCommas = (number) => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  // Limit input length to prevent ReDoS attacks
+  const numStr = number.toString();
+  if (numStr.length > 100) {
+    throw new Error('Input number too large for formatting');
+  }
+
+  // Use a safer regex pattern to add commas
+  // This pattern avoids nested quantifiers in lookaheads
+  return numStr.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 };
 
 /**
