@@ -26,14 +26,14 @@ _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
 def _validate_file_path(base_dir: Path, filename: str) -> Path:
     """Validate and construct a safe file path.
-    
+
     Args:
         base_dir: Base directory path
         filename: User-provided filename
-        
+
     Returns:
         Validated full path
-        
+
     Raises:
         HTTPException: If the path is invalid or unsafe
     """
@@ -41,20 +41,20 @@ def _validate_file_path(base_dir: Path, filename: str) -> Path:
     safe_filename = secure_filename(filename)
     if not safe_filename or safe_filename != filename:
         raise HTTPException(status_code=400, detail="Invalid filename")
-    
+
     # Construct the full path and normalize it
     full_path = Path(os.path.normpath(os.path.join(base_dir, safe_filename)))
-    
+
     # Ensure the path is within the base directory (prevent path traversal)
     try:
         full_path.relative_to(base_dir)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Access denied")
-    
+        raise HTTPException(status_code=400, detail="Access denied") from None
+
     # Check if the file exists
     if not full_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
-    
+
     return full_path
 
 
