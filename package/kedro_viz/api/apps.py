@@ -13,6 +13,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
+from werkzeug.utils import secure_filename
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
@@ -21,6 +22,40 @@ from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
+
+
+def _validate_file_path(base_dir: Path, filename: str) -> Path:
+    """Validate and construct a safe file path.
+    
+    Args:
+        base_dir: Base directory path
+        filename: User-provided filename
+        
+    Returns:
+        Validated full path
+        
+    Raises:
+        HTTPException: If the path is invalid or unsafe
+    """
+    # Sanitize the filename
+    safe_filename = secure_filename(filename)
+    if not safe_filename or safe_filename != filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
+    # Construct the full path and normalize it
+    full_path = Path(os.path.normpath(os.path.join(base_dir, safe_filename)))
+    
+    # Ensure the path is within the base directory (prevent path traversal)
+    try:
+        full_path.relative_to(base_dir)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Access denied")
+    
+    # Check if the file exists
+    if not full_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return full_path
 
 
 def _create_etag() -> str:
@@ -138,15 +173,13 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
-        )
+        file_path = _validate_file_path(Path(api_dir) / "nodes", node_id)
+        return json.loads(file_path.read_text(encoding="utf8"))
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
-        )
+        file_path = _validate_file_path(Path(api_dir) / "pipelines", pipeline_id)
+        return json.loads(file_path.read_text(encoding="utf8"))
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
