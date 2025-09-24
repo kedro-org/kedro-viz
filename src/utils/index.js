@@ -111,7 +111,14 @@ export const replaceAngleBracketMatches = (str) => {
  * @returns {String} The string with or without removed values
  */
 export const stripNamespace = (str) => {
-  const pattern = new RegExp('[A-Za-z0-9-_]+\\.', 'g');
+  // Limit input length to prevent potential performance issues
+  if (str && str.length > 10000) {
+    throw new Error('Input string too long for stripNamespace');
+  }
+
+  // Use a more explicit pattern that matches namespace.prefix patterns
+  // This pattern is safe from ReDoS as it doesn't have overlapping quantifiers
+  const pattern = /[A-Za-z0-9_-]+\./g;
   return str.replace(pattern, '');
 };
 
