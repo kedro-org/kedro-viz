@@ -169,7 +169,8 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads((Path(api_dir) / "main").read_text(encoding="utf8"))
+        file_path = _validate_file_path(Path(api_dir), "main")
+        return json.loads(file_path.read_text(encoding="utf8"))
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
@@ -183,14 +184,12 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
-        )
+        file_path = _validate_file_path(Path(api_dir), "deploy-viz-metadata")
+        return json.loads(file_path.read_text(encoding="utf8"))
 
     @app.get("/api/run-status", response_class=JSONResponse)
     async def get_run_status():
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "run-status").read_text(encoding="utf8")
-        )
+        file_path = _validate_file_path(Path(api_dir), "run-status")
+        return json.loads(file_path.read_text(encoding="utf8"))
 
     return app
