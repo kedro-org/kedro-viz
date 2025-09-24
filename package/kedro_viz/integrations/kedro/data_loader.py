@@ -36,16 +36,48 @@ def _get_dataset_stats(project_path: Path) -> Dict:
     try:
         stats_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/stats.json"
 
-        if not stats_file_path.exists():
-            return {}
-
         with open(stats_file_path, encoding="utf8") as stats_file:
             stats = json.load(stats_file)
+
+            # Validate that the loaded JSON is a dictionary
+            if not isinstance(stats, dict):
+                logger.warning(
+                    "Invalid data format in stats.json at project path %s. "
+                    "Expected a JSON object (dictionary), got %s. "
+                    "Please ensure stats.json contains a valid JSON object.",
+                    project_path,
+                    type(stats).__name__,
+                )
+                return {}
+
             return stats
 
+    except json.JSONDecodeError as exc:
+        logger.warning(
+            "Invalid JSON format in stats.json at project path %s. "
+            "Error at line %s, column %s: %s. "
+            "Please check your stats.json file for syntax errors.",
+            project_path,
+            exc.lineno,
+            exc.colno,
+            exc.msg,
+        )
+        return {}
+    except FileNotFoundError:
+        logger.debug("stats.json not found at %s", stats_file_path)
+        return {}
+    except PermissionError as exc:
+        logger.warning(
+            "Permission denied accessing stats.json at project path %s: %s. "
+            "Please check file permissions.",
+            project_path,
+            exc,
+        )
+        return {}
     except Exception as exc:  # noqa: BLE001
         logger.warning(
-            "Unable to get dataset statistics from project path %s : %s",
+            "Issue in reading stats.json at project path %s: %s. "
+            "Kedro-Viz will continue without dataset statistics.",
             project_path,
             exc,
         )
@@ -62,16 +94,48 @@ def _get_node_styles(project_path: Path) -> Dict:
     try:
         styles_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/styles.json"
 
-        if not styles_file_path.exists():
-            return {}
-
         with open(styles_file_path, encoding="utf8") as styles_file:
             styles = json.load(styles_file)
+
+            # Validate that the loaded JSON is a dictionary
+            if not isinstance(styles, dict):
+                logger.warning(
+                    "Invalid data format in styles.json at project path %s. "
+                    "Expected a JSON object (dictionary), got %s. "
+                    "Please ensure styles.json contains a valid JSON object.",
+                    project_path,
+                    type(styles).__name__,
+                )
+                return {}
+
             return styles
 
+    except json.JSONDecodeError as exc:
+        logger.warning(
+            "Invalid JSON format in styles.json at project path %s. "
+            "Error at line %s, column %s: %s. "
+            "Please check your styles.json file for syntax errors.",
+            project_path,
+            exc.lineno,
+            exc.colno,
+            exc.msg,
+        )
+        return {}
+    except FileNotFoundError:
+        logger.debug("styles.json not found at %s", styles_file_path)
+        return {}
+    except PermissionError as exc:
+        logger.warning(
+            "Permission denied accessing styles.json at project path %s: %s. "
+            "Please check file permissions.",
+            project_path,
+            exc,
+        )
+        return {}
     except Exception as exc:  # noqa: BLE001
         logger.warning(
-            "Unable to get node styles from project path %s : %s",
+            "Issue in reading styles.json at project path %s: %s. "
+            "Kedro-Viz will continue without node styling.",
             project_path,
             exc,
         )
