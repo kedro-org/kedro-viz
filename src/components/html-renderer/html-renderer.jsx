@@ -7,10 +7,10 @@ import './html-renderer.scss';
 const HTMLRenderer = ({ content, className = '', fontSize }) => {
   const style = fontSize ? { fontSize } : {};
 
-  // Sanitise the raw content first to prevent XSS attacks
+  // Sanitise the raw content first
   const sanitisedContent = DOMPurify.sanitize(content || '');
 
-  // Convert the sanitized markdown to HTML using our utility function
+  // Convert the sanitised markdown to HTML
   const htmlContent = renderMarkdownToHTML(sanitisedContent);
 
   return (
