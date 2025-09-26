@@ -13,7 +13,7 @@ const HTMLRenderer = ({ content, className = '', fontSize }) => {
   return (
     <div className={`html-renderer ${className}`} style={style}>
       <ReactMarkdown
-        // Enable GitHub Flavored Markdown features (tables, strikethrough, task lists, autolinks, footnotes)
+        // Enable GitHub Markdown features (tables, strikethrough, task lists, autolinks, footnotes)
         remarkPlugins={[remarkGfm]}
         components={{
           table: ({ children, ...props }) => (
