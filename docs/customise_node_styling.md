@@ -46,7 +46,7 @@ The `styles.json` file uses a JSON structure where each node name maps to its st
 
 ### Styling properties
 
-Each node can be customized using the following CSS properties:
+Each node can be customised using the following CSS properties:
 
 | Property | Description | CSS Reference |
 |----------|-------------|---------------|
@@ -56,7 +56,8 @@ Each node can be customized using the following CSS properties:
 | `opacity` | Sets the transparency level (0.0 to 1.0) | [CSS `opacity`](https://developer.mozilla.org/en-US/docs/Web/CSS/opacity) |
 
 !!! note "Additional CSS Properties"
-    For more advanced styling options and detailed information about CSS color values, visit the [MDN CSS Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_values) for comprehensive documentation on color formats and additional styling properties.
+    For more advanced styling options and detailed information about CSS color values, visit the [MDN CSS Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_values) 
+    for comprehensive documentation on color formats and additional styling properties.
 
 ### Example: Basic node styling
 
