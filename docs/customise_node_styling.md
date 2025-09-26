@@ -44,6 +44,20 @@ The `styles.json` file uses a JSON structure where each node name maps to its st
 }
 ```
 
+### Styling properties
+
+Each node can be customized using the following CSS properties:
+
+| Property | Description | CSS Reference |
+|----------|-------------|---------------|
+| `fill` | Sets the background color of the node | [CSS `background-color`](https://developer.mozilla.org/en-US/docs/Web/CSS/background-color) |
+| `stroke` | Sets the border color around the node | [CSS `border-color`](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| `color` | Sets the text color for the node label | [CSS `color`](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| `opacity` | Sets the transparency level (0.0 to 1.0) | [CSS `opacity`](https://developer.mozilla.org/en-US/docs/Web/CSS/opacity) |
+
+!!! note "Additional CSS Properties"
+    For more advanced styling options and detailed information about CSS color values, visit the [MDN CSS Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_values) for comprehensive documentation on color formats and additional styling properties.
+
 ### Example: Basic node styling
 
 ```json
