@@ -185,7 +185,9 @@
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
-      "^(.*)\\?worker&inline$": "$1"
+      "^(.*)\\?worker&inline$": "$1",
+      "^react-markdown$": "<rootDir>/src/components/html-renderer/__mocks__/react-markdown.js",
+      "^remark-gfm$": "<rootDir>/src/components/html-renderer/__mocks__/remark-gfm.js"
     },
     "maxWorkers": 5
   },
