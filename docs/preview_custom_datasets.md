@@ -122,7 +122,7 @@ Below is an example implementation:
 
 from kedro_datasets._typing import HTMLPreview
 
-class CustomTextDataset:
+class MarkdownTextDataset:
   def preview(self) -> HTMLPreview:
     text_content = self.load()
     # Can return plain text, markdown, or HTML content

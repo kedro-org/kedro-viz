@@ -14,7 +14,7 @@ class HTMLPreview:
         self.data = data
 
 
-class CustomTextDataset(TextDataset):
+class MarkdownTextDataset(TextDataset):
     """
     Custom Text dataset that extends TextDataset with preview support for Markdown.
 

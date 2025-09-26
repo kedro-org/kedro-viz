@@ -30,7 +30,6 @@ def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
 
     Args:
         shuttles: Raw data.
-        config: Configuration data from YAML file.
     Returns:
         Preprocessed data, with `price` converted to a float and `d_check_complete`,
         `moon_clearance_complete` converted to boolean.
