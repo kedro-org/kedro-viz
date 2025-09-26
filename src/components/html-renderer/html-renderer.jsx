@@ -1,4 +1,4 @@
-import React from 'react';
+import classnames from 'classnames';
 import DOMPurify from 'isomorphic-dompurify';
 import { renderMarkdownToHTML } from './utils';
 
@@ -15,7 +15,7 @@ const HTMLRenderer = ({ content, className = '', fontSize }) => {
 
   return (
     <div
-      className={`html-renderer ${className}`}
+      className={classnames('html-renderer', className)}
       style={style}
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
