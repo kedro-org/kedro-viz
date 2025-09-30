@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release xxx
+
+## Bug fixes and other changes
+ - Add HTML preview support for text/markdown datasets. (#2490)
+
 # Release 12.1.0
 
 ## Bug fixes and other changes
