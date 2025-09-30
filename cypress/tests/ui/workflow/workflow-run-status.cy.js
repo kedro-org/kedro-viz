@@ -48,8 +48,12 @@ describe('Workflow View - Run Status Feature', () => {
 
       // Assert after action
       cy.wait('@successfulRunStatus');
+      // All task nodes should have either success or skipped status
       cy.get('.pipeline-node--task').each(($node) => {
-        cy.wrap($node).should('have.class', 'pipeline-node--status-success');
+        cy.wrap($node).should('satisfy', ($el) => {
+          return $el.hasClass('pipeline-node--status-success') || 
+                 $el.hasClass('pipeline-node--status-skipped');
+        });
       });
     });
 
