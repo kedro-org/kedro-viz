@@ -303,6 +303,31 @@ export function DrawNodes({
       return;
     }
     const { allNodes } = selections;
+
+    // Reset previously overridden styles
+    allNodes.each(function (node) {
+      const nodeGroup = select(this);
+      // Tracker
+      const appliedOverrides = nodeGroup.node().__appliedStyleOverrides;
+
+      if (appliedOverrides) {
+        // Reset the styles that were previously overridden
+        Object.entries(appliedOverrides).forEach(
+          ([elementSelector, styles]) => {
+            const element = nodeGroup.select(elementSelector);
+            Object.keys(styles).forEach((cssProperty) => {
+              element.style(cssProperty, null);
+            });
+          }
+        );
+
+        // Clear the tracking
+        delete nodeGroup.node().__appliedStyleOverrides;
+        nodeGroup.classed('kedro-viz-custom-styled', false);
+      }
+    });
+
+    // Then apply new style overrides
     allNodes.each(function (node) {
       if (
         node.extras &&
@@ -313,6 +338,9 @@ export function DrawNodes({
         const nodeStyles = nodeStyleOverrides[node.id];
 
         if (nodeStyles) {
+          // Initialize tracking object for current node
+          const appliedOverrides = {};
+
           Object.entries(nodeStyles).forEach(([key, value]) => {
             const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
 
@@ -323,6 +351,12 @@ export function DrawNodes({
             ) {
               const bgElement = nodeGroup.select('.pipeline-node__bg');
               bgElement.style(cssProperty, value, 'important');
+
+              // Track this override
+              if (!appliedOverrides['.pipeline-node__bg']) {
+                appliedOverrides['.pipeline-node__bg'] = {};
+              }
+              appliedOverrides['.pipeline-node__bg'][cssProperty] = value;
             }
 
             // Text properties
@@ -334,15 +368,24 @@ export function DrawNodes({
               const textElement = nodeGroup.select('.pipeline-node__text');
               const iconElement = nodeGroup.select('.pipeline-node__icon');
 
-              [textElement, iconElement].forEach((element) => {
-                if (key === 'color') {
-                  element.style('fill', value, 'important');
-                } else {
-                  element.style(cssProperty, value, 'important');
+              [
+                { element: textElement, selector: '.pipeline-node__text' },
+                { element: iconElement, selector: '.pipeline-node__icon' },
+              ].forEach(({ element, selector }) => {
+                const finalProperty = key === 'color' ? 'fill' : cssProperty;
+                element.style(finalProperty, value, 'important');
+
+                // Track this override
+                if (!appliedOverrides[selector]) {
+                  appliedOverrides[selector] = {};
                 }
+                appliedOverrides[selector][finalProperty] = value;
               });
             }
           });
+
+          // Store the tracking data on the DOM node
+          nodeGroup.node().__appliedStyleOverrides = appliedOverrides;
         }
         nodeGroup.classed('kedro-viz-custom-styled', true);
       }
