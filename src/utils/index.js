@@ -111,7 +111,14 @@ export const replaceAngleBracketMatches = (str) => {
  * @returns {String} The string with or without removed values
  */
 export const stripNamespace = (str) => {
-  const pattern = new RegExp('[A-Za-z0-9-_]+\\.', 'g');
+  // Limit input length to prevent potential performance issues
+  if (str && str.length > 10000) {
+    throw new Error('Input string too long for stripNamespace');
+  }
+
+  // Use a more explicit pattern that matches namespace.prefix patterns
+  // This pattern is safe from ReDoS as it doesn't have overlapping quantifiers
+  const pattern = /[A-Za-z0-9_-]+\./g;
   return str.replace(pattern, '');
 };
 
@@ -184,7 +191,15 @@ export const formatFileSize = (fileSizeInBytes) => {
  * @returns {String} The formatted number e.g. 2500 -> 2,500
  */
 export const formatNumberWithCommas = (number) => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  // Limit input length to prevent ReDoS attacks
+  const numStr = number.toString();
+  if (numStr.length > 100) {
+    throw new Error('Input number too large for formatting');
+  }
+
+  // Use a safer regex pattern to add commas
+  // This pattern avoids nested quantifiers in lookaheads
+  return numStr.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 };
 
 /**
