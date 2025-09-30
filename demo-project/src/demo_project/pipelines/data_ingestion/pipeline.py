@@ -24,14 +24,14 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             node(
                 func=apply_types_to_companies,
-                inputs=["companies"],
+                inputs="companies",
                 outputs="int_typed_companies",
                 name="apply_types_to_companies",
                 tags="companies",
             ),
             node(
                 func=apply_types_to_shuttles,
-                inputs=["shuttles"],
+                inputs="shuttles",
                 outputs="int_typed_shuttles@pandas1",
                 name="apply_types_to_shuttles",
                 tags="shuttles",
