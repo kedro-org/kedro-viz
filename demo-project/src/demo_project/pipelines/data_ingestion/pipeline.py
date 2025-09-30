@@ -24,7 +24,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             node(
                 func=apply_types_to_companies,
-                inputs=["companies", "readme"],
+                inputs=["companies"],
                 outputs="int_typed_companies",
                 name="apply_types_to_companies",
                 tags="companies",
