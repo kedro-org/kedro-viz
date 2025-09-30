@@ -1,0 +1,120 @@
+@use '../../styles/variables' as variables;
+
+.kui-theme--light {
+  --color-text: #{variables.$grey-900};
+  --color-table-header-bg: #{variables.$white-300};
+  --color-border: #{variables.$grey-400};
+  --color-hr-border: #{variables.$grey-400};
+  --admonition-bg-color: #{variables.$white-300};
+}
+
+.kui-theme--dark {
+  --color-text: #{variables.$white-0};
+  --color-table-header-bg: #{variables.$slate-500};
+  --color-border: #{variables.$white-900-30};
+  --color-hr-border: #{variables.$white-900-30};
+  --admonition-bg-color: #{variables.$slate-500};
+}
+
+.html-renderer {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--color-text);
+  width: 60vw;
+  max-height: 90vh;
+  overflow: hidden auto;
+
+  h1 {
+    font-size: 24px;
+    padding-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    padding-bottom: 6px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  h5,
+  h6 {
+    font-size: 14px;
+  }
+
+  code {
+    background-color: var(--admonition-bg-color);
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background-color: var(--admonition-bg-color);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+
+    code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid var(--color-border);
+    margin: 12px 0;
+    padding: 0 16px;
+    color: var(--color-text-secondary);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-border);
+    text-align: left;
+    padding: 8px 12px;
+  }
+
+  th {
+    background-color: var(--color-table-header-bg);
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--color-hr-border);
+    margin: 16px 0;
+  }
+}

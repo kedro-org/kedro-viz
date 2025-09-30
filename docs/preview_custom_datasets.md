@@ -1,6 +1,6 @@
 # Extend preview to custom datasets
 
-When creating a custom dataset, if you wish to enable data preview for that dataset, you must implement a `preview()` function within the custom dataset class. Kedro-Viz currently supports previewing tables, Plotly charts, images, and JSON objects.
+When creating a custom dataset, if you wish to enable data preview for that dataset, you must implement a `preview()` function within the custom dataset class. Kedro-Viz supports previewing tables, Plotly charts, images, JSON objects, and HTML content.
 
 The return type of the `preview()` function should match one of the following types, as defined in the `kedro-datasets` source code ([_typing.py file](https://github.com/kedro-org/kedro-plugins/blob/main/kedro-datasets/kedro_datasets/_typing.py)):
 
@@ -9,6 +9,7 @@ TablePreview = NewType("TablePreview", dict)
 ImagePreview = NewType("ImagePreview", bytes)
 PlotlyPreview = NewType("PlotlyPreview", dict)
 JSONPreview = NewType("JSONPreview", dict)
+HTMLPreview = NewType("HTMLPreview", str)
 ```
 
 ## TablePreview
@@ -111,3 +112,21 @@ class CustomJSONDataset:
     return JSONPreview(json.dumps(json_data))
 ```
 ![](./images/preview_datasets_json.png)
+
+## HTMLPreview
+For `HTMLPreview`, the function should return a string containing HTML or markdown content. This is useful for previewing text-based datasets, documentation, or any content that can be rendered as HTML.
+
+Below is an example implementation:
+
+```python
+
+from kedro_datasets._typing import HTMLPreview
+
+class MarkdownTextDataset:
+  def preview(self) -> HTMLPreview:
+    text_content = self.load()
+    # Can return plain text, markdown, or HTML content
+    return HTMLPreview(text_content)
+```
+![](./images/preview_datasets_html.png)
+
