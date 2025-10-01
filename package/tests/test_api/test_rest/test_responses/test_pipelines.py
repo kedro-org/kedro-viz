@@ -112,7 +112,16 @@ class TestSinglePipelineEndpoint:
                 "type": "data",
                 "layer": "model_inputs",
                 "dataset_type": "pandas.csv_dataset.CSVDataset",
-                "stats": {"columns": 12, "rows": 29768},
+                "node_extras": {
+                    "stats": {"rows": 29768, "columns": 12},
+                    "styles": {
+                        "color": "white",
+                        "themes": {
+                            "dark": {"fill": "orange"},
+                            "light": {"fill": "green"},
+                        },
+                    },
+                },
             },
             {
                 "id": "f2b25286",
@@ -125,6 +134,7 @@ class TestSinglePipelineEndpoint:
                     "train_test_split": 0.1,
                     "num_epochs": 1000,
                 },
+                "node_extras": None,
             },
             {
                 "id": "f1f1425b",
@@ -135,7 +145,7 @@ class TestSinglePipelineEndpoint:
                 "type": "parameters",
                 "layer": None,
                 "dataset_type": None,
-                "stats": None,
+                "node_extras": None,
             },
             {
                 "id": "d5a8b994",
@@ -146,7 +156,7 @@ class TestSinglePipelineEndpoint:
                 "type": "data",
                 "layer": None,
                 "dataset_type": "io.memory_dataset.MemoryDataset",
-                "stats": None,
+                "node_extras": None,
             },
             {
                 "id": "uk",
@@ -157,7 +167,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": None,
                 "layer": None,
                 "dataset_type": None,
-                "stats": None,
+                "node_extras": None,
             },
             {
                 "id": "uk.data_science",
@@ -168,7 +178,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": None,
                 "layer": None,
                 "dataset_type": None,
-                "stats": None,
+                "node_extras": None,
             },
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)

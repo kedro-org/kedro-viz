@@ -21,9 +21,78 @@ from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
-from kedro_viz.models.metadata import Metadata
+from kedro_viz.models.metadata import Metadata, NodeExtras
 
 logger = logging.getLogger(__name__)
+
+
+def _read_and_validate_json(
+    file_path: Path, file_type: str, project_path: Path, fallback_message: str
+) -> Dict:
+    """Read and validate a JSON file, returning a dictionary.
+
+    Args:
+        file_path: Path to the JSON file to read
+        file_type: Type of file for logging (e.g., "stats.json", "styles.json")
+        project_path: Project path for logging context
+        fallback_message: Message to log when falling back to empty dict
+
+    Returns:
+        Dictionary containing the JSON data, or empty dict if file cannot be read/parsed
+    """
+    try:
+        with open(file_path, encoding="utf8") as json_file:
+            data = json.load(json_file)
+
+            # Validate that the loaded JSON is a dictionary
+            if not isinstance(data, dict):
+                logger.warning(
+                    "Invalid data format in %s at project path %s. "
+                    "Expected a JSON object (dictionary), got %s. "
+                    "Please ensure %s contains a valid JSON object.",
+                    file_type,
+                    project_path,
+                    type(data).__name__,
+                    file_type,
+                )
+                return {}
+
+            return data
+
+    except json.JSONDecodeError as exc:
+        logger.warning(
+            "Invalid JSON format in %s at project path %s. "
+            "Error at line %s, column %s: %s. "
+            "Please check your %s file for syntax errors.",
+            file_type,
+            project_path,
+            exc.lineno,
+            exc.colno,
+            exc.msg,
+            file_type,
+        )
+        return {}
+    except FileNotFoundError:
+        logger.debug("%s not found at %s", file_type, file_path)
+        return {}
+    except PermissionError as exc:
+        logger.warning(
+            "Permission denied accessing %s at project path %s: %s. "
+            "Please check file permissions.",
+            file_type,
+            project_path,
+            exc,
+        )
+        return {}
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(
+            "Issue in reading %s at project path %s: %s. %s",
+            file_type,
+            project_path,
+            exc,
+            fallback_message,
+        )
+        return {}
 
 
 def _get_dataset_stats(project_path: Path) -> Dict:
@@ -33,23 +102,59 @@ def _get_dataset_stats(project_path: Path) -> Dict:
     Args:
         project_path: the path where the Kedro project is located.
     """
-    try:
-        stats_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/stats.json"
+    stats_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/stats.json"
+    return _read_and_validate_json(
+        file_path=stats_file_path,
+        file_type="stats.json",
+        project_path=project_path,
+        fallback_message="Kedro-Viz will continue without dataset statistics.",
+    )
 
-        if not stats_file_path.exists():
-            return {}
 
-        with open(stats_file_path, encoding="utf8") as stats_file:
-            stats = json.load(stats_file)
-            return stats
+def _get_node_styles(project_path: Path) -> Dict:
+    """Return the styles saved at styles.json as a dictionary if found.
+    If not, return an empty dictionary
 
-    except Exception as exc:  # noqa: BLE001
-        logger.warning(
-            "Unable to get dataset statistics from project path %s : %s",
-            project_path,
-            exc,
-        )
-        return {}
+    Args:
+        project_path: the path where the Kedro project is located.
+    """
+    styles_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/styles.json"
+    return _read_and_validate_json(
+        file_path=styles_file_path,
+        file_type="styles.json",
+        project_path=project_path,
+        fallback_message="Kedro-Viz will continue without node styling.",
+    )
+
+
+def _create_node_extras_mapping(project_path: Path) -> Dict[str, NodeExtras]:
+    """Create a mapping from node names to NodeExtras objects.
+
+    Args:
+        project_path: the path where the Kedro project is located.
+
+    Returns:
+        Dictionary mapping node names to NodeExtras objects
+    """
+
+    stats_dict = _get_dataset_stats(project_path)
+    styles_dict = _get_node_styles(project_path)
+    node_extras_map = {}
+
+    # Get all unique node names from both stats and styles
+    all_node_names = set(stats_dict.keys()) | set(styles_dict.keys())
+
+    # Create NodeExtras objects for each node
+    for node_name in all_node_names:
+        stats = stats_dict.get(node_name)
+        styles = styles_dict.get(node_name)
+
+        node_extras = NodeExtras.create_node_extras(stats=stats, styles=styles)
+
+        if node_extras:
+            node_extras_map[node_name] = node_extras
+
+    return node_extras_map
 
 
 def _load_data_helper(
@@ -72,7 +177,7 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline and NodeExtras dictionary.
     """
 
     kedro_session = KedroSession.create(
@@ -102,8 +207,9 @@ def _load_data_helper(
         # in case user doesn't have an active session down the line when it's first accessed.
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
-        stats_dict = _get_dataset_stats(project_path)
-    return catalog, pipelines_dict, stats_dict
+        node_extras = _create_node_extras_mapping(project_path)
+
+    return catalog, pipelines_dict, node_extras
 
 
 def load_data(
@@ -113,7 +219,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict[str, NodeExtras]]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
@@ -127,7 +233,8 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary,and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline and NodeExtras dictionary.
+
     """
     if package_name:
         configure_project(package_name)
