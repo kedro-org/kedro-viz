@@ -187,9 +187,9 @@ Group related nodes by function using consistent color schemes:
 }
 ```
 
-### Status-based styling
+### Priority-based styling
 
-Use colors to indicate node status or importance:
+Use colors to indicate node importance:
 
 ```json
 {
