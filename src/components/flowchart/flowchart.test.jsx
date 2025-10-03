@@ -49,6 +49,7 @@ const defaultUnconnectedProps = {
   modularPipelineIds: [],
   onUpdateChartSize: () => {},
   onUpdateZoom: () => {},
+  theme: 'dark',
 };
 
 // Helper to render the unconnected FlowChart with overrides
@@ -663,6 +664,7 @@ describe('FlowChart', () => {
       modularPipelineIds: expect.any(Object),
       visibleSlicing: expect.any(Boolean),
       nodeReFocus: expect.any(Boolean),
+      theme: expect.any(String),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
