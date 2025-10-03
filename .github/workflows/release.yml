@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
