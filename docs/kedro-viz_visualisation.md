@@ -234,6 +234,14 @@ reviews:
 
 See [this example from the Kedro docs](https://docs.kedro.org/en/stable/data/data_catalog_yaml_examples.html#load-multiple-datasets-with-similar-configuration-using-yaml-anchors) for more details.
 
+## Customise node styling
+
+You can customise the visual appearance of individual nodes in your pipeline flowchart by applying custom colors, borders, and styling. This helps distinguish different types of operations, highlight important components, or create visual categories in your pipeline.
+
+Node styling is configured through a `styles.json` file in your project's `.viz` directory and supports theme-aware styling that automatically switches between light and dark modes.
+
+**See [Customise node styling in Kedro-Viz](./customise_node_styling.md) for a complete guide on how to apply custom styling to your pipeline nodes.**
+
 ## Share a pipeline visualisation
 
 You can save a pipeline structure within a Kedro-Viz visualisation directly from the terminal as follows:
