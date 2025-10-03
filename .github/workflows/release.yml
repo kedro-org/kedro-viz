@@ -7,6 +7,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   NODE_VERSION: 18.20.0

@@ -7,6 +7,9 @@ on:
     # Run every day at 9am (UTC time)
     - cron: '0 9 * * *'
 
+permissions:
+  issues: write
+
 jobs:
   noResponse:
     runs-on: ubuntu-latest

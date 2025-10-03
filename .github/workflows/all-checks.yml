@@ -8,7 +8,11 @@ on:
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 AM(UTC time)
-    - cron: 0 1 * * *  
+    - cron: 0 1 * * *
+
+permissions:
+  contents: read
+
 jobs:
   e2e_tests:
     strategy:

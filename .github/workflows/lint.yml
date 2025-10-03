@@ -10,6 +10,10 @@ on:
         type: string
       python-version:
         type: string
+
+permissions:
+  contents: read
+
 jobs:
     lint:
         runs-on: ${{ inputs.os }}

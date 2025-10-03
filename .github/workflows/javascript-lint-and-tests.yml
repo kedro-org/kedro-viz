@@ -9,11 +9,14 @@ on:
   pull_request:
     paths-ignore:
       - 'package/**'
-  workflow_dispatch:  
+  workflow_dispatch:
   workflow_call:
 
+permissions:
+  contents: read
+
 env:
-  PYTHON_VERSION: '3.9'    
+  PYTHON_VERSION: '3.9'
 
 jobs:
     javascript_lint_and_tests:

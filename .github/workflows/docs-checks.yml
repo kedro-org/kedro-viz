@@ -6,6 +6,10 @@ on:
       - "docs/**"
       - '**.md'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   vale:
     name: runner / vale
