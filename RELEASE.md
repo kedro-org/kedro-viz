@@ -8,6 +8,9 @@ Please follow the established format:
 
 # Release xxx
 
+## Major features and improvements
+ -  Introduced custom colours support for nodes and datasets. (#2487,#2488,#2495)
+
 ## Bug fixes and other changes
  - Add HTML preview support for text/markdown datasets. (#2490)
 
