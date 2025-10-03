@@ -55,7 +55,7 @@ import {
   DrawLayersGroup,
   GraphSVG,
 } from '../draw';
-import { createNodeStateMap } from './flowchart-utils';
+import { createNodeStateMap, processNodeStyles } from './flowchart-utils';
 import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import './styles/flowchart.scss';
@@ -100,6 +100,11 @@ export class FlowChart extends Component {
     this.slicedPipelineActionBarRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+
+    // Cache for node style overrides
+    this.nodeStyleOverridesCache = null;
+    this.prevNodesForStyles = null;
+    this.prevThemeForStyles = null;
   }
 
   componentDidMount() {
@@ -765,6 +770,52 @@ export class FlowChart extends Component {
   }
 
   /**
+   * Create node style overrides map for theme-based styling
+   */
+  createNodeStyleOverrides = (nodes, theme) => {
+    const nodeStyleOverrides = {};
+
+    nodes.forEach((node) => {
+      if (
+        node.extras &&
+        node.extras.styles &&
+        Object.keys(node.extras.styles).length > 0
+      ) {
+        const processedStyles = processNodeStyles(node.extras.styles, theme);
+        if (processedStyles) {
+          nodeStyleOverrides[node.id] = processedStyles;
+        }
+      }
+    });
+
+    return nodeStyleOverrides;
+  };
+
+  /**
+   * Get memoized node style overrides map for theme-based styling
+   */
+  getMemoizedNodeStyleOverrides = (nodes, theme) => {
+    // Check if we need to recalculate
+    if (
+      this.prevNodesForStyles !== nodes ||
+      this.prevThemeForStyles !== theme ||
+      this.nodeStyleOverridesCache === null
+    ) {
+      this.nodeStyleOverridesCache = this.createNodeStyleOverrides(
+        nodes,
+        theme
+      );
+      this.prevNodesForStyles = nodes;
+      this.prevThemeForStyles = theme;
+
+      // Return a new object reference to ensure React detects the change
+      return { ...this.nodeStyleOverridesCache };
+    }
+
+    return this.nodeStyleOverridesCache;
+  };
+
+  /**
    * Render React elements
    */
   render() {
@@ -795,6 +846,7 @@ export class FlowChart extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
+      theme,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const {
@@ -831,6 +883,8 @@ export class FlowChart extends Component {
     const seenSlicingFeedbackBefore =
       loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] === false;
 
+    const nodeStyleOverrides = this.getMemoizedNodeStyleOverrides(nodes, theme);
+
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -865,6 +919,7 @@ export class FlowChart extends Component {
             hoveredParameters={hoveredParameters}
             hoveredFocusMode={hoveredFocusMode}
             nodesWithInputParams={nodesWithInputParams}
+            nodeStyleOverrides={nodeStyleOverrides}
             inputOutputDataNodes={inputOutputDataNodes}
             focusMode={focusMode}
             orientation={orientation}
@@ -992,6 +1047,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSlicing: state.visible.slicing,
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
+  theme: state.theme,
   ...ownProps,
 });
 
