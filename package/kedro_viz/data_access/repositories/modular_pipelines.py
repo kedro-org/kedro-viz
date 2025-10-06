@@ -115,6 +115,7 @@ class ModularPipelinesRepository:
         """
 
         if modular_pipeline_id not in self.tree:
+            # TODO: Need to add node_extras
             modular_pipeline_node = GraphNode.create_modular_pipeline_node(
                 modular_pipeline_id
             )
