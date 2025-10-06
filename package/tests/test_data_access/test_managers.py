@@ -29,6 +29,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.models.metadata import NodeExtras
 
 
 def identity(x):
@@ -47,20 +48,20 @@ class TestDataAccessManager:
         assert isinstance(data_access_manager.modular_pipelines, defaultdict)
         assert isinstance(data_access_manager.edges, defaultdict)
         assert isinstance(data_access_manager.node_dependencies, defaultdict)
-        assert data_access_manager.dataset_stats == {}
+        assert data_access_manager.node_extras == {}
 
     def test_manager_reset_fields(self, data_access_manager: DataAccessManager):
         """Test that reset_fields correctly reinitializes the instance variables."""
         # Modify fields to non-default values
         data_access_manager.catalog = None
-        data_access_manager.dataset_stats = {"test_key": "test_value"}
+        data_access_manager.node_extras = {"test_key": NodeExtras(stats={"rows": 100})}
 
         data_access_manager.reset_fields()
 
         # Assert fields are reset to default
         assert isinstance(data_access_manager.catalog, CatalogRepository)
-        assert isinstance(data_access_manager.dataset_stats, dict)
-        assert data_access_manager.dataset_stats == {}
+        assert isinstance(data_access_manager.node_extras, dict)
+        assert data_access_manager.node_extras == {}
 
 
 class TestAddCatalog:

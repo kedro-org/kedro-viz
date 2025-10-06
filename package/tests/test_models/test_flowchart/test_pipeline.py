@@ -13,7 +13,7 @@ class TestGraphNodePipelines:
         pipeline = GraphNode.create_modular_pipeline_node("data_engineering")
         assert pipeline.name == "data_engineering"
 
-    def test_add_node_to_pipeline(self):
+    def test_add_node_to_pipeline(self, example_node_extras):
         default_pipeline = RegisteredPipeline(id="__default__")
         another_pipeline = RegisteredPipeline(id="testing")
         kedro_dataset = CSVDataset(filepath="foo.csv")
@@ -23,7 +23,7 @@ class TestGraphNodePipelines:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
-            stats={"rows": 10, "columns": 2, "file_size": 1048},
+            node_extras=example_node_extras,
             modular_pipelines=set(),
         )
         assert data_node.pipelines == set()

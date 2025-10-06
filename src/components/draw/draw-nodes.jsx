@@ -6,7 +6,6 @@ import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
 import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
 import { workFlowStatuses } from '../../config';
-
 import './styles/index.scss';
 
 /**
@@ -17,6 +16,7 @@ export function DrawNodes({
   nodeActive = {},
   nodeSelected = {},
   nodeTypeDisabled = {},
+  nodeStyleOverrides = {},
   hoveredParameters = null,
   hoveredFocusMode = null,
   nodesWithInputParams = {},
@@ -295,6 +295,102 @@ export function DrawNodes({
     // Only include values that truly affect the computation inside this effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, orientation]);
+
+  // --- Apply theme-based node styling ---
+  useEffect(() => {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
+      return;
+    }
+    const { allNodes } = selections;
+
+    // Reset previously overridden styles
+    allNodes.each(function (node) {
+      const nodeGroup = select(this);
+      // Tracker
+      const appliedOverrides = nodeGroup.node().__appliedStyleOverrides;
+
+      if (appliedOverrides) {
+        // Reset the styles that were previously overridden
+        Object.entries(appliedOverrides).forEach(
+          ([elementSelector, styles]) => {
+            const element = nodeGroup.select(elementSelector);
+            Object.keys(styles).forEach((cssProperty) => {
+              element.style(cssProperty, null);
+            });
+          }
+        );
+
+        // Clear the tracking
+        delete nodeGroup.node().__appliedStyleOverrides;
+        nodeGroup.classed('kedro-viz-custom-styled', false);
+      }
+    });
+
+    // Then apply new style overrides
+    allNodes.each(function (node) {
+      if (
+        node.extras &&
+        node.extras.styles &&
+        Object.keys(node.extras.styles).length > 0
+      ) {
+        const nodeGroup = select(this);
+        const nodeStyles = nodeStyleOverrides[node.id];
+
+        if (nodeStyles) {
+          // Initialize tracking object for current node
+          const appliedOverrides = {};
+
+          Object.entries(nodeStyles).forEach(([key, value]) => {
+            const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+
+            // Background properties
+            if (
+              key.toLowerCase().includes('background') ||
+              ['fill', 'stroke', 'strokeWidth', 'opacity'].includes(key)
+            ) {
+              const bgElement = nodeGroup.select('.pipeline-node__bg');
+              bgElement.style(cssProperty, value, 'important');
+
+              // Track this override
+              if (!appliedOverrides['.pipeline-node__bg']) {
+                appliedOverrides['.pipeline-node__bg'] = {};
+              }
+              appliedOverrides['.pipeline-node__bg'][cssProperty] = value;
+            }
+
+            // Text properties
+            else if (
+              key.toLowerCase().includes('text') ||
+              key.toLowerCase().includes('font') ||
+              ['color'].includes(key)
+            ) {
+              const textElement = nodeGroup.select('.pipeline-node__text');
+              const iconElement = nodeGroup.select('.pipeline-node__icon');
+
+              [
+                { element: textElement, selector: '.pipeline-node__text' },
+                { element: iconElement, selector: '.pipeline-node__icon' },
+              ].forEach(({ element, selector }) => {
+                const finalProperty = key === 'color' ? 'fill' : cssProperty;
+                element.style(finalProperty, value, 'important');
+
+                // Track this override
+                if (!appliedOverrides[selector]) {
+                  appliedOverrides[selector] = {};
+                }
+                appliedOverrides[selector][finalProperty] = value;
+              });
+            }
+          });
+
+          // Store the tracking data on the DOM node
+          nodeGroup.node().__appliedStyleOverrides = appliedOverrides;
+        }
+        nodeGroup.classed('kedro-viz-custom-styled', true);
+      }
+    });
+  }, [nodeStyleOverrides]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }

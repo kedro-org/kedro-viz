@@ -99,6 +99,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk.data_processing"],
             "type": "task",
             "parameters": {"uk.data_processing.train_test_split": 0.1},
+            "node_extras": None,
         },
         {
             "id": "13399a82",
@@ -109,7 +110,7 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": "raw",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "f0ebef01",
@@ -120,7 +121,7 @@ def assert_example_data(response_data):
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "0ecea0de",
@@ -131,7 +132,13 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
-            "stats": {"columns": 12, "rows": 29768},
+            "node_extras": {
+                "stats": {"rows": 29768, "columns": 12},
+                "styles": {
+                    "color": "white",
+                    "themes": {"dark": {"fill": "orange"}, "light": {"fill": "green"}},
+                },
+            },
         },
         {
             "id": "f2b25286",
@@ -144,6 +151,7 @@ def assert_example_data(response_data):
                 "train_test_split": 0.1,
                 "num_epochs": 1000,
             },
+            "node_extras": None,
         },
         {
             "id": "f1f1425b",
@@ -154,7 +162,7 @@ def assert_example_data(response_data):
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "d5a8b994",
@@ -165,7 +173,7 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "uk.data_processing",
@@ -176,7 +184,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "uk.data_science",
@@ -187,7 +195,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "uk",
@@ -198,7 +206,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
@@ -474,6 +482,7 @@ def assert_example_transcoded_data(response_data):
             "type": "task",
             "modular_pipelines": None,
             "parameters": {"uk.data_processing.train_test_split": 0.1},
+            "node_extras": None,
         },
         {
             "id": "7c58d8e6",
@@ -484,7 +493,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "f0ebef01",
@@ -495,7 +504,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "0ecea0de",
@@ -506,7 +515,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "7e29e365",
@@ -516,6 +525,7 @@ def assert_example_transcoded_data(response_data):
             "type": "task",
             "modular_pipelines": None,
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
+            "node_extras": None,
         },
         {
             "id": "f1f1425b",
@@ -526,7 +536,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
-            "stats": None,
+            "node_extras": None,
         },
         {
             "id": "1d06a0d7",
@@ -537,8 +547,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
-            "stats": None,
+            "node_extras": None,
         },
     ]
-
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
