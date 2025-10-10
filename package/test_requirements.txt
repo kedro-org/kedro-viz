@@ -14,7 +14,7 @@ pytest~=8.4
 pytest-asyncio~=1.2
 pytest-mock~=3.14
 pytest-cov~=7.0
-ruff==0.11.2
+ruff==0.13.3
 trufflehog~=2.2
 httpx~=0.28.1
 pathspec>=0.12.1
