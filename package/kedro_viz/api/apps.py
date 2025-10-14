@@ -154,7 +154,10 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
         expected_base = Path(api_dir).resolve() / subdirectory
 
         # Ensure the resolved path is within the expected directory
-        if not full_path.resolve().is_relative_to(expected_base):
+        try:
+            full_path_resolved = full_path.resolve(strict=False)
+            full_path_resolved.relative_to(expected_base)
+        except ValueError:
             raise HTTPException(status_code=400, detail="Invalid path")
 
         return full_path
