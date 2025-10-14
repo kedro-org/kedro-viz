@@ -127,6 +127,38 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
     app = _create_base_api_app()
     app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
+    def _get_safe_path(subdirectory: str, path_component: str) -> Path:
+        """Safely construct and validate a path within the API directory.
+
+        Args:
+            subdirectory: The subdirectory within api_dir (e.g., 'nodes', 'pipelines')
+            path_component: The user-provided path component to validate
+
+        Returns:
+            The validated Path object
+
+        Raises:
+            HTTPException: If the path component is invalid or attempts path traversal
+        """
+        # Reject path traversal attempts and absolute paths
+        if (
+            ".." in path_component
+            or "/" in path_component
+            or "\\" in path_component
+            or path_component.startswith(".")
+        ):
+            raise HTTPException(status_code=400, detail="Invalid path component")
+
+        # Construct and validate the full path
+        full_path = Path(api_dir) / subdirectory / path_component
+        expected_base = Path(api_dir).resolve() / subdirectory
+
+        # Ensure the resolved path is within the expected directory
+        if not full_path.resolve().is_relative_to(expected_base):
+            raise HTTPException(status_code=400, detail="Invalid path")
+
+        return full_path
+
     @app.get("/")
     async def index():
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
@@ -138,14 +170,16 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
+        node_path = _get_safe_path("nodes", node_id)
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
+            node_path.read_text(encoding="utf8")
         )
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
+        pipeline_path = _get_safe_path("pipelines", pipeline_id)
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
+            pipeline_path.read_text(encoding="utf8")
         )
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
