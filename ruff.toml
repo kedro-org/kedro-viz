@@ -33,6 +33,7 @@ ignore = [
     "B030", # Except handler is something other than exception class
     "C405", # Inconsistent definition of literal collections
     "PLR2004", # Magic values in comparisons
+    "PLC0415", # Ignore import at top-level for efficiency
 ]
 
 [lint.per-file-ignores]
