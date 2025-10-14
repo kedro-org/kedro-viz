@@ -111,8 +111,10 @@ export const replaceAngleBracketMatches = (str) => {
  * @returns {String} The string with or without removed values
  */
 export const stripNamespace = (str) => {
-  const pattern = /[A-Za-z0-9_-]+\./g;
-  return str.replace(pattern, '');
+  // Avoid ReDoS by using string operations instead of regex
+  // This removes all namespace prefixes (e.g., "a.b.c" -> "c")
+  const lastDotIndex = str.lastIndexOf('.');
+  return lastDotIndex >= 0 ? str.substring(lastDotIndex + 1) : str;
 };
 
 /**
