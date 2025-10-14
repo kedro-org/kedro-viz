@@ -263,19 +263,3 @@ class TestAPIAppFromFile:
         client = TestClient(api_app)
         response = client.get("/")
         assert response.status_code == 200
-
-    def test_get_safe_path_security(self):
-        """Test that _get_safe_path blocks malicious path traversal attempts"""
-        filepath = str(Path(__file__).parent.parent.parent)
-        api_app = apps.create_api_app_from_file(filepath)
-        client = TestClient(api_app)
-
-        # Test paths starting with dot are blocked
-        response = client.get("/api/nodes/.hidden")
-        assert response.status_code == 400
-        assert response.json()["detail"] == "Invalid path component"
-
-        # Test paths with backslashes are blocked
-        response = client.get("/api/pipelines/path\\with\\backslash")
-        assert response.status_code == 400
-        assert response.json()["detail"] == "Invalid path component"

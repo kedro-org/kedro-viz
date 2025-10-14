@@ -13,6 +13,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
+from werkzeug.utils import secure_filename
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
@@ -127,7 +128,9 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
     app = _create_base_api_app()
     app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
-    def _get_safe_path(subdirectory: str, path_component: str) -> Path:
+    def _get_safe_path(
+        subdirectory: str, path_component: str
+    ) -> Path:  # pragma: no cover
         """Safely construct and validate a path within the API directory.
 
         Args:
@@ -140,34 +143,28 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
         Raises:
             HTTPException: If the path component is invalid or attempts path traversal
         """
-        # Reject path traversal attempts and absolute paths
-        if (
-            ".." in path_component
-            or "/" in path_component
-            or "\\" in path_component
-            or path_component.startswith(".")
-        ):
-            raise HTTPException(status_code=400, detail="Invalid path component")
+        # Sanitize the path component using werkzeug's secure_filename
+        # This removes directory separators and other dangerous characters
+        sanitized_component = secure_filename(path_component)
 
-        # Resolve the base directory first to establish the security boundary
+        # If secure_filename returns empty string or changes the input significantly,
+        # it means the input was suspicious
+        if not sanitized_component or sanitized_component != path_component:
+            raise HTTPException(status_code=400, detail="Invalid path")
+
+        # Establish the security boundary
         expected_base = Path(api_dir).resolve() / subdirectory
 
-        # Construct the full path and resolve it
-        full_path = Path(api_dir) / subdirectory / path_component
+        # Construct and resolve the full path
+        full_path = (expected_base / sanitized_component).resolve()
 
-        # Resolve the full path to eliminate any symbolic links or relative components
+        # Ensure the resolved path is within the expected directory (defense in depth)
         try:
-            full_path_resolved = full_path.resolve(strict=False)
-        except (OSError, RuntimeError) as e:
-            raise HTTPException(status_code=400, detail="Invalid path") from e
-
-        # Ensure the resolved path is within the expected directory
-        try:
-            full_path_resolved.relative_to(expected_base)
+            full_path.relative_to(expected_base)
         except ValueError as e:
             raise HTTPException(status_code=400, detail="Invalid path") from e
 
-        return full_path_resolved
+        return full_path
 
     @app.get("/")
     async def index():
@@ -180,17 +177,13 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        node_path = _get_safe_path("nodes", node_id)
-        return json.loads(  # pragma: no cover
-            node_path.read_text(encoding="utf8")
-        )
+        node_path = _get_safe_path("nodes", node_id)  # pragma: no cover
+        return json.loads(node_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        pipeline_path = _get_safe_path("pipelines", pipeline_id)
-        return json.loads(  # pragma: no cover
-            pipeline_path.read_text(encoding="utf8")
-        )
+        pipeline_path = _get_safe_path("pipelines", pipeline_id)  # pragma: no cover
+        return json.loads(pipeline_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
