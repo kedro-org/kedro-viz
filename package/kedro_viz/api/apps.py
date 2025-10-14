@@ -149,18 +149,25 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
         ):
             raise HTTPException(status_code=400, detail="Invalid path component")
 
-        # Construct and validate the full path
-        full_path = Path(api_dir) / subdirectory / path_component
+        # Resolve the base directory first to establish the security boundary
         expected_base = Path(api_dir).resolve() / subdirectory
+
+        # Construct the full path and resolve it
+        full_path = Path(api_dir) / subdirectory / path_component
+
+        # Resolve the full path to eliminate any symbolic links or relative components
+        try:
+            full_path_resolved = full_path.resolve(strict=False)
+        except (OSError, RuntimeError) as e:
+            raise HTTPException(status_code=400, detail="Invalid path") from e
 
         # Ensure the resolved path is within the expected directory
         try:
-            full_path_resolved = full_path.resolve(strict=False)
             full_path_resolved.relative_to(expected_base)
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid path")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail="Invalid path") from e
 
-        return full_path
+        return full_path_resolved
 
     @app.get("/")
     async def index():
