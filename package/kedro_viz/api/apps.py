@@ -131,40 +131,23 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
     def _get_safe_path(
         subdirectory: str, path_component: str
     ) -> Path:  # pragma: no cover
-        """Safely construct and validate a path within the API directory.
-
-        Args:
-            subdirectory: The subdirectory within api_dir (e.g., 'nodes', 'pipelines')
-            path_component: The user-provided path component to validate
-
-        Returns:
-            The validated Path object
-
-        Raises:
-            HTTPException: If the path component is invalid or attempts path traversal
-        """
-        # Sanitize the path component using werkzeug's secure_filename
-        # This removes directory separators and other dangerous characters
-        sanitized_component = secure_filename(path_component)
-
-        # If secure_filename returns empty string or changes the input significantly,
-        # it means the input was suspicious
-        if not sanitized_component or sanitized_component != path_component:
+        """Return a validated safe path within the API directory."""
+        sanitized = secure_filename(path_component)
+        if not sanitized or sanitized != path_component:
             raise HTTPException(status_code=400, detail="Invalid path")
 
-        # Establish the security boundary
-        expected_base = Path(api_dir).resolve() / subdirectory
+        base = Path(api_dir).resolve() / subdirectory
+        path = (base / sanitized).resolve()
 
-        # Construct and resolve the full path
-        full_path = (expected_base / sanitized_component).resolve()
-
-        # Ensure the resolved path is within the expected directory (defense in depth)
         try:
-            full_path.relative_to(expected_base)
+            path.relative_to(base)
         except ValueError as e:
             raise HTTPException(status_code=400, detail="Invalid path") from e
 
-        return full_path
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Not found")
+
+        return path
 
     @app.get("/")
     async def index():
