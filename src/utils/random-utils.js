@@ -38,9 +38,12 @@ export const getSeedFromURL = () => {
     url.searchParams.set('seed', seed);
   }
   if (typeof jest === 'undefined') {
+    // Separate user-controlled values from format string to prevent format string injection
     console.info(
-      `%cRandom data seed: ${seed}\nTo reuse this layout, visit ${url.toString()}`,
-      'font-weight: bold'
+      '%cRandom data seed: %s\nTo reuse this layout, visit %s',
+      'font-weight: bold',
+      seed,
+      url.toString()
     );
   }
   return seed;

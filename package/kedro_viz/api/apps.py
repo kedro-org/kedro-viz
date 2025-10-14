@@ -127,6 +127,44 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
     app = _create_base_api_app()
     app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
+    def _safe_read_file(base_dir: Path, subdir: str, file_id: str) -> str:
+        """Safely read a file by validating the path stays within base_dir.
+
+        Args:
+            base_dir: The base directory to read from
+            subdir: Subdirectory within base_dir
+            file_id: The file identifier from user input
+
+        Returns:
+            File contents as string
+
+        Raises:
+            HTTPException: If path traversal is detected or file not found
+        """
+        # Construct the full path
+        if subdir:
+            file_path = base_dir / subdir / file_id
+        else:
+            file_path = base_dir / file_id
+
+        # Resolve to absolute path to detect traversal attempts
+        try:
+            resolved_path = file_path.resolve()
+            base_resolved = base_dir.resolve()
+
+            # Ensure the resolved path is within the base directory
+            if not str(resolved_path).startswith(str(base_resolved)):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Invalid file path"
+                )
+
+            return resolved_path.read_text(encoding="utf8")
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail="File not found")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error reading file: {str(e)}")
+
     @app.get("/")
     async def index():
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
@@ -134,30 +172,30 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads((Path(api_dir) / "main").read_text(encoding="utf8"))
+        return json.loads(_safe_read_file(Path(api_dir), "", "main"))
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
+            _safe_read_file(Path(api_dir), "nodes", node_id)
         )
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
+            _safe_read_file(Path(api_dir), "pipelines", pipeline_id)
         )
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
+            _safe_read_file(Path(api_dir), "", "deploy-viz-metadata")
         )
 
     @app.get("/api/run-status", response_class=JSONResponse)
     async def get_run_status():
         return json.loads(  # pragma: no cover
-            (Path(api_dir) / "run-status").read_text(encoding="utf8")
+            _safe_read_file(Path(api_dir), "", "run-status")
         )
 
     return app
