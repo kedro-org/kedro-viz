@@ -13,6 +13,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
+from werkzeug.utils import secure_filename
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
@@ -127,6 +128,27 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
     app = _create_base_api_app()
     app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
+    def _get_safe_path(
+        subdirectory: str, path_component: str
+    ) -> Path:  # pragma: no cover
+        """Return a validated safe path within the API directory."""
+        sanitized = secure_filename(path_component)
+        if not sanitized or sanitized != path_component:
+            raise HTTPException(status_code=400, detail="Invalid path")
+
+        base = Path(api_dir).resolve() / subdirectory
+        path = (base / sanitized).resolve()
+
+        try:
+            path.relative_to(base)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail="Invalid path") from e
+
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Not found")
+
+        return path
+
     @app.get("/")
     async def index():
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
@@ -138,15 +160,13 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
-        )
+        node_path = _get_safe_path("nodes", node_id)  # pragma: no cover
+        return json.loads(node_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
-        )
+        pipeline_path = _get_safe_path("pipelines", pipeline_id)  # pragma: no cover
+        return json.loads(pipeline_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
