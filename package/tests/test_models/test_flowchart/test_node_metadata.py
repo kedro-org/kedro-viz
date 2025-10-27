@@ -68,6 +68,11 @@ def full_func(a, b, c, x):
 partial_func = partial(full_func, 3, 1, 4)
 
 
+class ExampleTask:
+    def run(self, data):
+        return data
+
+
 class TestGraphNodeMetadata:
     @pytest.mark.parametrize(
         "dataset,has_metadata", [(MemoryDataset(data=1), True), (None, False)]
@@ -200,6 +205,26 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert not task_node_metadata.parameters
+
+    def test_task_node_metadata_with_class_method(self):
+        task = ExampleTask()
+        kedro_node = node(
+            task.run,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(
+            kedro_node, "identity_node", set(["namespace"])
+        )
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code is not None
+        assert "def run(self, data):" in task_node_metadata.code
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
 
     def test_task_node_metadata_with_partial_func(self):
         kedro_node = node(
