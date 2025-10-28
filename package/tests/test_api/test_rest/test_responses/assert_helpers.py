@@ -30,6 +30,7 @@ def assert_nodes_equal(response_nodes, expected_nodes):
     for response_node, expected_node in zip(
         sorted(response_nodes, key=node_sort_keys),
         sorted(expected_nodes, key=node_sort_keys),
+        strict=True,
     ):
         # since tags and pipelines are Sets, which are unordered,
         # to assert them, we have to sort first

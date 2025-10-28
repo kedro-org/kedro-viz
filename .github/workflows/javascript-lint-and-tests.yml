@@ -1,6 +1,6 @@
 name: Run javascript linters and tests on Kedro-Viz
 # Runs JavaScript linting, unit tests, and end-to-end tests on 
-# Kedro-Viz for ubuntu-latest operating systems and Python 3.9.
+# Kedro-Viz for ubuntu-latest operating systems and Python 3.10.
 
 on:
   push:
@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 env:
-  PYTHON_VERSION: '3.9'
+  PYTHON_VERSION: '3.10'
 
 jobs:
     javascript_lint_and_tests:
@@ -34,7 +34,7 @@ jobs:
             uses: actions/cache@v4
             with:
               path: ~/.cache/pip
-              key: ubuntu-latest-python-3.9            
+              key: ubuntu-latest-python-3.10            
 
           - name: Install Kedro and other Python Dependencies
             uses: "./.github/actions/install_kedro_and_python_dependencies"

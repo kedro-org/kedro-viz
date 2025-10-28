@@ -9,7 +9,7 @@ authors = [
 ]
 description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
 readme = {file = "README.md", content-type = "text/markdown"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "pipelines",
     "machine learning",
