@@ -10,6 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
  -  Introduced custom colours support for nodes and datasets. (#2487,#2488,#2495)
+ - Dropped support for Python 3.9 (EOL Oct 2025). Minimum supported version is now 3.10. (#2511)
 
 ## Bug fixes and other changes
  - Add HTML preview support for text/markdown datasets. (#2490)
