@@ -27,4 +27,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           timeout: ${{ env.TIMEOUT }}
           interval: ${{ env.INTERVAL }}
-          ignored: 'ci/circleci: win_unit_tests-3.9,ci/circleci: win_unit_tests-3.10,ci/circleci: win_unit_tests-3.8,ci/circleci: unit_tests-3.10,ci/circleci: unit_tests-3.8,ci/circleci: unit_tests-3.9,ci/circleci: win_e2e_tests-3.10,ci/circleci: win_e2e_tests-3.9,ci/circleci: win_e2e_tests-3.8,ci/circleci: e2e_tests-3.8,ci/circleci: e2e_tests-3.9,ci/circleci: e2e_tests-3.10,ci/circleci: lint-3.8,ci/circleci: lint-3.9,ci/circleci: lint-3.10,ci/circleci: javascript_lint_and_tests,ci/circleci: check-updated-files,ci/circleci: all_circleci_checks_succeeded,CircleCI Pipeline, runner / vale'
+          ignored: 'ci/circleci: win_unit_tests-3.10,ci/circleci: unit_tests-3.10,ci/circleci: win_e2e_tests-3.10,ci/circleci: e2e_tests-3.10,ci/circleci: lint-3.10,ci/circleci: javascript_lint_and_tests,ci/circleci: check-updated-files,ci/circleci: all_circleci_checks_succeeded,CircleCI Pipeline, runner / vale'

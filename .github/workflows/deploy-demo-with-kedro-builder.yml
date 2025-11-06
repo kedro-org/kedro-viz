@@ -1,11 +1,7 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Simple workflow for deploying static content to GitHub Pages with Kedro Builder
+name: Deploy static content to Pages with Kedro Builder
 
 on:
-  # Runs on pushes targeting the demo branch
-  push:
-    branches: ["demo"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -34,17 +30,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: demo
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}    
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache python packages for Linux
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ubuntu-latest-python-3.10            
+          key: ubuntu-latest-python-3.10
 
       - name: Install Kedro and other Python Dependencies
         uses: "./.github/actions/install_kedro_and_python_dependencies"
@@ -70,6 +68,21 @@ jobs:
           fi
         shell: bash
 
+      - name: Checkout Kedro Builder github-pages branch
+        uses: actions/checkout@v4
+        with:
+          repository: kedro-org/kedro-builder
+          ref: gh-pages
+          token: ${{ secrets.KEDRO_BUILDER_READ_TOKEN }}
+          path: temp-kedro-builder
+
+      - name: Copy Kedro Builder to build directory
+        run: |
+          mkdir -p demo-project/build/kedro-builder
+          cp -r temp-kedro-builder/* demo-project/build/kedro-builder/
+          echo "Kedro Builder contents copied to demo-project/build/kedro-builder"
+          ls -la demo-project/build/kedro-builder
+        shell: bash
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

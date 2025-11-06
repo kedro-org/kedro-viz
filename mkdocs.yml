@@ -181,3 +181,12 @@ nav:
     - Other Documentation:
         - Kedro-Viz CLI reference: cli-docs.md
   - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/stable/
+
+not_in_nav: |
+  readme.md
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
