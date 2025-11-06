@@ -83,8 +83,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_code(cls, code):
         # this is required to handle partial, curry functions
-        if inspect.isfunction(cls.kedro_node.func):
-            code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
+        func = cls.kedro_node.func
+
+        if inspect.ismethod(func):
+            func = func.__func__
+
+        if inspect.isfunction(func):
+            code = inspect.getsource(_extract_wrapped_func(func))
             return code
 
         return None
@@ -93,10 +98,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_filepath(cls, filepath):
         # this is required to handle partial, curry functions
-        if inspect.isfunction(cls.kedro_node.func):
-            code_full_path = (
-                Path(inspect.getfile(cls.kedro_node.func)).expanduser().resolve()
-            )
+        func = cls.kedro_node.func
+
+        if inspect.ismethod(func):
+            func = func.__func__
+
+        if inspect.isfunction(func):
+            code_full_path = Path(inspect.getfile(func)).expanduser().resolve()
 
             try:
                 filepath = code_full_path.relative_to(Path.cwd().parent)

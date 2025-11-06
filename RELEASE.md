@@ -14,6 +14,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Add HTML preview support for text/markdown datasets. (#2490)
+ - Display source metadata for task nodes defined as bound methods.
 
 # Release 12.1.0
 
