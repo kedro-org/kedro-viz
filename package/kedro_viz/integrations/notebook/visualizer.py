@@ -35,10 +35,11 @@ DEFAULT_VIZ_OPTIONS = {
     "height": "600px",
 }
 
-DEFAULT_JS_URL = (
-    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@chore/esm_webpack_vite/esm/kedro-viz.mjs"
+DEFAULT_JS_URL = "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@chore/esm_webpack_vite/esm/kedro-viz.mjs"
+DEFAULT_CSS_URL = (
+    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@esm_webpack_vite/esm/kedro-viz.css"
 )
-DEFAULT_CSS_URL = ("https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@esm_webpack_vite/esm/kedro-viz.css")
+
 
 class NotebookVisualizer:
     """Represent a Kedro-Viz visualization instance in a notebook"""
@@ -96,7 +97,9 @@ class NotebookVisualizer:
         <head>
             <meta charset='UTF-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel="stylesheet" type="text/css" href=""" + self.css_url + """>
+            <link rel="stylesheet" type="text/css" href="""
+            + self.css_url
+            + """>
             <title>Kedro-Viz</title>
         </head>
         <body>
