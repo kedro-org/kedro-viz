@@ -210,7 +210,7 @@ For example, prefer `getObject` instead `getObj`, unless it is practically unavo
 
 ### Imports
 
-Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
+Although it works during local development, you should avoid importing non-standard file types like .scss and .svg directly in JavaScript. These require special bundler handling and may break when Kedro-Viz is consumed as a library. The lib-test suite helps ensure Kedro-Viz works correctly when imported into a standard JS application.
 
 ### Testing
 
