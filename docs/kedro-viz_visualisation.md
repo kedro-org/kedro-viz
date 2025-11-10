@@ -356,7 +356,8 @@ NotebookVisualizer(
         "width": "100%",
         "height": "600px",   
     },
-    js_url="optional_url_for_viz_bundle"
+    js_url="optional_url_for_viz_bundle",
+    css_url="optional_url_for_css_bundle"
 )
 ```
 
