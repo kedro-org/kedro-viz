@@ -15,16 +15,22 @@ const sanitizeRegexPlugin = () => {
           // Fix overly permissive character range [$_A-z] -> [$_A-Za-z]
           code = code.replace(/\[\$_A-z\]/g, '[$_A-Za-z]');
           
-          // Fix incomplete string escaping - target the exact problematic pattern
+          // Fix incomplete string escaping in escapeGroup function specifically
           code = code.replace(
-            '"\\\\$1"',
-            '"\\\\\\\\$1"'
+            /return\s+group\.replace\(\/\(\[=!:\$\\?\/\(\)\]\)\/g,\s*"\\\\?\$1"\);/g,
+            'return group.replace(/([=!:$\\/()])/g, "\\\\\\\\$1");'
           );
           
-          // Also fix variations with single quotes
+          // Fix the exact pattern from the error
           code = code.replace(
-            "'\\\\$1'",
-            "'\\\\\\\\$1'"
+            'group.replace(/([=!:$\\/()])/g, "\\\\$1")',
+            'group.replace(/([=!:$\\/()])/g, "\\\\\\\\$1")'
+          );
+          
+          // Broader pattern for any replace with this specific regex
+          code = code.replace(
+            /\.replace\(\/\(\[=!:\$\\\/\(\)\]\)\/g,\s*"\\\\?\$1"\)/g,
+            '.replace(/([=!:$\\/()])/g, "\\\\\\\\$1")'
           );
           
           // Fix other problematic regex patterns

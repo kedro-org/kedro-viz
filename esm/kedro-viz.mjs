@@ -19789,10 +19789,10 @@ function requirePathToRegexp() {
     };
   }
   function escapeString(str) {
-    return str.replace(/([.+*?=^!:${}()[\]|\/\\])/g, "\\\\$1");
+    return str.replace(/([.+*?=^!:${}()[\]|\/\\])/g, "\\$1");
   }
   function escapeGroup(group) {
-    return group.replace(/([=!:$\/()])/g, "\\$1");
+    return group.replace(/([=!:$\/()])/g, "\\\\$1");
   }
   function attachKeys(re, keys) {
     re.keys = keys;
