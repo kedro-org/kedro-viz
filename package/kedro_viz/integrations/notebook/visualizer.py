@@ -37,7 +37,7 @@ DEFAULT_VIZ_OPTIONS = {
 
 DEFAULT_JS_URL = "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@chore/esm_webpack_vite/esm/kedro-viz.mjs"
 DEFAULT_CSS_URL = (
-    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@esm_webpack_vite/esm/kedro-viz.css"
+    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@chore/esm_webpack_vite/esm/kedro-viz.css"
 )
 
 
@@ -97,9 +97,9 @@ class NotebookVisualizer:
         <head>
             <meta charset='UTF-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <link rel="stylesheet" type="text/css" href="""
+            <link rel="stylesheet" type="text/css" href='"""
             + self.css_url
-            + """>
+            + """'>
             <title>Kedro-Viz</title>
         </head>
         <body>
