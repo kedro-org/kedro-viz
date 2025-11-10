@@ -2,8 +2,43 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// Plugin to sanitize problematic regex patterns in the bundle
+const sanitizeRegexPlugin = () => {
+  return {
+    name: 'sanitize-regex',
+    generateBundle(options, bundle) {
+      Object.keys(bundle).forEach(fileName => {
+        const chunk = bundle[fileName];
+        if (chunk.type === 'chunk' && chunk.code) {
+          let code = chunk.code;
+          
+          // Fix overly permissive character range [$_A-z] -> [$_A-Za-z]
+          code = code.replace(/\[\$_A-z\]/g, '[$_A-Za-z]');
+          
+          // Fix incomplete string escaping - target the exact problematic pattern
+          code = code.replace(
+            '"\\\\$1"',
+            '"\\\\\\\\$1"'
+          );
+          
+          // Also fix variations with single quotes
+          code = code.replace(
+            "'\\\\$1'",
+            "'\\\\\\\\$1'"
+          );
+          
+          // Fix other problematic regex patterns
+          code = code.replace(/illegal:\s*\/\#\(\?\!\[\$_A-z\]\)\//g, 'illegal: /#(?![\\$_A-Za-z])/');
+          
+          chunk.code = code;
+        }
+      });
+    },
+  };
+};
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), sanitizeRegexPlugin()],
   build: {
     outDir: 'esm',
     emptyOutDir: true,

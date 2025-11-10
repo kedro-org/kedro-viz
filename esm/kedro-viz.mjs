@@ -19789,7 +19789,7 @@ function requirePathToRegexp() {
     };
   }
   function escapeString(str) {
-    return str.replace(/([.+*?=^!:${}()[\]|\/\\])/g, "\\$1");
+    return str.replace(/([.+*?=^!:${}()[\]|\/\\])/g, "\\\\$1");
   }
   function escapeGroup(group) {
     return group.replace(/([=!:$\/()])/g, "\\$1");
@@ -39983,7 +39983,7 @@ function requireJavascript() {
       keywords: KEYWORDS$1,
       // this will be extended by TypeScript
       exports: { PARAMS_CONTAINS },
-      illegal: /#(?![$_A-z])/,
+      illegal: /#(?![$_A-Za-z])/,
       contains: [
         hljs2.SHEBANG({
           label: "shebang",
