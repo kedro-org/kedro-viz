@@ -36,7 +36,10 @@ DEFAULT_VIZ_OPTIONS = {
 }
 
 DEFAULT_JS_URL = (
-    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@main/esm/kedro-viz.production.mjs"
+    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@main/esm/kedro-viz.mjs"
+)
+DEFAULT_CSS_URL = (
+    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@main/esm/kedro-viz.css"
 )
 
 
@@ -49,6 +52,7 @@ class NotebookVisualizer:
         catalog: Optional[DataCatalog] = None,
         options: Optional[Dict[str, Any]] = None,
         js_url: Optional[str] = None,
+        css_url: Optional[str] = None,
     ):
         """
         Initialize NotebookVisualizer.
@@ -59,6 +63,7 @@ class NotebookVisualizer:
             options: Visualization options.
             (Ref: https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md#configure-kedro-viz-with-options)
             js_url: Optional URL for the Kedro-Viz JS bundle.
+            css_url: Optional URL for the Kedro-Viz CSS bundle.
 
         Returns:
             A new ``NotebookVisualizer`` instance.
@@ -75,6 +80,7 @@ class NotebookVisualizer:
         self.options.setdefault("display", {})["globalNavigation"] = False  # type: ignore[index]
 
         self.js_url = js_url or DEFAULT_JS_URL
+        self.css_url = css_url or DEFAULT_CSS_URL
 
     def _load_viz_data(self) -> Optional[Any]:
         """Load pipeline and catalog data for visualization."""
@@ -93,6 +99,9 @@ class NotebookVisualizer:
         <head>
             <meta charset='UTF-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <link rel="stylesheet" type="text/css" href='"""
+            + self.css_url
+            + """'>
             <title>Kedro-Viz</title>
         </head>
         <body>
