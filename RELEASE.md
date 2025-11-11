@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release xxx
+# Release 13.0.0
 
 ## Major features and improvements
  - Introduced custom colours support for nodes and datasets. (#2487,#2488,#2495)
