@@ -50,8 +50,7 @@ dist/
 __pycache__/
 .pytest_cache/
 
-# testing [Revert]
-# package/*/html/
+package/*/html/
 package/*.log
 
 # Unit test / coverage reports
