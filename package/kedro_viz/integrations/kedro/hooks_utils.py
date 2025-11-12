@@ -37,7 +37,7 @@ def extract_file_paths(dataset: Any) -> List[str]:
     for attr in ("filepath", "_filepath"):
         file_path = getattr(dataset, attr, None)
         if file_path:
-            paths.append(file_path)
+            paths.append(str(file_path))
     return paths
 
 
