@@ -1,0 +1,306 @@
+{
+  "companies": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#5C4505",
+        "stroke": "#7D5C00",
+        "color": "#FFFFFF"
+      },
+      "light": {
+        "fill": "#5C4505",
+        "stroke": "#424242",
+        "color": "#FFFFFF"
+      }
+    }
+  },
+  "shuttles": {
+    "opacity": "0.9",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#B28400",
+        "stroke": "#FFBC00",
+        "color": "#000000"
+      },
+      "light": {
+        "fill": "#B28400",
+        "stroke": "#7D5C00",
+        "color": "#000000"
+      }
+    }
+  },
+  "reviews": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFBC00",
+        "stroke": "#FFE8A7",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFBC00",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "prm_spine_table": {
+    "opacity": "0.9",
+    "strokeWidth": "3px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE300",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFE300",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "combine_step": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE08A",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFEFC4",
+        "stroke": "#B28400",
+        "color": "#000000"
+      }
+    }
+  },
+  "train_evaluation.linear_regression.regressor": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#5C4505",
+        "stroke": "#7D5C00",
+        "color": "#FFFFFF"
+      },
+      "light": {
+        "fill": "#5C4505",
+        "stroke": "#424242",
+        "color": "#FFFFFF"
+      }
+    }
+  },
+  "train_evaluation.random_forest.regressor": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#B28400",
+        "stroke": "#FFBC00",
+        "color": "#000000"
+      },
+      "light": {
+        "fill": "#B28400",
+        "stroke": "#7D5C00",
+        "color": "#000000"
+      }
+    }
+  },
+  "apply_types_to_companies": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#FFBC00",
+        "stroke": "#FFE8A7",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFBC00",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "apply_types_to_shuttles": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE300",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFE300",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "apply_types_to_reviews": {
+    "opacity": "0.8",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE08A",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFEFC4",
+        "stroke": "#B28400",
+        "color": "#000000"
+      }
+    }
+  },
+  "split_data": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#5C4505",
+        "stroke": "#7D5C00",
+        "color": "#FFFFFF"
+      },
+      "light": {
+        "fill": "#5C4505",
+        "stroke": "#424242",
+        "color": "#FFFFFF"
+      }
+    }
+  },
+  "create_derived_features": {
+    "opacity": "0.85",
+    "strokeWidth": "1px",
+    "themes": {
+      "dark": {
+        "fill": "#B28400",
+        "stroke": "#FFBC00",
+        "color": "#000000"
+      },
+      "light": {
+        "fill": "#B28400",
+        "stroke": "#7D5C00",
+        "color": "#000000"
+      }
+    }
+  },
+  "joiner": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFBC00",
+        "stroke": "#FFE8A7",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFBC00",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "X_train": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE300",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFE300",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "X_test": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE08A",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFEFC4",
+        "stroke": "#B28400",
+        "color": "#000000"
+      }
+    }
+  },
+  "y_train": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#5C4505",
+        "stroke": "#7D5C00",
+        "color": "#FFFFFF"
+      },
+      "light": {
+        "fill": "#5C4505",
+        "stroke": "#424242",
+        "color": "#FFFFFF"
+      }
+    }
+  },
+  "y_test": {
+    "opacity": "0.8",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#B28400",
+        "stroke": "#FFBC00",
+        "color": "#000000"
+      },
+      "light": {
+        "fill": "#B28400",
+        "stroke": "#7D5C00",
+        "color": "#000000"
+      }
+    }
+  },
+  "model_input_table": {
+    "opacity": "0.9",
+    "strokeWidth": "3px",
+    "themes": {
+      "dark": {
+        "fill": "#FFBC00",
+        "stroke": "#FFE8A7",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFBC00",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  },
+  "feature_importance_output": {
+    "opacity": "0.85",
+    "strokeWidth": "2px",
+    "themes": {
+      "dark": {
+        "fill": "#FFE300",
+        "stroke": "#FFFFFF",
+        "color": "#242424"
+      },
+      "light": {
+        "fill": "#FFE300",
+        "stroke": "#B28400",
+        "color": "#242424"
+      }
+    }
+  }
+}
