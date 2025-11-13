@@ -58,7 +58,7 @@ def get_file_size(file_path: str) -> Optional[int]:
         ValueError,
         FileNotFoundError,
         AttributeError,
-        Exception,
+        Exception,  # noqa
     ) as exc:  # pragma: no cover
         logger.debug("Unable to get file size for %s: %s", file_path, exc)
         return None
