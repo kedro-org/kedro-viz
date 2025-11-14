@@ -35,7 +35,7 @@ reporting.cancellation_policy_grid:
   filepath: ${_base_location}/08_reporting/cancellation_policy_grid.png
 
 reporting.confusion_matrix:
-  type: matplotlib.MatplotlibWriter
+  type: matplotlib.MatplotlibDataset
   filepath: ${_base_location}/08_reporting/confusion_matrix.png
   versioned: true
 
