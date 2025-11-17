@@ -1,0 +1,2 @@
+# .lycheeignore: URLs and patterns to skip during lychee link checking
+http://127.0.0.1:8000/*

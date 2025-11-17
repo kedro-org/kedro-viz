@@ -2,25 +2,10 @@
 
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Union
+from typing import Dict, List, Optional, Set, Union
 
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io.core import DatasetError
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore
-
+from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
@@ -38,6 +23,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.services import layers_services
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
@@ -77,7 +63,7 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.dataset_stats = {}
+        self.node_extras: Dict[str, NodeExtras] = {}
 
     def reset_fields(self):
         """Reset all instance variables."""
@@ -85,7 +71,7 @@ class DataAccessManager:
 
     def resolve_dataset_factory_patterns(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Resolve dataset factory patterns in data catalog by matching
@@ -94,29 +80,24 @@ class DataAccessManager:
         """
         all_datasets = set()
         for pipeline in pipelines.values():
-            if hasattr(pipeline, "data_sets"):
-                # Support for Kedro 0.18.x
-                datasets = pipeline.data_sets()
-            else:
-                datasets = pipeline.datasets()
-
+            datasets = pipeline.datasets()
             all_datasets.update(datasets)
 
         for dataset_name in all_datasets:
             try:
-                catalog._get_dataset(dataset_name, suggest=False)
+                catalog.get(dataset_name)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
     def add_catalog(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Add the catalog to the CatalogRepository
 
         Args:
-            catalog: The DataCatalog or KedroDataCatalog instance to add.
+            catalog: The DataCatalog instance to add.
         """
         self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
@@ -132,24 +113,24 @@ class DataAccessManager:
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
-    def add_dataset_stats(self, stats_dict: Dict):
-        """Add dataset statistics (eg. rows, columns, file_size) as a dictionary.
-        This will help in showing the relevant stats in the metadata panel
+    def add_node_extras(self, node_extras_mapping: Dict[str, NodeExtras]):
+        """Add all node extras at once.
 
         Args:
-            stats_dict: A dictionary object loaded from stats.json file in the kedro project
+            node_extras_mapping: Dictionary mapping node names to NodeExtras objects
         """
+        self.node_extras = node_extras_mapping
 
-        self.dataset_stats = stats_dict
-
-    def get_stats_for_data_node(self, data_node_name: str) -> Union[Dict, None]:
-        """Returns the dataset statistics for the data node if found
+    def get_extras_for_node(self, node_name: str) -> Optional[NodeExtras]:
+        """Get NodeExtras instance for a node.
 
         Args:
-            The data node name for which we need the statistics
-        """
+            node_name: The name of the node
 
-        return self.dataset_stats.get(data_node_name, None)
+        Returns:
+            NodeExtras object or None
+        """
+        return self.node_extras.get(node_name)
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
@@ -237,7 +218,12 @@ class DataAccessManager:
             modular_pipeline_ids,
         ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(node, node_id, modular_pipeline_ids)
+            GraphNode.create_task_node(
+                node=node,
+                node_id=node_id,
+                modular_pipelines=modular_pipeline_ids,
+                node_extras=self.get_extras_for_node(node._name or node._func_name),
+            )
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -372,6 +358,7 @@ class DataAccessManager:
                 tags=set(),
                 parameters=dataset_obj,
                 modular_pipelines=None,
+                node_extras=self.get_extras_for_node(dataset_name),
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -380,9 +367,9 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 dataset=dataset_obj,
-                stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
+                node_extras=self.get_extras_for_node(_strip_transcoding(dataset_name)),
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)

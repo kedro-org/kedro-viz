@@ -8,13 +8,17 @@ on:
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 AM(UTC time)
-    - cron: 0 1 * * *  
+    - cron: 0 1 * * *
+
+permissions:
+  contents: read
+
 jobs:
   e2e_tests:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest ]
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
     uses: ./.github/workflows/e2e-tests.yml
     with:
       os: ${{ matrix.os }}
@@ -24,7 +28,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest ]
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
     uses: ./.github/workflows/unit-tests.yml
     with:
       os: ${{ matrix.os }}
@@ -34,7 +38,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
     uses: ./.github/workflows/lint.yml
     with:
       os: ${{ matrix.os }}

@@ -210,13 +210,13 @@ For example, prefer `getObject` instead `getObj`, unless it is practically unavo
 
 ### Imports
 
-Although it works in regular development (because this project uses React-Scripts), you should avoid importing non-standard file-types like `.scss` and `.svg` directly into JavaScript files. This is because these won't work without specific webpack loaders, and breaks when Kedro-Viz is imported into other projects. The `lib-test` testing suite exists partly for this reason, to check that Kedro-Viz still works when imported as a component library into a fairly standard JS app.
+Although it works during local development, you should avoid importing non-standard file types like .scss and .svg directly in JavaScript. These require special bundler handling and may break when Kedro-Viz is consumed as a library. The lib-test suite helps ensure Kedro-Viz works correctly when imported into a standard JS application.
 
 ### Testing
 
 In accordance with McKinsey standards, we aim to maintain at least a test coverage of at least 70% averaged across the codebase. As it's not practical to write tests for every JavaScript file, we usually aim for closer to 90% on most files, so that the project average continues to exceed the expected minimum standard.
 
-We use [Jest](https://jestjs.io/), [Enzyme](https://enzymejs.github.io/enzyme/), and [Testing Library](https://testing-library.com/) for JavaScript testing. Most of the older tests are written with Enzyme, but we are beginning to write more tests using Testing Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, Enzyme helper utilities can be found in `/src/utils/state.mock.js`.
+We use [Jest](https://jestjs.io/), and [React Testing Library](https://testing-library.com/) for JavaScript testing. Most of the older tests are written with React Testing Library, but we are beginning to write more tests using Testing Library as it is more flexible for testing certain browser APIs. Either is acceptable. To help with mocking the Redux store, React Testing Library helper utilities can be found in `/src/utils/state.mock.js`.
 
 Before you request a review on a PR, be sure to review it yourself [by comparing changes](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-comparing-branches-in-pull-requests) line by line. Make your amends with this style guide in mind.
 

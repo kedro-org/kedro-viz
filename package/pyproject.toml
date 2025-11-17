@@ -9,7 +9,7 @@ authors = [
 ]
 description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
 readme = {file = "README.md", content-type = "text/markdown"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "pipelines",
     "machine learning",
@@ -29,7 +29,16 @@ Tracker = "https://github.com/kedro-org/kedro-viz/issues"
 
 [project.optional-dependencies]
 docs = [
-   "kedro-sphinx-theme==2024.10.3",
+   "mkdocs>=1.6.1",
+   "mkdocs-material>=9.6.11",
+   "mkdocs-material-extensions>=1.3.1",
+   "mkdocs-mermaid2-plugin>=1.2.1",
+   "mkdocs-autorefs>=1.4.1",
+   "mkdocs-get-deps>=0.2.0",
+   "mkdocstrings>=0.29.1",
+   "mkdocstrings-python>=0.29.1",
+   "linkchecker>=10.2.1",
+   "mkdocs-llmstxt" # Required to generate the llm.txt file
 ]
 aws = ["s3fs>=2021.4"]
 azure = ["adlfs>=2021.4"]
@@ -43,6 +52,7 @@ line_magic = "kedro_viz.launchers.jupyter:run_viz"
 
 [project.entry-points."kedro.hooks"]
 kedro-dataset-stats = "kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+pipeline-run-hook = "kedro_viz.integrations.kedro.run_hooks:pipeline_run_hook"
 
 [tool.hatch.version]
 path = "kedro_viz/__init__.py"

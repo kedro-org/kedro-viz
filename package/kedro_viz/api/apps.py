@@ -13,6 +13,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
+from werkzeug.utils import secure_filename
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
@@ -67,7 +68,7 @@ def create_api_app_from_project(
     if Path(_HTML_DIR).is_dir():
         # The html is needed when kedro_viz is used in cli but not required when running
         # frontend e2e tests via Cypress
-        app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+        app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
 
     # every time the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
@@ -79,6 +80,7 @@ def create_api_app_from_project(
         return FileResponse(_HTML_DIR / "favicon.ico")
 
     @app.get("/")
+    @app.get("/workflow")
     async def index():
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()
@@ -124,7 +126,28 @@ def create_api_app_from_project(
 def create_api_app_from_file(api_dir: str) -> FastAPI:
     """Create an API from a json file."""
     app = _create_base_api_app()
-    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+    app.mount("/assets", StaticFiles(directory=_HTML_DIR / "assets"), name="assets")
+
+    def _get_safe_path(
+        subdirectory: str, path_component: str
+    ) -> Path:  # pragma: no cover
+        """Return a validated safe path within the API directory."""
+        sanitized = secure_filename(path_component)
+        if not sanitized or sanitized != path_component:
+            raise HTTPException(status_code=400, detail="Invalid path")
+
+        base = Path(api_dir).resolve() / subdirectory
+        path = (base / sanitized).resolve()
+
+        try:
+            path.relative_to(base)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail="Invalid path") from e
+
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Not found")
+
+        return path
 
     @app.get("/")
     async def index():
@@ -137,20 +160,24 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
-        )
+        node_path = _get_safe_path("nodes", node_id)  # pragma: no cover
+        return json.loads(node_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        return json.loads(  # pragma: no cover
-            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
-        )
+        pipeline_path = _get_safe_path("pipelines", pipeline_id)  # pragma: no cover
+        return json.loads(pipeline_path.read_text(encoding="utf8"))  # pragma: no cover
 
     @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
     async def get_deployed_viz_metadata():
         return json.loads(  # pragma: no cover
             (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
+        )
+
+    @app.get("/api/run-status", response_class=JSONResponse)
+    async def get_run_status():
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "run-status").read_text(encoding="utf8")
         )
 
     return app

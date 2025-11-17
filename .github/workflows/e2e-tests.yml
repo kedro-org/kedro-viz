@@ -9,6 +9,10 @@ on:
         type: string
       python-version:
         type: string
+
+permissions:
+  contents: read
+
 jobs:
     e2e_tests:
         runs-on: ${{ inputs.os }}

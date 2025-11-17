@@ -7,7 +7,9 @@ from kedro_viz.api import apps
 
 
 class TestIndexEndpoint:
-    def test_index(self, client):
+    @mock.patch("kedro_viz.integrations.kedro.telemetry._check_for_telemetry_consent")
+    def test_index(self, mock_check_for_telemetry_consent, client):
+        mock_check_for_telemetry_consent.return_value = True
         response = client.get("/")
         assert response.status_code == 200
         assert "heap" in response.text

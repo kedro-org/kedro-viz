@@ -1,0 +1,83 @@
+@use '../../../styles/variables' as colors;
+
+/**
+ * Themed colour variables for the flowchart component
+ */
+
+.kui-theme--light {
+  --node-icon-fill: #{colors.$black-800};
+  --node-input-fill-active: #{colors.$white-600};
+  --node-input-icon-selected: #{colors.$black-900};
+  --node-fill-default: #{colors.$white-0};
+  --node-stroke-default: #{colors.$white-600};
+  --node-fill-active: #{colors.$ocean-200};
+  --node-stroke-active: #{colors.$blue-600};
+  --node-fill-selected: #{colors.$ocean-200};
+  --node-stroke-selected: #{colors.$blue-900};
+  --node-fill-sliced: #{colors.$ocean-0-50};
+  --node-stroke-sliced: #{colors.$blue-900};
+  --node-labeltext-fill: #{colors.$black-800};
+  --node-details-fill: #{colors.$white-200};
+  --node-details-stroke: #{colors.$white-900};
+  --node-details-text: #{colors.$black-200};
+  --node-details-text-success: #{colors.$black-900};
+  --node-fill-success: #d8e8e0;
+  --node-stroke-success: #26bf56;
+  --node-fill-failed: #ecdbdd;
+  --node-stroke-failed: #f03b3a;
+  --node-fill-skipped: #{colors.$white-200};
+  --node-stroke-skipped: #{colors.$black-0};
+  --edge-stroke: #{colors.$grey-400};
+  --edge-arrowhead-fill: #{colors.$grey-400};
+  --layer-fill: #{colors.$white-300};
+  --layer-text: #{colors.$black-900};
+  --node-input-fill: #{colors.$black-200};
+  --parameter-accent: #{colors.$purple-300};
+  --parameter-accent-input: #{colors.$purple-300};
+
+  @mixin export {
+    --node-fill-default: #{colors.$white-200};
+    --node-stroke-default: #{colors.$white-900};
+    --edge-stroke: #{colors.$black-100};
+  }
+
+  &.pipeline-graph--export {
+    @include export;
+  }
+
+  @media print {
+    @include export;
+  }
+}
+
+.kui-theme--dark {
+  --node-icon-fill: #{colors.$white-600};
+  --node-input-fill-active: #{colors.$slate-500};
+  --node-input-icon-selected: #{colors.$white-800};
+  --node-fill-default: #{colors.$slate-0};
+  --node-stroke-default: #{colors.$black-400};
+  --node-fill-active: #{colors.$blue-900};
+  --node-stroke-active: #{colors.$blue-600};
+  --node-fill-selected: #{colors.$blue-900};
+  --node-stroke-selected: #{colors.$blue-300};
+  --node-fill-sliced: #{colors.$ocean-600};
+  --node-stroke-sliced: #{colors.$blue-300};
+  --node-labeltext-fill: #{colors.$white-600};
+  --node-details-fill: #{colors.$slate-700};
+  --node-details-stroke: #{colors.$black-400};
+  --node-details-text: #b2b2b2;
+  --node-details-text-success: #{colors.$white-0};
+  --node-fill-success: #1d3c28;
+  --node-stroke-success: #40d86e;
+  --node-fill-failed: #412526;
+  --node-stroke-failed: #f56565;
+  --node-fill-skipped: #{colors.$slate-0};
+  --node-stroke-skipped: #{colors.$black-400};
+  --edge-stroke: #{colors.$black-300};
+  --edge-arrowhead-fill: #{colors.$white-900};
+  --layer-fill: #{colors.$slate-600};
+  --layer-text: #{colors.$white-0};
+  --node-input-fill: #{colors.$grey-800};
+  --parameter-accent: #{colors.$yellow-300};
+  --parameter-accent-input: #{colors.$yellow-900};
+}

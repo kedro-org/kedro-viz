@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
+import normalizeRunData from './normalize-run-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { mapNodeType, isValidBoolean } from '../utils';
 import {
@@ -9,6 +10,8 @@ import {
   localStorageName,
   params,
   BANNER_KEYS,
+  VIEW,
+  PIPELINE,
 } from '../config';
 
 /**
@@ -22,7 +25,8 @@ export const createInitialState = () => ({
   textLabels: true,
   theme: 'dark',
   expandAllPipelines: false,
-  orientation: 'vertical',
+  orientation: 'vertical', // 'horizontal' or 'vertical'
+  view: 'flowchart', // 'flowchart' (default), or 'workflow'
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   showDatasetPreviews: settings.showDatasetPreviews.default,
@@ -46,6 +50,7 @@ export const createInitialState = () => ({
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
     slicing: true,
+    traceback: false,
   },
   display: {
     globalNavigation: true,
@@ -209,6 +214,20 @@ export const preparePipelineState = (
     state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
+  // If user is on the workflow view, set the active pipeline to default
+  if (state.view === VIEW.WORKFLOW) {
+    state.pipeline.active = PIPELINE.DEFAULT;
+  }
+
+  return state;
+};
+
+/** * Prepare the run status data part of the state by normalizing the raw data.
+ * @param {Object} runData Run status data
+ * @returns {Object} The new run status state with modifications applied.
+ */
+export const prepareRunStatusState = (runData) => {
+  let state = normalizeRunData(runData);
   return state;
 };
 
@@ -256,9 +275,12 @@ const getInitialState = (props = {}) => {
     expandAllPipelines
   );
 
+  const runStatusState = prepareRunStatusState(props.runData);
+
   const initialState = {
     ...nonPipelineState,
     ...pipelineState,
+    runStatus: runStatusState,
   };
 
   return props.options ? deepmerge(initialState, props.options) : initialState;

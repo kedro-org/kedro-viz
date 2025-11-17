@@ -5,6 +5,62 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 12.2.0
+
+## Major features and improvements
+ - Introduced custom colours support for nodes and datasets. (#2487,#2488,#2495)
+ - Dropped support for Python 3.9 (EOL Oct 2025). Minimum supported version is now 3.10. (#2511)
+ 
+## Bug fixes and other changes
+ - Add HTML preview support for text/markdown datasets. (#2490)
+ - Display source metadata for task nodes defined as bound methods. (#2510)
+ - Migrate ESM bundling to vite from webpack. (#2521)
+ - Fixed issues with accessing remote file size in PipelineRunStatusHook. (#2527)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [MalikAly](https://github.com/MalikAly)
+
+# Release 12.1.0
+
+## Bug fixes and other changes
+ - Migrated React build system from Webpack to Vite, following CRA deprecation. (#2370)
+ - Add llm.txt with mkdocs to improve LLM base query. (#2466)
+ - Update demo-project to be compatible with Databricks. (#2447)
+ - Render boolean values in table previews. (#2458)
+ - Fix CI build issue due to kedro-telemetry 0.6.4 release. (#2470)
+ - Enhance warning message for circular dependency detection in layers. (#2467)
+
+
+# Release 12.0.0
+
+## Major features and improvements
+ - Introduce 'Workflow' view to visualise pipeline executions. (#2390)
+ - Drop support for Kedro 0.x series. (#2453)
+ - Migrate our current documentation from Sphinx to MkDocs. (#2422)
+ - Add new documentation page to introduce workflow feature. (#2436)
+
+## Bug fixes and other changes
+
+
+# Release 11.1.0
+
+## Major features and improvements
+ - Add support for both Kedro 0.19 series and Kedro 1.0. (#2329)
+
+ ## Bug fixes and other changes
+ - Migrate from Enzyme to React Testing Library. (#2365)
+ - Refactor the flowchart `draw` component. (#2358)
+
+
+# Release 11.0.2
+
+## Bug fixes and other changes
+- Remove unused npm dependencies from Kedro-Viz. (#2339)
+- Update documentation for `run_viz` magic command to reflect latest CLI options. (#2325)
+
 # Release 11.0.1
 
 ## Bug fixes and other changes

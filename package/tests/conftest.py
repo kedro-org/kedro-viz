@@ -7,8 +7,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from kedro.io import DataCatalog, MemoryDataset
-from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
+from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets import pandas
 from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
@@ -21,6 +20,7 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
+from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.server import populate_data
 
 
@@ -37,12 +37,36 @@ def data_access_manager():
 
 
 @pytest.fixture
-def example_stats_dict():
+def example_node_extras_dict():
     yield {
-        "companies": {"rows": 77096, "columns": 5},
-        "reviews": {"rows": 77096, "columns": 10},
-        "shuttles": {"rows": 77096, "columns": 13},
-        "model_inputs": {"rows": 29768, "columns": 12},
+        "companies": NodeExtras(
+            stats={"rows": 77096, "columns": 5},
+            styles={
+                "color": "white",
+                "themes": {"dark": {"fill": "red"}, "light": {"fill": "green"}},
+            },
+        ),
+        "reviews": NodeExtras(
+            stats={"rows": 77096, "columns": 10},
+            styles={
+                "color": "white",
+                "themes": {"dark": {"fill": "blue"}, "light": {"fill": "red"}},
+            },
+        ),
+        "shuttles": NodeExtras(
+            stats={"rows": 77096, "columns": 13},
+            styles={
+                "color": "white",
+                "themes": {"dark": {"fill": "red"}, "light": {"fill": "green"}},
+            },
+        ),
+        "model_inputs": NodeExtras(
+            stats={"rows": 29768, "columns": 12},
+            styles={
+                "color": "white",
+                "themes": {"dark": {"fill": "orange"}, "light": {"fill": "green"}},
+            },
+        ),
     }
 
 
@@ -315,13 +339,13 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     internal_pipe = Pipeline(
         [
             pipeline(
-                pipe=generic_pipe,
+                generic_pipe,
                 inputs={"input_dataset": "initial_customer_data"},
                 outputs={"output_dataset": "processed_customer_data"},
                 namespace="first_processing_step",
             ),
             pipeline(
-                pipe=generic_pipe,
+                generic_pipe,
                 inputs={"input_dataset": "processed_customer_data"},
                 outputs={"output_dataset": "final_customer_data_insights"},
                 namespace="second_processing_step",
@@ -333,7 +357,7 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     # with internal datasets (processed_customer_data) that
     # should not be exposed outside of the namespace
     main_pipeline = pipeline(
-        pipe=internal_pipe,
+        internal_pipe,
         inputs="initial_customer_data",
         outputs="final_customer_data_insights",
         namespace="customer_lifecycle_processing",
@@ -400,7 +424,7 @@ def expected_modular_pipeline_tree_for_edge_cases():
 
 @pytest.fixture
 def example_catalog():
-    yield DataCatalog(
+    example_data_catalog = DataCatalog(
         datasets={
             "uk.data_processing.raw_data": pandas.CSVDataset(
                 filepath="raw_data.csv", metadata={"kedro-viz": {"layer": "raw"}}
@@ -410,18 +434,16 @@ def example_catalog():
                 metadata={"kedro-viz": {"layer": "model_inputs"}},
             ),
             "uk.data_science.model": MemoryDataset(),
-        },
-        feed_dict={
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:uk.data_processing.train_test_split": 0.1,
-        },
-        dataset_patterns={
             "{dataset_name}#csv": {
                 "type": "pandas.CSVDataset",
                 "filepath": "data/01_raw/{dataset_name}#csv.csv",
             },
         },
     )
+    example_data_catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
+    example_data_catalog["params:uk.data_processing.train_test_split"] = 0.1
+
+    yield example_data_catalog
 
 
 @pytest.fixture
@@ -459,18 +481,19 @@ def example_transcoded_pipelines():
 
 @pytest.fixture
 def example_transcoded_catalog():
-    yield DataCatalog(
+    example_data_catalog = DataCatalog(
         datasets={
             "model_inputs@pandas": pandas.ParquetDataset(
                 filepath="model_inputs.parquet"
             ),
             "model_inputs@pandas2": pandas.CSVDataset(filepath="model_inputs.csv"),
         },
-        feed_dict={
-            "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
-            "params:uk.data_processing.train_test_split": 0.1,
-        },
     )
+
+    example_data_catalog["parameters"] = {"train_test_split": 0.1, "num_epochs": 1000}
+    example_data_catalog["params:uk.data_processing.train_test_split"] = 0.1
+
+    yield example_data_catalog
 
 
 @pytest.fixture
@@ -478,7 +501,7 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    example_stats_dict: Dict,
+    example_node_extras_dict: Dict[str, NodeExtras],
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -486,7 +509,7 @@ def example_api(
         data_access_manager,
         example_catalog,
         example_pipelines,
-        example_stats_dict,
+        example_node_extras_dict,
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.pipelines.data_access_manager",
@@ -673,7 +696,19 @@ def example_csv_filepath(tmp_path, example_data_frame):
 
 
 @pytest.fixture
-def example_data_node(example_csv_filepath):
+def example_node_extras():
+    node_extras = NodeExtras(
+        stats={"rows": 10, "columns": 5, "file_size": 1024},
+        styles={
+            "color": "white",
+            "themes": {"dark": {"fill": "red"}, "light": {"fill": "green"}},
+        },
+    )
+    yield node_extras
+
+
+@pytest.fixture
+def example_data_node(example_csv_filepath, example_node_extras):
     dataset_name = "uk.data_science.model_training.dataset"
     metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
     kedro_dataset = CSVDataset(filepath=example_csv_filepath, metadata=metadata)
@@ -683,7 +718,7 @@ def example_data_node(example_csv_filepath):
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
-        stats={"rows": 10, "columns": 5, "file_size": 1024},
+        node_extras=example_node_extras,
         modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
 
@@ -691,7 +726,7 @@ def example_data_node(example_csv_filepath):
 
 
 @pytest.fixture
-def example_data_node_without_viz_metadata(example_csv_filepath):
+def example_data_node_without_viz_metadata(example_csv_filepath, example_node_extras):
     dataset_name = "uk.data_science.model_training.dataset"
     kedro_dataset = CSVDataset(filepath=example_csv_filepath)
     data_node = GraphNode.create_data_node(
@@ -700,10 +735,9 @@ def example_data_node_without_viz_metadata(example_csv_filepath):
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
-        stats={"rows": 10, "columns": 5, "file_size": 1024},
+        node_extras=example_node_extras,
         modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
-
     yield data_node
 
 

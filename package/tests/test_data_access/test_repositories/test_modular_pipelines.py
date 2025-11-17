@@ -73,7 +73,7 @@ class TestModularPipelinesRepository:
         sub_pipeline_mock.nodes = ["node1", "node2"]
 
         mocker.patch.object(
-            mock_pipeline, "only_nodes_with_namespace", return_value=sub_pipeline_mock
+            mock_pipeline, "only_nodes_with_namespaces", return_value=sub_pipeline_mock
         )
         rest_of_the_pipeline_mock = mock_pipeline - sub_pipeline_mock
         rest_of_the_pipeline_mock.inputs.return_value = {"output2"}
@@ -104,11 +104,11 @@ class TestModularPipelinesRepository:
                 modular_pipeline_id, ["node1", "node2"]
             )
 
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace1")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace2")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call("namespace3")
-        mock_pipeline.only_nodes_with_namespace.assert_any_call(
-            "namespace3.sub_namespace"
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace1"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace2"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(["namespace3"])
+        mock_pipeline.only_nodes_with_namespaces.assert_any_call(
+            ["namespace3.sub_namespace"]
         )
 
     def test_get_or_create_modular_pipeline(self, mock_modular_pipelines):
@@ -198,19 +198,19 @@ class TestModularPipelinesRepository:
         )
         mocker.patch.object(mock_modular_pipelines, "_add_children_to_parent_pipeline")
 
-        with mocker.patch.object(
+        mocker.patch.object(
             mock_modular_pipelines,
             "get_or_create_modular_pipeline",
             return_value=mock_modular_pipeline_node,
-        ):
-            mock_modular_pipelines._add_children(modular_pipelines_id, mock_kedro_nodes)
+        )
+        mock_modular_pipelines._add_children(modular_pipelines_id, mock_kedro_nodes)
 
-            mock_modular_pipelines._add_nodes_and_datasets_as_children.assert_any_call(
-                mock_modular_pipeline_node, [mock_kedro_nodes[0]], {"input1", "output1"}
-            )
-            mock_modular_pipelines._add_children_to_parent_pipeline.assert_any_call(
-                mock_modular_pipeline_node, modular_pipelines_id, {"input1", "output1"}
-            )
+        mock_modular_pipelines._add_nodes_and_datasets_as_children.assert_any_call(
+            mock_modular_pipeline_node, [mock_kedro_nodes[0]], {"input1", "output1"}
+        )
+        mock_modular_pipelines._add_children_to_parent_pipeline.assert_any_call(
+            mock_modular_pipeline_node, modular_pipelines_id, {"input1", "output1"}
+        )
 
     def test_add_nodes_and_datasets_as_children(
         self, mocker, mock_modular_pipelines, mock_kedro_nodes
@@ -275,15 +275,16 @@ class TestModularPipelinesRepository:
             ModularPipelineChild(id="output1", type=GraphNodeType.DATA),
         }
 
-        with mocker.patch.object(
+        mocker.patch.object(
             mock_modular_pipelines,
             "get_or_create_modular_pipeline",
             return_value=parent_modular_pipeline,
-        ):
-            mock_modular_pipelines._add_children_to_parent_pipeline(
-                mock_modular_pipeline_node,
-                modular_pipeline_id,
-                modular_pipeline_inputs_outputs,
-            )
+        )
 
-            assert parent_modular_pipeline.children == expected_children
+        mock_modular_pipelines._add_children_to_parent_pipeline(
+            mock_modular_pipeline_node,
+            modular_pipeline_id,
+            modular_pipeline_inputs_outputs,
+        )
+
+        assert parent_modular_pipeline.children == expected_children

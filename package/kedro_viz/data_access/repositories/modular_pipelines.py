@@ -57,7 +57,8 @@ class ModularPipelinesRepository:
         for modular_pipeline_id in sorted(modular_pipeline_ids):
             self.get_or_create_modular_pipeline(modular_pipeline_id)
 
-            sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
+            sub_pipeline = pipeline.only_nodes_with_namespaces([modular_pipeline_id])
+
             rest_of_the_pipeline = pipeline - sub_pipeline
 
             free_inputs = sub_pipeline.inputs()
@@ -114,6 +115,7 @@ class ModularPipelinesRepository:
         """
 
         if modular_pipeline_id not in self.tree:
+            # TODO: Need to add node_extras
             modular_pipeline_node = GraphNode.create_modular_pipeline_node(
                 modular_pipeline_id
             )

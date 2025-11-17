@@ -4,21 +4,12 @@ functionalities for a kedro run."""
 import json
 import logging
 from collections import defaultdict
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Union
 
 import fsspec
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
-
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
-except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
-
 from kedro.io.core import get_filepath_str
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -37,28 +28,12 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
-        """Hooks to be invoked after a data catalog is created.
-
-        Args:
-            catalog: The catalog that was created.
-        """
-        # Check for KedroDataCatalog first (DataCatalog 2.0)
+    def after_catalog_created(self, catalog: DataCatalog):
         try:
-            if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-                self.datasets = (
-                    catalog.datasets
-                )  # This gives access to both lazy normal datasets
-                logger.debug("Using KedroDataCatalog for dataset statistics collection")
-            # For original DataCatalog
-            elif hasattr(catalog, "_datasets"):
-                self.datasets = catalog._datasets
-            else:
-                # Support for older Kedro versions
-                self.datasets = catalog._data_sets  # type: ignore
+            self.datasets = catalog
         except Exception as exc:  # pragma: no cover
             logger.warning("Unable to access datasets in catalog: %s", exc)
-            self.datasets = {}
+            self.datasets = DataCatalog({})
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):
@@ -135,12 +110,12 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-                current_dataset = self.datasets.get(dataset_name, None)
+                current_dataset = self.datasets.get(dataset_name)
 
                 if current_dataset:
-                    self._stats[stats_dataset_name]["file_size"] = self.get_file_size(
-                        current_dataset
-                    )
+                    dataset_file_size = self.get_file_size(current_dataset)
+                    if dataset_file_size:
+                        self._stats[stats_dataset_name]["file_size"] = dataset_file_size
 
         except ImportError as exc:  # pragma: no cover
             logger.warning(
@@ -173,7 +148,7 @@ class DatasetStatsHook:
             else:
                 return None
 
-            fs, path_in_fs = fsspec.core.url_to_fs(filepath)
+            fs, path_in_fs = fsspec.core.url_to_fs(str(filepath))
             if fs.exists(path_in_fs):
                 file_size = fs.size(path_in_fs)
                 return file_size

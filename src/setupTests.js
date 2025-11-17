@@ -1,19 +1,42 @@
-// Configure react-testing-library
-// See https://create-react-app.dev/docs/running-tests/#option-2-react-testing-library
 import '@testing-library/jest-dom';
+import 'whatwg-fetch';
 
-// Configure enzyme
-// See https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs
-import { configure } from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
-import util from 'util';
+// src/setupTests.js
+import { selection } from 'd3-selection'; // polyfills global fetch
 
-// Require to run enzyme tests after upgrading to React 18
-Object.defineProperty(global, 'TextEncoder', {
-  value: util.TextEncoder,
-});
-
-// Require to create jest using Plotly.js library
+// Mock createObjectURL for Plotly or similar libraries
 window.URL.createObjectURL = jest.fn();
 
-configure({ adapter: new Adapter() });
+// Patch d3-selection to mock transition chain for testing
+selection.prototype.transition = function () {
+  return {
+    duration() {
+      return this;
+    },
+    style() {
+      return this;
+    },
+    attr() {
+      return this;
+    },
+    attrTween() {
+      return this;
+    },
+    call(fn) {
+      fn(this);
+      return this;
+    },
+    on() {
+      return this;
+    },
+    ease() {
+      return this;
+    },
+    remove() {
+      return this;
+    },
+    select() {
+      return this;
+    },
+  };
+};

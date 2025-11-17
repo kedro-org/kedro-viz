@@ -3,6 +3,7 @@ import nodeTask from '../utils/data/node_task.mock.json';
 import nodeData from '../utils/data/node_data.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from './index';
+import { VIEW } from '../config';
 import {
   CHANGE_FLAG,
   RESET_DATA,
@@ -11,6 +12,7 @@ import {
   TOGGLE_LAYERS,
   TOGGLE_MINIMAP,
   TOGGLE_CODE,
+  TOGGLE_TRACEBACK,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_IS_PRETTY_NAME,
@@ -21,6 +23,8 @@ import {
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
+  SET_VIEW,
+  RESET_STATE_FOR_WORKFLOW_VIEW,
 } from '../actions';
 import { SET_SLICE_PIPELINE, RESET_SLICE_PIPELINE } from '../actions/slice';
 import {
@@ -403,6 +407,16 @@ describe('Reducer', () => {
     });
   });
 
+  describe('TOGGLE_TRACEBACK', () => {
+    it('should toggle whether the traceback panel is open', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_TRACEBACK,
+        visible: true,
+      });
+      expect(newState.visible.traceback).toBe(true);
+    });
+  });
+
   describe('CHANGE_FLAG', () => {
     it('should update the state when a flag is changed', () => {
       const newState = reducer(mockState.spaceflights, {
@@ -495,6 +509,56 @@ describe('Reducer', () => {
         payload: newOptions,
       });
       expect(newState.tag.enabled.large).toBe(true);
+    });
+  });
+
+  describe('SET_VIEW', () => {
+    it('should set the view to workflow', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: SET_VIEW,
+        view: VIEW.WORKFLOW,
+      });
+      expect(newState.view).toBe(VIEW.WORKFLOW);
+    });
+
+    it('should set the view to flowchart', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: SET_VIEW,
+        view: VIEW.FLOWCHART,
+      });
+      expect(newState.view).toBe(VIEW.FLOWCHART);
+    });
+  });
+
+  describe('RESET_STATE_FOR_WORKFLOW_VIEW', () => {
+    it('should reset textLabels to default value when action is dispatched', () => {
+      const stateWithCustomTextLabels = {
+        ...mockState.spaceflights,
+        textLabels: false,
+      };
+      const newState = reducer(stateWithCustomTextLabels, {
+        type: RESET_STATE_FOR_WORKFLOW_VIEW,
+      });
+      expect(newState.textLabels).toBe(true);
+    });
+
+    it('should reset expandAllPipelines to default value when action is dispatched', () => {
+      const stateWithCustomExpansion = {
+        ...mockState.spaceflights,
+        expandAllPipelines: false,
+      };
+      const newState = reducer(stateWithCustomExpansion, {
+        type: RESET_STATE_FOR_WORKFLOW_VIEW,
+      });
+      expect(newState.expandAllPipelines).toBe(true);
+    });
+
+    it('should not affect other state properties that are not in resetDefaults', () => {
+      const originalTheme = mockState.spaceflights.theme;
+      const newState = reducer(mockState.spaceflights, {
+        type: RESET_STATE_FOR_WORKFLOW_VIEW,
+      });
+      expect(newState.theme).toBe(originalTheme);
     });
   });
 });

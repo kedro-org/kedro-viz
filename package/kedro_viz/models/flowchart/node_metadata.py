@@ -9,15 +9,9 @@ from abc import ABC
 from pathlib import Path
 from typing import ClassVar, Dict, List, Optional, Union, cast
 
+from kedro.io.core import AbstractDataset
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import BaseModel, Field, field_validator, model_validator
-
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 from kedro_viz.models.utils import get_dataset_type
 
@@ -89,8 +83,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_code(cls, code):
         # this is required to handle partial, curry functions
-        if inspect.isfunction(cls.kedro_node.func):
-            code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
+        func = cls.kedro_node.func
+
+        if inspect.ismethod(func):
+            func = func.__func__
+
+        if inspect.isfunction(func):
+            code = inspect.getsource(_extract_wrapped_func(func))
             return code
 
         return None
@@ -99,10 +98,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_filepath(cls, filepath):
         # this is required to handle partial, curry functions
-        if inspect.isfunction(cls.kedro_node.func):
-            code_full_path = (
-                Path(inspect.getfile(cls.kedro_node.func)).expanduser().resolve()
-            )
+        func = cls.kedro_node.func
+
+        if inspect.ismethod(func):
+            func = func.__func__
+
+        if inspect.isfunction(func):
+            code_full_path = Path(inspect.getfile(func)).expanduser().resolve()
 
             try:
                 filepath = code_full_path.relative_to(Path.cwd().parent)
@@ -288,7 +290,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("stats")
     @classmethod
     def set_stats(cls, _):
-        return cls.data_node.stats
+        return cls.data_node.node_extras and cls.data_node.node_extras.stats
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
@@ -368,7 +370,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     @field_validator("stats")
     @classmethod
     def set_stats(cls, _):
-        return cls.transcoded_data_node.stats
+        return (
+            cls.transcoded_data_node.node_extras
+            and cls.transcoded_data_node.node_extras.stats
+        )
 
 
 class ParametersNodeMetadata(GraphNodeMetadata):

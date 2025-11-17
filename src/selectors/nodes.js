@@ -30,6 +30,7 @@ const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
+const getNodeExtras = (state) => state.node.extras;
 
 /**
  * Gets a map of nodeIds to graph nodes
@@ -196,6 +197,7 @@ export const getNodeData = createSelector(
     getNodeDisabledTag,
     getNodeTypeDisabled,
     getNodeModularPipelines,
+    getNodeExtras,
   ],
   (
     nodeIDs,
@@ -207,7 +209,8 @@ export const getNodeData = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     typeDisabled,
-    nodeModularPipelines
+    nodeModularPipelines,
+    nodeExtras
   ) =>
     nodeIDs
       .sort((a, b) => {
@@ -230,6 +233,7 @@ export const getNodeData = createSelector(
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: nodeDisabledTag[id],
         disabledType: Boolean(typeDisabled[nodeType[id]]),
+        extras: nodeExtras[id],
       }))
 );
 
@@ -251,6 +255,7 @@ export const getNodeDataObject = createSelector(
     getNodeTypeDisabled,
     getNodeModularPipelines,
     getOppositeForPrettyName,
+    getNodeExtras,
   ],
   (
     nodeIDs,
@@ -263,7 +268,8 @@ export const getNodeDataObject = createSelector(
     nodeDisabledTag,
     typeDisabled,
     nodeModularPipelines,
-    oppositeForPrettyName
+    oppositeForPrettyName,
+    nodeExtras
   ) =>
     nodeIDs.reduce((obj, id) => {
       obj[id] = {
@@ -278,6 +284,7 @@ export const getNodeDataObject = createSelector(
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: Boolean(nodeDisabledTag[id]),
         disabledType: Boolean(typeDisabled[nodeType[id]]),
+        extras: nodeExtras[id],
       };
       return obj;
     }, {})
@@ -417,6 +424,7 @@ export const getVisibleNodes = createSelector(
     getNodeSize,
     getNodeLayer,
     getNodeRank,
+    getNodeExtras,
   ],
   (
     nodeIDs,
@@ -426,7 +434,8 @@ export const getVisibleNodes = createSelector(
     nodeFullName,
     nodeSize,
     nodeLayer,
-    nodeRank
+    nodeRank,
+    nodeExtras
   ) =>
     nodeIDs.map((id) => ({
       id,
@@ -436,6 +445,7 @@ export const getVisibleNodes = createSelector(
       type: nodeType[id],
       layer: nodeLayer[id],
       rank: nodeRank[id],
+      extras: nodeExtras[id],
       ...nodeSize[id],
     }))
 );

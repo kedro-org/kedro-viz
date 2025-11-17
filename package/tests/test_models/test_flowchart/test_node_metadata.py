@@ -1,3 +1,4 @@
+import sys
 from functools import partial, wraps
 from pathlib import Path
 from textwrap import dedent
@@ -6,7 +7,6 @@ import pytest
 from kedro.io import MemoryDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
-from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
 
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -15,6 +15,7 @@ from kedro_viz.models.flowchart.node_metadata import (
     TranscodedDataNodeMetadata,
 )
 from kedro_viz.models.flowchart.nodes import GraphNode
+from kedro_viz.models.metadata import NodeExtras
 
 
 def identity(x):
@@ -67,6 +68,11 @@ def full_func(a, b, c, x):
 partial_func = partial(full_func, 3, 1, 4)
 
 
+class ExampleTask:
+    def run(self, data):
+        return data
+
+
 class TestGraphNodeMetadata:
     @pytest.mark.parametrize(
         "dataset,has_metadata", [(MemoryDataset(data=1), True), (None, False)]
@@ -78,7 +84,7 @@ class TestGraphNodeMetadata:
             layer=None,
             tags=set(),
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.has_metadata() == has_metadata
@@ -200,6 +206,26 @@ class TestGraphNodeMetadata:
         )
         assert not task_node_metadata.parameters
 
+    def test_task_node_metadata_with_class_method(self):
+        task = ExampleTask()
+        kedro_node = node(
+            task.run,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(
+            kedro_node, "identity_node", set(["namespace"])
+        )
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code is not None
+        assert "def run(self, data):" in task_node_metadata.code
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
+
     def test_task_node_metadata_with_partial_func(self):
         kedro_node = node(
             partial_func,
@@ -227,7 +253,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats={"rows": 10, "columns": 2},
+            node_extras=NodeExtras(stats={"rows": 10, "columns": 2}),
             modular_pipelines=set(),
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
@@ -247,7 +273,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.get_preview_args() == {"nrows": 3}
@@ -261,7 +287,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         assert data_node.is_preview_enabled() is False
@@ -298,7 +324,7 @@ class TestGraphNodeMetadata:
             tags=set(),
             layer=None,
             dataset=empty_dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
 
@@ -340,7 +366,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats={"rows": 10, "columns": 2},
+            node_extras=NodeExtras(stats={"rows": 10, "columns": 2}),
             modular_pipelines=set(),
         )
         transcoded_data_node.original_name = "dataset"
@@ -362,6 +388,8 @@ class TestGraphNodeMetadata:
         assert transcoded_data_node_metadata.stats.get("columns") == 2
 
     def test_partitioned_data_node_metadata(self):
+        from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
+
         dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataset")
         data_node = GraphNode.create_data_node(
             dataset_id="dataset",
@@ -369,7 +397,7 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats=None,
+            node_extras=None,
             modular_pipelines=set(),
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
