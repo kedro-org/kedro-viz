@@ -37,7 +37,7 @@ def extract_file_paths(dataset: Any) -> List[str]:
     for attr in ("filepath", "_filepath"):
         file_path = getattr(dataset, attr, None)
         if file_path:
-            paths.append(file_path)
+            paths.append(str(file_path))
     return paths
 
 
@@ -58,6 +58,7 @@ def get_file_size(file_path: str) -> Optional[int]:
         ValueError,
         FileNotFoundError,
         AttributeError,
+        Exception,  # noqa
     ) as exc:  # pragma: no cover
         logger.debug("Unable to get file size for %s: %s", file_path, exc)
         return None
