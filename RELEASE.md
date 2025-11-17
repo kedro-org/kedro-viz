@@ -16,6 +16,7 @@ Please follow the established format:
  - Add HTML preview support for text/markdown datasets. (#2490)
  - Display source metadata for task nodes defined as bound methods. (#2510)
  - Migrate ESM bundling to vite from webpack. (#2521)
+ - Fixed issues with accessing remote file size in PipelineRunStatusHook. (#2527)
 
 ## Community contributions
 
