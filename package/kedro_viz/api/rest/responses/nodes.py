@@ -31,6 +31,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
         inputs (List[str]): The list of input data for the task node.
         outputs (List[str]): The list of output data from the task node.
         run_command (Optional[str]): The command to run the task node.
+        preview (Optional[Dict]): The serialized preview payload for the frontend to display.
     """
 
     code: Optional[str] = None
@@ -39,6 +40,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     inputs: List[str]
     outputs: List[str]
     run_command: Optional[str] = None
+    preview: Optional[Dict] = None
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -48,6 +51,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "inputs": ["params:input1", "input2"],
                 "outputs": ["output1"],
                 "run_command": "kedro run --to-nodes=split_data",
+                "preview": {"kind": "mermaid", "content": "graph string", "meta": {"title": "Pipeline Graph"}},
             }
         }
     )

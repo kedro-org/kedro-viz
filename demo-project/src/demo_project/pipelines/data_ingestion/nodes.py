@@ -2,11 +2,36 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
-
+from kedro.pipeline.preview_types import PreviewPayload
 
 def _is_true(column: pd.Series) -> pd.Series:
     return column == "t"
 
+def visualize_companies_graph() -> PreviewPayload:
+    """
+    Visualization function that returns a Mermaid diagram of the intent detection workflow.
+    
+    Args:
+        result: The result from detect_intent function
+    
+    Returns:
+        Mermaid diagram representation of the intent detection flow.
+    """
+    return PreviewPayload(kind = "mermaid", content = """graph TD
+A[START] --> B[detect_intent]
+B --> C{Intent Classification}
+C -->|clarification_needed| D[clarify_intent]
+C -->|general_question| E[update_context]
+C -->|claim_new| E
+C -->|existing_claim_question| E
+D --> E
+E --> F[END]
+style A fill:#e1f5fe
+style F fill:#f3e5f5
+style C fill:#fff3e0
+style D fill:#ffebee
+style E fill:#e8f5e8"""
+    )
 
 def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the data for companies.

@@ -130,6 +130,25 @@
   margin: 1.5em 0;
 }
 
+.pipeline-metadata-modal__preview-mermaid {
+  width: 80%;
+  max-width: calc(100vw - #{variables.$global-toolbar-width} - 3em);
+  overflow: auto;
+  padding: 1.5em;
+  margin: 1.5em 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pipeline-metadata-modal__mermaid-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 200px;
+}
+
 .pipeline-metadata-modal__collapse-plot-icon {
   width: 1.9em;
   height: 1.9em;

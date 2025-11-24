@@ -66,13 +66,34 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPreview = showDatasetPreviews && metadata?.preview;
-  const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
-  const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
+
+  // Data node previews
+  const hasDataPreview = showDatasetPreviews && isDataNode && metadata?.preview;
+  const hasPlot = hasDataPreview && metadata?.previewType === 'PlotlyPreview';
+  const hasImage = hasDataPreview && metadata?.previewType === 'ImagePreview';
   const hasTablePreview =
-    hasPreview && metadata?.previewType === 'TablePreview';
-  const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
-  const hasHTMLPreview = hasPreview && metadata?.previewType === 'HTMLPreview';
+    hasDataPreview && metadata?.previewType === 'TablePreview';
+  const hasJSONPreview =
+    hasDataPreview && metadata?.previewType === 'JSONPreview';
+  const hasHTMLPreview =
+    hasDataPreview && metadata?.previewType === 'HTMLPreview';
+
+  // Task node previews
+  const hasTaskPreview = isTaskNode && metadata?.preview;
+  const hasMermaidPreview =
+    hasTaskPreview && metadata?.preview?.kind === 'mermaid';
+  const hasTaskJSONPreview =
+    hasTaskPreview && metadata?.preview?.kind === 'json';
+  const hasTaskTextPreview =
+    hasTaskPreview && metadata?.preview?.kind === 'text';
+  const hasTaskImagePreview =
+    hasTaskPreview && metadata?.preview?.kind === 'image';
+  const hasTaskPlotlyPreview =
+    hasTaskPreview && metadata?.preview?.kind === 'plotly';
+  const hasTaskTablePreview =
+    hasTaskPreview && metadata?.preview?.kind === 'table';
+  const hasTaskCustomPreview =
+    hasTaskPreview && metadata?.preview?.kind === 'custom';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -419,6 +440,198 @@ const MetaData = ({
                   <div className="pipeline-metadata__preview-html">
                     <div className="scrollable-container">
                       <HTMLRenderer content={metadata.preview} />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasMermaidPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-mermaid">
+                    <div
+                      className="scrollable-container"
+                      onClick={onExpandMetaDataClick}
+                      ref={(el) => {
+                        if (el && metadata?.preview?.content) {
+                          // Render mermaid directly into scrollable container
+                          const renderMermaid = async () => {
+                            try {
+                              const mermaid = await import('mermaid');
+                              mermaid.default.initialize({
+                                startOnLoad: false,
+                                theme: 'default',
+                                securityLevel: 'loose',
+                              });
+
+                              el.innerHTML = '';
+                              const id = `mermaid-${Date.now()}`;
+                              const { svg } = await mermaid.default.render(
+                                id,
+                                metadata.preview.content
+                              );
+                              el.innerHTML = svg;
+                            } catch (error) {
+                              console.error('Mermaid error:', error);
+                              el.innerHTML = `
+                                <div style="padding: 20px; border: 1px solid red; background: #ffe6e6; color: red;">
+                                  <strong>Mermaid Error:</strong><br/>
+                                  ${error.message}
+                                </div>
+                              `;
+                            }
+                          };
+                          renderMermaid();
+                        }
+                      }}
+                    />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskJSONPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-json">
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={JSON.parse(metadata?.preview?.content)}
+                        theme={theme}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskTextPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-text">
+                    <div className="scrollable-container">
+                      <pre className="pipeline-metadata__text-content">
+                        {metadata?.preview?.content}
+                      </pre>
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskImagePreview && (
+                <>
+                  <div className="pipeline-metadata__plot">
+                    <img
+                      alt="Task preview image"
+                      className="pipeline-metadata__plot-image"
+                      src={metadata?.preview?.content}
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskPlotlyPreview && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <PlotlyChart
+                      data={JSON.parse(metadata?.preview?.content).data}
+                      layout={JSON.parse(metadata?.preview?.content).layout}
+                      view="preview"
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskTablePreview && (
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={JSON.parse(metadata?.preview?.content)}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskCustomPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-custom">
+                    <div className="scrollable-container">
+                      <div
+                        className="pipeline-metadata__custom-content"
+                        dangerouslySetInnerHTML={{
+                          __html: metadata?.preview?.content,
+                        }}
+                      />
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

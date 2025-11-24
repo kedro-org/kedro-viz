@@ -1,0 +1,12 @@
+.mermaid-renderer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
