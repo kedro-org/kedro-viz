@@ -6,7 +6,6 @@ from .nodes import (
     apply_types_to_reviews,
     apply_types_to_shuttles,
     combine_shuttle_level_information,
-    visualize_companies_graph,
 )
 
 
@@ -29,7 +28,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="int_typed_companies",
                 name="apply_types_to_companies",
                 tags="companies",
-                preview_fn=visualize_companies_graph,
             ),
             node(
                 func=apply_types_to_shuttles,

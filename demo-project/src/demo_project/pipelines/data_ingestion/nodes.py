@@ -3,6 +3,7 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 from kedro.pipeline.preview_types import PreviewPayload
+from kedro.pipeline.node import with_node_preview
 
 def _is_true(column: pd.Series) -> pd.Series:
     return column == "t"
@@ -33,6 +34,7 @@ style D fill:#ffebee
 style E fill:#e8f5e8"""
     )
 
+@with_node_preview(visualize_companies_graph)
 def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the data for companies.
 
