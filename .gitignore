@@ -49,8 +49,8 @@ dist/
 .idea/
 __pycache__/
 .pytest_cache/
-
-package/*/html/
+# [TODO : Revert after testing]
+# package/*/html/
 package/*.log
 
 # Unit test / coverage reports
