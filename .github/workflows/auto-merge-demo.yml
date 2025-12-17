@@ -1,0 +1,28 @@
+name: Auto-merge main to demo
+
+# Automatically merges main into demo branch when a release is published
+# This triggers the demo deployment to demo.kedro.org
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge-main-to-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge main into demo
+        run: |
+          git checkout demo
+          git merge main --no-edit -m "Merge main into demo for release ${{ github.event.release.tag_name }}"
+          git push origin demo
