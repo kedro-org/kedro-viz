@@ -1,18 +1,13 @@
 """`kedro_viz.api.rest.utils` contains utility functions used in the `kedro_viz.api.rest` package"""
 
 import logging
-from importlib.metadata import PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 from typing import List
 
 import packaging
 
 from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.models.metadata import PackageCompatibility
-
-try:
-    from importlib.metadata import version
-except ImportError:  # pragma: no cover
-    from importlib_metadata import version
 
 logger = logging.getLogger(__name__)
 
