@@ -1,11 +1,15 @@
 name: Auto-merge main to demo
 
-# Automatically merges main into demo branch when a release is published
+# Automatically merges main into demo branch after the release workflow completes successfully
+# This ensures PyPI and npm releases are done before demo deployment
 # This triggers the demo deployment to demo.kedro.org
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Release to NPM and PyPI"]
+    types:
+      - completed
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -14,6 +18,8 @@ permissions:
 jobs:
   merge-main-to-demo:
     runs-on: ubuntu-latest
+    # Only run if the release workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
