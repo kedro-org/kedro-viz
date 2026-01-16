@@ -6,6 +6,8 @@ import IconButton from '../../components/ui/icon-button';
 import PreviewTable from '../../components/preview-table';
 import JSONObject from '../../components/json-object';
 import HTMLRenderer from '../html-renderer';
+import TextRenderer from '../text-renderer';
+import MermaidRenderer from '../mermaid-renderer';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -66,13 +68,41 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPreview = showDatasetPreviews && metadata?.preview;
-  const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
-  const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
+
+  // DataNode previews
+  const hasDataNodePreview =
+    showDatasetPreviews && metadata?.preview && metadata?.previewType;
+  const hasPlot =
+    hasDataNodePreview && metadata.previewType === 'PlotlyPreview';
+  const hasImage =
+    hasDataNodePreview && metadata.previewType === 'ImagePreview';
   const hasTablePreview =
-    hasPreview && metadata?.previewType === 'TablePreview';
-  const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
-  const hasHTMLPreview = hasPreview && metadata?.previewType === 'HTMLPreview';
+    hasDataNodePreview && metadata.previewType === 'TablePreview';
+  const hasJSONPreview =
+    hasDataNodePreview && metadata.previewType === 'JSONPreview';
+  const hasHTMLPreview =
+    hasDataNodePreview && metadata.previewType === 'HTMLPreview';
+
+  // TaskNode previews
+  const hasTaskNodePreview = metadata?.preview && metadata.preview.kind;
+  const previewKind = hasTaskNodePreview ? metadata.preview.kind : null;
+  const previewContent = hasTaskNodePreview ? metadata.preview.content : null;
+  const previewMeta = hasTaskNodePreview ? metadata.preview.meta || {} : {};
+
+  // Transform table data from list of dicts to {columns, data} format
+  const transformTableData = (tableContent) => {
+    if (
+      !tableContent ||
+      !Array.isArray(tableContent) ||
+      tableContent.length === 0
+    ) {
+      return { columns: [], data: [] };
+    }
+    const columns = Object.keys(tableContent[0]);
+    const data = tableContent.map((row) => columns.map((col) => row[col]));
+    return { columns, data };
+  };
+
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -422,6 +452,149 @@ const MetaData = ({
                     </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {/* TaskNode PreviewPayload renderers */}
+              {hasTaskNodePreview && previewKind === 'text' && (
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <TextRenderer
+                        content={previewContent}
+                        meta={previewMeta}
+                        view="preview"
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskNodePreview && previewKind === 'mermaid' && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <MermaidRenderer content={previewContent} view="preview" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskNodePreview && previewKind === 'plotly' && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <PlotlyChart
+                      data={previewContent.data}
+                      layout={previewContent.layout}
+                      view="preview"
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskNodePreview && previewKind === 'table' && (
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={transformTableData(previewContent)}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskNodePreview && previewKind === 'json' && (
+                <>
+                  <div className="pipeline-metadata__preview-json">
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={previewContent}
+                        theme={theme}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand preview
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTaskNodePreview && previewKind === 'image' && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <img
+                      alt="Preview visualization"
+                      className="pipeline-metadata__plot-image"
+                      src={
+                        previewContent.startsWith('data:')
+                          ? previewContent
+                          : `data:image/png;base64,${previewContent}`
+                      }
+                    />
                   </div>
                   <button
                     className="pipeline-metadata__link"
