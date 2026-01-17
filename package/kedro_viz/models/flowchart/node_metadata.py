@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from kedro_viz.models.utils import get_dataset_type
 
-from .model_utils import _extract_wrapped_func, _parse_filepath
+from .model_utils import _extract_wrapped_func, _parse_filepath, limit_preview_data
 from .nodes import DataNode, ParametersNode, TaskNode, TranscodedDataNode
 
 logger = logging.getLogger(__name__)
@@ -147,10 +147,12 @@ class TaskNodeMetadata(GraphNodeMetadata):
             preview_payload = cls.kedro_node.preview()
             if preview_payload is None:
                 return None
-                
-            # Serialized PreviewPayload
+
+            # Serialize and limit preview data
             serialized_preview = preview_payload.to_dict()
-            return serialized_preview
+            limited_preview = limit_preview_data(serialized_preview)
+
+            return limited_preview
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
