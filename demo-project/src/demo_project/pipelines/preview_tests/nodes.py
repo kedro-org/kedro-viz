@@ -11,6 +11,31 @@ from kedro.pipeline.preview_contract import (
     TextPreview,
 )
 
+def contextual_preview():
+    pass
+
+def make_preview_fn(data_sample):
+    """Create a preview function with captured context."""
+    def preview_fn() -> TablePreview:
+        return TablePreview(content=data_sample)
+    return preview_fn
+
+from kedro.framework.session import KedroSession
+
+
+def preview_with_data_access() -> TablePreview:
+    """Preview function that loads data from catalog.
+
+    Demonstrates using meta.limit to control preview size.
+    Without meta.limit, backend defaults to 10 rows.
+    With meta.limit=20, shows 20 rows (clamped to max of 50).
+    """
+    with KedroSession.create() as session:
+        context = session.load_context()
+        data = context.catalog.load("companies").to_dict(orient='records')
+
+        # Example: Request 20 rows (will be clamped to 10-50 range by backend)
+        return TablePreview(content=data, meta={"limit": 20})
 
 def generate_text_preview() -> TextPreview:
     """Generate a simple text preview.

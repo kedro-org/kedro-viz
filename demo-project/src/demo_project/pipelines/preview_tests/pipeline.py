@@ -4,6 +4,7 @@ from kedro.pipeline import Pipeline, node, pipeline
 
 from .nodes import (
     aggregate_preview_results,
+    contextual_preview,
     generate_code_preview,
     generate_flowchart_preview,
     generate_image_preview,
@@ -12,6 +13,8 @@ from .nodes import (
     generate_plotly_preview,
     generate_table_preview,
     generate_text_preview,
+    make_preview_fn,
+    preview_with_data_access,
 )
 
 
@@ -29,6 +32,7 @@ def create_pipeline(**kwargs) -> Pipeline:
     Returns:
         Pipeline: A set of nodes that generate different preview types
     """
+    sample_data = [{"id": 1, "value": 100}, {"id": 2, "value": 200}]
     return pipeline(
         [
             node(
@@ -86,6 +90,13 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="image_preview",
                 name="generate_image_preview",
                 preview_fn=generate_image_preview,
+            ),
+            node(
+                func=contextual_preview,
+                inputs=None,
+                outputs="context_json_preview",
+                name="generate_contextual_preview",
+                preview_fn=preview_with_data_access,
             ),
             node(
                 func=aggregate_preview_results,
