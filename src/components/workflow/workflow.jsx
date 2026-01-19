@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { select } from 'd3-selection';
 import { getHeap } from '../../tracking';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import { changed } from '../../utils';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
   toggleSingleModularPipelineExpanded,
@@ -120,14 +121,14 @@ export class Workflow extends Component {
    */
   update(prevProps = {}) {
     const { chartZoom } = this.props;
-    const changed = (...names) => this.changed(names, prevProps, this.props);
+    const hasChanged = (...names) => changed(names, prevProps, this.props);
     const preventZoom = this.props.visibleMetaSidebar;
 
-    if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
+    if (hasChanged('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
       this.updateChartSize();
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
+    if (hasChanged('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
       const metaSidebarViewChanged =
         prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
@@ -153,18 +154,6 @@ export class Workflow extends Component {
     } else {
       this.onChartZoomChanged(chartZoom);
     }
-  }
-
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return (
-      objectA &&
-      objectB &&
-      props.some((prop) => objectA[prop] !== objectB[prop])
-    );
   }
 
   /**
@@ -764,7 +753,7 @@ export class Workflow extends Component {
               style={{ fontSize: '1.5em' }}
             />
           </div>
-          <PipelineLoading loading={loading} sidebarVisibl={sidebarVisible} />
+          <PipelineLoading loading={loading} sidebarVisible={sidebarVisible} />
           <PipelineWarning />
         </div>
         {displayExportBtn && <ExportModal />}
