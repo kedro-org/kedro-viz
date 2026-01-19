@@ -141,7 +141,11 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasTaskNodePreview && previewKind === 'mermaid' && (
         <div className="pipeline-metadata-modal__preview">
-          <MermaidRenderer content={previewContent} view="modal" />
+          <MermaidRenderer
+            content={previewContent}
+            view="modal"
+            config={previewMeta}
+          />
         </div>
       )}
       {hasTaskNodePreview && previewKind === 'plotly' && (

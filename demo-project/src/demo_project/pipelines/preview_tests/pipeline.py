@@ -3,17 +3,14 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
 from .nodes import (
-    aggregate_preview_results,
     contextual_preview,
     generate_code_preview,
-    generate_flowchart_preview,
     generate_image_preview,
     generate_json_preview,
     generate_mermaid_preview,
     generate_plotly_preview,
     generate_table_preview,
     generate_text_preview,
-    make_preview_fn,
     preview_with_data_access,
 )
 
@@ -57,13 +54,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 preview_fn=generate_mermaid_preview,
             ),
             node(
-                func=generate_flowchart_preview,
-                inputs=None,
-                outputs="mermaid_flowchart_preview",
-                name="generate_mermaid_flowchart",
-                preview_fn=generate_flowchart_preview,
-            ),
-            node(
                 func=generate_json_preview,
                 inputs=None,
                 outputs="json_preview",
@@ -98,22 +88,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name="generate_contextual_preview",
                 preview_fn=preview_with_data_access,
             ),
-            node(
-                func=aggregate_preview_results,
-                inputs=[
-                    "text_preview",
-                    "code_preview",
-                    "mermaid_diagram_preview",
-                    "mermaid_flowchart_preview",
-                    "json_preview",
-                    "table_preview",
-                    "plotly_preview",
-                    "image_preview",
-                ],
-                outputs="preview_summary",
-                name="aggregate_results",
-            ),
         ],
         namespace="preview_tests",
-        outputs={"preview_summary"},
     )

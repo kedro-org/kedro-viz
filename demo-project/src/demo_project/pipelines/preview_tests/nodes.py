@@ -181,25 +181,6 @@ def generate_mermaid_preview() -> MermaidPreview:
     return MermaidPreview(content=diagram, meta=custom_config)
 
 
-def generate_flowchart_preview() -> MermaidPreview:
-    """Generate a more complex Mermaid flowchart.
-
-    Returns:
-        MermaidPreview object with flowchart markup
-    """
-    flowchart = """flowchart LR
-    Start([Start]) --> Input[/Load Dataset/]
-    Input --> Process1[Clean Data]
-    Process1 --> Process2[Transform Features]
-    Process2 --> Decision{Data Valid?}
-    Decision -->|Yes| Train[Train Model]
-    Decision -->|No| Error[Log Error]
-    Train --> Evaluate[Evaluate Model]
-    Evaluate --> Output[/Save Results/]
-    Output --> End([End])
-    Error --> End"""
-
-    return MermaidPreview(content=flowchart)
 
 
 def generate_json_preview() -> JsonPreview:
@@ -318,44 +299,3 @@ def generate_image_preview() -> ImagePreview:
     data_uri = f"data:image/svg+xml;base64,{base64_svg}"
 
     return ImagePreview(content=data_uri)
-
-
-def aggregate_preview_results(
-    text_preview: TextPreview,
-    code_preview: TextPreview,
-    mermaid_preview: MermaidPreview,
-    flowchart_preview: MermaidPreview,
-    json_preview: JsonPreview,
-    table_preview: TablePreview,
-    plotly_preview: PlotlyPreview,
-    image_preview: ImagePreview
-) -> dict:
-    """Aggregate all preview results into a summary.
-
-    Args:
-        text_preview: Text preview result
-        code_preview: Code preview result
-        mermaid_preview: Mermaid diagram preview result
-        flowchart_preview: Flowchart preview result
-        json_preview: JSON preview result
-        table_preview: Table preview result
-        plotly_preview: Plotly chart preview result
-        image_preview: Image preview result
-
-    Returns:
-        Summary of all previews tested
-    """
-    return {
-        "total_previews": 8,
-        "preview_types": {
-            "text": text_preview.kind,
-            "code": code_preview.kind,
-            "mermaid": mermaid_preview.kind,
-            "flowchart": flowchart_preview.kind,
-            "json": json_preview.kind,
-            "table": table_preview.kind,
-            "plotly": plotly_preview.kind,
-            "image": image_preview.kind
-        },
-        "status": "All preview renderers tested successfully"
-    }
