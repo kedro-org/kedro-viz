@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyRenderer from '../plotly-renderer';
-import PreviewTable from '../preview-table';
+import TableRenderer from '../table-renderer';
 import JSONObject from '../../components/json-object';
 import HTMLRenderer from '../html-renderer';
 import TextRenderer from '../text-renderer';
@@ -111,7 +111,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasTable && (
         <div className="pipeline-metadata-modal__preview">
-          <PreviewTable data={metadata.preview} size="large" />
+          <TableRenderer data={metadata.preview} size="large" />
         </div>
       )}
       {hasJSON && (
@@ -155,7 +155,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasTaskNodePreview && previewKind === 'table' && (
         <div className="pipeline-metadata-modal__preview">
-          <PreviewTable
+          <TableRenderer
             data={transformTableData(previewContent)}
             size="large"
           />

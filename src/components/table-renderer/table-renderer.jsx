@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import className from 'classnames';
 
-import './preview-table.scss';
+import './table-renderer.scss';
 
-const PreviewTable = ({ data, size = 'small', onClick }) => {
+const TableRenderer = ({ data, size = 'small', onClick }) => {
   const [hoveredHeaderIndex, setHoveredHeaderIndex] = useState(null);
 
   return (
     <table
-      className={className('preview-table', {
-        'preview-table__small': size === 'small',
-        'preview-table__large': size === 'large',
+      className={className('pipeline-table-renderer', {
+        'pipeline-table-renderer__small': size === 'small',
+        'pipeline-table-renderer__large': size === 'large',
       })}
       cellSpacing={0}
     >
       <tbody>
-        <tr className="preview-table__row-header">
+        <tr className="pipeline-table-renderer__row-header">
           {data.columns?.map((column, index) => (
             <th
-              className="preview-table__header"
+              className="pipeline-table-renderer__header"
               key={column}
               onClick={onClick}
               onMouseOut={() => setHoveredHeaderIndex(null)}
@@ -29,11 +29,12 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
           ))}
         </tr>
         {data.data?.map((row, index) => (
-          <tr className="preview-table__row" key={index}>
+          <tr className="pipeline-table-renderer__row" key={index}>
             {row.map((content, i) => (
               <td
-                className={className('preview-table__data', {
-                  'preview-table__data-hovered': i === hoveredHeaderIndex,
+                className={className('pipeline-table-renderer__data', {
+                  'pipeline-table-renderer__data-hovered':
+                    i === hoveredHeaderIndex,
                 })}
                 key={i}
                 onClick={onClick}
@@ -48,4 +49,4 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
   );
 };
 
-export default PreviewTable;
+export default TableRenderer;

@@ -304,10 +304,19 @@ $list-inline-spacing: 0.2em;
 
 .scrollable-container {
   overflow: scroll;
-  max-width: 400px;
   max-height: 300px;
   height: 100%;
   width: 100%;
+  overflow: auto auto;
+  position: relative;
+
+  // Hide scrollbar but keep scrolling functionality
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
 }
 
 .pipeline-metadata__preview-shadow-box-right {
@@ -323,6 +332,8 @@ $list-inline-spacing: 0.2em;
   right: 0;
   top: 0;
   width: 50px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .pipeline-metadata__preview-shadow-box-bottom {

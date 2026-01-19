@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
-import PreviewTable from '../../components/preview-table';
+import TableRenderer from '../../components/table-renderer';
 import JSONObject from '../../components/json-object';
 import HTMLRenderer from '../html-renderer';
 import TextRenderer from '../text-renderer';
@@ -400,7 +400,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview">
                     <div className="scrollable-container">
-                      <PreviewTable
+                      <TableRenderer
                         data={metadata?.preview}
                         size="small"
                         onClick={onExpandMetaDataClick}
@@ -542,7 +542,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview">
                     <div className="scrollable-container">
-                      <PreviewTable
+                      <TableRenderer
                         data={transformTableData(previewContent)}
                         size="small"
                         onClick={onExpandMetaDataClick}
