@@ -1,0 +1,38 @@
+@use '../../styles/variables' as variables;
+
+.kui-theme--light {
+  --color-plotly-bg: #{variables.$grey-200};
+}
+
+.kui-theme--dark {
+  --color-plotly-bg: #{variables.$slate-800};
+}
+
+.pipeline-plotly-renderer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  background: var(--color-plotly-bg);
+
+  .js-plotly-plot {
+    align-items: center;
+    display: flex;
+    width: 100%;
+    min-width: 100%;
+  }
+
+  // Preview mode (used in metadata panel)
+  &--preview {
+    min-height: 300px;
+    max-height: 300px;
+  }
+
+  // Modal mode (used when expanded)
+  &--modal {
+    min-height: 400px;
+    height: 100%;
+  }
+}

@@ -9,7 +9,7 @@ import HTMLRenderer from '../html-renderer';
 import TextRenderer from '../text-renderer';
 import MermaidRenderer from '../mermaid-renderer';
 import CommandCopier from '../ui/command-copier/command-copier';
-import PlotlyChart from '../plotly-chart';
+import PlotlyRenderer from '../plotly-renderer';
 import CloseIcon from '../icons/close';
 import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
@@ -351,15 +351,16 @@ const MetaData = ({
               </dl>
               {hasPlot && (
                 <>
-                  <div
-                    className="pipeline-metadata__plot"
-                    onClick={onExpandMetaDataClick}
-                  >
-                    <PlotlyChart
-                      data={metadata?.preview.data}
-                      layout={metadata?.preview.layout}
-                      view="preview"
-                    />
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <PlotlyRenderer
+                        data={metadata?.preview.data}
+                        layout={metadata?.preview.layout}
+                        view="preview"
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
                   <button
                     className="pipeline-metadata__link"
@@ -515,15 +516,16 @@ const MetaData = ({
               )}
               {hasTaskNodePreview && previewKind === 'plotly' && (
                 <>
-                  <div
-                    className="pipeline-metadata__plot"
-                    onClick={onExpandMetaDataClick}
-                  >
-                    <PlotlyChart
-                      data={previewContent.data}
-                      layout={previewContent.layout}
-                      view="preview"
-                    />
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <PlotlyRenderer
+                        data={previewContent.data}
+                        layout={previewContent.layout}
+                        view="preview"
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
                   <button
                     className="pipeline-metadata__link"

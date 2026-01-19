@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PlotlyChart from '../plotly-chart';
+import PlotlyRenderer from '../plotly-renderer';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
 import HTMLRenderer from '../html-renderer';
@@ -91,7 +91,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       </div>
       {hasPlot && (
         <>
-          <PlotlyChart
+          <PlotlyRenderer
             data={metadata.preview.data}
             layout={metadata.preview.layout}
             view="modal"
@@ -146,7 +146,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasTaskNodePreview && previewKind === 'plotly' && (
         <>
-          <PlotlyChart
+          <PlotlyRenderer
             data={previewContent.data}
             layout={previewContent.layout}
             view="modal"

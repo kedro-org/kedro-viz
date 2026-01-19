@@ -50,6 +50,46 @@ Useful for displaying log outputs, reports, or any textual information.
 
 Line 1: Sample data
 Line 2: More information
+Line 3: Additional details
+This is a plain text preview.
+
+It can contain multiple lines of text.
+Useful for displaying log outputs, reports, or any textual information.
+
+Line 1: Sample data
+Line 2: More information
+Line 3: Additional details
+This is a plain text preview.
+
+It can contain multiple lines of text.
+Useful for displaying log outputs, reports, or any textual information.
+
+Line 1: Sample data
+Line 2: More information
+Line 3: Additional details
+This is a plain text preview.
+
+It can contain multiple lines of text.
+Useful for displaying log outputs, reports, or any textual information.
+
+Line 1: Sample data
+Line 2: More information
+Line 3: Additional details
+This is a plain text preview.
+
+It can contain multiple lines of text.
+Useful for displaying log outputs, reports, or any textual information.
+
+Line 1: Sample data
+Line 2: More information
+Line 3: Additional details
+This is a plain text preview.
+
+It can contain multiple lines of text.
+Useful for displaying log outputs, reports, or any textual information.
+
+Line 1: Sample data
+Line 2: More information
 Line 3: Additional details"""
 
     return TextPreview(content=content)

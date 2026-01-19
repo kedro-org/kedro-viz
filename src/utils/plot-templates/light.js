@@ -101,8 +101,8 @@ const lightTemplate = {
   mapbox: {
     style: 'light',
   },
-  paper_bgcolor: '#EEEEEE',
-  plot_bgcolor: '#EEEEEE',
+  paper_bgcolor: '#d5d8da',
+  plot_bgcolor: '#d5d8da',
   title: {
     font: {
       color: 'rgba(0,0,0,0.85)',

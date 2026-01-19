@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import PlotlyChart from './plotly-chart';
+import PlotlyRenderer from './plotly-renderer';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { toggleTheme } from '../../actions';
@@ -17,16 +17,16 @@ const renderWithStore = (props = {}, theme = 'dark') => {
 
   return render(
     <Provider store={store}>
-      <PlotlyChart {...props} />
+      <PlotlyRenderer {...props} />
     </Provider>
   );
 };
 
-describe('PlotlyChart', () => {
+describe('PlotlyRenderer', () => {
   it('renders without crashing', () => {
     const { container } = renderWithStore();
     expect(
-      container.querySelector('.pipeline-plotly-chart')
+      container.querySelector('.pipeline-plotly-renderer')
     ).toBeInTheDocument();
   });
 
