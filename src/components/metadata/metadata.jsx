@@ -491,11 +491,16 @@ const MetaData = ({
               )}
               {hasTaskNodePreview && previewKind === 'mermaid' && (
                 <>
-                  <div
-                    className="pipeline-metadata__plot"
-                    onClick={onExpandMetaDataClick}
-                  >
-                    <MermaidRenderer content={previewContent} view="preview" />
+                  <div className="pipeline-metadata__preview">
+                    <div className="scrollable-container">
+                      <MermaidRenderer
+                        content={previewContent}
+                        view="preview"
+                        config={previewMeta}
+                      />
+                    </div>
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
                   <button
                     className="pipeline-metadata__link"

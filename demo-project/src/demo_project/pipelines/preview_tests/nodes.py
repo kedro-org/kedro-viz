@@ -81,10 +81,25 @@ print(result)"""
 
 
 def generate_mermaid_preview() -> MermaidPreview:
-    """Generate a Mermaid diagram preview.
+    """Generate a Mermaid diagram preview with custom configuration.
+
+    This example demonstrates how to customize both the Mermaid rendering
+    configuration and the text styling for node labels.
 
     Returns:
-        MermaidPreview object with diagram markup
+        MermaidPreview object with diagram markup and custom config
+
+    Example:
+        Basic usage without configuration:
+        >>> return MermaidPreview(content=diagram)
+
+        With custom configuration:
+        >>> config = {
+        ...     "flowchart": {"wrappingWidth": 300},
+        ...     "themeVariables": {"fontSize": "16px"},
+        ...     "textStyle": {"padding": "8px", "lineHeight": "1.5"}
+        ... }
+        >>> return MermaidPreview(content=diagram, meta=config)
     """
     diagram = """graph TD
     A[Raw Data] -->|Ingest| B(Typed Data)
@@ -100,7 +115,30 @@ def generate_mermaid_preview() -> MermaidPreview:
     style E fill:#ffcdd2
     style H fill:#fff9c4"""
 
-    return MermaidPreview(content=diagram)
+    # Optional: Customize Mermaid rendering configuration
+    # This configuration is merged with sensible defaults
+    custom_config = {
+        "securityLevel": "strict",  # Security level: 'strict', 'loose', 'antiscript' (default: 'strict')
+        "flowchart": {
+            "wrappingWidth": 300,   # Text wrapping threshold (default: 250)
+            "nodeSpacing": 60,      # Horizontal space between nodes (default: 50)
+            "rankSpacing": 60,      # Vertical space between levels (default: 50)
+            "curve": "basis",       # Edge curve style: 'basis', 'linear', 'step'
+        },
+        "themeVariables": {
+            "fontSize": "16px",     # Font size for labels (default: '14px')
+        },
+        # CSS styling for text nodes (nested within config)
+        "textStyle": {
+            "padding": "6px",           # Internal padding in nodes (default: '4px')
+            "lineHeight": "1.3",        # Line height for wrapped text (default: '1.2')
+            "textAlign": "center",      # Text alignment (default: 'center')
+            # Available options: whiteSpace, wordBreak, overflowWrap, overflow,
+            # display, alignItems, justifyContent, width, height
+        }
+    }
+
+    return MermaidPreview(content=diagram, meta=custom_config)
 
 
 def generate_flowchart_preview() -> MermaidPreview:
