@@ -23,7 +23,12 @@ const TextRenderer = ({ content, meta = {}, theme, view = 'preview' }) => {
       )}
     >
       {isCode ? (
-        <MetaDataCode value={content} visible={true} theme={theme} />
+        <MetaDataCode
+          value={content}
+          visible={true}
+          theme={theme}
+          inline={true}
+        />
       ) : (
         <pre className="pipeline-text-renderer__content">{content}</pre>
       )}
