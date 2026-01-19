@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyRenderer from '../plotly-renderer';
 import TableRenderer from '../table-renderer';
-import JSONObject from '../../components/json-object';
+import JsonRenderer from '../../components/json-renderer';
 import HTMLRenderer from '../html-renderer';
 import TextRenderer from '../text-renderer';
 import MermaidRenderer from '../mermaid-renderer';
@@ -116,7 +116,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasJSON && (
         <div className="pipeline-metadata-modal__preview-json">
-          <JSONObject
+          <JsonRenderer
             value={JSON.parse(metadata.preview)}
             theme={theme}
             style={{ background: 'transparent', fontSize: '15px' }}
@@ -163,7 +163,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       )}
       {hasTaskNodePreview && previewKind === 'json' && (
         <div className="pipeline-metadata-modal__preview-json">
-          <JSONObject
+          <JsonRenderer
             value={previewContent}
             theme={theme}
             style={{ background: 'transparent', fontSize: '15px' }}

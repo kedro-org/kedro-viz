@@ -4,7 +4,7 @@ import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
 import TableRenderer from '../../components/table-renderer';
-import JSONObject from '../../components/json-object';
+import JsonRenderer from '../../components/json-renderer';
 import HTMLRenderer from '../html-renderer';
 import TextRenderer from '../text-renderer';
 import MermaidRenderer from '../mermaid-renderer';
@@ -424,7 +424,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview-json">
                     <div className="scrollable-container">
-                      <JSONObject
+                      <JsonRenderer
                         value={JSON.parse(metadata.preview)}
                         theme={theme}
                         style={{ background: 'transparent', fontSize: '14px' }}
@@ -566,7 +566,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview-json">
                     <div className="scrollable-container">
-                      <JSONObject
+                      <JsonRenderer
                         value={previewContent}
                         theme={theme}
                         style={{ background: 'transparent', fontSize: '14px' }}
