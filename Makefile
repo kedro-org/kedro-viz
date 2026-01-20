@@ -19,7 +19,7 @@ package:
 
 # Dev server
 run:
-	PYTHONWARNINGS=$(PYTHONWARNINGS) PYTHONPATH="$(shell pwd)/package" python package/kedro_viz/server.py $(PROJECT_PATH)
+	PYTHONWARNINGS=$(PYTHONWARNINGS) PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
 # Tests
 pytest:
