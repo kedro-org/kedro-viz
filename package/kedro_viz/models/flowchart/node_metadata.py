@@ -67,8 +67,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
         default=None, validate_default=True, description="The outputs from the TaskNode"
     )
 
-    preview: Optional[Dict] = Field(default=None, validate_default=True, description="Serialized preview payload of the TaskNode")
-
     @model_validator(mode="before")
     @classmethod
     def check_task_node_exists(cls, values):
@@ -139,26 +137,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_outputs(cls, _):
         return cls.kedro_node.outputs
-
-    @field_validator("preview")
-    @classmethod
-    def set_preview(cls, _):
-        try:
-            preview_payload = cls.kedro_node.preview()
-            if preview_payload is None:
-                return None
-
-            # Serialize and limit preview data
-            serialized_preview = preview_payload.to_dict()
-            return serialized_preview
-        except Exception as exc:  # noqa: BLE001
-            logger.warning(
-                "'%s' could not be previewed. Full exception: %s: %s",
-                cls.task_node.name,
-                type(exc).__name__,
-                exc,
-            )
-            return None
 
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode.
