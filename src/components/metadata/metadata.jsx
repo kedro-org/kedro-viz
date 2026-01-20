@@ -94,10 +94,18 @@ const MetaData = ({
       };
     }
 
-    // Check for TaskNode preview
+    // Check for TaskNode preview - only supports mermaid, text, and image
     if (metadata?.preview && metadata.preview.kind) {
+      const supportedTaskNodePreviews = ['mermaid', 'text', 'image'];
+      const previewKind = metadata.preview.kind;
+
+      // Filter out unsupported preview types for TaskNode
+      if (!supportedTaskNodePreviews.includes(previewKind)) {
+        return null;
+      }
+
       return {
-        kind: metadata.preview.kind,
+        kind: previewKind,
         content: metadata.preview.content,
         meta: metadata.preview.meta || {},
         isDataNode: false,
@@ -108,20 +116,6 @@ const MetaData = ({
   };
 
   const normalizedPreview = getNormalizedPreview();
-
-  // Transform table data from list of dicts to {columns, data} format
-  const transformTableData = (tableContent) => {
-    if (
-      !tableContent ||
-      !Array.isArray(tableContent) ||
-      tableContent.length === 0
-    ) {
-      return { columns: [], data: [] };
-    }
-    const columns = Object.keys(tableContent[0]);
-    const data = tableContent.map((row) => columns.map((col) => row[col]));
-    return { columns, data };
-  };
 
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -222,6 +216,8 @@ const MetaData = ({
   };
 
   // Unified preview rendering function - works with normalized data
+  // TaskNode supports: mermaid, text, image
+  // DataNode supports: plotly, image, table, json, html
   const renderPreview = () => {
     if (!normalizedPreview) {
       return null;
@@ -229,20 +225,7 @@ const MetaData = ({
 
     const { kind, content, meta, isDataNode } = normalizedPreview;
 
-    // Handle plotly previews
-    if (kind === 'plotly') {
-      return (
-        <PreviewWrapper onExpand={onExpandMetaDataClick}>
-          <PlotlyRenderer
-            data={content.data}
-            layout={content.layout}
-            view="preview"
-          />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle image previews
+    // Handle image previews (supported by both DataNode and TaskNode)
     if (kind === 'image') {
       const imageSrc = isDataNode
         ? `data:image/png;base64,${content}`
@@ -265,13 +248,43 @@ const MetaData = ({
       );
     }
 
-    // Handle table previews
+    // Handle text previews (TaskNode only)
+    if (kind === 'text') {
+      return (
+        <PreviewWrapper onExpand={onExpandMetaDataClick}>
+          <TextRenderer content={content} meta={meta} view="preview" />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle mermaid previews (TaskNode only)
+    if (kind === 'mermaid') {
+      return (
+        <PreviewWrapper onExpand={onExpandMetaDataClick}>
+          <MermaidRenderer content={content} view="preview" config={meta} />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle plotly previews (DataNode only)
+    if (kind === 'plotly') {
+      return (
+        <PreviewWrapper onExpand={onExpandMetaDataClick}>
+          <PlotlyRenderer
+            data={content.data}
+            layout={content.layout}
+            view="preview"
+          />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle table previews (DataNode only)
     if (kind === 'table') {
-      const tableData = isDataNode ? content : transformTableData(content);
       return (
         <PreviewWrapper onExpand={onExpandMetaDataClick}>
           <TableRenderer
-            data={tableData}
+            data={content}
             size="small"
             onClick={onExpandMetaDataClick}
           />
@@ -279,9 +292,9 @@ const MetaData = ({
       );
     }
 
-    // Handle JSON previews
+    // Handle JSON previews (DataNode only)
     if (kind === 'json') {
-      const jsonValue = isDataNode ? JSON.parse(content) : content;
+      const jsonValue = JSON.parse(content);
       return (
         <PreviewWrapper
           onExpand={onExpandMetaDataClick}
@@ -297,7 +310,7 @@ const MetaData = ({
       );
     }
 
-    // Handle HTML previews
+    // Handle HTML previews (DataNode only)
     if (kind === 'html') {
       return (
         <PreviewWrapper
@@ -305,24 +318,6 @@ const MetaData = ({
           className="pipeline-metadata__preview-html"
         >
           <HTMLRenderer content={content} />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle text previews
-    if (kind === 'text') {
-      return (
-        <PreviewWrapper onExpand={onExpandMetaDataClick}>
-          <TextRenderer content={content} meta={meta} view="preview" />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle mermaid previews
-    if (kind === 'mermaid') {
-      return (
-        <PreviewWrapper onExpand={onExpandMetaDataClick}>
-          <MermaidRenderer content={content} view="preview" config={meta} />
         </PreviewWrapper>
       );
     }
