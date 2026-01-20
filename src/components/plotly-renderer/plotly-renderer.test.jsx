@@ -26,7 +26,7 @@ describe('PlotlyRenderer', () => {
   it('renders without crashing', () => {
     const { container } = renderWithStore();
     expect(
-      container.querySelector('.pipeline-plotly-renderer')
+      container.querySelector('.pipeline-plotly-chart')
     ).toBeInTheDocument();
   });
 
