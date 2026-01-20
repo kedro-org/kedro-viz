@@ -8,17 +8,17 @@ const TableRenderer = ({ data, size = 'small', onClick }) => {
 
   return (
     <table
-      className={className('table-renderer', {
-        'table-renderer__small': size === 'small',
-        'table-renderer__large': size === 'large',
+      className={className('preview-table', {
+        'preview-table__small': size === 'small',
+        'preview-table__large': size === 'large',
       })}
       cellSpacing={0}
     >
       <tbody>
-        <tr className="table-renderer__row-header">
+        <tr className="preview-table__row-header">
           {data.columns?.map((column, index) => (
             <th
-              className="table-renderer__header"
+              className="preview-table__header"
               key={column}
               onClick={onClick}
               onMouseOut={() => setHoveredHeaderIndex(null)}
@@ -29,11 +29,11 @@ const TableRenderer = ({ data, size = 'small', onClick }) => {
           ))}
         </tr>
         {data.data?.map((row, index) => (
-          <tr className="table-renderer__row" key={index}>
+          <tr className="preview-table__row" key={index}>
             {row.map((content, i) => (
               <td
-                className={className('table-renderer__data', {
-                  'table-renderer__data-hovered': i === hoveredHeaderIndex,
+                className={className('preview-table__data', {
+                  'preview-table__data-hovered': i === hoveredHeaderIndex,
                 })}
                 key={i}
                 onClick={onClick}
