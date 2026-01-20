@@ -9,14 +9,9 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
 import './metadata-modal.scss';
 
-const MetadataModal = ({
-  metadata,
-  onToggle,
-  visible,
-  theme,
-  showDatasetPreviews,
-}) => {
-  const normalizedPreview = useNormalizedPreview(metadata, showDatasetPreviews);
+const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
+  // Modal only opens when preview exists, so showDatasetPreviews is always true
+  const normalizedPreview = useNormalizedPreview(metadata, true);
 
   if (!visible.metadataModal || !normalizedPreview) {
     return null;
@@ -61,7 +56,6 @@ export const mapStateToProps = (state) => ({
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
   visible: state.visible,
-  showDatasetPreviews: state.showDatasetPreviews,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
