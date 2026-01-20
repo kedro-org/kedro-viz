@@ -67,7 +67,11 @@ class TaskNodeMetadata(GraphNodeMetadata):
         default=None, validate_default=True, description="The outputs from the TaskNode"
     )
 
-    preview: Optional[Dict] = Field(default=None, validate_default=True, description="Serialized preview payload of the TaskNode")
+    preview: Optional[Dict] = Field(
+        default=None,
+        validate_default=True,
+        description="Serialized preview payload of the TaskNode",
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -145,15 +149,21 @@ class TaskNodeMetadata(GraphNodeMetadata):
     def set_preview(cls, _):
         try:
             preview_payload = cls.kedro_node.preview()
-            
+
             if preview_payload is None:
                 return None
-            
-            from kedro.pipeline.preview_contract import TextPreview, MermaidPreview, ImagePreview
-            
-            if not isinstance(preview_payload, (TextPreview, MermaidPreview, ImagePreview)):
+
+            from kedro.pipeline.preview_contract import (
+                ImagePreview,
+                MermaidPreview,
+                TextPreview,
+            )
+
+            if not isinstance(
+                preview_payload, (TextPreview, MermaidPreview, ImagePreview)
+            ):
                 return None
-            
+
             # Serialize and limit preview data
             serialized_preview = preview_payload.to_dict()
             return serialized_preview
@@ -165,6 +175,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 exc,
             )
             return None
+
 
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode.

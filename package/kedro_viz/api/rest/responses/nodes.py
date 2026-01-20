@@ -50,7 +50,11 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "inputs": ["params:input1", "input2"],
                 "outputs": ["output1"],
                 "run_command": "kedro run --to-nodes=split_data",
-                "preview": {"kind": "mermaid", "content": "graph string", "meta": {"title": "Pipeline Graph"}},
+                "preview": {
+                    "kind": "mermaid",
+                    "content": "graph string",
+                    "meta": {"title": "Pipeline Graph"},
+                },
             }
         }
     )
