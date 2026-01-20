@@ -138,6 +138,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
     def set_outputs(cls, _):
         return cls.kedro_node.outputs
 
+
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode.
 
