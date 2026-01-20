@@ -24,7 +24,7 @@ import classNames from 'classnames';
 
 const Plot = createPlotlyComponent(Plotly);
 
-const PlotlyChart = ({ theme, view = '', data = [], layout = {} }) => {
+const PlotlyRenderer = ({ theme, view = '', data = [], layout = {} }) => {
   const plotConfig = view.includes('preview')
     ? { staticPlot: true }
     : undefined;
@@ -65,4 +65,4 @@ const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(PlotlyChart);
+export default connect(mapStateToProps)(PlotlyRenderer);
