@@ -6,11 +6,11 @@ import PreviewRenderer from '../preview-renderer';
 import { togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
-import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
+import { normalizePreview } from '../../utils/normalize-preview';
 import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
-  const normalizedPreview = useNormalizedPreview(metadata, true);
+  const normalizedPreview = normalizePreview(metadata, true);
 
   if (!visible.metadataModal || !normalizedPreview) {
     return null;

@@ -20,7 +20,7 @@ import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal, toggleTraceback } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
-import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
+import { normalizePreview } from '../../utils/normalize-preview';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 import './styles/metadata.scss';
@@ -162,7 +162,7 @@ const MetaData = ({
   };
 
   // Get normalized preview
-  const normalizedPreview = useNormalizedPreview(metadata, showDatasetPreviews);
+  const normalizedPreview = normalizePreview(metadata, showDatasetPreviews);
 
   // Render preview using shared component
   const renderPreview = () => {
