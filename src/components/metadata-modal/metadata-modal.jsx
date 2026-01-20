@@ -10,7 +10,6 @@ import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
 import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
-  // Modal only opens when preview exists, so showDatasetPreviews is always true
   const normalizedPreview = useNormalizedPreview(metadata, true);
 
   if (!visible.metadataModal || !normalizedPreview) {
