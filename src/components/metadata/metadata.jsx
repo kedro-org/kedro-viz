@@ -94,18 +94,10 @@ const MetaData = ({
       };
     }
 
-    // Check for TaskNode preview - only supports mermaid, text, and image
+    // Check for TaskNode preview
     if (metadata?.preview && metadata.preview.kind) {
-      const supportedTaskNodePreviews = ['mermaid', 'text', 'image'];
-      const previewKind = metadata.preview.kind;
-
-      // Filter out unsupported preview types for TaskNode
-      if (!supportedTaskNodePreviews.includes(previewKind)) {
-        return null;
-      }
-
       return {
-        kind: previewKind,
+        kind: metadata.preview.kind,
         content: metadata.preview.content,
         meta: metadata.preview.meta || {},
         isDataNode: false,
