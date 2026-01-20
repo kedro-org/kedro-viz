@@ -3,17 +3,13 @@ import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
-import TableRenderer from '../../components/table-renderer';
-import JsonRenderer from '../../components/json-renderer';
-import HTMLRenderer from '../html-renderer';
 import CommandCopier from '../ui/command-copier/command-copier';
-import PlotlyRenderer from '../plotly-renderer';
 import CloseIcon from '../icons/close';
 import MetaDataRow from './metadata-row';
 import MetaDataCode from './metadata-code';
 import Toggle from '../ui/toggle';
 import ErrorLog from '../error-log';
-import PreviewWrapper from './preview-wrapper';
+import PreviewRenderer from '../preview-renderer';
 import { VIEW } from '../../config';
 import {
   getVisibleMetaSidebar,
@@ -24,6 +20,7 @@ import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal, toggleTraceback } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 import './styles/metadata.scss';
@@ -66,36 +63,6 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-
-  // Normalize preview data
-  const getNormalizedPreview = () => {
-    // Check for DataNode preview
-    if (showDatasetPreviews && metadata?.preview && metadata?.previewType) {
-      const previewType = metadata.previewType;
-
-      // Map DataNode preview types to normalized format
-      const typeMap = {
-        PlotlyPreview: 'plotly',
-        ImagePreview: 'image',
-        TablePreview: 'table',
-        JSONPreview: 'json',
-        HTMLPreview: 'html',
-      };
-
-      return {
-        kind:
-          typeMap[previewType] ||
-          previewType.toLowerCase().replace('preview', ''),
-        content: metadata.preview,
-        meta: {},
-        isDataNode: true,
-      };
-    }
-    return null;
-  };
-
-  const normalizedPreview = getNormalizedPreview();
-
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -194,95 +161,23 @@ const MetaData = ({
     }
   };
 
-  // Unified preview rendering function - works with normalized data
-  // DataNode supports: plotly, image, table, json, html
+  // Get normalized preview
+  const normalizedPreview = useNormalizedPreview(metadata, showDatasetPreviews);
+
+  // Render preview using shared component
   const renderPreview = () => {
     if (!normalizedPreview) {
       return null;
     }
 
-    const { kind, content, meta, isDataNode } = normalizedPreview;
-
-    // Handle image previews
-    if (kind === 'image') {
-      const imageSrc = isDataNode
-        ? `data:image/png;base64,${content}`
-        : content.startsWith('data:')
-        ? content
-        : `data:image/png;base64,${content}`;
-      return (
-        <PreviewWrapper
-          onExpand={onExpandMetaDataClick}
-          className="pipeline-metadata__plot"
-          showShadows={false}
-          onClick={onExpandMetaDataClick}
-        >
-          <img
-            alt="Preview visualization"
-            className="pipeline-metadata__plot-image"
-            src={imageSrc}
-          />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle plotly previews
-    if (kind === 'plotly') {
-      return (
-        <PreviewWrapper onExpand={onExpandMetaDataClick}>
-          <PlotlyRenderer
-            data={content.data}
-            layout={content.layout}
-            view="preview"
-          />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle table previews
-    if (kind === 'table') {
-      return (
-        <PreviewWrapper onExpand={onExpandMetaDataClick}>
-          <TableRenderer
-            data={content}
-            size="small"
-            onClick={onExpandMetaDataClick}
-          />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle JSON previews
-    if (kind === 'json') {
-      const jsonValue = JSON.parse(content);
-      return (
-        <PreviewWrapper
-          onExpand={onExpandMetaDataClick}
-          className="pipeline-metadata__preview-json"
-        >
-          <JsonRenderer
-            value={jsonValue}
-            theme={theme}
-            style={{ background: 'transparent', fontSize: '14px' }}
-            collapsed={3}
-          />
-        </PreviewWrapper>
-      );
-    }
-
-    // Handle HTML previews
-    if (kind === 'html') {
-      return (
-        <PreviewWrapper
-          onExpand={onExpandMetaDataClick}
-          className="pipeline-metadata__preview-html"
-        >
-          <HTMLRenderer content={content} />
-        </PreviewWrapper>
-      );
-    }
-
-    return null;
+    return (
+      <PreviewRenderer
+        normalizedPreview={normalizedPreview}
+        view="preview"
+        theme={theme}
+        onExpand={onExpandMetaDataClick}
+      />
+    );
   };
 
   return (

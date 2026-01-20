@@ -1,26 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PlotlyRenderer from '../plotly-renderer';
-import TableRenderer from '../table-renderer';
-import JsonRenderer from '../../components/json-renderer';
-import HTMLRenderer from '../html-renderer';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
+import PreviewRenderer from '../preview-renderer';
 import { togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
+import { useNormalizedPreview } from '../../utils/hooks/use-normalized-preview';
 import './metadata-modal.scss';
 
-const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
-  const hasPlot = metadata?.previewType === 'PlotlyPreview';
-  const hasImage = metadata?.previewType === 'ImagePreview';
-  const hasTable = metadata?.previewType === 'TablePreview';
-  const hasJSON = metadata?.previewType === 'JSONPreview';
-  const hasHTML = metadata?.previewType === 'HTMLPreview';
-  const hasMetadataContent =
-    hasPlot || hasImage || hasTable || hasJSON || hasHTML;
+const MetadataModal = ({
+  metadata,
+  onToggle,
+  visible,
+  theme,
+  showDatasetPreviews,
+}) => {
+  const normalizedPreview = useNormalizedPreview(metadata, showDatasetPreviews);
 
-  if (!visible.metadataModal || !hasMetadataContent) {
+  if (!visible.metadataModal || !normalizedPreview) {
     return null;
   }
 
@@ -49,53 +47,12 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             {metadata.name}
           </span>
         </div>
-        {hasTable && (
-          <div className="pipeline-metadata-modal__preview-text">
-            Previewing first{' '}
-            {metadata.preview.data && metadata.preview.data.length} rows
-          </div>
-        )}
       </div>
-      {hasPlot && (
-        <>
-          <PlotlyRenderer
-            data={metadata.preview.data}
-            layout={metadata.preview.layout}
-            view="modal"
-          />
-        </>
-      )}
-      {hasImage && (
-        <div className="pipeline-matplotlib-chart">
-          <div className="pipeline-metadata__plot-image-container">
-            <img
-              alt="Matplotlib rendering"
-              className="pipeline-metadata__plot-image--expanded"
-              src={`data:image/png;base64,${metadata.preview}`}
-            />
-          </div>
-        </div>
-      )}
-      {hasTable && (
-        <div className="pipeline-metadata-modal__preview">
-          <TableRenderer data={metadata.preview} size="large" />
-        </div>
-      )}
-      {hasJSON && (
-        <div className="pipeline-metadata-modal__preview-json">
-          <JsonRenderer
-            value={JSON.parse(metadata.preview)}
-            theme={theme}
-            style={{ background: 'transparent', fontSize: '15px' }}
-            collapsed={3}
-          />
-        </div>
-      )}
-      {hasHTML && (
-        <div className="pipeline-metadata-modal__preview-markdown">
-          <HTMLRenderer content={metadata.preview} fontSize="15px" />
-        </div>
-      )}
+      <PreviewRenderer
+        normalizedPreview={normalizedPreview}
+        view="modal"
+        theme={theme}
+      />
     </div>
   );
 };
@@ -104,6 +61,7 @@ export const mapStateToProps = (state) => ({
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
   visible: state.visible,
+  showDatasetPreviews: state.showDatasetPreviews,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
