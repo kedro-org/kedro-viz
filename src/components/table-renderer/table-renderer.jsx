@@ -8,17 +8,17 @@ const TableRenderer = ({ data, size = 'small', onClick }) => {
 
   return (
     <table
-      className={className('pipeline-table-renderer', {
-        'pipeline-table-renderer__small': size === 'small',
-        'pipeline-table-renderer__large': size === 'large',
+      className={className('table-renderer', {
+        'table-renderer__small': size === 'small',
+        'table-renderer__large': size === 'large',
       })}
       cellSpacing={0}
     >
       <tbody>
-        <tr className="pipeline-table-renderer__row-header">
+        <tr className="table-renderer__row-header">
           {data.columns?.map((column, index) => (
             <th
-              className="pipeline-table-renderer__header"
+              className="table-renderer__header"
               key={column}
               onClick={onClick}
               onMouseOut={() => setHoveredHeaderIndex(null)}
@@ -29,12 +29,11 @@ const TableRenderer = ({ data, size = 'small', onClick }) => {
           ))}
         </tr>
         {data.data?.map((row, index) => (
-          <tr className="pipeline-table-renderer__row" key={index}>
+          <tr className="table-renderer__row" key={index}>
             {row.map((content, i) => (
               <td
-                className={className('pipeline-table-renderer__data', {
-                  'pipeline-table-renderer__data-hovered':
-                    i === hoveredHeaderIndex,
+                className={className('table-renderer__data', {
+                  'table-renderer__data-hovered': i === hoveredHeaderIndex,
                 })}
                 key={i}
                 onClick={onClick}

@@ -15,18 +15,14 @@ const mockData = {
 describe('TableRenderer', () => {
   it('renders without crashing', () => {
     const { container } = render(<TableRenderer data={mockData} />);
-    expect(
-      container.querySelector('.pipeline-table-renderer')
-    ).toBeInTheDocument();
+    expect(container.querySelector('.table-renderer')).toBeInTheDocument();
   });
 
   it('renders the correct number of headers and rows', () => {
     const { container } = render(<TableRenderer data={mockData} />);
 
-    const headers = container.querySelectorAll(
-      '.pipeline-table-renderer__header'
-    );
-    const rows = container.querySelectorAll('.pipeline-table-renderer__row');
+    const headers = container.querySelectorAll('.table-renderer__header');
+    const rows = container.querySelectorAll('.table-renderer__row');
 
     expect(headers.length).toBe(mockData.columns.length);
     expect(rows.length).toBe(mockData.index.length);
@@ -36,7 +32,7 @@ describe('TableRenderer', () => {
     const { container } = render(<TableRenderer data={mockData} />);
 
     const lastColumnCells = container.querySelectorAll(
-      '.pipeline-table-renderer__row > td:last-child'
+      '.table-renderer__row > td:last-child'
     );
 
     lastColumnCells.forEach((cell) => {

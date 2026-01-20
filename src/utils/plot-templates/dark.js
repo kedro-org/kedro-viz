@@ -101,8 +101,8 @@ const darkTemplate = {
   mapbox: {
     style: 'DARK',
   },
-  paper_bgcolor: '#101112',
-  plot_bgcolor: '#101112',
+  paper_bgcolor: '#111111',
+  plot_bgcolor: '#111111',
   title: {
     font: {
       color: 'rgba(255,255,255,0.85)',

@@ -11,60 +11,60 @@
   --color-highlight: #{variables.$slate-400};
 }
 
-.pipeline-table-renderer__header {
+.table-renderer__header {
   font-size: 12px;
   font-weight: 600;
   line-height: 16px;
   padding-bottom: 12px;
 }
 
-.pipeline-table-renderer__data {
+.table-renderer__data {
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
   padding-bottom: 8px;
 }
 
-.pipeline-table-renderer__small {
+.table-renderer__small {
   margin: 30px 32px;
 
-  .pipeline-table-renderer__header,
-  .pipeline-table-renderer__data {
+  .table-renderer__header,
+  .table-renderer__data {
     text-align: left;
     padding-right: 32px;
   }
 }
 
-.pipeline-table-renderer__large {
+.table-renderer__large {
   margin: auto 30px 30px auto;
 
-  .pipeline-table-renderer__header,
-  .pipeline-table-renderer__data {
+  .table-renderer__header,
+  .table-renderer__data {
     padding: 12px 42px 12px 22px;
     text-align: left;
   }
 
-  .pipeline-table-renderer__row-header {
+  .table-renderer__row-header {
     background: var(--color-bg);
     position: sticky;
     top: 0;
     z-index: variables.$zindex-table-renderer-header;
   }
 
-  .pipeline-table-renderer__row:hover,
-  .pipeline-table-renderer__header:hover,
-  .pipeline-table-renderer__data-hovered {
+  .table-renderer__row:hover,
+  .table-renderer__header:hover,
+  .table-renderer__data-hovered {
     background: var(--color-highlight);
   }
 }
 
-.pipeline-table-renderer__row:hover,
-.pipeline-table-renderer__header:hover {
+.table-renderer__row:hover,
+.table-renderer__header:hover {
   cursor: pointer;
 }
 
-.pipeline-table-renderer__header,
-.pipeline-table-renderer__data {
+.table-renderer__header,
+.table-renderer__data {
   position: relative;
   outline: 0;
 }
