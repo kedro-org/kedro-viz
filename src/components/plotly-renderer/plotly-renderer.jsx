@@ -3,7 +3,6 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-dist-min';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import './plotly-renderer.scss';
 import {
   darkPreviewTemplate,
@@ -13,29 +12,28 @@ import {
   lightPreviewTemplate,
   lightModalTemplate,
 } from '../../utils/plot-templates/light';
+import classNames from 'classnames';
+
+/**
+ * Display plotly chart
+ * @param {Object} chartSize Chart dimensions in pixels
+ * @param {Object} targetRect event.target.getBoundingClientRect()
+ * @param {Boolean} visible Whether to show the tooltip
+ * @param {String} text Tooltip display label
+ */
 
 const Plot = createPlotlyComponent(Plotly);
 
-/**
- * PlotlyRenderer component for rendering Plotly charts
- * @param {string} theme - Current theme (light/dark)
- * @param {string} view - View mode ('preview' or 'modal')
- * @param {Array} data - Plotly data traces
- * @param {Object} layout - Plotly layout configuration
- */
-const PlotlyRenderer = ({
-  theme,
-  view = 'preview',
-  data = [],
-  layout = {},
-}) => {
-  const plotConfig = view === 'preview' ? { staticPlot: true } : undefined;
+const PlotlyChart = ({ theme, view = '', data = [], layout = {} }) => {
+  const plotConfig = view.includes('preview')
+    ? { staticPlot: true }
+    : undefined;
 
   return (
     <div
-      className={classnames(
-        'pipeline-plotly-renderer',
-        `pipeline-plotly-renderer--${view}`
+      className={classNames(
+        'pipeline-plotly-chart',
+        `pipeline-plotly__${view}`
       )}
     >
       <Plot
@@ -67,4 +65,4 @@ const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(PlotlyRenderer);
+export default connect(mapStateToProps)(PlotlyChart);
