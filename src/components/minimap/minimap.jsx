@@ -13,6 +13,7 @@ import {
   getViewTransform,
   setViewTransformExact,
 } from '../../utils/view';
+import { changed } from '../../utils';
 import { drawNodes, drawViewport } from './draw';
 import './styles/minimap.scss';
 
@@ -98,10 +99,10 @@ export class MiniMap extends Component {
     const { miniMapVisible, chartZoom } = this.props;
 
     if (miniMapVisible) {
-      const changed = (...names) => this.changed(names, prevProps, this.props);
+      const hasChanged = (...names) => changed(names, prevProps, this.props);
 
       if (
-        changed(
+        hasChanged(
           'miniMapVisible',
           'nodes',
           'clickedNodes',
@@ -113,26 +114,14 @@ export class MiniMap extends Component {
         drawNodes.call(this);
       }
 
-      if (changed('miniMapVisible', 'chartZoom') && chartZoom.applied) {
+      if (hasChanged('miniMapVisible', 'chartZoom') && chartZoom.applied) {
         drawViewport.call(this);
       }
 
-      if (changed('miniMapVisible', 'nodes', 'textLabels', 'chartSize')) {
+      if (hasChanged('miniMapVisible', 'nodes', 'textLabels', 'chartSize')) {
         this.resetView();
       }
     }
-  }
-
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return (
-      objectA &&
-      objectB &&
-      props.some((prop) => objectA[prop] !== objectB[prop])
-    );
   }
 
   /**
