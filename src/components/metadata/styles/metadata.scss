@@ -303,11 +303,11 @@ $list-inline-spacing: 0.2em;
 }
 
 .scrollable-container {
+  overflow: scroll;
+  max-width: 400px;
   max-height: 300px;
   height: 100%;
   width: 100%;
-  overflow: auto auto;
-  position: relative;
 }
 
 .pipeline-metadata__preview-shadow-box-right {
@@ -323,8 +323,6 @@ $list-inline-spacing: 0.2em;
   right: 0;
   top: 0;
   width: 50px;
-  pointer-events: none;
-  z-index: 1;
 }
 
 .pipeline-metadata__preview-shadow-box-bottom {
