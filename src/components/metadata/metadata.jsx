@@ -161,23 +161,27 @@ const MetaData = ({
     }
   };
 
-  // Get normalized preview
-  const normalizedPreview = normalizePreview(metadata, showDatasetPreviews);
-
   // Render preview using shared component
   const renderPreview = () => {
-    if (!normalizedPreview) {
-      return null;
+    // Only render preview if it's a DataNode with previews enabled OR a TaskNode
+    if ((isDataNode && showDatasetPreviews) || isTaskNode) {
+      const normalizedPreview = normalizePreview(metadata);
+
+      if (!normalizedPreview) {
+        return null;
+      }
+
+      return (
+        <PreviewRenderer
+          normalizedPreview={normalizedPreview}
+          view="preview"
+          theme={theme}
+          onExpand={onExpandMetaDataClick}
+        />
+      );
     }
 
-    return (
-      <PreviewRenderer
-        normalizedPreview={normalizedPreview}
-        view="preview"
-        theme={theme}
-        onExpand={onExpandMetaDataClick}
-      />
-    );
+    return null;
   };
 
   return (

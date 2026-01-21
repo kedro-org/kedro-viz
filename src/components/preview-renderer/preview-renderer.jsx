@@ -4,6 +4,8 @@ import TableRenderer from '../table-renderer';
 import JsonRenderer from '../json-renderer';
 import HTMLRenderer from '../html-renderer';
 import PreviewWrapper from '../metadata/preview-wrapper';
+import MermaidRenderer from '../mermaid-renderer';
+import TextRenderer from '../text-renderer';
 
 /**
  * Unified DataNode preview renderer component
@@ -20,35 +22,16 @@ const PreviewRenderer = ({
     return null;
   }
 
-  const { kind, content } = normalizedPreview;
+  const { kind, content, meta, isDataNode } = normalizedPreview;
   const isModal = view === 'modal';
 
-  // Handle plotly previews
-  if (kind === 'plotly') {
-    if (isModal) {
-      return (
-        <PlotlyRenderer
-          data={content.data}
-          layout={content.layout}
-          view="modal"
-        />
-      );
-    }
-
-    return (
-      <PreviewWrapper onExpand={onExpand}>
-        <PlotlyRenderer
-          data={content.data}
-          layout={content.layout}
-          view="preview"
-        />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle image previews
+  // Handle image previews (supported by both DataNode and TaskNode)
   if (kind === 'image') {
-    const imageSrc = `data:image/png;base64,${content}`;
+    const imageSrc = isDataNode
+      ? `data:image/png;base64,${content}`
+      : content.startsWith('data:')
+      ? content
+      : `data:image/png;base64,${content}`;
 
     if (isModal) {
       return (
@@ -80,7 +63,48 @@ const PreviewRenderer = ({
     );
   }
 
-  // Handle table previews
+  // Handle text previews (TaskNode only)
+  if (kind === 'text') {
+    return (
+      <PreviewWrapper onExpand={onExpand}>
+        <TextRenderer content={content} meta={meta} view="preview" />
+      </PreviewWrapper>
+    );
+  }
+
+  // Handle mermaid previews (TaskNode only)
+  if (kind === 'mermaid') {
+    return (
+      <PreviewWrapper onExpand={onExpand}>
+        <MermaidRenderer content={content} view="preview" config={meta} />
+      </PreviewWrapper>
+    );
+  }
+
+  // Handle plotly previews (DataNode only)
+  if (kind === 'plotly') {
+    if (isModal) {
+      return (
+        <PlotlyRenderer
+          data={content.data}
+          layout={content.layout}
+          view="modal"
+        />
+      );
+    }
+
+    return (
+      <PreviewWrapper onExpand={onExpand}>
+        <PlotlyRenderer
+          data={content.data}
+          layout={content.layout}
+          view="preview"
+        />
+      </PreviewWrapper>
+    );
+  }
+
+  // Handle table previews (DataNode only)
   if (kind === 'table') {
     const rowCount = content?.data?.length || 0;
 
@@ -106,7 +130,7 @@ const PreviewRenderer = ({
     );
   }
 
-  // Handle JSON previews
+  // Handle JSON previews (DataNode only)
   if (kind === 'json') {
     const jsonValue = JSON.parse(content);
     const fontSize = isModal ? '15px' : '14px';
@@ -139,7 +163,7 @@ const PreviewRenderer = ({
     );
   }
 
-  // Handle HTML previews
+  // Handle HTML previews (DataNode only)
   if (kind === 'html') {
     const fontSize = isModal ? '15px' : undefined;
 
