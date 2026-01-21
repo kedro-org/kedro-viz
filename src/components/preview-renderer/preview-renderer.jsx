@@ -65,6 +65,13 @@ const PreviewRenderer = ({
 
   // Handle text previews (TaskNode only)
   if (kind === 'text') {
+    if (isModal) {
+      return (
+        <div className="pipeline-metadata-modal__preview">
+          <TextRenderer content={content} meta={meta} view="modal" />
+        </div>
+      );
+    }
     return (
       <PreviewWrapper onExpand={onExpand}>
         <TextRenderer content={content} meta={meta} view="preview" />
@@ -74,6 +81,13 @@ const PreviewRenderer = ({
 
   // Handle mermaid previews (TaskNode only)
   if (kind === 'mermaid') {
+    if (isModal) {
+      return (
+        <div className="pipeline-metadata-modal__preview">
+          <MermaidRenderer content={content} view="modal" config={meta} />
+        </div>
+      );
+    }
     return (
       <PreviewWrapper onExpand={onExpand}>
         <MermaidRenderer content={content} view="preview" config={meta} />
