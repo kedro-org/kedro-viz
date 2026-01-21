@@ -27,7 +27,7 @@ const TextRenderer = ({ content, meta = {}, theme, view = 'preview' }) => {
           value={content}
           visible={true}
           theme={theme}
-          inline={true}
+          previewMode={true}
         />
       ) : (
         <pre className="pipeline-text-renderer__content">{content}</pre>

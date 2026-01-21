@@ -60,8 +60,8 @@
     @include breakpoints(variables.$sidebar-width-closed);
   }
 
-  // Inline mode for use in previews
-  &--inline {
+  // Preview mode for use in previews
+  &--previewMode {
     position: relative;
     inset: unset;
     left: unset;
@@ -115,8 +115,8 @@
     color: var(--color-metadata-code-text);
   }
 
-  // Inline mode styling
-  .pipeline-metadata-code--inline & {
+  // Preview mode styling
+  .pipeline-metadata-code--previewMode & {
     font-size: 14px;
     line-height: 1.6;
     overflow-x: auto;
@@ -128,8 +128,8 @@
   margin: 0;
   padding: 0 36px 36px;
 
-  // Inline mode styling
-  .pipeline-metadata-code--inline & {
+  // Preview mode styling
+  .pipeline-metadata-code--previewMode & {
     padding: 16px;
     margin: 0;
     white-space: pre;
