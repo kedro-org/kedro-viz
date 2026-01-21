@@ -19,7 +19,7 @@ export const MetaDataCode = ({
   visible = true,
   value = '',
   title = '',
-  inline = false,
+  previewMode = false,
 }) => {
   const codeRef = useRef();
 
@@ -33,7 +33,7 @@ export const MetaDataCode = ({
     <div
       className={modifiers(
         'pipeline-metadata-code',
-        { visible, sidebarVisible, inline },
+        { visible, sidebarVisible, previewMode },
         'kedro'
       )}
     >
