@@ -62,22 +62,22 @@
 
   // Inline mode for use in previews
   &--inline {
-    position: relative !important;
-    inset: unset !important;
-    left: unset !important;
-    right: unset !important;
-    top: unset !important;
-    bottom: unset !important;
-    transform: none !important;
-    padding: 0 !important;
-    background: transparent !important;
-    z-index: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    transition: none !important;
-    border: none !important;
-    border-bottom: none !important;
-    border-right: none !important;
+    position: relative;
+    inset: unset;
+    left: unset;
+    right: unset;
+    top: unset;
+    bottom: unset;
+    transform: none;
+    padding: 0;
+    background: transparent;
+    z-index: auto;
+    width: 100%;
+    height: auto;
+    transition: none;
+    border: none;
+    border-bottom: none;
+    border-right: none;
   }
 
   @media print {
