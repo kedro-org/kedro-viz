@@ -148,7 +148,11 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_preview(cls, _):
         try:
-            preview_payload = cls.kedro_node.preview()
+            task_node_preview_fn = getattr(cls.kedro_node, "preview", None)
+            if not callable(task_node_preview_fn):
+                return None
+            
+            preview_payload = task_node_preview_fn()
 
             if preview_payload is None:
                 return None
@@ -164,9 +168,18 @@ class TaskNodeMetadata(GraphNodeMetadata):
             ):
                 return None
 
-            # Serialize and limit preview data
-            serialized_preview = preview_payload.to_dict()
-            return serialized_preview
+            # serialized payload
+            return preview_payload.to_dict() 
+
+        except ImportError:
+            if not getattr(cls.set_preview, "_import_warning_shown", False):
+                logger.warning(
+                    "Task node previews are disabled because this Kedro version "
+                    "does not provide 'kedro.pipeline.preview_contract'."
+                )
+                cls.set_preview._import_warning_shown = True
+            return None
+
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
@@ -175,7 +188,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 exc,
             )
             return None
-
 
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode.
