@@ -6,7 +6,7 @@
  * @returns {Object|null} Normalized preview object with { kind, content, meta, isDataNode } or null
  */
 export const normalizePreview = (metadata) => {
-  if (!metadata || !metadata?.preview) {
+  if (!(metadata && metadata?.preview)) {
     return null;
   }
 
