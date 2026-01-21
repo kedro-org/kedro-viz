@@ -23,12 +23,15 @@ def get_split_data_graph() -> MermaidPreview:
     E -->|Test Set| H[X_test]
     E -->|Test Set| I[y_test]
 
-    style A fill:#e1f5ff
-    style F fill:#c8e6c9
-    style G fill:#c8e6c9
-    style H fill:#fff9c4
-    style I fill:#fff9c4
-    style E fill:#e1bee7"""
+    classDef inputNode fill:#4A90E2,stroke:#2E5C8A,color:#FFFFFF
+    classDef trainNode fill:#50C878,stroke:#2D7A4A,color:#FFFFFF
+    classDef testNode fill:#F5A623,stroke:#C17D11,color:#FFFFFF
+    classDef processNode fill:#9B59B6,stroke:#6C3A84,color:#FFFFFF
+
+    class A inputNode
+    class F,G trainNode
+    class H,I testNode
+    class E processNode"""
     )
 
 
