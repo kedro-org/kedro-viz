@@ -1,6 +1,7 @@
 name: Blocking Issues
 
 on:
+  workflow_dispatch:
   issues:
     types: [closed]
   pull_request_target:
