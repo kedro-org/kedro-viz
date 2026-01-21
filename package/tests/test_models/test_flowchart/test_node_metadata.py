@@ -447,9 +447,9 @@ class TestGraphNodeMetadata:
             inputs="x",
             outputs="y",
             name="preview_node",
-            preview_fn=get_text_preview
+            preview_fn=get_text_preview,
         )
-        
+
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
@@ -462,20 +462,18 @@ class TestGraphNodeMetadata:
     def test_mermaid_preview(self):
         """Test that MermaidPreview is correctly serialized."""
         from kedro.pipeline.preview_contract import MermaidPreview
-        
+
         def get_mermaid_preview():
-            return MermaidPreview(
-                content="graph TD; A-->B;", meta={"theme": "default"}
-            )
+            return MermaidPreview(content="graph TD; A-->B;", meta={"theme": "default"})
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
-            preview_fn=get_mermaid_preview
+            preview_fn=get_mermaid_preview,
         )
-    
+
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
@@ -490,18 +488,16 @@ class TestGraphNodeMetadata:
         from kedro.pipeline.preview_contract import ImagePreview
 
         def get_image_preview():
-            return ImagePreview(
-                    content="base64encodedcontent", meta={"format": "png"}
-                )
+            return ImagePreview(content="base64encodedcontent", meta={"format": "png"})
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
-            preview_fn=get_image_preview
+            preview_fn=get_image_preview,
         )
-        
+
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
@@ -516,18 +512,16 @@ class TestGraphNodeMetadata:
         from kedro.pipeline.preview_contract import JsonPreview
 
         def get_json_preview():
-            return JsonPreview(
-                    content={"random": "value"}
-                )
+            return JsonPreview(content={"random": "value"})
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
-            preview_fn=get_json_preview
+            preview_fn=get_json_preview,
         )
-        
+
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
@@ -552,15 +546,15 @@ class TestGraphNodeMetadata:
 
         def dummy_preview():
             return None
-        
+
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
-            preview_fn=dummy_preview
+            preview_fn=dummy_preview,
         )
-        
+
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
