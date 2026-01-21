@@ -1,4 +1,3 @@
-import sys
 from functools import partial, wraps
 from pathlib import Path
 from textwrap import dedent
@@ -433,3 +432,168 @@ class TestGraphNodeMetadata:
             parameters_node=parameters_node
         )
         assert parameters_node_metadata.parameters == {"test_split_ratio": 0.3}
+
+    def test_text_preview(self, mocker):
+        """Test that TextPreview is correctly serialized."""
+        try:
+            from kedro.pipeline.preview_contract import TextPreview
+        except ImportError:
+            pytest.skip("kedro.pipeline.preview_contract not available")
+
+        text_preview = TextPreview(
+            content="Sample text content", meta={"language": "python"}
+        )
+
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="preview_node",
+        )
+        kedro_node.preview = mocker.MagicMock(return_value=text_preview)
+
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview == {
+            "kind": "text",
+            "content": "Sample text content",
+            "meta": {"language": "python"},
+        }
+
+    def test_mermaid_preview(self, mocker):
+        """Test that MermaidPreview is correctly serialized."""
+        try:
+            from kedro.pipeline.preview_contract import MermaidPreview
+        except ImportError:
+            pytest.skip("kedro.pipeline.preview_contract not available")
+
+        mermaid_preview = MermaidPreview(
+            content="graph TD; A-->B;", meta={"theme": "default"}
+        )
+
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="mermaid_node",
+        )
+        kedro_node.preview = mocker.MagicMock(return_value=mermaid_preview)
+
+        task_node = GraphNode.create_task_node(kedro_node, "mermaid_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview == {
+            "kind": "mermaid",
+            "content": "graph TD; A-->B;",
+            "meta": {"theme": "default"},
+        }
+
+    def test_image_preview(self, mocker):
+        """Test that ImagePreview is correctly serialized."""
+        try:
+            from kedro.pipeline.preview_contract import ImagePreview
+        except ImportError:
+            pytest.skip("kedro.pipeline.preview_contract not available")
+
+        image_preview = ImagePreview(
+            content="base64encodedcontent", meta={"format": "png"}
+        )
+
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="image_node",
+        )
+        kedro_node.preview = mocker.MagicMock(return_value=image_preview)
+
+        task_node = GraphNode.create_task_node(kedro_node, "image_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview == {
+            "kind": "image",
+            "content": "base64encodedcontent",
+            "meta": {"format": "png"},
+        }
+
+    def test_no_preview_attr(self):
+        """Test that preview is None when kedro_node has no preview attribute."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="no_preview_node",
+        )
+
+        task_node = GraphNode.create_task_node(kedro_node, "no_preview_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+
+    def test_preview_not_callable(self):
+        """Test that preview is None when preview attribute is not callable."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="non_callable_preview_node",
+        )
+        kedro_node.preview = "not a callable"
+
+        task_node = GraphNode.create_task_node(
+            kedro_node, "non_callable_preview_node", set()
+        )
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+
+    def test_preview_returns_none(self, mocker):
+        """Test that preview is None when preview() returns None."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="null_preview_node",
+        )
+        kedro_node.preview = mocker.MagicMock(return_value=None)
+
+        task_node = GraphNode.create_task_node(kedro_node, "null_preview_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+
+    def test_invalid_preview_type(self, mocker):
+        """Test that preview is None when preview() returns an unsupported type."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="invalid_type_node",
+        )
+        # Return a string which is not a valid preview type
+        kedro_node.preview = mocker.MagicMock(return_value="invalid type")
+
+        task_node = GraphNode.create_task_node(kedro_node, "invalid_type_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+
+    def test_preview_exception_handler(self, mocker, caplog):
+        """Test that exceptions during preview() are handled gracefully."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="exception_node",
+        )
+        kedro_node.preview = mocker.MagicMock(
+            side_effect=RuntimeError("Preview failed")
+        )
+
+        task_node = GraphNode.create_task_node(kedro_node, "exception_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+        assert "'exception_node' could not be previewed" in caplog.text
+        assert "RuntimeError" in caplog.text
