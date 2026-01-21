@@ -149,7 +149,10 @@ class TaskNodeMetadata(GraphNodeMetadata):
     def set_preview(cls, _):
         try:
             task_node_preview_fn = getattr(cls.kedro_node, "preview", None)
-            if not callable(task_node_preview_fn):
+
+            # for supporting versions of kedro
+            # which do not support preview_fn
+            if task_node_preview_fn is None:  # pragma: no cover
                 return None
 
             preview_payload = task_node_preview_fn()
@@ -171,7 +174,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
             # serialized payload
             return preview_payload.to_dict()
 
-        except ImportError:
+        except ImportError:  # pragma: no cover
             if not getattr(cls.set_preview, "_import_warning_shown", False):
                 logger.warning(
                     "Task node previews are disabled because this Kedro version "

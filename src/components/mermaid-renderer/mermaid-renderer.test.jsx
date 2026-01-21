@@ -4,12 +4,6 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import MermaidRenderer from './mermaid-renderer';
 
-// Mock mermaid library
-jest.mock('mermaid', () => ({
-  initialize: jest.fn(),
-  render: jest.fn().mockResolvedValue({ svg: '<svg></svg>' }),
-}));
-
 const mockStore = configureStore([]);
 
 const renderWithStore = (props = {}, theme = 'dark') => {
@@ -68,7 +62,7 @@ describe('MermaidRenderer', () => {
   });
 
   it('applies correct theme to mermaid initialization', () => {
-    const mermaid = require('mermaid');
+    const mermaid = require('mermaid').default;
     renderWithStore({ content: 'graph TD; A-->B;' }, 'light');
 
     expect(mermaid.initialize).toHaveBeenCalledWith(
@@ -80,7 +74,7 @@ describe('MermaidRenderer', () => {
   });
 
   it('applies dark theme to mermaid initialization', () => {
-    const mermaid = require('mermaid');
+    const mermaid = require('mermaid').default;
     renderWithStore({ content: 'graph TD; A-->B;' }, 'dark');
 
     expect(mermaid.initialize).toHaveBeenCalledWith(
@@ -92,19 +86,26 @@ describe('MermaidRenderer', () => {
   });
 
   it('displays error message when rendering fails', async () => {
-    const mermaid = require('mermaid');
-    mermaid.render.mockRejectedValueOnce(new Error('Invalid syntax'));
+    const mermaid = require('mermaid').default;
+    // Set up the mock to reject before rendering
+    mermaid.render.mockRejectedValue(new Error('Invalid syntax'));
 
     const { container } = renderWithStore({
       content: 'invalid diagram',
     });
 
-    await waitFor(() => {
-      const errorElement = container.querySelector(
-        '.pipeline-mermaid-renderer__error'
-      );
-      expect(errorElement).toBeInTheDocument();
-      expect(errorElement.textContent).toContain('Failed to render diagram');
-    });
+    await waitFor(
+      () => {
+        const errorElement = container.querySelector(
+          '.pipeline-mermaid-renderer__error'
+        );
+        expect(errorElement).toBeInTheDocument();
+        expect(errorElement.textContent).toContain('Failed to render diagram');
+      },
+      { timeout: 3000 }
+    );
+
+    // Reset the mock back to success for other tests
+    mermaid.render.mockResolvedValue({ svg: '<svg></svg>' });
   });
 });

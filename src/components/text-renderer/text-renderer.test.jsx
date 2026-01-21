@@ -7,7 +7,12 @@ import TextRenderer from './text-renderer';
 const mockStore = configureStore([]);
 
 const renderWithStore = (props = {}, theme = 'dark') => {
-  const store = mockStore({ theme });
+  const store = mockStore({
+    theme,
+    visible: {
+      sidebar: true,
+    },
+  });
   return render(
     <Provider store={store}>
       <TextRenderer {...props} />
@@ -44,7 +49,7 @@ describe('TextRenderer', () => {
       meta: { language: 'python' },
     });
     // When language is provided, MetaDataCode component should be used
-    const codeElement = container.querySelector('.pipeline-metadata__code');
+    const codeElement = container.querySelector('.pipeline-metadata-code');
     expect(codeElement).toBeInTheDocument();
   });
 
