@@ -151,7 +151,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
             task_node_preview_fn = getattr(cls.kedro_node, "preview", None)
             if not callable(task_node_preview_fn):
                 return None
-            
+
             preview_payload = task_node_preview_fn()
 
             if preview_payload is None:
@@ -169,7 +169,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 return None
 
             # serialized payload
-            return preview_payload.to_dict() 
+            return preview_payload.to_dict()
 
         except ImportError:
             if not getattr(cls.set_preview, "_import_warning_shown", False):
@@ -188,6 +188,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 exc,
             )
             return None
+
 
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode.
