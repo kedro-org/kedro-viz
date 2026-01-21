@@ -1,7 +1,6 @@
 name: Blocking Issues
 
 on:
-  workflow_dispatch:
   issues:
     types: [closed]
   pull_request_target:
@@ -17,4 +16,4 @@ jobs:
     name: Checks for blocking issues
 
     steps:
-      - uses: Levi-Lesches/blocking-issues@v2
+      - uses: Levi-Lesches/blocking-issues@v1.1
