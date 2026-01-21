@@ -108,6 +108,14 @@ const MermaidRenderer = ({ content, theme, view = 'preview', config = {} }) => {
     };
 
     renderDiagram();
+
+    // Cleanup function to clear the container
+    // when component unmounts or effect re-runs
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
+    };
   }, [content, theme, config]);
 
   return (
