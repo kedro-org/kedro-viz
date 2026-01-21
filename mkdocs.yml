@@ -83,11 +83,12 @@ plugins:
           - publish_and_share_kedro_viz_on_aws.md: Publish and share on AWS
           - publish_and_share_kedro_viz_on_azure.md: Publish and share on Azure
           - publish_and_share_kedro_viz_on_gcp.md: Publish and share on GCP
-        Dataset Previews:
+        Previews:
           - preview_datasets.md: Preview datasets overview
           - preview_matplotlib_datasets.md: Preview Matplotlib charts in Kedro-Viz
           - preview_plotly_datasets.md: Preview Plotly charts in Kedro-Viz
           - preview_pandas_datasets.md: Preview tabular data in Kedro-Viz
+          - preview_task_nodes.md: Preview TaskNodes in Kedro-Viz
           - preview_custom_datasets.md: Extend preview to custom datasets
         Advanced Features:
           - slice_a_pipeline.md: Slice a pipeline
@@ -168,11 +169,12 @@ nav:
           - Publish and share on AWS: publish_and_share_kedro_viz_on_aws.md
           - Publish and share on Azure: publish_and_share_kedro_viz_on_azure.md
           - Publish and share on GCP: publish_and_share_kedro_viz_on_gcp.md
-        - Preview datasets in Kedro-Viz: 
+        - Previews in Kedro-Viz:
           - Preview datasets overview: preview_datasets.md
           - Preview Matplotlib charts in Kedro-Viz: preview_matplotlib_datasets.md
           - Preview Plotly charts in Kedro-Viz: preview_plotly_datasets.md
           - Preview tabular data in Kedro-Viz: preview_pandas_datasets.md
+          - Preview TaskNodes in Kedro-Viz: preview_task_nodes.md
           - Extend preview to custom datasets: preview_custom_datasets.md
         - Customise node styling in Kedro-Viz: customise_node_styling.md
         - Slice a pipeline: slice_a_pipeline.md
