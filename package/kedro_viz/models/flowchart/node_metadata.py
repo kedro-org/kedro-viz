@@ -149,7 +149,10 @@ class TaskNodeMetadata(GraphNodeMetadata):
     def set_preview(cls, _):
         try:
             task_node_preview_fn = getattr(cls.kedro_node, "preview", None)
-            if not callable(task_node_preview_fn):
+            
+            # for supporting versions of kedro 
+            # which do not support preview_fn
+            if task_node_preview_fn is None:    # pragma: no cover
                 return None
 
             preview_payload = task_node_preview_fn()

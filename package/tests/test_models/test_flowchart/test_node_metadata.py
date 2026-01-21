@@ -433,25 +433,23 @@ class TestGraphNodeMetadata:
         )
         assert parameters_node_metadata.parameters == {"test_split_ratio": 0.3}
 
-    def test_text_preview(self, mocker):
+    def test_text_preview(self):
         """Test that TextPreview is correctly serialized."""
-        try:
-            from kedro.pipeline.preview_contract import TextPreview
-        except ImportError:
-            pytest.skip("kedro.pipeline.preview_contract not available")
+        from kedro.pipeline.preview_contract import TextPreview
 
-        text_preview = TextPreview(
-            content="Sample text content", meta={"language": "python"}
-        )
+        def get_text_preview():
+            return TextPreview(
+                content="Sample text content", meta={"language": "python"}
+            )
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
+            preview_fn=get_text_preview
         )
-        kedro_node.preview = mocker.MagicMock(return_value=text_preview)
-
+        
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
@@ -461,26 +459,24 @@ class TestGraphNodeMetadata:
             "meta": {"language": "python"},
         }
 
-    def test_mermaid_preview(self, mocker):
+    def test_mermaid_preview(self):
         """Test that MermaidPreview is correctly serialized."""
-        try:
-            from kedro.pipeline.preview_contract import MermaidPreview
-        except ImportError:
-            pytest.skip("kedro.pipeline.preview_contract not available")
-
-        mermaid_preview = MermaidPreview(
-            content="graph TD; A-->B;", meta={"theme": "default"}
-        )
+        from kedro.pipeline.preview_contract import MermaidPreview
+        
+        def get_mermaid_preview():
+            return MermaidPreview(
+                content="graph TD; A-->B;", meta={"theme": "default"}
+            )
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
-            name="mermaid_node",
+            name="preview_node",
+            preview_fn=get_mermaid_preview
         )
-        kedro_node.preview = mocker.MagicMock(return_value=mermaid_preview)
-
-        task_node = GraphNode.create_task_node(kedro_node, "mermaid_node", set())
+    
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
         assert task_node_metadata.preview == {
@@ -489,26 +485,24 @@ class TestGraphNodeMetadata:
             "meta": {"theme": "default"},
         }
 
-    def test_image_preview(self, mocker):
+    def test_image_preview(self):
         """Test that ImagePreview is correctly serialized."""
-        try:
-            from kedro.pipeline.preview_contract import ImagePreview
-        except ImportError:
-            pytest.skip("kedro.pipeline.preview_contract not available")
+        from kedro.pipeline.preview_contract import ImagePreview
 
-        image_preview = ImagePreview(
-            content="base64encodedcontent", meta={"format": "png"}
-        )
+        def get_image_preview():
+            return ImagePreview(
+                    content="base64encodedcontent", meta={"format": "png"}
+                )
 
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
-            name="image_node",
+            name="preview_node",
+            preview_fn=get_image_preview
         )
-        kedro_node.preview = mocker.MagicMock(return_value=image_preview)
-
-        task_node = GraphNode.create_task_node(kedro_node, "image_node", set())
+        
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
         assert task_node_metadata.preview == {
@@ -517,64 +511,57 @@ class TestGraphNodeMetadata:
             "meta": {"format": "png"},
         }
 
+    def test_not_supported_preview(self):
+        """Test that JsonPreview is not supported."""
+        from kedro.pipeline.preview_contract import JsonPreview
+
+        def get_json_preview():
+            return JsonPreview(
+                    content={"random": "value"}
+                )
+
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="preview_node",
+            preview_fn=get_json_preview
+        )
+        
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+
+        assert task_node_metadata.preview is None
+
     def test_no_preview_attr(self):
         """Test that preview is None when kedro_node has no preview attribute."""
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
-            name="no_preview_node",
+            name="preview_node",
         )
 
-        task_node = GraphNode.create_task_node(kedro_node, "no_preview_node", set())
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
         assert task_node_metadata.preview is None
 
-    def test_preview_not_callable(self):
-        """Test that preview is None when preview attribute is not callable."""
-        kedro_node = node(
-            identity,
-            inputs="x",
-            outputs="y",
-            name="non_callable_preview_node",
-        )
-        kedro_node.preview = "not a callable"
-
-        task_node = GraphNode.create_task_node(
-            kedro_node, "non_callable_preview_node", set()
-        )
-        task_node_metadata = TaskNodeMetadata(task_node=task_node)
-
-        assert task_node_metadata.preview is None
-
-    def test_preview_returns_none(self, mocker):
+    def test_preview_returns_none(self):
         """Test that preview is None when preview() returns None."""
+
+        def dummy_preview():
+            return None
+        
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
-            name="null_preview_node",
+            name="preview_node",
+            preview_fn=dummy_preview
         )
-        kedro_node.preview = mocker.MagicMock(return_value=None)
-
-        task_node = GraphNode.create_task_node(kedro_node, "null_preview_node", set())
-        task_node_metadata = TaskNodeMetadata(task_node=task_node)
-
-        assert task_node_metadata.preview is None
-
-    def test_invalid_preview_type(self, mocker):
-        """Test that preview is None when preview() returns an unsupported type."""
-        kedro_node = node(
-            identity,
-            inputs="x",
-            outputs="y",
-            name="invalid_type_node",
-        )
-        # Return a string which is not a valid preview type
-        kedro_node.preview = mocker.MagicMock(return_value="invalid type")
-
-        task_node = GraphNode.create_task_node(kedro_node, "invalid_type_node", set())
+        
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
         assert task_node_metadata.preview is None
