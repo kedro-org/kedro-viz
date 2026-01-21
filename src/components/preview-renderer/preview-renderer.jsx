@@ -25,181 +25,184 @@ const PreviewRenderer = ({
   const { kind, content, meta, isDataNode } = normalizedPreview;
   const isModal = view === 'modal';
 
-  // Handle image previews (supported by both DataNode and TaskNode)
-  if (kind === 'image') {
-    const imageSrc = isDataNode
-      ? `data:image/png;base64,${content}`
-      : content.startsWith('data:')
-      ? content
-      : `data:image/png;base64,${content}`;
+  switch (kind) {
+    // Handle image previews (supported by both DataNode and TaskNode)
+    case 'image': {
+      const imageSrc = isDataNode
+        ? `data:image/png;base64,${content}`
+        : content.startsWith('data:')
+        ? content
+        : `data:image/png;base64,${content}`;
 
-    if (isModal) {
+      if (isModal) {
+        return (
+          <div className="pipeline-matplotlib-chart">
+            <div className="pipeline-metadata__plot-image-container">
+              <img
+                alt="Matplotlib rendering"
+                className="pipeline-metadata__plot-image--expanded"
+                src={imageSrc}
+              />
+            </div>
+          </div>
+        );
+      }
+
       return (
-        <div className="pipeline-matplotlib-chart">
-          <div className="pipeline-metadata__plot-image-container">
-            <img
-              alt="Matplotlib rendering"
-              className="pipeline-metadata__plot-image--expanded"
-              src={imageSrc}
+        <PreviewWrapper
+          onExpand={onExpand}
+          className="pipeline-metadata__plot"
+          showShadows={false}
+          onClick={onExpand}
+        >
+          <img
+            alt="Preview visualization"
+            className="pipeline-metadata__plot-image"
+            src={imageSrc}
+          />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle text previews (TaskNode only)
+    case 'text': {
+      if (isModal) {
+        return (
+          <div className="pipeline-metadata-modal__preview">
+            <TextRenderer content={content} meta={meta} view="modal" />
+          </div>
+        );
+      }
+      return (
+        <PreviewWrapper onExpand={onExpand}>
+          <TextRenderer content={content} meta={meta} view="preview" />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle mermaid previews (TaskNode only)
+    case 'mermaid': {
+      if (isModal) {
+        return (
+          <div className="pipeline-metadata-modal__preview">
+            <MermaidRenderer content={content} view="modal" config={meta} />
+          </div>
+        );
+      }
+      return (
+        <PreviewWrapper onExpand={onExpand}>
+          <MermaidRenderer content={content} view="preview" config={meta} />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle plotly previews (DataNode only)
+    case 'plotly': {
+      if (isModal) {
+        return (
+          <PlotlyRenderer
+            data={content.data}
+            layout={content.layout}
+            view="modal"
+          />
+        );
+      }
+
+      return (
+        <PreviewWrapper onExpand={onExpand}>
+          <PlotlyRenderer
+            data={content.data}
+            layout={content.layout}
+            view="preview"
+          />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle table previews (DataNode only)
+    case 'table': {
+      const rowCount = content?.data?.length || 0;
+
+      if (isModal) {
+        return (
+          <>
+            {rowCount > 0 && (
+              <div className="pipeline-metadata-modal__preview-text">
+                Previewing first {rowCount} rows
+              </div>
+            )}
+            <div className="pipeline-metadata-modal__preview">
+              <TableRenderer data={content} size="large" />
+            </div>
+          </>
+        );
+      }
+
+      return (
+        <PreviewWrapper onExpand={onExpand}>
+          <TableRenderer data={content} size="small" onClick={onExpand} />
+        </PreviewWrapper>
+      );
+    }
+
+    // Handle JSON previews (DataNode only)
+    case 'json': {
+      const jsonValue = JSON.parse(content);
+      const fontSize = isModal ? '15px' : '14px';
+
+      if (isModal) {
+        return (
+          <div className="pipeline-metadata-modal__preview-json">
+            <JsonRenderer
+              value={jsonValue}
+              theme={theme}
+              style={{ background: 'transparent', fontSize }}
+              collapsed={3}
             />
           </div>
-        </div>
-      );
-    }
+        );
+      }
 
-    return (
-      <PreviewWrapper
-        onExpand={onExpand}
-        className="pipeline-metadata__plot"
-        showShadows={false}
-        onClick={onExpand}
-      >
-        <img
-          alt="Preview visualization"
-          className="pipeline-metadata__plot-image"
-          src={imageSrc}
-        />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle text previews (TaskNode only)
-  if (kind === 'text') {
-    if (isModal) {
       return (
-        <div className="pipeline-metadata-modal__preview">
-          <TextRenderer content={content} meta={meta} view="modal" />
-        </div>
-      );
-    }
-    return (
-      <PreviewWrapper onExpand={onExpand}>
-        <TextRenderer content={content} meta={meta} view="preview" />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle mermaid previews (TaskNode only)
-  if (kind === 'mermaid') {
-    if (isModal) {
-      return (
-        <div className="pipeline-metadata-modal__preview">
-          <MermaidRenderer content={content} view="modal" config={meta} />
-        </div>
-      );
-    }
-    return (
-      <PreviewWrapper onExpand={onExpand}>
-        <MermaidRenderer content={content} view="preview" config={meta} />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle plotly previews (DataNode only)
-  if (kind === 'plotly') {
-    if (isModal) {
-      return (
-        <PlotlyRenderer
-          data={content.data}
-          layout={content.layout}
-          view="modal"
-        />
-      );
-    }
-
-    return (
-      <PreviewWrapper onExpand={onExpand}>
-        <PlotlyRenderer
-          data={content.data}
-          layout={content.layout}
-          view="preview"
-        />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle table previews (DataNode only)
-  if (kind === 'table') {
-    const rowCount = content?.data?.length || 0;
-
-    if (isModal) {
-      return (
-        <>
-          {rowCount > 0 && (
-            <div className="pipeline-metadata-modal__preview-text">
-              Previewing first {rowCount} rows
-            </div>
-          )}
-          <div className="pipeline-metadata-modal__preview">
-            <TableRenderer data={content} size="large" />
-          </div>
-        </>
-      );
-    }
-
-    return (
-      <PreviewWrapper onExpand={onExpand}>
-        <TableRenderer data={content} size="small" onClick={onExpand} />
-      </PreviewWrapper>
-    );
-  }
-
-  // Handle JSON previews (DataNode only)
-  if (kind === 'json') {
-    const jsonValue = JSON.parse(content);
-    const fontSize = isModal ? '15px' : '14px';
-
-    if (isModal) {
-      return (
-        <div className="pipeline-metadata-modal__preview-json">
+        <PreviewWrapper
+          onExpand={onExpand}
+          className="pipeline-metadata__preview-json"
+        >
           <JsonRenderer
             value={jsonValue}
             theme={theme}
             style={{ background: 'transparent', fontSize }}
             collapsed={3}
           />
-        </div>
+        </PreviewWrapper>
       );
     }
 
-    return (
-      <PreviewWrapper
-        onExpand={onExpand}
-        className="pipeline-metadata__preview-json"
-      >
-        <JsonRenderer
-          value={jsonValue}
-          theme={theme}
-          style={{ background: 'transparent', fontSize }}
-          collapsed={3}
-        />
-      </PreviewWrapper>
-    );
-  }
+    // Handle HTML previews (DataNode only)
+    case 'html': {
+      const fontSize = isModal ? '15px' : undefined;
 
-  // Handle HTML previews (DataNode only)
-  if (kind === 'html') {
-    const fontSize = isModal ? '15px' : undefined;
+      if (isModal) {
+        return (
+          <div className="pipeline-metadata-modal__preview-markdown">
+            <HTMLRenderer content={content} fontSize={fontSize} />
+          </div>
+        );
+      }
 
-    if (isModal) {
       return (
-        <div className="pipeline-metadata-modal__preview-markdown">
-          <HTMLRenderer content={content} fontSize={fontSize} />
-        </div>
+        <PreviewWrapper
+          onExpand={onExpand}
+          className="pipeline-metadata__preview-html"
+        >
+          <HTMLRenderer content={content} />
+        </PreviewWrapper>
       );
     }
 
-    return (
-      <PreviewWrapper
-        onExpand={onExpand}
-        className="pipeline-metadata__preview-html"
-      >
-        <HTMLRenderer content={content} />
-      </PreviewWrapper>
-    );
+    default:
+      return null;
   }
-
-  return null;
 };
 
 export default PreviewRenderer;
