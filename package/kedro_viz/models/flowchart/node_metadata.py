@@ -171,7 +171,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
             # serialized payload
             return preview_payload.to_dict()
 
-        except ImportError:
+        except ImportError:  # pragma: no cover
             if not getattr(cls.set_preview, "_import_warning_shown", False):
                 logger.warning(
                     "Task node previews are disabled because this Kedro version "
