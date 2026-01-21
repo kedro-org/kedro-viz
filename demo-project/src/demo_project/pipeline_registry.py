@@ -8,7 +8,7 @@ from demo_project.pipelines import data_ingestion as di
 from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
-
+from demo_project.pipelines import preview_tests as pt
 
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
@@ -27,6 +27,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     reporting_pipeline = rep.create_pipeline()
 
+    preview_tests_pipeline = pt.create_pipeline()
+    
     return {
         "__default__": (
             ingestion_pipeline
@@ -39,4 +41,5 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "feature_engineering": feature_pipeline,
         "reporting_stage": reporting_pipeline,
         "pre_modelling": ingestion_pipeline + feature_pipeline,
+        "preview_tests": preview_tests_pipeline,
     }
