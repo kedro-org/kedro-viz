@@ -1,4 +1,6 @@
+<!-- vale off -->
 # Preview TaskNodes in Kedro-Viz
+<!-- vale on -->
 
 !!! warning
     This functionality is experimental and may change or be removed in future releases. Experimental features follow the process described in  [`docs/about/experimental.md`](../about/experimental.md).
@@ -8,9 +10,11 @@ This page describes how to add preview functions to your Kedro nodes (TaskNodes)
 
 Starting from Kedro 1.2.0 and Kedro-Viz 12.3.0, you can attach preview functions to nodes using the `preview_fn` parameter. These preview functions return lightweight summaries, diagrams, or visualizations that help you understand what a node is doing without running the full pipeline.
 
+<!-- vale off -->
 ## What are TaskNode previews?
+<!-- vale on -->
 
-TaskNode previews allow you to attach a preview function to any node in your pipeline. When you click on a TaskNode in Kedro-Viz, the preview appears in the metadata panel, just like dataset previews.
+TaskNode previews allow you to attach a preview function to any node in your pipeline. When you click on a TaskNode in Kedro-Viz, the preview appears in the metadata panel, similar to dataset previews.
 
 Preview functions are:
 
@@ -23,12 +27,13 @@ Preview functions are:
 
 ## Supported preview types in Kedro-Viz
 
-Kedro-Viz currently supports three preview types for TaskNodes:
+As of now, Kedro-Viz supports three preview types for TaskNodes:
 
 1. **MermaidPreview**: Display flowcharts, sequence diagrams, and other Mermaid visualizations
 2. **TextPreview**: Display text summaries, logs, or formatted code
+<!-- vale off -->
 3. **ImagePreview**: Display images using URLs or base64-encoded data URIs
-
+<!-- vale on -->
 ## How to add a preview function to a node
 
 To add a preview to a TaskNode, use the `preview_fn` parameter when creating the node:
@@ -410,11 +415,11 @@ After adding preview functions to your nodes:
 
 When creating preview functions for TaskNodes:
 
-- **Keep them lightweight**: Preview functions should return quickly
+- **Keep them lightweight**: Preview functions should return quick responses
 - **Make them informative**: Use previews to explain what a node does or its configuration
 - **Use appropriate types**: Choose the preview type that best communicates your information
 - **Don't duplicate information**: If information is already in parameters or metadata, you don't need it in the preview
-- **Consider maintenance**: Preview functions should be easy to update when node logic changes
+- **Consider maintenance**: Preview functions should not be complex to update when node logic changes
 
 ## Differences from dataset previews
 
@@ -430,12 +435,12 @@ TaskNode previews differ from dataset previews in several ways:
 
 ## Additional preview types
 
-While Kedro-Viz currently supports MermaidPreview, TextPreview, and ImagePreview for TaskNodes, Kedro itself supports additional preview types:
+While Kedro-Viz supports MermaidPreview, TextPreview, and ImagePreview for TaskNodes, Kedro itself supports additional preview types:
 
 - **JsonPreview**: For structured metadata
 - **TablePreview**: For tabular data samples
 - **PlotlyPreview**: For interactive charts
-- **CustomPreview**: For specialized rendering
+- **CustomPreview**: For specialised rendering
 
 Support for these additional preview types in Kedro-Viz may be added in future releases.
 
