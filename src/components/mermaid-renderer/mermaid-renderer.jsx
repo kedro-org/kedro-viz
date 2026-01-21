@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import deepmerge from 'deepmerge';
@@ -50,11 +50,14 @@ const MermaidRenderer = ({ content, theme, view = 'preview', config = {} }) => {
   const containerRef = useRef(null);
   const [error, setError] = useState(null);
 
+  // Merge default config with user config
+  const mergedConfig = useMemo(() => {
+    const defaultConfig = getDefaultConfig();
+    return deepmerge(defaultConfig, config);
+  }, [JSON.stringify(config)]);
+
   // Initialize mermaid with merged configuration
   useEffect(() => {
-    const defaultConfig = getDefaultConfig();
-    const mergedConfig = deepmerge(defaultConfig, config);
-
     // Extract textStyle from config (not part of Mermaid's config)
     const { textStyle, ...mermaidConfig } = mergedConfig;
 
@@ -64,7 +67,7 @@ const MermaidRenderer = ({ content, theme, view = 'preview', config = {} }) => {
       theme: theme === 'dark' ? 'dark' : 'default',
       ...mermaidConfig,
     });
-  }, [theme, config]);
+  }, [theme, mergedConfig]);
 
   // Render diagram when content or theme changes
   useEffect(() => {
@@ -86,8 +89,6 @@ const MermaidRenderer = ({ content, theme, view = 'preview', config = {} }) => {
         containerRef.current.innerHTML = svg;
 
         // Post-process: Apply text styling to nodes
-        const defaultConfig = getDefaultConfig();
-        const mergedConfig = deepmerge(defaultConfig, config);
         const textStyle = mergedConfig.textStyle;
 
         const foreignObjects =
@@ -116,7 +117,7 @@ const MermaidRenderer = ({ content, theme, view = 'preview', config = {} }) => {
         containerRef.current.innerHTML = '';
       }
     };
-  }, [content, theme, config]);
+  }, [content, theme, mergedConfig]);
 
   return (
     <div
