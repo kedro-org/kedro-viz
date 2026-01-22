@@ -167,7 +167,10 @@ The `meta` parameter accepts the following configuration options. All values sho
 **Security options**:
 
 - `securityLevel`: Security level (default: `'strict'`)
-  - Options: `'strict'`, `'loose'`, `'antiscript'`
+    - Options:
+        - `'strict'`
+        - `'loose'`
+        - `'antiscript'`
 
 **Font options**:
 
@@ -177,8 +180,10 @@ The `meta` parameter accepts the following configuration options. All values sho
 
 - `htmlLabels`: Enable HTML in labels (default: `true`)
 - `curve`: Edge curve style (default: `'basis'`)
-  
-  - Options: `'basis'`, `'linear'`, `'step'`
+    - Options:
+        - `'basis'`
+        - `'linear'`
+        - `'step'`
 
 - `wrappingWidth`: Text wrapping threshold in pixels (default: `250`)
 - `useMaxWidth`: Use maximum width available (default: `true`)
