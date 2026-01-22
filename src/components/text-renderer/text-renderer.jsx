@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import SyntaxHighlighter from '../ui/syntax-highlighter';
 import './text-renderer.scss';
 
@@ -8,10 +7,9 @@ import './text-renderer.scss';
  * TextRenderer component for displaying plain text or code with syntax highlighting
  * @param {string} content - The text content to display
  * @param {Object} meta - Optional metadata (e.g., language for syntax highlighting)
- * @param {string} theme - Current theme (light/dark)
  * @param {string} view - View mode ('preview' or 'modal')
  */
-const TextRenderer = ({ content, meta = {}, theme, view = 'preview' }) => {
+const TextRenderer = ({ content, meta = {}, view = 'preview' }) => {
   const { language } = meta;
   const isCode = Boolean(language);
 
@@ -33,8 +31,4 @@ const TextRenderer = ({ content, meta = {}, theme, view = 'preview' }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  theme: state.theme,
-});
-
-export default connect(mapStateToProps)(TextRenderer);
+export default TextRenderer;

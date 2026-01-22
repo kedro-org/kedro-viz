@@ -49,12 +49,12 @@
     }
   }
 
-  // When sidebar is open (but not in inline mode)
+  // When sidebar is open
   &--sidebarVisible {
     @include breakpoints(variables.$sidebar-width-open);
   }
 
-  // When sidebar is closed (but not in inline mode)
+  // When sidebar is closed
   &--no-sidebarVisible {
     @include breakpoints(variables.$sidebar-width-closed);
   }
