@@ -3,7 +3,7 @@
 <!-- vale on -->
 
 !!! warning
-    This functionality is experimental and may change or be removed in future releases. Experimental features follow the process described in  [`docs/about/experimental.md`](../about/experimental.md).
+    This functionality is experimental and may change or be removed in future releases. Experimental features follow the process described in  [`docs/about/experimental.md`](https://docs.kedro.org/en/stable/about/experimental/).
 
 
 This page describes how to add preview functions to your Kedro nodes (TaskNodes) to display helpful debugging information and visualisations in Kedro-Viz.
