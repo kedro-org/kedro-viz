@@ -48,9 +48,13 @@ describe('TextRenderer', () => {
       content: "def hello():\n    return 'world'",
       meta: { language: 'python' },
     });
-    // When language is provided, MetaDataCode component should be used
-    const codeElement = container.querySelector('.pipeline-metadata-code');
-    expect(codeElement).toBeInTheDocument();
+    // When language is provided, SyntaxHighlighter component should be used
+    const codeWrapper = container.querySelector(
+      '.pipeline-text-renderer__code'
+    );
+    expect(codeWrapper).toBeInTheDocument();
+    const syntaxHighlighter = container.querySelector('.syntax-highlighter');
+    expect(syntaxHighlighter).toBeInTheDocument();
   });
 
   it('applies correct theme', () => {
