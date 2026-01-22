@@ -26,14 +26,15 @@ Preview functions are:
     For detailed information on how to create preview functions in Kedro, see the [Kedro documentation on preview functions](https://docs.kedro.org/en/stable/build/nodes.html#how-to-add-preview-functions-to-nodes).
 
 ## Supported preview types in Kedro-Viz
-
+<!-- vale off -->
 As of now, Kedro-Viz supports three preview types for TaskNodes:
 
 1. **MermaidPreview**: Display flowcharts, sequence diagrams, and other Mermaid visualizations
 2. **TextPreview**: Display text summaries, logs, or formatted code
-<!-- vale off -->
 3. **ImagePreview**: Display images using URLs or base64-encoded data URIs
+
 <!-- vale on -->
+
 ## How to add a preview function to a node
 
 To add a preview to a TaskNode, use the `preview_fn` parameter when creating the node:
@@ -164,13 +165,16 @@ node(
 The `meta` parameter accepts the following configuration options. All values shown are the defaults that Kedro-Viz uses:
 
 **Security options**:
+
 - `securityLevel`: Security level (default: `'strict'`)
   - Options: `'strict'`, `'loose'`, `'antiscript'`
 
 **Font options**:
+
 - `fontFamily`: Font family for the diagram (default: `'ui-sans-serif, system-ui, sans-serif'`)
 
 **Flowchart options** (`flowchart` key):
+
 - `htmlLabels`: Enable HTML in labels (default: `true`)
 - `curve`: Edge curve style (default: `'basis'`)
   - Options: `'basis'`, `'linear'`, `'step'`
@@ -180,10 +184,12 @@ The `meta` parameter accepts the following configuration options. All values sho
 - `rankSpacing`: Vertical space between levels in pixels (default: `50`)
 
 **Theme options** (`themeVariables` key):
+
 - `fontSize`: Font size for labels (default: `'14px'`)
 - Other Mermaid theme variables as needed
 
 **Text styling options** (`textStyle` key):
+
 - `whiteSpace`: CSS white-space property (default: `'normal'`)
 - `wordBreak`: CSS word-break property (default: `'normal'`)
 - `overflowWrap`: CSS overflow-wrap property (default: `'normal'`)
