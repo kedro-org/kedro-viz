@@ -14,7 +14,7 @@ Starting from Kedro 1.2.0 and Kedro-Viz 12.3.0, you can attach preview functions
 ## What are TaskNode previews?
 <!-- vale on -->
 
-TaskNode previews allow you to attach a preview function to any node in your pipeline. When you click on a TaskNode in Kedro-Viz, the preview appears in the metadata panel, similar to dataset previews.
+TaskNode previews allow you to attach a preview function to any node in your pipeline. When you click on a TaskNode in Kedro-Viz, the preview appears in the metadata panel, in the same way as dataset previews.
 
 Preview functions are:
 
@@ -415,7 +415,7 @@ After adding preview functions to your nodes:
 
 When creating preview functions for TaskNodes:
 
-- **Keep them lightweight**: Preview functions should return quick responses
+- **Keep them lightweight**: Preview functions should return responses with minimal latency.
 - **Make them informative**: Use previews to explain what a node does or its configuration
 - **Use appropriate types**: Choose the preview type that best communicates your information
 - **Don't duplicate information**: If information is already in parameters or metadata, you don't need it in the preview
