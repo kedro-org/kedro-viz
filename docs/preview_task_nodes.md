@@ -405,6 +405,8 @@ def create_pipeline(**kwargs) -> pipeline:
 
 ## Viewing TaskNode previews in Kedro-Viz
 
+![Mermaid preview of a task node](./images/task-node-preview.png)
+
 After adding preview functions to your nodes:
 
 1. Run `kedro viz` to start Kedro-Viz
