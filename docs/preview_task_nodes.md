@@ -177,7 +177,9 @@ The `meta` parameter accepts the following configuration options. All values sho
 
 - `htmlLabels`: Enable HTML in labels (default: `true`)
 - `curve`: Edge curve style (default: `'basis'`)
+  
   - Options: `'basis'`, `'linear'`, `'step'`
+
 - `wrappingWidth`: Text wrapping threshold in pixels (default: `250`)
 - `useMaxWidth`: Use maximum width available (default: `true`)
 - `nodeSpacing`: Horizontal space between nodes in pixels (default: `50`)
@@ -186,7 +188,6 @@ The `meta` parameter accepts the following configuration options. All values sho
 **Theme options** (`themeVariables` key):
 
 - `fontSize`: Font size for labels (default: `'14px'`)
-- Other Mermaid theme variables as needed
 
 **Text styling options** (`textStyle` key):
 
