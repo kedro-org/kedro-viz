@@ -1,6 +1,5 @@
 @use '../../../styles/extends';
 @use '../../../styles/variables' as variables;
-@use './metadata-code-themes.scss';
 
 .kui-theme--light {
   --color-metadata-code-bg: #{variables.$grey-0};
@@ -60,26 +59,6 @@
     @include breakpoints(variables.$sidebar-width-closed);
   }
 
-  // Preview mode for use in previews
-  &--previewMode {
-    position: relative;
-    inset: unset;
-    left: unset;
-    right: unset;
-    top: unset;
-    bottom: unset;
-    transform: none;
-    padding: 0;
-    background: transparent;
-    z-index: auto;
-    width: 100%;
-    height: auto;
-    transition: none;
-    border: none;
-    border-bottom: none;
-    border-right: none;
-  }
-
   @media print {
     display: none;
   }
@@ -96,8 +75,6 @@
 .pipeline-metadata-code__code {
   display: block;
   flex-grow: 1;
-  font-size: 1.25em;
-  line-height: 1.8;
   opacity: 1;
   overflow: auto;
   transition: opacity 0.4s ease 0.4s;
@@ -106,34 +83,10 @@
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-
-  * {
-    font-family: variables.$font-monospace;
-  }
-
-  .hljs-keyword {
-    color: var(--color-metadata-code-text);
-  }
-
-  // Preview mode styling
-  .pipeline-metadata-code--previewMode & {
-    font-size: 14px;
-    line-height: 1.6;
-    overflow-x: auto;
-  }
 }
 
 .pipeline-metadata-code pre {
   display: inline-block;
   margin: 0;
   padding: 0 36px 36px;
-
-  // Preview mode styling
-  .pipeline-metadata-code--previewMode & {
-    padding: 16px;
-    margin: 0;
-    white-space: pre;
-    overflow-x: auto;
-    border: none;
-  }
 }

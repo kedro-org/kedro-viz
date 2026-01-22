@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import MetaDataCode from '../metadata/metadata-code';
+import SyntaxHighlighter from '../ui/syntax-highlighter';
 import './text-renderer.scss';
 
 /**
@@ -23,12 +23,9 @@ const TextRenderer = ({ content, meta = {}, theme, view = 'preview' }) => {
       )}
     >
       {isCode ? (
-        <MetaDataCode
-          value={content}
-          visible={true}
-          theme={theme}
-          previewMode={true}
-        />
+        <div className="pipeline-text-renderer__code">
+          <SyntaxHighlighter code={content} language={language} />
+        </div>
       ) : (
         <pre className="pipeline-text-renderer__content">{content}</pre>
       )}
