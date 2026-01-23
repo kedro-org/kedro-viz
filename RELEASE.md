@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.3.0
+
+## Major features and improvements
+ - Support for node previews (mermaid, text and image). (#2554)
+ 
 # Release 12.2.0
 
 ## Major features and improvements
