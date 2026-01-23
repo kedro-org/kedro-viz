@@ -12,6 +12,10 @@ Node previews help you understand node behaviour without reading implementation 
 - Internal workflows or decision logic
 - Expected behaviour or outputs
 
+## How to create and configure node previews
+
+To learn how to add preview functions to your nodes, including detailed examples and configuration options, see the [Kedro documentation on preview functions](https://docs.kedro.org/en/stable/build/nodes/#how-to-add-preview-functions-to-nodes).
+
 ## Supported preview types in Kedro-Viz
 
 Kedro-Viz supports three preview types for nodes:
@@ -37,10 +41,6 @@ Displays images using URLs or base64-encoded data uniform resource identifiers. 
 !!! info
     Kedro supports additional preview types (JsonPreview, TablePreview, PlotlyPreview, CustomPreview) that are not yet rendered in Kedro-Viz. Support for these types may be added in future releases.
 
-## How to create and configure node previews
-
-To learn how to add preview functions to your nodes, including detailed examples and configuration options, see the [Kedro documentation on preview functions](https://docs.kedro.org/en/stable/build/nodes/#how-to-add-preview-functions-to-nodes).
-
 ## Differences from dataset previews
 
 Node previews differ from dataset previews in several ways:
@@ -54,4 +54,4 @@ Node previews differ from dataset previews in several ways:
 | **Enabled by default** | Yes (since Kedro-Viz 8.0.0) | When `preview_fn` is provided |
 
 !!! tip
-    Node previews work alongside dataset previews to give you a complete view of your pipeline's behavior.
+    Node previews work alongside dataset previews to give you a complete view of your pipeline's behaviour.
