@@ -41,14 +41,6 @@ Displays images using URLs or base64-encoded data uniform resource identifiers. 
 
 To learn how to add preview functions to your nodes, including detailed examples and configuration options, see the [Kedro documentation on preview functions](https://docs.kedro.org/en/stable/build/nodes/#how-to-add-preview-functions-to-nodes).
 
-The Kedro documentation covers:
-
-- How to attach preview functions to nodes using the `preview_fn` parameter
-- Code examples for all preview types
-- Configuration options for customising previews (for example, Mermaid rendering options, syntax highlighting languages)
-- Using closures to capture context
-- Best practices and guidelines
-
 ## Differences from dataset previews
 
 Node previews differ from dataset previews in several ways:
