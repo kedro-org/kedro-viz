@@ -9,7 +9,7 @@ Please follow the established format:
 # Release 12.3.0
 
 ## Major features and improvements
- - Support for TaskNode previews (MermaidPreview, TextPreview and ImagePreview). (#2554)
+ - Support for node previews (mermaid, text and image). (#2554)
  
 # Release 12.2.0
 
