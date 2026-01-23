@@ -70,7 +70,7 @@ Node previews differ from dataset previews in several ways:
 
 | Aspect | Dataset Previews | Node Previews |
 |--------|------------------|---------------|
-| **What they show** | Actual data content | Node behavior/configuration |
+| **What they show** | Actual data content | Node behaviour/configuration |
 | **When they run** | After data is loaded | Defined at pipeline creation |
 | **Access to data** | Full dataset access | No direct access to inputs/outputs |
 | **Primary use case** | Inspect data quality | Understand node logic |
