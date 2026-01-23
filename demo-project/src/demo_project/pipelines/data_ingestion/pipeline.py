@@ -6,6 +6,7 @@ from .nodes import (
     apply_types_to_reviews,
     apply_types_to_shuttles,
     combine_shuttle_level_information,
+    preview_apply_types_to_companies,
 )
 
 
@@ -28,6 +29,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="int_typed_companies",
                 name="apply_types_to_companies",
                 tags="companies",
+                preview_fn=preview_apply_types_to_companies,
             ),
             node(
                 func=apply_types_to_shuttles,
