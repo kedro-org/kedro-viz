@@ -28,9 +28,9 @@ Displays flowcharts, sequence diagrams, and other [Mermaid](https://mermaid.js.o
 
 ### Text preview
 
-Displays text summaries, logs, or formatted code with syntax highlighting. Useful for showing configuration details, documentation, or code snippets.
+Displays text summaries, usage examples, or testing information. Useful for showing how to test a node, expected input/output examples, or additional context that doesn't fit in docstrings.
 
-![Code preview example](./images/code_preview.png)
+![Code preview example](./images/text_preview.png)
 
 ### Image preview
 
