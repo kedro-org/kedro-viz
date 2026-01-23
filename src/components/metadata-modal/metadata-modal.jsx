@@ -10,7 +10,7 @@ import { normalizePreview } from '../../utils/normalize-preview';
 import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
-  const normalizedPreview = normalizePreview(metadata, true);
+  const normalizedPreview = normalizePreview(metadata);
 
   if (!visible.metadataModal || !normalizedPreview) {
     return null;
