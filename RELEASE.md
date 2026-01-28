@@ -10,6 +10,9 @@ Please follow the established format:
 
 ## Major features and improvements
  - Support for node previews (mermaid, text and image). (#2554)
+
+## Bug fixes and other changes
+ - Fix compatibility fallback for `importlib_metadata` imports. (#2545)
  
 # Release 12.2.0
 

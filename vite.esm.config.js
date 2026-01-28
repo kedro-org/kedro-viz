@@ -56,13 +56,14 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['plotly.js-dist-min'],
+      external: ['plotly.js-dist-min', 'mermaid'],
       output: {
         format: 'es',
         entryFileNames: 'kedro-viz.mjs',
         exports: 'auto',
         paths: {
           'plotly.js-dist-min': 'https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.26.0/+esm',
+          'mermaid': 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs',
         },
       },
     },
