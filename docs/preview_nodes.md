@@ -38,7 +38,6 @@ Displays images using URLs or base64-encoded data uniform resource identifiers. 
 
 ![Image preview example](./images/image_preview.png)
 
-
 ## Differences from dataset previews
 
 Node previews differ from dataset previews in several ways:
