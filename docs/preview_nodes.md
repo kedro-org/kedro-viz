@@ -38,8 +38,6 @@ Displays images using URLs or base64-encoded data uniform resource identifiers. 
 
 ![Image preview example](./images/image_preview.png)
 
-!!! info
-    Kedro supports additional preview types (JsonPreview, TablePreview, PlotlyPreview, CustomPreview) that are not yet rendered in Kedro-Viz. Support for these types may be added in future releases.
 
 ## Differences from dataset previews
 
