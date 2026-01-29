@@ -512,7 +512,9 @@ class TestGraphNodeMetadata:
         from kedro.pipeline.preview_contract import CustomPreview
 
         def get_json_preview():
-            return CustomPreview(renderer_key="test_renderer", content={"random": "value"})
+            return CustomPreview(
+                renderer_key="test_renderer", content={"random": "value"}
+            )
 
         kedro_node = node(
             identity,
