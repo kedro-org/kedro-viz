@@ -2,6 +2,7 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 import Plotly from "https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.26.0/+esm";
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 function _mergeNamespaces(n, m) {
   for (var i = 0; i < m.length; i++) {
     const e = m[i];
@@ -9633,6 +9634,9 @@ const getUrl = (type, id2) => {
     default:
       throw new Error("Unknown URL type");
   }
+};
+const changed = (props, objectA, objectB) => {
+  return objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop]);
 };
 const replaceAngleBracketMatches = (str) => {
   if ((str == null ? void 0 : str.length) > 0) {
@@ -21246,10 +21250,10 @@ const FeatureHintDot = ({
     }
   );
 };
-const mapStateToProps$o = (state) => ({
+const mapStateToProps$p = (state) => ({
   appState: state
 });
-const FeatureHintDot$1 = connect(mapStateToProps$o)(FeatureHintDot);
+const FeatureHintDot$1 = connect(mapStateToProps$p)(FeatureHintDot);
 const featureHintsContent = [
   {
     title: "Workflow run status",
@@ -21416,12 +21420,12 @@ const mapDispatchToProps$g = (dispatch2, ownProps) => ({
   },
   ...ownProps
 });
-const mapStateToProps$n = (state) => {
+const mapStateToProps$o = (state) => {
   return {
     metadataVisible: getVisibleMetaSidebar(state)
   };
 };
-const FeatureHints$1 = connect(mapStateToProps$n, mapDispatchToProps$g)(FeatureHints);
+const FeatureHints$1 = connect(mapStateToProps$o, mapDispatchToProps$g)(FeatureHints);
 const DownloadIcon = ({ className }) => /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className, viewBox: "0 0 24 24", children: /* @__PURE__ */ jsxRuntimeExports.jsx("g", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M12 4.5L12.7071 3.79289L12 3.08579L11.2929 3.79289L12 4.5ZM8.29289 6.79289L7.58579 7.5L9 8.91421L9.70711 8.20711L8.29289 6.79289ZM14.2929 8.20711L15 8.91421L16.4142 7.5L15.7071 6.79289L14.2929 8.20711ZM15.75 9.5H14.75V11.5H15.75V9.5ZM18.75 10.5H19.75V9.5H18.75V10.5ZM18.75 20.25V21.25H19.75V20.25H18.75ZM5.25 20.25H4.25V21.25H5.25V20.25ZM5.25 10.5V9.5H4.25V10.5H5.25ZM8.25 11.5H9.25V9.5H8.25V11.5ZM11 4.5V15H13V4.5H11ZM9.70711 8.20711L12.7071 5.20711L11.2929 3.79289L8.29289 6.79289L9.70711 8.20711ZM11.2929 5.20711L14.2929 8.20711L15.7071 6.79289L12.7071 3.79289L11.2929 5.20711ZM15.75 11.5H18.75V9.5H15.75V11.5ZM17.75 10.5V20.25H19.75V10.5H17.75ZM18.75 19.25H5.25V21.25H18.75V19.25ZM6.25 20.25V10.5H4.25V20.25H6.25ZM5.25 11.5H8.25V9.5H5.25V11.5Z" }) }) });
 const labelPositionTypes = ["right", "left", "bottom", "top"];
 const IconButton = ({
@@ -21708,7 +21712,7 @@ const GlobalToolbar = ({
     ] })
   ] });
 };
-const mapStateToProps$m = (state) => ({
+const mapStateToProps$n = (state) => ({
   theme: state.theme,
   visible: state.visible,
   runStatusPipelineInfo: getPipelineRunData(state),
@@ -21725,7 +21729,7 @@ const mapDispatchToProps$f = (dispatch2) => ({
     dispatch2(toggleTheme(value));
   }
 });
-const GlobalToolbar$1 = connect(mapStateToProps$m, mapDispatchToProps$f)(GlobalToolbar);
+const GlobalToolbar$1 = connect(mapStateToProps$n, mapDispatchToProps$f)(GlobalToolbar);
 const getGraphLoading = (state) => state.loading.graph;
 const getPipelineLoading = (state) => state.loading.pipeline;
 const getNodeLoading = (state) => state.loading.node;
@@ -22048,7 +22052,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
     }
   );
 };
-const mapStateToProps$l = (state) => ({
+const mapStateToProps$m = (state) => ({
   graphSize: state.graph.size || {},
   visible: state.visible,
   theme: state.theme
@@ -22058,7 +22062,7 @@ const mapDispatchToProps$e = (dispatch2) => ({
     dispatch2(toggleExportModal(value));
   }
 });
-const ExportModal$1 = connect(mapStateToProps$l, mapDispatchToProps$e)(ExportModal);
+const ExportModal$1 = connect(mapStateToProps$m, mapDispatchToProps$e)(ExportModal);
 var lodash$1 = { exports: {} };
 /**
  * @license
@@ -32060,12 +32064,12 @@ let FlowChart$1 = class FlowChart extends reactExports.Component {
    */
   update(prevProps = {}) {
     const { chartZoom } = this.props;
-    const changed = (...names) => this.changed(names, prevProps, this.props);
+    const hasChanged = (...names) => changed(names, prevProps, this.props);
     const preventZoom = this.props.visibleMetaSidebar;
-    if (changed("visibleSidebar", "visibleCode", "visibleMetaSidebar")) {
+    if (hasChanged("visibleSidebar", "visibleCode", "visibleMetaSidebar")) {
       this.updateChartSize();
     }
-    if (changed("edges", "nodes", "layers", "chartSize", "clickedNode")) {
+    if (hasChanged("edges", "nodes", "layers", "chartSize", "clickedNode")) {
       const metaSidebarViewChanged = prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
       const codeViewChangedWithoutMetaSidebar = prevProps.visibleCode !== this.props.visibleCode && !this.props.visibleMetaSidebar;
       const clickedNodeChangedWithoutReFocus = prevProps.clickedNode !== this.props.clickedNode && !this.props.nodeReFocus;
@@ -32076,13 +32080,6 @@ let FlowChart$1 = class FlowChart extends reactExports.Component {
     } else {
       this.onChartZoomChanged(chartZoom);
     }
-  }
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop]);
   }
   /**
    * Update the chart size in state from chart container bounds.
@@ -32486,7 +32483,7 @@ const chartSizeTestFallback$1 = {
 const emptyEdges$1 = [];
 const emptyNodes$2 = [];
 const emptyGraphSize$2 = {};
-const mapStateToProps$k = (state, ownProps) => ({
+const mapStateToProps$l = (state, ownProps) => ({
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
@@ -32554,7 +32551,7 @@ const mapDispatchToProps$d = (dispatch2, ownProps) => ({
   },
   ...ownProps
 });
-const FlowChart$2 = connect(mapStateToProps$k, mapDispatchToProps$d)(FlowChart$1);
+const FlowChart$2 = connect(mapStateToProps$l, mapDispatchToProps$d)(FlowChart$1);
 const getCurrentActivePipeline = () => {
   var _a, _b;
   const localStorage2 = window.localStorage.getItem(localStorageName);
@@ -32760,7 +32757,7 @@ const PipelineWarning = ({
     )
   ] });
 };
-const mapStateToProps$j = (state) => ({
+const mapStateToProps$k = (state) => ({
   nodes: getVisibleNodes(state),
   sidebarVisible: state.visible.sidebar,
   theme: state.theme,
@@ -32774,7 +32771,7 @@ const mapDispatchToProps$c = (dispatch2) => ({
     dispatch2(toggleIgnoreLargeWarning(true));
   }
 });
-const PipelineWarning$1 = connect(mapStateToProps$j, mapDispatchToProps$c)(PipelineWarning);
+const PipelineWarning$1 = connect(mapStateToProps$k, mapDispatchToProps$c)(PipelineWarning);
 const d = "M 50 50 100 100 50 150 0 100 Z";
 const LoadingIcon = ({ className, visible }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
   "svg",
@@ -32805,43 +32802,66 @@ const InfoBannerIcon = ({ className }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
     fill: "black"
   }
 ) });
-const PreviewTable = ({ data, size = "small", onClick }) => {
-  var _a, _b;
-  const [hoveredHeaderIndex, setHoveredHeaderIndex] = reactExports.useState(null);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "table",
-    {
-      className: classnames("preview-table", {
-        "preview-table__small": size === "small",
-        "preview-table__large": size === "large"
-      }),
-      cellSpacing: 0,
-      children: /* @__PURE__ */ jsxRuntimeExports.jsxs("tbody", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "preview-table__row-header", children: (_a = data.columns) == null ? void 0 : _a.map((column2, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "th",
+const MetaDataValue = ({
+  className,
+  container: Container = "span",
+  empty: empty2,
+  kind,
+  title,
+  value
+}) => /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+  Container,
+  {
+    title,
+    className: modifiers("pipeline-metadata__value", { kind }, className),
+    children: !value && value !== 0 ? empty2 : value
+  }
+) });
+const MetaDataList = ({
+  property,
+  values: values2 = [],
+  kind = "text",
+  empty: empty2 = "-",
+  inline = true,
+  commas = true,
+  limit = false
+}) => {
+  const [expanded, setExpanded] = reactExports.useState(false);
+  const showValues = !expanded && limit ? values2.slice(0, limit) : values2;
+  const remainder = values2.length - showValues.length;
+  reactExports.useEffect(() => setExpanded(false), [values2]);
+  return values2.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "ul",
+      {
+        className: modifiers("pipeline-metadata__value-list", {
+          inline,
+          commas
+        }),
+        children: showValues.map((item, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          MetaDataValue,
           {
-            className: "preview-table__header",
-            onClick,
-            onMouseOut: () => setHoveredHeaderIndex(null),
-            onMouseOver: () => setHoveredHeaderIndex(index),
-            children: column2
-          },
-          column2
-        )) }),
-        (_b = data.data) == null ? void 0 : _b.map((row, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "preview-table__row", children: row.map((content, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "td",
-          {
-            className: classnames("preview-table__data", {
-              "preview-table__data-hovered": i === hoveredHeaderIndex
-            }),
-            onClick,
-            children: String(content)
-          },
-          i
-        )) }, index))
-      ] })
-    }
-  );
+            value: property ? item[property] : item,
+            kind,
+            empty: empty2
+          }
+        ) }, index))
+      }
+    ),
+    remainder > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        className: "pipeline-metadata__value-list-expand",
+        "aria-expanded": expanded,
+        onClick: () => setExpanded(true),
+        children: [
+          "+ ",
+          remainder,
+          " more"
+        ]
+      }
+    ) : null
+  ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(MetaDataValue, { empty: empty2 });
 };
 var main$1 = { exports: {} };
 var main = main$1.exports;
@@ -35457,7 +35477,7 @@ const lightjsonViewerTheme = {
   base0E: "#7928a1",
   base0F: "rgba(0,0,0,0.85)"
 };
-const JSONObject = ({
+const JsonRenderer = ({
   className,
   value,
   kind,
@@ -35479,2021 +35499,6 @@ const JSONObject = ({
     style: style2 ? style2 : { backgroundColor: "transparent" }
   }
 ) });
-/*! @license DOMPurify 3.3.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.0/LICENSE */
-var purify_cjs;
-var hasRequiredPurify_cjs;
-function requirePurify_cjs() {
-  if (hasRequiredPurify_cjs) return purify_cjs;
-  hasRequiredPurify_cjs = 1;
-  const {
-    entries,
-    setPrototypeOf,
-    isFrozen,
-    getPrototypeOf,
-    getOwnPropertyDescriptor
-  } = Object;
-  let {
-    freeze,
-    seal,
-    create: create2
-  } = Object;
-  let {
-    apply,
-    construct
-  } = typeof Reflect !== "undefined" && Reflect;
-  if (!freeze) {
-    freeze = function freeze2(x2) {
-      return x2;
-    };
-  }
-  if (!seal) {
-    seal = function seal2(x2) {
-      return x2;
-    };
-  }
-  if (!apply) {
-    apply = function apply2(func, thisArg) {
-      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
-      }
-      return func.apply(thisArg, args);
-    };
-  }
-  if (!construct) {
-    construct = function construct2(Func) {
-      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-      }
-      return new Func(...args);
-    };
-  }
-  const arrayForEach = unapply(Array.prototype.forEach);
-  const arrayLastIndexOf = unapply(Array.prototype.lastIndexOf);
-  const arrayPop = unapply(Array.prototype.pop);
-  const arrayPush = unapply(Array.prototype.push);
-  const arraySplice = unapply(Array.prototype.splice);
-  const stringToLowerCase = unapply(String.prototype.toLowerCase);
-  const stringToString = unapply(String.prototype.toString);
-  const stringMatch = unapply(String.prototype.match);
-  const stringReplace = unapply(String.prototype.replace);
-  const stringIndexOf = unapply(String.prototype.indexOf);
-  const stringTrim = unapply(String.prototype.trim);
-  const objectHasOwnProperty = unapply(Object.prototype.hasOwnProperty);
-  const regExpTest = unapply(RegExp.prototype.test);
-  const typeErrorCreate = unconstruct(TypeError);
-  function unapply(func) {
-    return function(thisArg) {
-      if (thisArg instanceof RegExp) {
-        thisArg.lastIndex = 0;
-      }
-      for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-        args[_key3 - 1] = arguments[_key3];
-      }
-      return apply(func, thisArg, args);
-    };
-  }
-  function unconstruct(Func) {
-    return function() {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
-      }
-      return construct(Func, args);
-    };
-  }
-  function addToSet(set2, array2) {
-    let transformCaseFunc = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : stringToLowerCase;
-    if (setPrototypeOf) {
-      setPrototypeOf(set2, null);
-    }
-    let l = array2.length;
-    while (l--) {
-      let element = array2[l];
-      if (typeof element === "string") {
-        const lcElement = transformCaseFunc(element);
-        if (lcElement !== element) {
-          if (!isFrozen(array2)) {
-            array2[l] = lcElement;
-          }
-          element = lcElement;
-        }
-      }
-      set2[element] = true;
-    }
-    return set2;
-  }
-  function cleanArray(array2) {
-    for (let index = 0; index < array2.length; index++) {
-      const isPropertyExist = objectHasOwnProperty(array2, index);
-      if (!isPropertyExist) {
-        array2[index] = null;
-      }
-    }
-    return array2;
-  }
-  function clone(object2) {
-    const newObject = create2(null);
-    for (const [property, value] of entries(object2)) {
-      const isPropertyExist = objectHasOwnProperty(object2, property);
-      if (isPropertyExist) {
-        if (Array.isArray(value)) {
-          newObject[property] = cleanArray(value);
-        } else if (value && typeof value === "object" && value.constructor === Object) {
-          newObject[property] = clone(value);
-        } else {
-          newObject[property] = value;
-        }
-      }
-    }
-    return newObject;
-  }
-  function lookupGetter(object2, prop) {
-    while (object2 !== null) {
-      const desc = getOwnPropertyDescriptor(object2, prop);
-      if (desc) {
-        if (desc.get) {
-          return unapply(desc.get);
-        }
-        if (typeof desc.value === "function") {
-          return unapply(desc.value);
-        }
-      }
-      object2 = getPrototypeOf(object2);
-    }
-    function fallbackValue() {
-      return null;
-    }
-    return fallbackValue;
-  }
-  const html$1 = freeze(["a", "abbr", "acronym", "address", "area", "article", "aside", "audio", "b", "bdi", "bdo", "big", "blink", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "font", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "img", "input", "ins", "kbd", "label", "legend", "li", "main", "map", "mark", "marquee", "menu", "menuitem", "meter", "nav", "nobr", "ol", "optgroup", "option", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "search", "section", "select", "shadow", "slot", "small", "source", "spacer", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "time", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"]);
-  const svg$1 = freeze(["svg", "a", "altglyph", "altglyphdef", "altglyphitem", "animatecolor", "animatemotion", "animatetransform", "circle", "clippath", "defs", "desc", "ellipse", "enterkeyhint", "exportparts", "filter", "font", "g", "glyph", "glyphref", "hkern", "image", "inputmode", "line", "lineargradient", "marker", "mask", "metadata", "mpath", "part", "path", "pattern", "polygon", "polyline", "radialgradient", "rect", "stop", "style", "switch", "symbol", "text", "textpath", "title", "tref", "tspan", "view", "vkern"]);
-  const svgFilters = freeze(["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"]);
-  const svgDisallowed = freeze(["animate", "color-profile", "cursor", "discard", "font-face", "font-face-format", "font-face-name", "font-face-src", "font-face-uri", "foreignobject", "hatch", "hatchpath", "mesh", "meshgradient", "meshpatch", "meshrow", "missing-glyph", "script", "set", "solidcolor", "unknown", "use"]);
-  const mathMl$1 = freeze(["math", "menclose", "merror", "mfenced", "mfrac", "mglyph", "mi", "mlabeledtr", "mmultiscripts", "mn", "mo", "mover", "mpadded", "mphantom", "mroot", "mrow", "ms", "mspace", "msqrt", "mstyle", "msub", "msup", "msubsup", "mtable", "mtd", "mtext", "mtr", "munder", "munderover", "mprescripts"]);
-  const mathMlDisallowed = freeze(["maction", "maligngroup", "malignmark", "mlongdiv", "mscarries", "mscarry", "msgroup", "mstack", "msline", "msrow", "semantics", "annotation", "annotation-xml", "mprescripts", "none"]);
-  const text = freeze(["#text"]);
-  const html = freeze(["accept", "action", "align", "alt", "autocapitalize", "autocomplete", "autopictureinpicture", "autoplay", "background", "bgcolor", "border", "capture", "cellpadding", "cellspacing", "checked", "cite", "class", "clear", "color", "cols", "colspan", "controls", "controlslist", "coords", "crossorigin", "datetime", "decoding", "default", "dir", "disabled", "disablepictureinpicture", "disableremoteplayback", "download", "draggable", "enctype", "enterkeyhint", "exportparts", "face", "for", "headers", "height", "hidden", "high", "href", "hreflang", "id", "inert", "inputmode", "integrity", "ismap", "kind", "label", "lang", "list", "loading", "loop", "low", "max", "maxlength", "media", "method", "min", "minlength", "multiple", "muted", "name", "nonce", "noshade", "novalidate", "nowrap", "open", "optimum", "part", "pattern", "placeholder", "playsinline", "popover", "popovertarget", "popovertargetaction", "poster", "preload", "pubdate", "radiogroup", "readonly", "rel", "required", "rev", "reversed", "role", "rows", "rowspan", "spellcheck", "scope", "selected", "shape", "size", "sizes", "slot", "span", "srclang", "start", "src", "srcset", "step", "style", "summary", "tabindex", "title", "translate", "type", "usemap", "valign", "value", "width", "wrap", "xmlns", "slot"]);
-  const svg = freeze(["accent-height", "accumulate", "additive", "alignment-baseline", "amplitude", "ascent", "attributename", "attributetype", "azimuth", "basefrequency", "baseline-shift", "begin", "bias", "by", "class", "clip", "clippathunits", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "cx", "cy", "d", "dx", "dy", "diffuseconstant", "direction", "display", "divisor", "dur", "edgemode", "elevation", "end", "exponent", "fill", "fill-opacity", "fill-rule", "filter", "filterunits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "fx", "fy", "g1", "g2", "glyph-name", "glyphref", "gradientunits", "gradienttransform", "height", "href", "id", "image-rendering", "in", "in2", "intercept", "k", "k1", "k2", "k3", "k4", "kerning", "keypoints", "keysplines", "keytimes", "lang", "lengthadjust", "letter-spacing", "kernelmatrix", "kernelunitlength", "lighting-color", "local", "marker-end", "marker-mid", "marker-start", "markerheight", "markerunits", "markerwidth", "maskcontentunits", "maskunits", "max", "mask", "mask-type", "media", "method", "mode", "min", "name", "numoctaves", "offset", "operator", "opacity", "order", "orient", "orientation", "origin", "overflow", "paint-order", "path", "pathlength", "patterncontentunits", "patterntransform", "patternunits", "points", "preservealpha", "preserveaspectratio", "primitiveunits", "r", "rx", "ry", "radius", "refx", "refy", "repeatcount", "repeatdur", "restart", "result", "rotate", "scale", "seed", "shape-rendering", "slope", "specularconstant", "specularexponent", "spreadmethod", "startoffset", "stddeviation", "stitchtiles", "stop-color", "stop-opacity", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke", "stroke-width", "style", "surfacescale", "systemlanguage", "tabindex", "tablevalues", "targetx", "targety", "transform", "transform-origin", "text-anchor", "text-decoration", "text-rendering", "textlength", "type", "u1", "u2", "unicode", "values", "viewbox", "visibility", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "width", "word-spacing", "wrap", "writing-mode", "xchannelselector", "ychannelselector", "x", "x1", "x2", "xmlns", "y", "y1", "y2", "z", "zoomandpan"]);
-  const mathMl = freeze(["accent", "accentunder", "align", "bevelled", "close", "columnsalign", "columnlines", "columnspan", "denomalign", "depth", "dir", "display", "displaystyle", "encoding", "fence", "frame", "height", "href", "id", "largeop", "length", "linethickness", "lspace", "lquote", "mathbackground", "mathcolor", "mathsize", "mathvariant", "maxsize", "minsize", "movablelimits", "notation", "numalign", "open", "rowalign", "rowlines", "rowspacing", "rowspan", "rspace", "rquote", "scriptlevel", "scriptminsize", "scriptsizemultiplier", "selection", "separator", "separators", "stretchy", "subscriptshift", "supscriptshift", "symmetric", "voffset", "width", "xmlns"]);
-  const xml = freeze(["xlink:href", "xml:id", "xlink:title", "xml:space", "xmlns:xlink"]);
-  const MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm);
-  const ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
-  const TMPLIT_EXPR = seal(/\$\{[\w\W]*/gm);
-  const DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]+$/);
-  const ARIA_ATTR = seal(/^aria-[\-\w]+$/);
-  const IS_ALLOWED_URI = seal(
-    /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
-    // eslint-disable-line no-useless-escape
-  );
-  const IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
-  const ATTR_WHITESPACE = seal(
-    /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
-    // eslint-disable-line no-control-regex
-  );
-  const DOCTYPE_NAME = seal(/^html$/i);
-  const CUSTOM_ELEMENT = seal(/^[a-z][.\w]*(-[.\w]+)+$/i);
-  var EXPRESSIONS = /* @__PURE__ */ Object.freeze({
-    __proto__: null,
-    ARIA_ATTR,
-    ATTR_WHITESPACE,
-    CUSTOM_ELEMENT,
-    DATA_ATTR,
-    DOCTYPE_NAME,
-    ERB_EXPR,
-    IS_ALLOWED_URI,
-    IS_SCRIPT_OR_DATA,
-    MUSTACHE_EXPR,
-    TMPLIT_EXPR
-  });
-  const NODE_TYPE = {
-    element: 1,
-    text: 3,
-    // Deprecated
-    progressingInstruction: 7,
-    comment: 8,
-    document: 9
-  };
-  const getGlobal = function getGlobal2() {
-    return typeof window === "undefined" ? null : window;
-  };
-  const _createTrustedTypesPolicy = function _createTrustedTypesPolicy2(trustedTypes, purifyHostElement) {
-    if (typeof trustedTypes !== "object" || typeof trustedTypes.createPolicy !== "function") {
-      return null;
-    }
-    let suffix = null;
-    const ATTR_NAME = "data-tt-policy-suffix";
-    if (purifyHostElement && purifyHostElement.hasAttribute(ATTR_NAME)) {
-      suffix = purifyHostElement.getAttribute(ATTR_NAME);
-    }
-    const policyName = "dompurify" + (suffix ? "#" + suffix : "");
-    try {
-      return trustedTypes.createPolicy(policyName, {
-        createHTML(html2) {
-          return html2;
-        },
-        createScriptURL(scriptUrl) {
-          return scriptUrl;
-        }
-      });
-    } catch (_) {
-      console.warn("TrustedTypes policy " + policyName + " could not be created.");
-      return null;
-    }
-  };
-  const _createHooksMap = function _createHooksMap2() {
-    return {
-      afterSanitizeAttributes: [],
-      afterSanitizeElements: [],
-      afterSanitizeShadowDOM: [],
-      beforeSanitizeAttributes: [],
-      beforeSanitizeElements: [],
-      beforeSanitizeShadowDOM: [],
-      uponSanitizeAttribute: [],
-      uponSanitizeElement: [],
-      uponSanitizeShadowNode: []
-    };
-  };
-  function createDOMPurify() {
-    let window2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
-    const DOMPurify2 = (root2) => createDOMPurify(root2);
-    DOMPurify2.version = "3.3.0";
-    DOMPurify2.removed = [];
-    if (!window2 || !window2.document || window2.document.nodeType !== NODE_TYPE.document || !window2.Element) {
-      DOMPurify2.isSupported = false;
-      return DOMPurify2;
-    }
-    let {
-      document: document2
-    } = window2;
-    const originalDocument = document2;
-    const currentScript = originalDocument.currentScript;
-    const {
-      DocumentFragment,
-      HTMLTemplateElement,
-      Node: Node2,
-      Element,
-      NodeFilter,
-      NamedNodeMap = window2.NamedNodeMap || window2.MozNamedAttrMap,
-      HTMLFormElement,
-      DOMParser,
-      trustedTypes
-    } = window2;
-    const ElementPrototype = Element.prototype;
-    const cloneNode = lookupGetter(ElementPrototype, "cloneNode");
-    const remove2 = lookupGetter(ElementPrototype, "remove");
-    const getNextSibling = lookupGetter(ElementPrototype, "nextSibling");
-    const getChildNodes = lookupGetter(ElementPrototype, "childNodes");
-    const getParentNode = lookupGetter(ElementPrototype, "parentNode");
-    if (typeof HTMLTemplateElement === "function") {
-      const template = document2.createElement("template");
-      if (template.content && template.content.ownerDocument) {
-        document2 = template.content.ownerDocument;
-      }
-    }
-    let trustedTypesPolicy;
-    let emptyHTML = "";
-    const {
-      implementation,
-      createNodeIterator,
-      createDocumentFragment,
-      getElementsByTagName
-    } = document2;
-    const {
-      importNode
-    } = originalDocument;
-    let hooks = _createHooksMap();
-    DOMPurify2.isSupported = typeof entries === "function" && typeof getParentNode === "function" && implementation && implementation.createHTMLDocument !== void 0;
-    const {
-      MUSTACHE_EXPR: MUSTACHE_EXPR2,
-      ERB_EXPR: ERB_EXPR2,
-      TMPLIT_EXPR: TMPLIT_EXPR2,
-      DATA_ATTR: DATA_ATTR2,
-      ARIA_ATTR: ARIA_ATTR2,
-      IS_SCRIPT_OR_DATA: IS_SCRIPT_OR_DATA2,
-      ATTR_WHITESPACE: ATTR_WHITESPACE2,
-      CUSTOM_ELEMENT: CUSTOM_ELEMENT2
-    } = EXPRESSIONS;
-    let {
-      IS_ALLOWED_URI: IS_ALLOWED_URI$1
-    } = EXPRESSIONS;
-    let ALLOWED_TAGS = null;
-    const DEFAULT_ALLOWED_TAGS = addToSet({}, [...html$1, ...svg$1, ...svgFilters, ...mathMl$1, ...text]);
-    let ALLOWED_ATTR = null;
-    const DEFAULT_ALLOWED_ATTR = addToSet({}, [...html, ...svg, ...mathMl, ...xml]);
-    let CUSTOM_ELEMENT_HANDLING = Object.seal(create2(null, {
-      tagNameCheck: {
-        writable: true,
-        configurable: false,
-        enumerable: true,
-        value: null
-      },
-      attributeNameCheck: {
-        writable: true,
-        configurable: false,
-        enumerable: true,
-        value: null
-      },
-      allowCustomizedBuiltInElements: {
-        writable: true,
-        configurable: false,
-        enumerable: true,
-        value: false
-      }
-    }));
-    let FORBID_TAGS = null;
-    let FORBID_ATTR = null;
-    const EXTRA_ELEMENT_HANDLING = Object.seal(create2(null, {
-      tagCheck: {
-        writable: true,
-        configurable: false,
-        enumerable: true,
-        value: null
-      },
-      attributeCheck: {
-        writable: true,
-        configurable: false,
-        enumerable: true,
-        value: null
-      }
-    }));
-    let ALLOW_ARIA_ATTR = true;
-    let ALLOW_DATA_ATTR = true;
-    let ALLOW_UNKNOWN_PROTOCOLS = false;
-    let ALLOW_SELF_CLOSE_IN_ATTR = true;
-    let SAFE_FOR_TEMPLATES = false;
-    let SAFE_FOR_XML = true;
-    let WHOLE_DOCUMENT = false;
-    let SET_CONFIG = false;
-    let FORCE_BODY = false;
-    let RETURN_DOM = false;
-    let RETURN_DOM_FRAGMENT = false;
-    let RETURN_TRUSTED_TYPE = false;
-    let SANITIZE_DOM = true;
-    let SANITIZE_NAMED_PROPS = false;
-    const SANITIZE_NAMED_PROPS_PREFIX = "user-content-";
-    let KEEP_CONTENT = true;
-    let IN_PLACE = false;
-    let USE_PROFILES = {};
-    let FORBID_CONTENTS = null;
-    const DEFAULT_FORBID_CONTENTS = addToSet({}, ["annotation-xml", "audio", "colgroup", "desc", "foreignobject", "head", "iframe", "math", "mi", "mn", "mo", "ms", "mtext", "noembed", "noframes", "noscript", "plaintext", "script", "style", "svg", "template", "thead", "title", "video", "xmp"]);
-    let DATA_URI_TAGS = null;
-    const DEFAULT_DATA_URI_TAGS = addToSet({}, ["audio", "video", "img", "source", "image", "track"]);
-    let URI_SAFE_ATTRIBUTES = null;
-    const DEFAULT_URI_SAFE_ATTRIBUTES = addToSet({}, ["alt", "class", "for", "id", "label", "name", "pattern", "placeholder", "role", "summary", "title", "value", "style", "xmlns"]);
-    const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
-    const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-    const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-    let NAMESPACE = HTML_NAMESPACE;
-    let IS_EMPTY_INPUT = false;
-    let ALLOWED_NAMESPACES = null;
-    const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
-    let MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ["mi", "mo", "mn", "ms", "mtext"]);
-    let HTML_INTEGRATION_POINTS = addToSet({}, ["annotation-xml"]);
-    const COMMON_SVG_AND_HTML_ELEMENTS = addToSet({}, ["title", "style", "font", "a", "script"]);
-    let PARSER_MEDIA_TYPE = null;
-    const SUPPORTED_PARSER_MEDIA_TYPES = ["application/xhtml+xml", "text/html"];
-    const DEFAULT_PARSER_MEDIA_TYPE = "text/html";
-    let transformCaseFunc = null;
-    let CONFIG = null;
-    const formElement = document2.createElement("form");
-    const isRegexOrFunction = function isRegexOrFunction2(testValue) {
-      return testValue instanceof RegExp || testValue instanceof Function;
-    };
-    const _parseConfig = function _parseConfig2() {
-      let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
-      if (CONFIG && CONFIG === cfg) {
-        return;
-      }
-      if (!cfg || typeof cfg !== "object") {
-        cfg = {};
-      }
-      cfg = clone(cfg);
-      PARSER_MEDIA_TYPE = // eslint-disable-next-line unicorn/prefer-includes
-      SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? DEFAULT_PARSER_MEDIA_TYPE : cfg.PARSER_MEDIA_TYPE;
-      transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? stringToString : stringToLowerCase;
-      ALLOWED_TAGS = objectHasOwnProperty(cfg, "ALLOWED_TAGS") ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
-      ALLOWED_ATTR = objectHasOwnProperty(cfg, "ALLOWED_ATTR") ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
-      ALLOWED_NAMESPACES = objectHasOwnProperty(cfg, "ALLOWED_NAMESPACES") ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
-      URI_SAFE_ATTRIBUTES = objectHasOwnProperty(cfg, "ADD_URI_SAFE_ATTR") ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), cfg.ADD_URI_SAFE_ATTR, transformCaseFunc) : DEFAULT_URI_SAFE_ATTRIBUTES;
-      DATA_URI_TAGS = objectHasOwnProperty(cfg, "ADD_DATA_URI_TAGS") ? addToSet(clone(DEFAULT_DATA_URI_TAGS), cfg.ADD_DATA_URI_TAGS, transformCaseFunc) : DEFAULT_DATA_URI_TAGS;
-      FORBID_CONTENTS = objectHasOwnProperty(cfg, "FORBID_CONTENTS") ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
-      FORBID_TAGS = objectHasOwnProperty(cfg, "FORBID_TAGS") ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : clone({});
-      FORBID_ATTR = objectHasOwnProperty(cfg, "FORBID_ATTR") ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : clone({});
-      USE_PROFILES = objectHasOwnProperty(cfg, "USE_PROFILES") ? cfg.USE_PROFILES : false;
-      ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false;
-      ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false;
-      ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false;
-      ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false;
-      SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false;
-      SAFE_FOR_XML = cfg.SAFE_FOR_XML !== false;
-      WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false;
-      RETURN_DOM = cfg.RETURN_DOM || false;
-      RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false;
-      RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false;
-      FORCE_BODY = cfg.FORCE_BODY || false;
-      SANITIZE_DOM = cfg.SANITIZE_DOM !== false;
-      SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false;
-      KEEP_CONTENT = cfg.KEEP_CONTENT !== false;
-      IN_PLACE = cfg.IN_PLACE || false;
-      IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
-      NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
-      MATHML_TEXT_INTEGRATION_POINTS = cfg.MATHML_TEXT_INTEGRATION_POINTS || MATHML_TEXT_INTEGRATION_POINTS;
-      HTML_INTEGRATION_POINTS = cfg.HTML_INTEGRATION_POINTS || HTML_INTEGRATION_POINTS;
-      CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
-      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) {
-        CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
-      }
-      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) {
-        CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
-      }
-      if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === "boolean") {
-        CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
-      }
-      if (SAFE_FOR_TEMPLATES) {
-        ALLOW_DATA_ATTR = false;
-      }
-      if (RETURN_DOM_FRAGMENT) {
-        RETURN_DOM = true;
-      }
-      if (USE_PROFILES) {
-        ALLOWED_TAGS = addToSet({}, text);
-        ALLOWED_ATTR = [];
-        if (USE_PROFILES.html === true) {
-          addToSet(ALLOWED_TAGS, html$1);
-          addToSet(ALLOWED_ATTR, html);
-        }
-        if (USE_PROFILES.svg === true) {
-          addToSet(ALLOWED_TAGS, svg$1);
-          addToSet(ALLOWED_ATTR, svg);
-          addToSet(ALLOWED_ATTR, xml);
-        }
-        if (USE_PROFILES.svgFilters === true) {
-          addToSet(ALLOWED_TAGS, svgFilters);
-          addToSet(ALLOWED_ATTR, svg);
-          addToSet(ALLOWED_ATTR, xml);
-        }
-        if (USE_PROFILES.mathMl === true) {
-          addToSet(ALLOWED_TAGS, mathMl$1);
-          addToSet(ALLOWED_ATTR, mathMl);
-          addToSet(ALLOWED_ATTR, xml);
-        }
-      }
-      if (cfg.ADD_TAGS) {
-        if (typeof cfg.ADD_TAGS === "function") {
-          EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
-        } else {
-          if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
-            ALLOWED_TAGS = clone(ALLOWED_TAGS);
-          }
-          addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
-        }
-      }
-      if (cfg.ADD_ATTR) {
-        if (typeof cfg.ADD_ATTR === "function") {
-          EXTRA_ELEMENT_HANDLING.attributeCheck = cfg.ADD_ATTR;
-        } else {
-          if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
-            ALLOWED_ATTR = clone(ALLOWED_ATTR);
-          }
-          addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
-        }
-      }
-      if (cfg.ADD_URI_SAFE_ATTR) {
-        addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
-      }
-      if (cfg.FORBID_CONTENTS) {
-        if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
-          FORBID_CONTENTS = clone(FORBID_CONTENTS);
-        }
-        addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
-      }
-      if (KEEP_CONTENT) {
-        ALLOWED_TAGS["#text"] = true;
-      }
-      if (WHOLE_DOCUMENT) {
-        addToSet(ALLOWED_TAGS, ["html", "head", "body"]);
-      }
-      if (ALLOWED_TAGS.table) {
-        addToSet(ALLOWED_TAGS, ["tbody"]);
-        delete FORBID_TAGS.tbody;
-      }
-      if (cfg.TRUSTED_TYPES_POLICY) {
-        if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== "function") {
-          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');
-        }
-        if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== "function") {
-          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');
-        }
-        trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY;
-        emptyHTML = trustedTypesPolicy.createHTML("");
-      } else {
-        if (trustedTypesPolicy === void 0) {
-          trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
-        }
-        if (trustedTypesPolicy !== null && typeof emptyHTML === "string") {
-          emptyHTML = trustedTypesPolicy.createHTML("");
-        }
-      }
-      if (freeze) {
-        freeze(cfg);
-      }
-      CONFIG = cfg;
-    };
-    const ALL_SVG_TAGS = addToSet({}, [...svg$1, ...svgFilters, ...svgDisallowed]);
-    const ALL_MATHML_TAGS = addToSet({}, [...mathMl$1, ...mathMlDisallowed]);
-    const _checkValidNamespace = function _checkValidNamespace2(element) {
-      let parent = getParentNode(element);
-      if (!parent || !parent.tagName) {
-        parent = {
-          namespaceURI: NAMESPACE,
-          tagName: "template"
-        };
-      }
-      const tagName = stringToLowerCase(element.tagName);
-      const parentTagName = stringToLowerCase(parent.tagName);
-      if (!ALLOWED_NAMESPACES[element.namespaceURI]) {
-        return false;
-      }
-      if (element.namespaceURI === SVG_NAMESPACE) {
-        if (parent.namespaceURI === HTML_NAMESPACE) {
-          return tagName === "svg";
-        }
-        if (parent.namespaceURI === MATHML_NAMESPACE) {
-          return tagName === "svg" && (parentTagName === "annotation-xml" || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
-        }
-        return Boolean(ALL_SVG_TAGS[tagName]);
-      }
-      if (element.namespaceURI === MATHML_NAMESPACE) {
-        if (parent.namespaceURI === HTML_NAMESPACE) {
-          return tagName === "math";
-        }
-        if (parent.namespaceURI === SVG_NAMESPACE) {
-          return tagName === "math" && HTML_INTEGRATION_POINTS[parentTagName];
-        }
-        return Boolean(ALL_MATHML_TAGS[tagName]);
-      }
-      if (element.namespaceURI === HTML_NAMESPACE) {
-        if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
-          return false;
-        }
-        if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
-          return false;
-        }
-        return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
-      }
-      if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[element.namespaceURI]) {
-        return true;
-      }
-      return false;
-    };
-    const _forceRemove = function _forceRemove2(node2) {
-      arrayPush(DOMPurify2.removed, {
-        element: node2
-      });
-      try {
-        getParentNode(node2).removeChild(node2);
-      } catch (_) {
-        remove2(node2);
-      }
-    };
-    const _removeAttribute = function _removeAttribute2(name, element) {
-      try {
-        arrayPush(DOMPurify2.removed, {
-          attribute: element.getAttributeNode(name),
-          from: element
-        });
-      } catch (_) {
-        arrayPush(DOMPurify2.removed, {
-          attribute: null,
-          from: element
-        });
-      }
-      element.removeAttribute(name);
-      if (name === "is") {
-        if (RETURN_DOM || RETURN_DOM_FRAGMENT) {
-          try {
-            _forceRemove(element);
-          } catch (_) {
-          }
-        } else {
-          try {
-            element.setAttribute(name, "");
-          } catch (_) {
-          }
-        }
-      }
-    };
-    const _initDocument = function _initDocument2(dirty) {
-      let doc = null;
-      let leadingWhitespace = null;
-      if (FORCE_BODY) {
-        dirty = "<remove></remove>" + dirty;
-      } else {
-        const matches = stringMatch(dirty, /^[\r\n\t ]+/);
-        leadingWhitespace = matches && matches[0];
-      }
-      if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && NAMESPACE === HTML_NAMESPACE) {
-        dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + "</body></html>";
-      }
-      const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
-      if (NAMESPACE === HTML_NAMESPACE) {
-        try {
-          doc = new DOMParser().parseFromString(dirtyPayload, PARSER_MEDIA_TYPE);
-        } catch (_) {
-        }
-      }
-      if (!doc || !doc.documentElement) {
-        doc = implementation.createDocument(NAMESPACE, "template", null);
-        try {
-          doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
-        } catch (_) {
-        }
-      }
-      const body = doc.body || doc.documentElement;
-      if (dirty && leadingWhitespace) {
-        body.insertBefore(document2.createTextNode(leadingWhitespace), body.childNodes[0] || null);
-      }
-      if (NAMESPACE === HTML_NAMESPACE) {
-        return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? "html" : "body")[0];
-      }
-      return WHOLE_DOCUMENT ? doc.documentElement : body;
-    };
-    const _createNodeIterator = function _createNodeIterator2(root2) {
-      return createNodeIterator.call(
-        root2.ownerDocument || root2,
-        root2,
-        // eslint-disable-next-line no-bitwise
-        NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION,
-        null
-      );
-    };
-    const _isClobbered = function _isClobbered2(element) {
-      return element instanceof HTMLFormElement && (typeof element.nodeName !== "string" || typeof element.textContent !== "string" || typeof element.removeChild !== "function" || !(element.attributes instanceof NamedNodeMap) || typeof element.removeAttribute !== "function" || typeof element.setAttribute !== "function" || typeof element.namespaceURI !== "string" || typeof element.insertBefore !== "function" || typeof element.hasChildNodes !== "function");
-    };
-    const _isNode = function _isNode2(value) {
-      return typeof Node2 === "function" && value instanceof Node2;
-    };
-    function _executeHooks(hooks2, currentNode, data) {
-      arrayForEach(hooks2, (hook) => {
-        hook.call(DOMPurify2, currentNode, data, CONFIG);
-      });
-    }
-    const _sanitizeElements = function _sanitizeElements2(currentNode) {
-      let content = null;
-      _executeHooks(hooks.beforeSanitizeElements, currentNode, null);
-      if (_isClobbered(currentNode)) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      const tagName = transformCaseFunc(currentNode.nodeName);
-      _executeHooks(hooks.uponSanitizeElement, currentNode, {
-        tagName,
-        allowedTags: ALLOWED_TAGS
-      });
-      if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(/<[/\w!]/g, currentNode.innerHTML) && regExpTest(/<[/\w!]/g, currentNode.textContent)) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(/<[/\w]/g, currentNode.data)) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      if (!(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName])) {
-        if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
-          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) {
-            return false;
-          }
-          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) {
-            return false;
-          }
-        }
-        if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
-          const parentNode = getParentNode(currentNode) || currentNode.parentNode;
-          const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
-          if (childNodes && parentNode) {
-            const childCount = childNodes.length;
-            for (let i = childCount - 1; i >= 0; --i) {
-              const childClone = cloneNode(childNodes[i], true);
-              childClone.__removalCount = (currentNode.__removalCount || 0) + 1;
-              parentNode.insertBefore(childClone, getNextSibling(currentNode));
-            }
-          }
-        }
-        _forceRemove(currentNode);
-        return true;
-      }
-      if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      if ((tagName === "noscript" || tagName === "noembed" || tagName === "noframes") && regExpTest(/<\/no(script|embed|frames)/i, currentNode.innerHTML)) {
-        _forceRemove(currentNode);
-        return true;
-      }
-      if (SAFE_FOR_TEMPLATES && currentNode.nodeType === NODE_TYPE.text) {
-        content = currentNode.textContent;
-        arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
-          content = stringReplace(content, expr, " ");
-        });
-        if (currentNode.textContent !== content) {
-          arrayPush(DOMPurify2.removed, {
-            element: currentNode.cloneNode()
-          });
-          currentNode.textContent = content;
-        }
-      }
-      _executeHooks(hooks.afterSanitizeElements, currentNode, null);
-      return false;
-    };
-    const _isValidAttribute = function _isValidAttribute2(lcTag, lcName, value) {
-      if (SANITIZE_DOM && (lcName === "id" || lcName === "name") && (value in document2 || value in formElement)) {
-        return false;
-      }
-      if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR2, lcName)) ;
-      else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR2, lcName)) ;
-      else if (EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag)) ;
-      else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
-        if (
-          // First condition does a very basic check if a) it's basically a valid custom element tagname AND
-          // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
-          // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
-          _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName, lcTag)) || // Alternative, second condition checks if it's an `is`-attribute, AND
-          // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
-          lcName === "is" && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))
-        ) ;
-        else {
-          return false;
-        }
-      } else if (URI_SAFE_ATTRIBUTES[lcName]) ;
-      else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE2, ""))) ;
-      else if ((lcName === "src" || lcName === "xlink:href" || lcName === "href") && lcTag !== "script" && stringIndexOf(value, "data:") === 0 && DATA_URI_TAGS[lcTag]) ;
-      else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA2, stringReplace(value, ATTR_WHITESPACE2, ""))) ;
-      else if (value) {
-        return false;
-      } else ;
-      return true;
-    };
-    const _isBasicCustomElement = function _isBasicCustomElement2(tagName) {
-      return tagName !== "annotation-xml" && stringMatch(tagName, CUSTOM_ELEMENT2);
-    };
-    const _sanitizeAttributes = function _sanitizeAttributes2(currentNode) {
-      _executeHooks(hooks.beforeSanitizeAttributes, currentNode, null);
-      const {
-        attributes
-      } = currentNode;
-      if (!attributes || _isClobbered(currentNode)) {
-        return;
-      }
-      const hookEvent = {
-        attrName: "",
-        attrValue: "",
-        keepAttr: true,
-        allowedAttributes: ALLOWED_ATTR,
-        forceKeepAttr: void 0
-      };
-      let l = attributes.length;
-      while (l--) {
-        const attr = attributes[l];
-        const {
-          name,
-          namespaceURI,
-          value: attrValue
-        } = attr;
-        const lcName = transformCaseFunc(name);
-        const initValue = attrValue;
-        let value = name === "value" ? initValue : stringTrim(initValue);
-        hookEvent.attrName = lcName;
-        hookEvent.attrValue = value;
-        hookEvent.keepAttr = true;
-        hookEvent.forceKeepAttr = void 0;
-        _executeHooks(hooks.uponSanitizeAttribute, currentNode, hookEvent);
-        value = hookEvent.attrValue;
-        if (SANITIZE_NAMED_PROPS && (lcName === "id" || lcName === "name")) {
-          _removeAttribute(name, currentNode);
-          value = SANITIZE_NAMED_PROPS_PREFIX + value;
-        }
-        if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title|textarea)/i, value)) {
-          _removeAttribute(name, currentNode);
-          continue;
-        }
-        if (lcName === "attributename" && stringMatch(value, "href")) {
-          _removeAttribute(name, currentNode);
-          continue;
-        }
-        if (hookEvent.forceKeepAttr) {
-          continue;
-        }
-        if (!hookEvent.keepAttr) {
-          _removeAttribute(name, currentNode);
-          continue;
-        }
-        if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
-          _removeAttribute(name, currentNode);
-          continue;
-        }
-        if (SAFE_FOR_TEMPLATES) {
-          arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
-            value = stringReplace(value, expr, " ");
-          });
-        }
-        const lcTag = transformCaseFunc(currentNode.nodeName);
-        if (!_isValidAttribute(lcTag, lcName, value)) {
-          _removeAttribute(name, currentNode);
-          continue;
-        }
-        if (trustedTypesPolicy && typeof trustedTypes === "object" && typeof trustedTypes.getAttributeType === "function") {
-          if (namespaceURI) ;
-          else {
-            switch (trustedTypes.getAttributeType(lcTag, lcName)) {
-              case "TrustedHTML": {
-                value = trustedTypesPolicy.createHTML(value);
-                break;
-              }
-              case "TrustedScriptURL": {
-                value = trustedTypesPolicy.createScriptURL(value);
-                break;
-              }
-            }
-          }
-        }
-        if (value !== initValue) {
-          try {
-            if (namespaceURI) {
-              currentNode.setAttributeNS(namespaceURI, name, value);
-            } else {
-              currentNode.setAttribute(name, value);
-            }
-            if (_isClobbered(currentNode)) {
-              _forceRemove(currentNode);
-            } else {
-              arrayPop(DOMPurify2.removed);
-            }
-          } catch (_) {
-            _removeAttribute(name, currentNode);
-          }
-        }
-      }
-      _executeHooks(hooks.afterSanitizeAttributes, currentNode, null);
-    };
-    const _sanitizeShadowDOM = function _sanitizeShadowDOM2(fragment) {
-      let shadowNode = null;
-      const shadowIterator = _createNodeIterator(fragment);
-      _executeHooks(hooks.beforeSanitizeShadowDOM, fragment, null);
-      while (shadowNode = shadowIterator.nextNode()) {
-        _executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
-        _sanitizeElements(shadowNode);
-        _sanitizeAttributes(shadowNode);
-        if (shadowNode.content instanceof DocumentFragment) {
-          _sanitizeShadowDOM2(shadowNode.content);
-        }
-      }
-      _executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
-    };
-    DOMPurify2.sanitize = function(dirty) {
-      let cfg = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-      let body = null;
-      let importedNode = null;
-      let currentNode = null;
-      let returnNode = null;
-      IS_EMPTY_INPUT = !dirty;
-      if (IS_EMPTY_INPUT) {
-        dirty = "<!-->";
-      }
-      if (typeof dirty !== "string" && !_isNode(dirty)) {
-        if (typeof dirty.toString === "function") {
-          dirty = dirty.toString();
-          if (typeof dirty !== "string") {
-            throw typeErrorCreate("dirty is not a string, aborting");
-          }
-        } else {
-          throw typeErrorCreate("toString is not a function");
-        }
-      }
-      if (!DOMPurify2.isSupported) {
-        return dirty;
-      }
-      if (!SET_CONFIG) {
-        _parseConfig(cfg);
-      }
-      DOMPurify2.removed = [];
-      if (typeof dirty === "string") {
-        IN_PLACE = false;
-      }
-      if (IN_PLACE) {
-        if (dirty.nodeName) {
-          const tagName = transformCaseFunc(dirty.nodeName);
-          if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
-            throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
-          }
-        }
-      } else if (dirty instanceof Node2) {
-        body = _initDocument("<!---->");
-        importedNode = body.ownerDocument.importNode(dirty, true);
-        if (importedNode.nodeType === NODE_TYPE.element && importedNode.nodeName === "BODY") {
-          body = importedNode;
-        } else if (importedNode.nodeName === "HTML") {
-          body = importedNode;
-        } else {
-          body.appendChild(importedNode);
-        }
-      } else {
-        if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && // eslint-disable-next-line unicorn/prefer-includes
-        dirty.indexOf("<") === -1) {
-          return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
-        }
-        body = _initDocument(dirty);
-        if (!body) {
-          return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : "";
-        }
-      }
-      if (body && FORCE_BODY) {
-        _forceRemove(body.firstChild);
-      }
-      const nodeIterator = _createNodeIterator(IN_PLACE ? dirty : body);
-      while (currentNode = nodeIterator.nextNode()) {
-        _sanitizeElements(currentNode);
-        _sanitizeAttributes(currentNode);
-        if (currentNode.content instanceof DocumentFragment) {
-          _sanitizeShadowDOM(currentNode.content);
-        }
-      }
-      if (IN_PLACE) {
-        return dirty;
-      }
-      if (RETURN_DOM) {
-        if (RETURN_DOM_FRAGMENT) {
-          returnNode = createDocumentFragment.call(body.ownerDocument);
-          while (body.firstChild) {
-            returnNode.appendChild(body.firstChild);
-          }
-        } else {
-          returnNode = body;
-        }
-        if (ALLOWED_ATTR.shadowroot || ALLOWED_ATTR.shadowrootmode) {
-          returnNode = importNode.call(originalDocument, returnNode, true);
-        }
-        return returnNode;
-      }
-      let serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
-      if (WHOLE_DOCUMENT && ALLOWED_TAGS["!doctype"] && body.ownerDocument && body.ownerDocument.doctype && body.ownerDocument.doctype.name && regExpTest(DOCTYPE_NAME, body.ownerDocument.doctype.name)) {
-        serializedHTML = "<!DOCTYPE " + body.ownerDocument.doctype.name + ">\n" + serializedHTML;
-      }
-      if (SAFE_FOR_TEMPLATES) {
-        arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
-          serializedHTML = stringReplace(serializedHTML, expr, " ");
-        });
-      }
-      return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
-    };
-    DOMPurify2.setConfig = function() {
-      let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
-      _parseConfig(cfg);
-      SET_CONFIG = true;
-    };
-    DOMPurify2.clearConfig = function() {
-      CONFIG = null;
-      SET_CONFIG = false;
-    };
-    DOMPurify2.isValidAttribute = function(tag, attr, value) {
-      if (!CONFIG) {
-        _parseConfig({});
-      }
-      const lcTag = transformCaseFunc(tag);
-      const lcName = transformCaseFunc(attr);
-      return _isValidAttribute(lcTag, lcName, value);
-    };
-    DOMPurify2.addHook = function(entryPoint, hookFunction) {
-      if (typeof hookFunction !== "function") {
-        return;
-      }
-      arrayPush(hooks[entryPoint], hookFunction);
-    };
-    DOMPurify2.removeHook = function(entryPoint, hookFunction) {
-      if (hookFunction !== void 0) {
-        const index = arrayLastIndexOf(hooks[entryPoint], hookFunction);
-        return index === -1 ? void 0 : arraySplice(hooks[entryPoint], index, 1)[0];
-      }
-      return arrayPop(hooks[entryPoint]);
-    };
-    DOMPurify2.removeHooks = function(entryPoint) {
-      hooks[entryPoint] = [];
-    };
-    DOMPurify2.removeAllHooks = function() {
-      hooks = _createHooksMap();
-    };
-    return DOMPurify2;
-  }
-  var purify = createDOMPurify();
-  purify_cjs = purify;
-  return purify_cjs;
-}
-var browser;
-var hasRequiredBrowser;
-function requireBrowser() {
-  if (hasRequiredBrowser) return browser;
-  hasRequiredBrowser = 1;
-  browser = window.DOMPurify || (window.DOMPurify = requirePurify_cjs().default || requirePurify_cjs());
-  return browser;
-}
-var browserExports = requireBrowser();
-const DOMPurify = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
-const renderMarkdownToHTML = (markdown) => {
-  if (!markdown || typeof markdown !== "string") {
-    return "";
-  }
-  let html = markdown;
-  html = html.replace(
-    /\|(.+)\|\n\|[-s|:]+\|\n((?:\|.+\|\n?)*)/gim,
-    (match2, header, rows) => {
-      const headerCells = header.split("|").map((cell) => cell.trim()).filter((cell) => cell);
-      const headerRow = "<tr>" + headerCells.map((cell) => `<th>${cell}</th>`).join("") + "</tr>";
-      const bodyRows = rows.trim().split("\n").map((row) => {
-        const cells = row.split("|").map((cell) => cell.trim()).filter((cell) => cell);
-        return "<tr>" + cells.map((cell) => `<td>${cell}</td>`).join("") + "</tr>";
-      }).join("");
-      return `<table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>`;
-    }
-  );
-  html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
-  html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
-  html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
-  html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
-  html = html.replace(/__(.*?)__/gim, "<strong>$1</strong>");
-  html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
-  html = html.replace(/_(.*?)_/gim, "<em>$1</em>");
-  html = html.replace(
-    /```(\w+)?\n([\s\S]*?)```/gim,
-    '<pre><code class="language-$1">$2</code></pre>'
-  );
-  html = html.replace(/`([^`]+)`/gim, "<code>$1</code>");
-  html = html.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/gim,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
-  html = html.replace(/^\d+\.\s(.+)$/gim, "<li>$1</li>");
-  html = html.replace(/^[*-]\s(.+)$/gim, "<li>$1</li>");
-  html = html.replace(/(<li>.*<\/li>)/gims, (match2) => {
-    const originalText = markdown.substring(
-      markdown.indexOf(match2.replace(/<\/?li>/g, ""))
-    );
-    if (/^\d+\./.test(originalText)) {
-      return "<ol>" + match2 + "</ol>";
-    }
-    return "<ul>" + match2 + "</ul>";
-  });
-  html = html.replace(/<\/(ul|ol)>\s*<\1>/gim, "");
-  html = html.replace(/\n\s*\n/gim, "</p><p>");
-  html = html.replace(/\n/gim, "<br>");
-  html = "<p>" + html + "</p>";
-  html = html.replace(/<p><\/p>/gim, "");
-  html = html.replace(/<p><br><\/p>/gim, "");
-  html = html.replace(/<p>(<table>.*?<\/table>)<\/p>/gims, "$1");
-  html = html.replace(/<p>(<[uo]l>.*?<\/[uo]l>)<\/p>/gims, "$1");
-  html = html.replace(/<p>(<h[1-6]>.*?<\/h[1-6]>)<\/p>/gims, "$1");
-  return html;
-};
-const HTMLRenderer = ({ content, className = "", fontSize }) => {
-  const style2 = fontSize ? { fontSize } : {};
-  const sanitisedContent = DOMPurify.sanitize(content || "");
-  const htmlContent = renderMarkdownToHTML(sanitisedContent);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      className: classnames("html-renderer", className),
-      style: style2,
-      dangerouslySetInnerHTML: { __html: htmlContent }
-    }
-  );
-};
-var factory = {};
-var hasRequiredFactory;
-function requireFactory() {
-  if (hasRequiredFactory) return factory;
-  hasRequiredFactory = 1;
-  (function(exports) {
-    function _typeof2(obj) {
-      "@babel/helpers - typeof";
-      return _typeof2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
-        return typeof obj2;
-      } : function(obj2) {
-        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
-      }, _typeof2(obj);
-    }
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports["default"] = plotComponentFactory;
-    var _react = _interopRequireWildcard(requireReact());
-    var _propTypes = _interopRequireDefault(/* @__PURE__ */ requirePropTypes());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { "default": obj };
-    }
-    function _getRequireWildcardCache(nodeInterop) {
-      if (typeof WeakMap !== "function") return null;
-      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
-      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
-      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
-        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
-      })(nodeInterop);
-    }
-    function _interopRequireWildcard(obj, nodeInterop) {
-      if (obj && obj.__esModule) {
-        return obj;
-      }
-      if (obj === null || _typeof2(obj) !== "object" && typeof obj !== "function") {
-        return { "default": obj };
-      }
-      var cache = _getRequireWildcardCache(nodeInterop);
-      if (cache && cache.has(obj)) {
-        return cache.get(obj);
-      }
-      var newObj = {};
-      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-      for (var key in obj) {
-        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-          if (desc && (desc.get || desc.set)) {
-            Object.defineProperty(newObj, key, desc);
-          } else {
-            newObj[key] = obj[key];
-          }
-        }
-      }
-      newObj["default"] = obj;
-      if (cache) {
-        cache.set(obj, newObj);
-      }
-      return newObj;
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
-    }
-    function _createClass(Constructor, protoProps, staticProps) {
-      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-      Object.defineProperty(Constructor, "prototype", { writable: false });
-      return Constructor;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
-      Object.defineProperty(subClass, "prototype", { writable: false });
-      if (superClass) _setPrototypeOf2(subClass, superClass);
-    }
-    function _setPrototypeOf2(o, p) {
-      _setPrototypeOf2 = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf3(o2, p2) {
-        o2.__proto__ = p2;
-        return o2;
-      };
-      return _setPrototypeOf2(o, p);
-    }
-    function _createSuper(Derived) {
-      var hasNativeReflectConstruct = _isNativeReflectConstruct();
-      return function _createSuperInternal() {
-        var Super = _getPrototypeOf(Derived), result;
-        if (hasNativeReflectConstruct) {
-          var NewTarget = _getPrototypeOf(this).constructor;
-          result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-          result = Super.apply(this, arguments);
-        }
-        return _possibleConstructorReturn(this, result);
-      };
-    }
-    function _possibleConstructorReturn(self2, call) {
-      if (call && (_typeof2(call) === "object" || typeof call === "function")) {
-        return call;
-      } else if (call !== void 0) {
-        throw new TypeError("Derived constructors may only return object or undefined");
-      }
-      return _assertThisInitialized(self2);
-    }
-    function _assertThisInitialized(self2) {
-      if (self2 === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return self2;
-    }
-    function _isNativeReflectConstruct() {
-      if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-      if (Reflect.construct.sham) return false;
-      if (typeof Proxy === "function") return true;
-      try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
-        }));
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-    function _getPrototypeOf(o) {
-      _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf2(o2) {
-        return o2.__proto__ || Object.getPrototypeOf(o2);
-      };
-      return _getPrototypeOf(o);
-    }
-    var eventNames = ["AfterExport", "AfterPlot", "Animated", "AnimatingFrame", "AnimationInterrupted", "AutoSize", "BeforeExport", "BeforeHover", "ButtonClicked", "Click", "ClickAnnotation", "Deselect", "DoubleClick", "Framework", "Hover", "LegendClick", "LegendDoubleClick", "Relayout", "Relayouting", "Restyle", "Redraw", "Selected", "Selecting", "SliderChange", "SliderEnd", "SliderStart", "SunburstClick", "Transitioning", "TransitionInterrupted", "Unhover", "WebGlContextLost"];
-    var updateEvents = ["plotly_restyle", "plotly_redraw", "plotly_relayout", "plotly_relayouting", "plotly_doubleclick", "plotly_animated", "plotly_sunburstclick"];
-    var isBrowser2 = typeof window !== "undefined";
-    function plotComponentFactory(Plotly2) {
-      var PlotlyComponent = /* @__PURE__ */ function(_Component) {
-        _inherits(PlotlyComponent2, _Component);
-        var _super = _createSuper(PlotlyComponent2);
-        function PlotlyComponent2(props) {
-          var _this;
-          _classCallCheck(this, PlotlyComponent2);
-          _this = _super.call(this, props);
-          _this.p = Promise.resolve();
-          _this.resizeHandler = null;
-          _this.handlers = {};
-          _this.syncWindowResize = _this.syncWindowResize.bind(_assertThisInitialized(_this));
-          _this.syncEventHandlers = _this.syncEventHandlers.bind(_assertThisInitialized(_this));
-          _this.attachUpdateEvents = _this.attachUpdateEvents.bind(_assertThisInitialized(_this));
-          _this.getRef = _this.getRef.bind(_assertThisInitialized(_this));
-          _this.handleUpdate = _this.handleUpdate.bind(_assertThisInitialized(_this));
-          _this.figureCallback = _this.figureCallback.bind(_assertThisInitialized(_this));
-          _this.updatePlotly = _this.updatePlotly.bind(_assertThisInitialized(_this));
-          return _this;
-        }
-        _createClass(PlotlyComponent2, [{
-          key: "updatePlotly",
-          value: function updatePlotly(shouldInvokeResizeHandler, figureCallbackFunction, shouldAttachUpdateEvents) {
-            var _this2 = this;
-            this.p = this.p.then(function() {
-              if (_this2.unmounting) {
-                return;
-              }
-              if (!_this2.el) {
-                throw new Error("Missing element reference");
-              }
-              return Plotly2.react(_this2.el, {
-                data: _this2.props.data,
-                layout: _this2.props.layout,
-                config: _this2.props.config,
-                frames: _this2.props.frames
-              });
-            }).then(function() {
-              if (_this2.unmounting) {
-                return;
-              }
-              _this2.syncWindowResize(shouldInvokeResizeHandler);
-              _this2.syncEventHandlers();
-              _this2.figureCallback(figureCallbackFunction);
-              if (shouldAttachUpdateEvents) {
-                _this2.attachUpdateEvents();
-              }
-            })["catch"](function(err) {
-              if (_this2.props.onError) {
-                _this2.props.onError(err);
-              }
-            });
-          }
-        }, {
-          key: "componentDidMount",
-          value: function componentDidMount() {
-            this.unmounting = false;
-            this.updatePlotly(true, this.props.onInitialized, true);
-          }
-        }, {
-          key: "componentDidUpdate",
-          value: function componentDidUpdate(prevProps) {
-            this.unmounting = false;
-            var numPrevFrames = prevProps.frames && prevProps.frames.length ? prevProps.frames.length : 0;
-            var numNextFrames = this.props.frames && this.props.frames.length ? this.props.frames.length : 0;
-            var figureChanged = !(prevProps.layout === this.props.layout && prevProps.data === this.props.data && prevProps.config === this.props.config && numNextFrames === numPrevFrames);
-            var revisionDefined = prevProps.revision !== void 0;
-            var revisionChanged = prevProps.revision !== this.props.revision;
-            if (!figureChanged && (!revisionDefined || revisionDefined && !revisionChanged)) {
-              return;
-            }
-            this.updatePlotly(false, this.props.onUpdate, false);
-          }
-        }, {
-          key: "componentWillUnmount",
-          value: function componentWillUnmount() {
-            this.unmounting = true;
-            this.figureCallback(this.props.onPurge);
-            if (this.resizeHandler && isBrowser2) {
-              window.removeEventListener("resize", this.resizeHandler);
-              this.resizeHandler = null;
-            }
-            this.removeUpdateEvents();
-            Plotly2.purge(this.el);
-          }
-        }, {
-          key: "attachUpdateEvents",
-          value: function attachUpdateEvents() {
-            var _this3 = this;
-            if (!this.el || !this.el.removeListener) {
-              return;
-            }
-            updateEvents.forEach(function(updateEvent) {
-              _this3.el.on(updateEvent, _this3.handleUpdate);
-            });
-          }
-        }, {
-          key: "removeUpdateEvents",
-          value: function removeUpdateEvents() {
-            var _this4 = this;
-            if (!this.el || !this.el.removeListener) {
-              return;
-            }
-            updateEvents.forEach(function(updateEvent) {
-              _this4.el.removeListener(updateEvent, _this4.handleUpdate);
-            });
-          }
-        }, {
-          key: "handleUpdate",
-          value: function handleUpdate() {
-            this.figureCallback(this.props.onUpdate);
-          }
-        }, {
-          key: "figureCallback",
-          value: function figureCallback(callback) {
-            if (typeof callback === "function") {
-              var _this$el = this.el, data = _this$el.data, layout = _this$el.layout;
-              var frames = this.el._transitionData ? this.el._transitionData._frames : null;
-              var figure = {
-                data,
-                layout,
-                frames
-              };
-              callback(figure, this.el);
-            }
-          }
-        }, {
-          key: "syncWindowResize",
-          value: function syncWindowResize(invoke) {
-            var _this5 = this;
-            if (!isBrowser2) {
-              return;
-            }
-            if (this.props.useResizeHandler && !this.resizeHandler) {
-              this.resizeHandler = function() {
-                return Plotly2.Plots.resize(_this5.el);
-              };
-              window.addEventListener("resize", this.resizeHandler);
-              if (invoke) {
-                this.resizeHandler();
-              }
-            } else if (!this.props.useResizeHandler && this.resizeHandler) {
-              window.removeEventListener("resize", this.resizeHandler);
-              this.resizeHandler = null;
-            }
-          }
-        }, {
-          key: "getRef",
-          value: function getRef(el) {
-            this.el = el;
-            if (this.props.debug && isBrowser2) {
-              window.gd = this.el;
-            }
-          }
-          // Attach and remove event handlers as they're added or removed from props:
-        }, {
-          key: "syncEventHandlers",
-          value: function syncEventHandlers() {
-            var _this6 = this;
-            eventNames.forEach(function(eventName) {
-              var prop = _this6.props["on" + eventName];
-              var handler = _this6.handlers[eventName];
-              var hasHandler = Boolean(handler);
-              if (prop && !hasHandler) {
-                _this6.addEventHandler(eventName, prop);
-              } else if (!prop && hasHandler) {
-                _this6.removeEventHandler(eventName);
-              } else if (prop && hasHandler && prop !== handler) {
-                _this6.removeEventHandler(eventName);
-                _this6.addEventHandler(eventName, prop);
-              }
-            });
-          }
-        }, {
-          key: "addEventHandler",
-          value: function addEventHandler(eventName, prop) {
-            this.handlers[eventName] = prop;
-            this.el.on(this.getPlotlyEventName(eventName), this.handlers[eventName]);
-          }
-        }, {
-          key: "removeEventHandler",
-          value: function removeEventHandler(eventName) {
-            this.el.removeListener(this.getPlotlyEventName(eventName), this.handlers[eventName]);
-            delete this.handlers[eventName];
-          }
-        }, {
-          key: "getPlotlyEventName",
-          value: function getPlotlyEventName(eventName) {
-            return "plotly_" + eventName.toLowerCase();
-          }
-        }, {
-          key: "render",
-          value: function render() {
-            return /* @__PURE__ */ _react["default"].createElement("div", {
-              id: this.props.divId,
-              style: this.props.style,
-              ref: this.getRef,
-              className: this.props.className
-            });
-          }
-        }]);
-        return PlotlyComponent2;
-      }(_react.Component);
-      PlotlyComponent.propTypes = {
-        data: _propTypes["default"].arrayOf(_propTypes["default"].object),
-        config: _propTypes["default"].object,
-        layout: _propTypes["default"].object,
-        frames: _propTypes["default"].arrayOf(_propTypes["default"].object),
-        revision: _propTypes["default"].number,
-        onInitialized: _propTypes["default"].func,
-        onPurge: _propTypes["default"].func,
-        onError: _propTypes["default"].func,
-        onUpdate: _propTypes["default"].func,
-        debug: _propTypes["default"].bool,
-        style: _propTypes["default"].object,
-        className: _propTypes["default"].string,
-        useResizeHandler: _propTypes["default"].bool,
-        divId: _propTypes["default"].string
-      };
-      eventNames.forEach(function(eventName) {
-        PlotlyComponent.propTypes["on" + eventName] = _propTypes["default"].func;
-      });
-      PlotlyComponent.defaultProps = {
-        debug: false,
-        useResizeHandler: false,
-        data: [],
-        style: {
-          position: "relative",
-          display: "inline-block"
-        }
-      };
-      return PlotlyComponent;
-    }
-  })(factory);
-  return factory;
-}
-var factoryExports = requireFactory();
-const createPlotlyComponent = /* @__PURE__ */ getDefaultExportFromCjs(factoryExports);
-const darkTemplate = {
-  autosize: true,
-  annotationdefaults: {
-    arrowcolor: "#2a3f5f",
-    arrowhead: 0,
-    arrowwidth: 1
-  },
-  autotypenumbers: "strict",
-  coloraxis: {
-    autocolorscale: false,
-    colorbar: {
-      thickness: 20,
-      showticklabels: true,
-      ticks: "outside",
-      tickwidth: 1,
-      tickcolor: "rgba(255,255,255,0.30)",
-      ticklen: 12,
-      tickfont: {
-        color: "rgba(255,255,255,0.55)",
-        size: 12
-      },
-      ticklabelposition: "outside",
-      title: {
-        font: {
-          color: "rgba(255,255,255,0.55)",
-          size: 12
-        }
-      }
-    }
-  },
-  colorscale: {
-    diverging: [
-      "rgb(230,59,90)",
-      "rgb(240,185,186)",
-      "rgb(237,212,213)",
-      "rgb(232,232,232)",
-      "rgb(190,213,236)",
-      "rgb(136,192,240)",
-      "rgb(0,169,244)"
-    ],
-    sequential: [
-      "rgb(0,169,244)",
-      "rgb(60,175,245)",
-      "rgb(148,203,250)",
-      "rgb(195,225,254)",
-      "rgb(214,235,255)"
-    ],
-    sequentialminus: [
-      "rgb(0,169,244)",
-      "rgb(60,175,245)",
-      "rgb(148,203,250)",
-      "rgb(195,225,254)",
-      "rgb(214,235,255)"
-    ]
-  },
-  colorway: [
-    "#00a9f4",
-    "#42459F",
-    "#F4973B",
-    "#E63B5A",
-    "#948DCA",
-    "#769D00",
-    "#1A2E91",
-    "#4F9596",
-    "#F7D02A",
-    "#F07179",
-    "#3C7A34",
-    "#B2DFE1",
-    "#C1BCE5",
-    "#AD544A",
-    "#F4973B",
-    "#B6CD70",
-    "#65A6A8",
-    "#F8E979"
-  ],
-  font: {
-    color: "rgba(255,255,255,0.55)"
-  },
-  height: null,
-  hoverlabel: {
-    align: "left"
-  },
-  hovermode: "closest",
-  legend: {
-    title: {
-      font: {
-        color: "rgba(255,255,255,0.55)"
-      }
-    },
-    font: {
-      color: "rgba(255,255,255,0.55)"
-    }
-  },
-  mapbox: {
-    style: "DARK"
-  },
-  paper_bgcolor: "#111111",
-  plot_bgcolor: "#111111",
-  title: {
-    font: {
-      color: "rgba(255,255,255,0.85)",
-      size: 16
-    },
-    xref: "paper",
-    yref: "paper",
-    x: 0,
-    xanchor: "left",
-    yanchor: "middle"
-  },
-  width: null,
-  xaxis: {
-    automargin: true,
-    gridcolor: "rgba(255,255,255,0.12)",
-    layer: "below traces",
-    linewidth: 1,
-    linecolor: "rgba(255,255,255,0.30)",
-    rangemode: "normal",
-    showline: true,
-    showticklabels: true,
-    ticks: "outside",
-    tickwidth: 1,
-    tickcolor: "rgba(255,255,255,0.30)",
-    ticklen: 12,
-    tickfont: {
-      color: "rgba(255,255,255,0.55)",
-      size: 12
-    },
-    ticklabelposition: "outside",
-    title: {
-      font: {
-        color: "rgba(255,255,255,0.55)",
-        size: 16
-      }
-    },
-    zerolinecolor: "rgba(255,255,255,0.30)",
-    zerolinewidth: 1
-  },
-  yaxis: {
-    automargin: true,
-    gridcolor: "rgba(255,255,255,0.12)",
-    layer: "below traces",
-    linewidth: 1,
-    linecolor: "rgba(255,255,255,0.30)",
-    rangemode: "normal",
-    showline: true,
-    showticklabels: true,
-    ticks: "outside",
-    tickwidth: 1,
-    tickcolor: "rgba(255,255,255,0.30)",
-    ticklen: 12,
-    tickfont: {
-      color: "rgba(255,255,255,0.55)",
-      size: 12
-    },
-    ticklabelposition: "outside",
-    title: {
-      font: {
-        color: "rgba(255,255,255,0.55)",
-        size: 16
-      }
-    },
-    zerolinecolor: "rgba(255,255,255,0.30)",
-    zerolinewidth: 1
-  },
-  margin: {
-    l: 72,
-    r: 40,
-    t: 64,
-    b: 72
-  }
-};
-const darkModalTemplate = {
-  ...darkTemplate
-};
-const darkPreviewTemplate = {
-  ...darkTemplate,
-  height: 300,
-  margin: {
-    l: 70,
-    r: 40,
-    t: 60,
-    b: 70
-  },
-  title: {
-    font: {
-      size: 12
-    },
-    x: 0.09
-  },
-  showlegend: false,
-  width: 400,
-  xaxis: {
-    ...darkTemplate.xaxis,
-    title: {
-      ...darkTemplate.xaxis.title,
-      font: {
-        ...darkTemplate.xaxis.font,
-        size: 8
-      }
-    },
-    tickfont: {
-      ...darkTemplate.xaxis.tickfont,
-      size: 8
-    },
-    nticks: 5
-  },
-  yaxis: {
-    ...darkTemplate.yaxis,
-    title: {
-      ...darkTemplate.yaxis.title,
-      font: {
-        ...darkTemplate.yaxis.font,
-        size: 8
-      }
-    },
-    tickfont: {
-      ...darkTemplate.yaxis.tickfont,
-      size: 8
-    },
-    nticks: 5
-  }
-};
-const lightTemplate = {
-  autosize: true,
-  annotationdefaults: {
-    arrowcolor: "#2a3f5f",
-    arrowhead: 0,
-    arrowwidth: 1
-  },
-  autotypenumbers: "strict",
-  coloraxis: {
-    autocolorscale: false,
-    colorbar: {
-      thickness: 20,
-      showticklabels: true,
-      ticks: "outside",
-      tickwidth: 1,
-      tickcolor: "rgba(0,0,0,0.30)",
-      ticklen: 12,
-      tickfont: {
-        color: "rgba(0,0,0,0.55)",
-        size: 12
-      },
-      ticklabelposition: "outside",
-      title: {
-        font: {
-          color: "rgba(0,0,0,0.55)",
-          size: 12
-        }
-      }
-    }
-  },
-  colorscale: {
-    diverging: [
-      "rgb(230,59,90)",
-      "rgb(240,185,186)",
-      "rgb(237,212,213)",
-      "rgb(232,232,232)",
-      "rgb(190,213,236)",
-      "rgb(136,192,240)",
-      "rgb(0,169,244)"
-    ],
-    sequential: [
-      "rgb(0,169,244)",
-      "rgb(60,175,245)",
-      "rgb(148,203,250)",
-      "rgb(195,225,254)",
-      "rgb(214,235,255)"
-    ],
-    sequentialminus: [
-      "rgb(0,169,244)",
-      "rgb(60,175,245)",
-      "rgb(148,203,250)",
-      "rgb(195,225,254)",
-      "rgb(214,235,255)"
-    ]
-  },
-  colorway: [
-    "#00a9f4",
-    "#42459F",
-    "#F4973B",
-    "#E63B5A",
-    "#948DCA",
-    "#769D00",
-    "#1A2E91",
-    "#4F9596",
-    "#F7D02A",
-    "#F07179",
-    "#3C7A34",
-    "#B2DFE1",
-    "#C1BCE5",
-    "#AD544A",
-    "#F4973B",
-    "#B6CD70",
-    "#65A6A8",
-    "#F8E979"
-  ],
-  font: {
-    color: "rgba(0,0,0,0.55)"
-  },
-  height: null,
-  hoverlabel: {
-    align: "left"
-  },
-  hovermode: "closest",
-  legend: {
-    title: {
-      font: {
-        color: "rgba(0,0,0,0.55)"
-      }
-    },
-    font: {
-      color: "rgba(0,0,0,0.55)"
-    }
-  },
-  mapbox: {
-    style: "light"
-  },
-  paper_bgcolor: "#EEEEEE",
-  plot_bgcolor: "#EEEEEE",
-  title: {
-    font: {
-      color: "rgba(0,0,0,0.85)",
-      size: 16
-    },
-    xref: "paper",
-    yref: "paper",
-    x: 0,
-    xanchor: "left",
-    yanchor: "middle"
-  },
-  width: null,
-  xaxis: {
-    automargin: true,
-    gridcolor: "rgba(0,0,0,0.12)",
-    layer: "below traces",
-    linewidth: 1,
-    linecolor: "rgba(0,0,0,0.30)",
-    rangemode: "normal",
-    showline: true,
-    showticklabels: true,
-    ticks: "outside",
-    tickwidth: 1,
-    tickcolor: "rgba(0,0,0,0.30)",
-    ticklen: 12,
-    tickfont: {
-      color: "rgba(0,0,0,0.55)",
-      size: 12
-    },
-    ticklabelposition: "outside",
-    title: {
-      font: {
-        color: "rgba(0,0,0,0.55)",
-        size: 16
-      }
-    },
-    zerolinecolor: "rgba(0,0,0,0.30)",
-    zerolinewidth: 1
-  },
-  yaxis: {
-    automargin: true,
-    gridcolor: "rgba(0,0,0,0.12)",
-    layer: "below traces",
-    linewidth: 1,
-    linecolor: "rgba(0,0,0,0.30)",
-    rangemode: "normal",
-    showline: true,
-    showticklabels: true,
-    ticks: "outside",
-    tickwidth: 1,
-    tickcolor: "rgba(0,0,0,0.30)",
-    ticklen: 12,
-    tickfont: {
-      color: "rgba(0,0,0,0.55)",
-      size: 12
-    },
-    ticklabelposition: "outside",
-    title: {
-      font: {
-        color: "rgba(0,0,0,0.55)",
-        size: 16
-      }
-    },
-    zerolinecolor: "rgba(0,0,0,0.30)",
-    zerolinewidth: 1
-  },
-  margin: {
-    l: 72,
-    r: 40,
-    t: 64,
-    b: 72
-  }
-};
-const lightModalTemplate = {
-  ...lightTemplate
-};
-const lightPreviewTemplate = {
-  ...lightTemplate,
-  height: 300,
-  margin: {
-    l: 70,
-    r: 40,
-    t: 60,
-    b: 70
-  },
-  showlegend: false,
-  width: 400,
-  title: {
-    font: {
-      size: 12
-    },
-    x: 0.09
-  },
-  xaxis: {
-    ...lightTemplate.xaxis,
-    title: {
-      ...lightTemplate.xaxis.title,
-      font: {
-        ...lightTemplate.xaxis.font,
-        size: 8
-      }
-    },
-    tickfont: {
-      ...lightTemplate.xaxis.tickfont,
-      size: 8
-    },
-    nticks: 5
-  },
-  yaxis: {
-    ...lightTemplate.yaxis,
-    title: {
-      ...lightTemplate.yaxis.title,
-      font: {
-        ...lightTemplate.yaxis.font,
-        size: 8
-      }
-    },
-    tickfont: {
-      ...lightTemplate.yaxis.tickfont,
-      size: 8
-    },
-    nticks: 5
-  }
-};
-const Plot = createPlotlyComponent(Plotly);
-const PlotlyChart = ({ theme, view = "", data = [], layout = {} }) => {
-  const plotConfig = view.includes("preview") ? { staticPlot: true } : void 0;
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      className: classnames(
-        "pipeline-plotly-chart",
-        `pipeline-plotly__${view}`
-      ),
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Plot,
-        {
-          data,
-          layout: updateLayout(theme, view, layout),
-          config: plotConfig,
-          style: { width: "100%", height: "100%" },
-          useResizeHandler: true
-        }
-      )
-    }
-  );
-};
-const updateLayout = (theme, view, layout) => {
-  if (theme === "dark") {
-    if (view === "modal") {
-      return deepmerge$2(layout, darkModalTemplate);
-    }
-    return deepmerge$2(layout, darkPreviewTemplate);
-  } else {
-    if (view === "modal") {
-      return deepmerge$2(layout, lightModalTemplate);
-    }
-    return deepmerge$2(layout, lightPreviewTemplate);
-  }
-};
-const mapStateToProps$i = (state) => ({
-  theme: state.theme
-});
-const PlotlyChart$1 = connect(mapStateToProps$i)(PlotlyChart);
-const ExpandIcon = ({ className }) => /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className, viewBox: "0 0 24 24", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 5v16H5v-8h2v6h12V7h-6.116V5H21zM8 3v2H6.415l6.292 6.293-1.414 1.414L5 6.415V8H3V3h5z" }) });
-const MetaDataValue = ({
-  className,
-  container: Container = "span",
-  empty: empty2,
-  kind,
-  title,
-  value
-}) => /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-  Container,
-  {
-    title,
-    className: modifiers("pipeline-metadata__value", { kind }, className),
-    children: !value && value !== 0 ? empty2 : value
-  }
-) });
-const MetaDataList = ({
-  property,
-  values: values2 = [],
-  kind = "text",
-  empty: empty2 = "-",
-  inline = true,
-  commas = true,
-  limit = false
-}) => {
-  const [expanded, setExpanded] = reactExports.useState(false);
-  const showValues = !expanded && limit ? values2.slice(0, limit) : values2;
-  const remainder = values2.length - showValues.length;
-  reactExports.useEffect(() => setExpanded(false), [values2]);
-  return values2.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "ul",
-      {
-        className: modifiers("pipeline-metadata__value-list", {
-          inline,
-          commas
-        }),
-        children: showValues.map((item, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          MetaDataValue,
-          {
-            value: property ? item[property] : item,
-            kind,
-            empty: empty2
-          }
-        ) }, index))
-      }
-    ),
-    remainder > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "button",
-      {
-        className: "pipeline-metadata__value-list-expand",
-        "aria-expanded": expanded,
-        onClick: () => setExpanded(true),
-        children: [
-          "+ ",
-          remainder,
-          " more"
-        ]
-      }
-    ) : null
-  ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(MetaDataValue, { empty: empty2 });
-};
 const MetaDataRow = ({
   label,
   theme,
@@ -37535,7 +35540,15 @@ const MetaDataRow = ({
           value
         }
       ),
-      showObject && /* @__PURE__ */ jsxRuntimeExports.jsx(JSONObject, { value, kind, theme, empty: empty2 }),
+      showObject && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        JsonRenderer,
+        {
+          value,
+          kind,
+          theme,
+          empty: empty2
+        }
+      ),
       children2
     ] })
   ] });
@@ -40198,18 +38211,25 @@ const javascript = /* @__PURE__ */ getDefaultExportFromCjs(javascriptExports);
 hljs.registerLanguage("python", python);
 hljs.registerLanguage("yaml", yaml);
 hljs.registerLanguage("javascript", javascript);
+const SyntaxHighlighter = ({ code = "", language }) => {
+  const codeRef = reactExports.useRef();
+  const highlighted = reactExports.useMemo(() => {
+    var _a;
+    if (language && hljs.getLanguage(language)) {
+      return hljs.highlight(code, { language }).value;
+    }
+    const detected = hljs.highlightAuto(code);
+    const detectedLang = detected.language || ((_a = detected.second_best) == null ? void 0 : _a.language);
+    return detectedLang ? hljs.highlight(code, { language: detectedLang }).value : code;
+  }, [code, language]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "syntax-highlighter", children: /* @__PURE__ */ jsxRuntimeExports.jsx("pre", { ref: codeRef, dangerouslySetInnerHTML: { __html: highlighted } }) });
+};
 const MetaDataCode = ({
   sidebarVisible,
   visible = true,
   value = "",
   title = ""
 }) => {
-  const codeRef = reactExports.useRef();
-  const highlighted = reactExports.useMemo(() => {
-    const detected = hljs.highlightAuto(value);
-    const language = detected.language || detected.second_best.language;
-    return language ? hljs.highlight(value, { language }).value : value;
-  }, [value]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
@@ -40219,16 +38239,16 @@ const MetaDataCode = ({
         "kedro"
       ),
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "pipeline-metadata-code__title", children: title }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "pipeline-metadata-code__code", children: /* @__PURE__ */ jsxRuntimeExports.jsx("pre", { ref: codeRef, dangerouslySetInnerHTML: { __html: highlighted } }) })
+        title && /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "pipeline-metadata-code__title", children: title }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-code__code", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SyntaxHighlighter, { code: value }) })
       ]
     }
   );
 };
-const mapStateToProps$h = (state) => ({
+const mapStateToProps$j = (state) => ({
   sidebarVisible: state.visible.sidebar
 });
-const MetaDataCode$1 = connect(mapStateToProps$h)(MetaDataCode);
+const MetaDataCode$1 = connect(mapStateToProps$j)(MetaDataCode);
 const Toggle = ({
   id: id2 = "",
   checked,
@@ -40316,6 +38336,2310 @@ function ErrorLog({
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "error-log--footer", children: ERROR_MESSAGES.footer })
   ] });
 }
+var factory = {};
+var hasRequiredFactory;
+function requireFactory() {
+  if (hasRequiredFactory) return factory;
+  hasRequiredFactory = 1;
+  (function(exports) {
+    function _typeof2(obj) {
+      "@babel/helpers - typeof";
+      return _typeof2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
+        return typeof obj2;
+      } : function(obj2) {
+        return obj2 && "function" == typeof Symbol && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+      }, _typeof2(obj);
+    }
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports["default"] = plotComponentFactory;
+    var _react = _interopRequireWildcard(requireReact());
+    var _propTypes = _interopRequireDefault(/* @__PURE__ */ requirePropTypes());
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { "default": obj };
+    }
+    function _getRequireWildcardCache(nodeInterop) {
+      if (typeof WeakMap !== "function") return null;
+      var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
+      var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
+      return (_getRequireWildcardCache = function _getRequireWildcardCache2(nodeInterop2) {
+        return nodeInterop2 ? cacheNodeInterop : cacheBabelInterop;
+      })(nodeInterop);
+    }
+    function _interopRequireWildcard(obj, nodeInterop) {
+      if (obj && obj.__esModule) {
+        return obj;
+      }
+      if (obj === null || _typeof2(obj) !== "object" && typeof obj !== "function") {
+        return { "default": obj };
+      }
+      var cache = _getRequireWildcardCache(nodeInterop);
+      if (cache && cache.has(obj)) {
+        return cache.get(obj);
+      }
+      var newObj = {};
+      var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+      for (var key in obj) {
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+          if (desc && (desc.get || desc.set)) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+      newObj["default"] = obj;
+      if (cache) {
+        cache.set(obj, newObj);
+      }
+      return newObj;
+    }
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    function _defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+    function _createClass(Constructor, protoProps, staticProps) {
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      Object.defineProperty(Constructor, "prototype", { writable: false });
+      return Constructor;
+    }
+    function _inherits(subClass, superClass) {
+      if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+      }
+      subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
+      Object.defineProperty(subClass, "prototype", { writable: false });
+      if (superClass) _setPrototypeOf2(subClass, superClass);
+    }
+    function _setPrototypeOf2(o, p) {
+      _setPrototypeOf2 = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf3(o2, p2) {
+        o2.__proto__ = p2;
+        return o2;
+      };
+      return _setPrototypeOf2(o, p);
+    }
+    function _createSuper(Derived) {
+      var hasNativeReflectConstruct = _isNativeReflectConstruct();
+      return function _createSuperInternal() {
+        var Super = _getPrototypeOf(Derived), result;
+        if (hasNativeReflectConstruct) {
+          var NewTarget = _getPrototypeOf(this).constructor;
+          result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+          result = Super.apply(this, arguments);
+        }
+        return _possibleConstructorReturn(this, result);
+      };
+    }
+    function _possibleConstructorReturn(self2, call) {
+      if (call && (_typeof2(call) === "object" || typeof call === "function")) {
+        return call;
+      } else if (call !== void 0) {
+        throw new TypeError("Derived constructors may only return object or undefined");
+      }
+      return _assertThisInitialized(self2);
+    }
+    function _assertThisInitialized(self2) {
+      if (self2 === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+      }
+      return self2;
+    }
+    function _isNativeReflectConstruct() {
+      if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+      if (Reflect.construct.sham) return false;
+      if (typeof Proxy === "function") return true;
+      try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {
+        }));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    function _getPrototypeOf(o) {
+      _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf2(o2) {
+        return o2.__proto__ || Object.getPrototypeOf(o2);
+      };
+      return _getPrototypeOf(o);
+    }
+    var eventNames = ["AfterExport", "AfterPlot", "Animated", "AnimatingFrame", "AnimationInterrupted", "AutoSize", "BeforeExport", "BeforeHover", "ButtonClicked", "Click", "ClickAnnotation", "Deselect", "DoubleClick", "Framework", "Hover", "LegendClick", "LegendDoubleClick", "Relayout", "Relayouting", "Restyle", "Redraw", "Selected", "Selecting", "SliderChange", "SliderEnd", "SliderStart", "SunburstClick", "Transitioning", "TransitionInterrupted", "Unhover", "WebGlContextLost"];
+    var updateEvents = ["plotly_restyle", "plotly_redraw", "plotly_relayout", "plotly_relayouting", "plotly_doubleclick", "plotly_animated", "plotly_sunburstclick"];
+    var isBrowser2 = typeof window !== "undefined";
+    function plotComponentFactory(Plotly2) {
+      var PlotlyComponent = /* @__PURE__ */ function(_Component) {
+        _inherits(PlotlyComponent2, _Component);
+        var _super = _createSuper(PlotlyComponent2);
+        function PlotlyComponent2(props) {
+          var _this;
+          _classCallCheck(this, PlotlyComponent2);
+          _this = _super.call(this, props);
+          _this.p = Promise.resolve();
+          _this.resizeHandler = null;
+          _this.handlers = {};
+          _this.syncWindowResize = _this.syncWindowResize.bind(_assertThisInitialized(_this));
+          _this.syncEventHandlers = _this.syncEventHandlers.bind(_assertThisInitialized(_this));
+          _this.attachUpdateEvents = _this.attachUpdateEvents.bind(_assertThisInitialized(_this));
+          _this.getRef = _this.getRef.bind(_assertThisInitialized(_this));
+          _this.handleUpdate = _this.handleUpdate.bind(_assertThisInitialized(_this));
+          _this.figureCallback = _this.figureCallback.bind(_assertThisInitialized(_this));
+          _this.updatePlotly = _this.updatePlotly.bind(_assertThisInitialized(_this));
+          return _this;
+        }
+        _createClass(PlotlyComponent2, [{
+          key: "updatePlotly",
+          value: function updatePlotly(shouldInvokeResizeHandler, figureCallbackFunction, shouldAttachUpdateEvents) {
+            var _this2 = this;
+            this.p = this.p.then(function() {
+              if (_this2.unmounting) {
+                return;
+              }
+              if (!_this2.el) {
+                throw new Error("Missing element reference");
+              }
+              return Plotly2.react(_this2.el, {
+                data: _this2.props.data,
+                layout: _this2.props.layout,
+                config: _this2.props.config,
+                frames: _this2.props.frames
+              });
+            }).then(function() {
+              if (_this2.unmounting) {
+                return;
+              }
+              _this2.syncWindowResize(shouldInvokeResizeHandler);
+              _this2.syncEventHandlers();
+              _this2.figureCallback(figureCallbackFunction);
+              if (shouldAttachUpdateEvents) {
+                _this2.attachUpdateEvents();
+              }
+            })["catch"](function(err) {
+              if (_this2.props.onError) {
+                _this2.props.onError(err);
+              }
+            });
+          }
+        }, {
+          key: "componentDidMount",
+          value: function componentDidMount() {
+            this.unmounting = false;
+            this.updatePlotly(true, this.props.onInitialized, true);
+          }
+        }, {
+          key: "componentDidUpdate",
+          value: function componentDidUpdate(prevProps) {
+            this.unmounting = false;
+            var numPrevFrames = prevProps.frames && prevProps.frames.length ? prevProps.frames.length : 0;
+            var numNextFrames = this.props.frames && this.props.frames.length ? this.props.frames.length : 0;
+            var figureChanged = !(prevProps.layout === this.props.layout && prevProps.data === this.props.data && prevProps.config === this.props.config && numNextFrames === numPrevFrames);
+            var revisionDefined = prevProps.revision !== void 0;
+            var revisionChanged = prevProps.revision !== this.props.revision;
+            if (!figureChanged && (!revisionDefined || revisionDefined && !revisionChanged)) {
+              return;
+            }
+            this.updatePlotly(false, this.props.onUpdate, false);
+          }
+        }, {
+          key: "componentWillUnmount",
+          value: function componentWillUnmount() {
+            this.unmounting = true;
+            this.figureCallback(this.props.onPurge);
+            if (this.resizeHandler && isBrowser2) {
+              window.removeEventListener("resize", this.resizeHandler);
+              this.resizeHandler = null;
+            }
+            this.removeUpdateEvents();
+            Plotly2.purge(this.el);
+          }
+        }, {
+          key: "attachUpdateEvents",
+          value: function attachUpdateEvents() {
+            var _this3 = this;
+            if (!this.el || !this.el.removeListener) {
+              return;
+            }
+            updateEvents.forEach(function(updateEvent) {
+              _this3.el.on(updateEvent, _this3.handleUpdate);
+            });
+          }
+        }, {
+          key: "removeUpdateEvents",
+          value: function removeUpdateEvents() {
+            var _this4 = this;
+            if (!this.el || !this.el.removeListener) {
+              return;
+            }
+            updateEvents.forEach(function(updateEvent) {
+              _this4.el.removeListener(updateEvent, _this4.handleUpdate);
+            });
+          }
+        }, {
+          key: "handleUpdate",
+          value: function handleUpdate() {
+            this.figureCallback(this.props.onUpdate);
+          }
+        }, {
+          key: "figureCallback",
+          value: function figureCallback(callback) {
+            if (typeof callback === "function") {
+              var _this$el = this.el, data = _this$el.data, layout = _this$el.layout;
+              var frames = this.el._transitionData ? this.el._transitionData._frames : null;
+              var figure = {
+                data,
+                layout,
+                frames
+              };
+              callback(figure, this.el);
+            }
+          }
+        }, {
+          key: "syncWindowResize",
+          value: function syncWindowResize(invoke) {
+            var _this5 = this;
+            if (!isBrowser2) {
+              return;
+            }
+            if (this.props.useResizeHandler && !this.resizeHandler) {
+              this.resizeHandler = function() {
+                return Plotly2.Plots.resize(_this5.el);
+              };
+              window.addEventListener("resize", this.resizeHandler);
+              if (invoke) {
+                this.resizeHandler();
+              }
+            } else if (!this.props.useResizeHandler && this.resizeHandler) {
+              window.removeEventListener("resize", this.resizeHandler);
+              this.resizeHandler = null;
+            }
+          }
+        }, {
+          key: "getRef",
+          value: function getRef(el) {
+            this.el = el;
+            if (this.props.debug && isBrowser2) {
+              window.gd = this.el;
+            }
+          }
+          // Attach and remove event handlers as they're added or removed from props:
+        }, {
+          key: "syncEventHandlers",
+          value: function syncEventHandlers() {
+            var _this6 = this;
+            eventNames.forEach(function(eventName) {
+              var prop = _this6.props["on" + eventName];
+              var handler = _this6.handlers[eventName];
+              var hasHandler = Boolean(handler);
+              if (prop && !hasHandler) {
+                _this6.addEventHandler(eventName, prop);
+              } else if (!prop && hasHandler) {
+                _this6.removeEventHandler(eventName);
+              } else if (prop && hasHandler && prop !== handler) {
+                _this6.removeEventHandler(eventName);
+                _this6.addEventHandler(eventName, prop);
+              }
+            });
+          }
+        }, {
+          key: "addEventHandler",
+          value: function addEventHandler(eventName, prop) {
+            this.handlers[eventName] = prop;
+            this.el.on(this.getPlotlyEventName(eventName), this.handlers[eventName]);
+          }
+        }, {
+          key: "removeEventHandler",
+          value: function removeEventHandler(eventName) {
+            this.el.removeListener(this.getPlotlyEventName(eventName), this.handlers[eventName]);
+            delete this.handlers[eventName];
+          }
+        }, {
+          key: "getPlotlyEventName",
+          value: function getPlotlyEventName(eventName) {
+            return "plotly_" + eventName.toLowerCase();
+          }
+        }, {
+          key: "render",
+          value: function render() {
+            return /* @__PURE__ */ _react["default"].createElement("div", {
+              id: this.props.divId,
+              style: this.props.style,
+              ref: this.getRef,
+              className: this.props.className
+            });
+          }
+        }]);
+        return PlotlyComponent2;
+      }(_react.Component);
+      PlotlyComponent.propTypes = {
+        data: _propTypes["default"].arrayOf(_propTypes["default"].object),
+        config: _propTypes["default"].object,
+        layout: _propTypes["default"].object,
+        frames: _propTypes["default"].arrayOf(_propTypes["default"].object),
+        revision: _propTypes["default"].number,
+        onInitialized: _propTypes["default"].func,
+        onPurge: _propTypes["default"].func,
+        onError: _propTypes["default"].func,
+        onUpdate: _propTypes["default"].func,
+        debug: _propTypes["default"].bool,
+        style: _propTypes["default"].object,
+        className: _propTypes["default"].string,
+        useResizeHandler: _propTypes["default"].bool,
+        divId: _propTypes["default"].string
+      };
+      eventNames.forEach(function(eventName) {
+        PlotlyComponent.propTypes["on" + eventName] = _propTypes["default"].func;
+      });
+      PlotlyComponent.defaultProps = {
+        debug: false,
+        useResizeHandler: false,
+        data: [],
+        style: {
+          position: "relative",
+          display: "inline-block"
+        }
+      };
+      return PlotlyComponent;
+    }
+  })(factory);
+  return factory;
+}
+var factoryExports = requireFactory();
+const createPlotlyComponent = /* @__PURE__ */ getDefaultExportFromCjs(factoryExports);
+const darkTemplate = {
+  autosize: true,
+  annotationdefaults: {
+    arrowcolor: "#2a3f5f",
+    arrowhead: 0,
+    arrowwidth: 1
+  },
+  autotypenumbers: "strict",
+  coloraxis: {
+    autocolorscale: false,
+    colorbar: {
+      thickness: 20,
+      showticklabels: true,
+      ticks: "outside",
+      tickwidth: 1,
+      tickcolor: "rgba(255,255,255,0.30)",
+      ticklen: 12,
+      tickfont: {
+        color: "rgba(255,255,255,0.55)",
+        size: 12
+      },
+      ticklabelposition: "outside",
+      title: {
+        font: {
+          color: "rgba(255,255,255,0.55)",
+          size: 12
+        }
+      }
+    }
+  },
+  colorscale: {
+    diverging: [
+      "rgb(230,59,90)",
+      "rgb(240,185,186)",
+      "rgb(237,212,213)",
+      "rgb(232,232,232)",
+      "rgb(190,213,236)",
+      "rgb(136,192,240)",
+      "rgb(0,169,244)"
+    ],
+    sequential: [
+      "rgb(0,169,244)",
+      "rgb(60,175,245)",
+      "rgb(148,203,250)",
+      "rgb(195,225,254)",
+      "rgb(214,235,255)"
+    ],
+    sequentialminus: [
+      "rgb(0,169,244)",
+      "rgb(60,175,245)",
+      "rgb(148,203,250)",
+      "rgb(195,225,254)",
+      "rgb(214,235,255)"
+    ]
+  },
+  colorway: [
+    "#00a9f4",
+    "#42459F",
+    "#F4973B",
+    "#E63B5A",
+    "#948DCA",
+    "#769D00",
+    "#1A2E91",
+    "#4F9596",
+    "#F7D02A",
+    "#F07179",
+    "#3C7A34",
+    "#B2DFE1",
+    "#C1BCE5",
+    "#AD544A",
+    "#F4973B",
+    "#B6CD70",
+    "#65A6A8",
+    "#F8E979"
+  ],
+  font: {
+    color: "rgba(255,255,255,0.55)"
+  },
+  height: null,
+  hoverlabel: {
+    align: "left"
+  },
+  hovermode: "closest",
+  legend: {
+    title: {
+      font: {
+        color: "rgba(255,255,255,0.55)"
+      }
+    },
+    font: {
+      color: "rgba(255,255,255,0.55)"
+    }
+  },
+  mapbox: {
+    style: "DARK"
+  },
+  paper_bgcolor: "#111111",
+  plot_bgcolor: "#111111",
+  title: {
+    font: {
+      color: "rgba(255,255,255,0.85)",
+      size: 16
+    },
+    xref: "paper",
+    yref: "paper",
+    x: 0,
+    xanchor: "left",
+    yanchor: "middle"
+  },
+  width: null,
+  xaxis: {
+    automargin: true,
+    gridcolor: "rgba(255,255,255,0.12)",
+    layer: "below traces",
+    linewidth: 1,
+    linecolor: "rgba(255,255,255,0.30)",
+    rangemode: "normal",
+    showline: true,
+    showticklabels: true,
+    ticks: "outside",
+    tickwidth: 1,
+    tickcolor: "rgba(255,255,255,0.30)",
+    ticklen: 12,
+    tickfont: {
+      color: "rgba(255,255,255,0.55)",
+      size: 12
+    },
+    ticklabelposition: "outside",
+    title: {
+      font: {
+        color: "rgba(255,255,255,0.55)",
+        size: 16
+      }
+    },
+    zerolinecolor: "rgba(255,255,255,0.30)",
+    zerolinewidth: 1
+  },
+  yaxis: {
+    automargin: true,
+    gridcolor: "rgba(255,255,255,0.12)",
+    layer: "below traces",
+    linewidth: 1,
+    linecolor: "rgba(255,255,255,0.30)",
+    rangemode: "normal",
+    showline: true,
+    showticklabels: true,
+    ticks: "outside",
+    tickwidth: 1,
+    tickcolor: "rgba(255,255,255,0.30)",
+    ticklen: 12,
+    tickfont: {
+      color: "rgba(255,255,255,0.55)",
+      size: 12
+    },
+    ticklabelposition: "outside",
+    title: {
+      font: {
+        color: "rgba(255,255,255,0.55)",
+        size: 16
+      }
+    },
+    zerolinecolor: "rgba(255,255,255,0.30)",
+    zerolinewidth: 1
+  },
+  margin: {
+    l: 72,
+    r: 40,
+    t: 64,
+    b: 72
+  }
+};
+const darkModalTemplate = {
+  ...darkTemplate
+};
+const darkPreviewTemplate = {
+  ...darkTemplate,
+  height: 300,
+  margin: {
+    l: 70,
+    r: 40,
+    t: 60,
+    b: 70
+  },
+  title: {
+    font: {
+      size: 12
+    },
+    x: 0.09
+  },
+  showlegend: false,
+  width: 400,
+  xaxis: {
+    ...darkTemplate.xaxis,
+    title: {
+      ...darkTemplate.xaxis.title,
+      font: {
+        ...darkTemplate.xaxis.font,
+        size: 8
+      }
+    },
+    tickfont: {
+      ...darkTemplate.xaxis.tickfont,
+      size: 8
+    },
+    nticks: 5
+  },
+  yaxis: {
+    ...darkTemplate.yaxis,
+    title: {
+      ...darkTemplate.yaxis.title,
+      font: {
+        ...darkTemplate.yaxis.font,
+        size: 8
+      }
+    },
+    tickfont: {
+      ...darkTemplate.yaxis.tickfont,
+      size: 8
+    },
+    nticks: 5
+  }
+};
+const lightTemplate = {
+  autosize: true,
+  annotationdefaults: {
+    arrowcolor: "#2a3f5f",
+    arrowhead: 0,
+    arrowwidth: 1
+  },
+  autotypenumbers: "strict",
+  coloraxis: {
+    autocolorscale: false,
+    colorbar: {
+      thickness: 20,
+      showticklabels: true,
+      ticks: "outside",
+      tickwidth: 1,
+      tickcolor: "rgba(0,0,0,0.30)",
+      ticklen: 12,
+      tickfont: {
+        color: "rgba(0,0,0,0.55)",
+        size: 12
+      },
+      ticklabelposition: "outside",
+      title: {
+        font: {
+          color: "rgba(0,0,0,0.55)",
+          size: 12
+        }
+      }
+    }
+  },
+  colorscale: {
+    diverging: [
+      "rgb(230,59,90)",
+      "rgb(240,185,186)",
+      "rgb(237,212,213)",
+      "rgb(232,232,232)",
+      "rgb(190,213,236)",
+      "rgb(136,192,240)",
+      "rgb(0,169,244)"
+    ],
+    sequential: [
+      "rgb(0,169,244)",
+      "rgb(60,175,245)",
+      "rgb(148,203,250)",
+      "rgb(195,225,254)",
+      "rgb(214,235,255)"
+    ],
+    sequentialminus: [
+      "rgb(0,169,244)",
+      "rgb(60,175,245)",
+      "rgb(148,203,250)",
+      "rgb(195,225,254)",
+      "rgb(214,235,255)"
+    ]
+  },
+  colorway: [
+    "#00a9f4",
+    "#42459F",
+    "#F4973B",
+    "#E63B5A",
+    "#948DCA",
+    "#769D00",
+    "#1A2E91",
+    "#4F9596",
+    "#F7D02A",
+    "#F07179",
+    "#3C7A34",
+    "#B2DFE1",
+    "#C1BCE5",
+    "#AD544A",
+    "#F4973B",
+    "#B6CD70",
+    "#65A6A8",
+    "#F8E979"
+  ],
+  font: {
+    color: "rgba(0,0,0,0.55)"
+  },
+  height: null,
+  hoverlabel: {
+    align: "left"
+  },
+  hovermode: "closest",
+  legend: {
+    title: {
+      font: {
+        color: "rgba(0,0,0,0.55)"
+      }
+    },
+    font: {
+      color: "rgba(0,0,0,0.55)"
+    }
+  },
+  mapbox: {
+    style: "light"
+  },
+  paper_bgcolor: "#EEEEEE",
+  plot_bgcolor: "#EEEEEE",
+  title: {
+    font: {
+      color: "rgba(0,0,0,0.85)",
+      size: 16
+    },
+    xref: "paper",
+    yref: "paper",
+    x: 0,
+    xanchor: "left",
+    yanchor: "middle"
+  },
+  width: null,
+  xaxis: {
+    automargin: true,
+    gridcolor: "rgba(0,0,0,0.12)",
+    layer: "below traces",
+    linewidth: 1,
+    linecolor: "rgba(0,0,0,0.30)",
+    rangemode: "normal",
+    showline: true,
+    showticklabels: true,
+    ticks: "outside",
+    tickwidth: 1,
+    tickcolor: "rgba(0,0,0,0.30)",
+    ticklen: 12,
+    tickfont: {
+      color: "rgba(0,0,0,0.55)",
+      size: 12
+    },
+    ticklabelposition: "outside",
+    title: {
+      font: {
+        color: "rgba(0,0,0,0.55)",
+        size: 16
+      }
+    },
+    zerolinecolor: "rgba(0,0,0,0.30)",
+    zerolinewidth: 1
+  },
+  yaxis: {
+    automargin: true,
+    gridcolor: "rgba(0,0,0,0.12)",
+    layer: "below traces",
+    linewidth: 1,
+    linecolor: "rgba(0,0,0,0.30)",
+    rangemode: "normal",
+    showline: true,
+    showticklabels: true,
+    ticks: "outside",
+    tickwidth: 1,
+    tickcolor: "rgba(0,0,0,0.30)",
+    ticklen: 12,
+    tickfont: {
+      color: "rgba(0,0,0,0.55)",
+      size: 12
+    },
+    ticklabelposition: "outside",
+    title: {
+      font: {
+        color: "rgba(0,0,0,0.55)",
+        size: 16
+      }
+    },
+    zerolinecolor: "rgba(0,0,0,0.30)",
+    zerolinewidth: 1
+  },
+  margin: {
+    l: 72,
+    r: 40,
+    t: 64,
+    b: 72
+  }
+};
+const lightModalTemplate = {
+  ...lightTemplate
+};
+const lightPreviewTemplate = {
+  ...lightTemplate,
+  height: 300,
+  margin: {
+    l: 70,
+    r: 40,
+    t: 60,
+    b: 70
+  },
+  showlegend: false,
+  width: 400,
+  title: {
+    font: {
+      size: 12
+    },
+    x: 0.09
+  },
+  xaxis: {
+    ...lightTemplate.xaxis,
+    title: {
+      ...lightTemplate.xaxis.title,
+      font: {
+        ...lightTemplate.xaxis.font,
+        size: 8
+      }
+    },
+    tickfont: {
+      ...lightTemplate.xaxis.tickfont,
+      size: 8
+    },
+    nticks: 5
+  },
+  yaxis: {
+    ...lightTemplate.yaxis,
+    title: {
+      ...lightTemplate.yaxis.title,
+      font: {
+        ...lightTemplate.yaxis.font,
+        size: 8
+      }
+    },
+    tickfont: {
+      ...lightTemplate.yaxis.tickfont,
+      size: 8
+    },
+    nticks: 5
+  }
+};
+const Plot = createPlotlyComponent(Plotly);
+const PlotlyRenderer = ({ theme, view = "", data = [], layout = {} }) => {
+  const plotConfig = view.includes("preview") ? { staticPlot: true } : void 0;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: classnames(
+        "pipeline-plotly-chart",
+        `pipeline-plotly__${view}`
+      ),
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Plot,
+        {
+          data,
+          layout: updateLayout(theme, view, layout),
+          config: plotConfig,
+          style: { width: "100%", height: "100%" },
+          useResizeHandler: true
+        }
+      )
+    }
+  );
+};
+const updateLayout = (theme, view, layout) => {
+  if (theme === "dark") {
+    if (view === "modal") {
+      return deepmerge$2(layout, darkModalTemplate);
+    }
+    return deepmerge$2(layout, darkPreviewTemplate);
+  } else {
+    if (view === "modal") {
+      return deepmerge$2(layout, lightModalTemplate);
+    }
+    return deepmerge$2(layout, lightPreviewTemplate);
+  }
+};
+const mapStateToProps$i = (state) => ({
+  theme: state.theme
+});
+const PlotlyRenderer$1 = connect(mapStateToProps$i)(PlotlyRenderer);
+const TableRenderer = ({ data, size = "small", onClick }) => {
+  var _a, _b;
+  const [hoveredHeaderIndex, setHoveredHeaderIndex] = reactExports.useState(null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "table",
+    {
+      className: classnames("preview-table", {
+        "preview-table__small": size === "small",
+        "preview-table__large": size === "large"
+      }),
+      cellSpacing: 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs("tbody", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "preview-table__row-header", children: (_a = data.columns) == null ? void 0 : _a.map((column2, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "th",
+          {
+            className: "preview-table__header",
+            onClick,
+            onMouseOut: () => setHoveredHeaderIndex(null),
+            onMouseOver: () => setHoveredHeaderIndex(index),
+            children: column2
+          },
+          column2
+        )) }),
+        (_b = data.data) == null ? void 0 : _b.map((row, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "preview-table__row", children: row.map((content, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "td",
+          {
+            className: classnames("preview-table__data", {
+              "preview-table__data-hovered": i === hoveredHeaderIndex
+            }),
+            onClick,
+            children: String(content)
+          },
+          i
+        )) }, index))
+      ] })
+    }
+  );
+};
+/*! @license DOMPurify 3.3.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.0/LICENSE */
+var purify_cjs;
+var hasRequiredPurify_cjs;
+function requirePurify_cjs() {
+  if (hasRequiredPurify_cjs) return purify_cjs;
+  hasRequiredPurify_cjs = 1;
+  const {
+    entries,
+    setPrototypeOf,
+    isFrozen,
+    getPrototypeOf,
+    getOwnPropertyDescriptor
+  } = Object;
+  let {
+    freeze,
+    seal,
+    create: create2
+  } = Object;
+  let {
+    apply,
+    construct
+  } = typeof Reflect !== "undefined" && Reflect;
+  if (!freeze) {
+    freeze = function freeze2(x2) {
+      return x2;
+    };
+  }
+  if (!seal) {
+    seal = function seal2(x2) {
+      return x2;
+    };
+  }
+  if (!apply) {
+    apply = function apply2(func, thisArg) {
+      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
+      }
+      return func.apply(thisArg, args);
+    };
+  }
+  if (!construct) {
+    construct = function construct2(Func) {
+      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+      return new Func(...args);
+    };
+  }
+  const arrayForEach = unapply(Array.prototype.forEach);
+  const arrayLastIndexOf = unapply(Array.prototype.lastIndexOf);
+  const arrayPop = unapply(Array.prototype.pop);
+  const arrayPush = unapply(Array.prototype.push);
+  const arraySplice = unapply(Array.prototype.splice);
+  const stringToLowerCase = unapply(String.prototype.toLowerCase);
+  const stringToString = unapply(String.prototype.toString);
+  const stringMatch = unapply(String.prototype.match);
+  const stringReplace = unapply(String.prototype.replace);
+  const stringIndexOf = unapply(String.prototype.indexOf);
+  const stringTrim = unapply(String.prototype.trim);
+  const objectHasOwnProperty = unapply(Object.prototype.hasOwnProperty);
+  const regExpTest = unapply(RegExp.prototype.test);
+  const typeErrorCreate = unconstruct(TypeError);
+  function unapply(func) {
+    return function(thisArg) {
+      if (thisArg instanceof RegExp) {
+        thisArg.lastIndex = 0;
+      }
+      for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
+      }
+      return apply(func, thisArg, args);
+    };
+  }
+  function unconstruct(Func) {
+    return function() {
+      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        args[_key4] = arguments[_key4];
+      }
+      return construct(Func, args);
+    };
+  }
+  function addToSet(set2, array2) {
+    let transformCaseFunc = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : stringToLowerCase;
+    if (setPrototypeOf) {
+      setPrototypeOf(set2, null);
+    }
+    let l = array2.length;
+    while (l--) {
+      let element = array2[l];
+      if (typeof element === "string") {
+        const lcElement = transformCaseFunc(element);
+        if (lcElement !== element) {
+          if (!isFrozen(array2)) {
+            array2[l] = lcElement;
+          }
+          element = lcElement;
+        }
+      }
+      set2[element] = true;
+    }
+    return set2;
+  }
+  function cleanArray(array2) {
+    for (let index = 0; index < array2.length; index++) {
+      const isPropertyExist = objectHasOwnProperty(array2, index);
+      if (!isPropertyExist) {
+        array2[index] = null;
+      }
+    }
+    return array2;
+  }
+  function clone(object2) {
+    const newObject = create2(null);
+    for (const [property, value] of entries(object2)) {
+      const isPropertyExist = objectHasOwnProperty(object2, property);
+      if (isPropertyExist) {
+        if (Array.isArray(value)) {
+          newObject[property] = cleanArray(value);
+        } else if (value && typeof value === "object" && value.constructor === Object) {
+          newObject[property] = clone(value);
+        } else {
+          newObject[property] = value;
+        }
+      }
+    }
+    return newObject;
+  }
+  function lookupGetter(object2, prop) {
+    while (object2 !== null) {
+      const desc = getOwnPropertyDescriptor(object2, prop);
+      if (desc) {
+        if (desc.get) {
+          return unapply(desc.get);
+        }
+        if (typeof desc.value === "function") {
+          return unapply(desc.value);
+        }
+      }
+      object2 = getPrototypeOf(object2);
+    }
+    function fallbackValue() {
+      return null;
+    }
+    return fallbackValue;
+  }
+  const html$1 = freeze(["a", "abbr", "acronym", "address", "area", "article", "aside", "audio", "b", "bdi", "bdo", "big", "blink", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "font", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "img", "input", "ins", "kbd", "label", "legend", "li", "main", "map", "mark", "marquee", "menu", "menuitem", "meter", "nav", "nobr", "ol", "optgroup", "option", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "search", "section", "select", "shadow", "slot", "small", "source", "spacer", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "time", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"]);
+  const svg$1 = freeze(["svg", "a", "altglyph", "altglyphdef", "altglyphitem", "animatecolor", "animatemotion", "animatetransform", "circle", "clippath", "defs", "desc", "ellipse", "enterkeyhint", "exportparts", "filter", "font", "g", "glyph", "glyphref", "hkern", "image", "inputmode", "line", "lineargradient", "marker", "mask", "metadata", "mpath", "part", "path", "pattern", "polygon", "polyline", "radialgradient", "rect", "stop", "style", "switch", "symbol", "text", "textpath", "title", "tref", "tspan", "view", "vkern"]);
+  const svgFilters = freeze(["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"]);
+  const svgDisallowed = freeze(["animate", "color-profile", "cursor", "discard", "font-face", "font-face-format", "font-face-name", "font-face-src", "font-face-uri", "foreignobject", "hatch", "hatchpath", "mesh", "meshgradient", "meshpatch", "meshrow", "missing-glyph", "script", "set", "solidcolor", "unknown", "use"]);
+  const mathMl$1 = freeze(["math", "menclose", "merror", "mfenced", "mfrac", "mglyph", "mi", "mlabeledtr", "mmultiscripts", "mn", "mo", "mover", "mpadded", "mphantom", "mroot", "mrow", "ms", "mspace", "msqrt", "mstyle", "msub", "msup", "msubsup", "mtable", "mtd", "mtext", "mtr", "munder", "munderover", "mprescripts"]);
+  const mathMlDisallowed = freeze(["maction", "maligngroup", "malignmark", "mlongdiv", "mscarries", "mscarry", "msgroup", "mstack", "msline", "msrow", "semantics", "annotation", "annotation-xml", "mprescripts", "none"]);
+  const text = freeze(["#text"]);
+  const html = freeze(["accept", "action", "align", "alt", "autocapitalize", "autocomplete", "autopictureinpicture", "autoplay", "background", "bgcolor", "border", "capture", "cellpadding", "cellspacing", "checked", "cite", "class", "clear", "color", "cols", "colspan", "controls", "controlslist", "coords", "crossorigin", "datetime", "decoding", "default", "dir", "disabled", "disablepictureinpicture", "disableremoteplayback", "download", "draggable", "enctype", "enterkeyhint", "exportparts", "face", "for", "headers", "height", "hidden", "high", "href", "hreflang", "id", "inert", "inputmode", "integrity", "ismap", "kind", "label", "lang", "list", "loading", "loop", "low", "max", "maxlength", "media", "method", "min", "minlength", "multiple", "muted", "name", "nonce", "noshade", "novalidate", "nowrap", "open", "optimum", "part", "pattern", "placeholder", "playsinline", "popover", "popovertarget", "popovertargetaction", "poster", "preload", "pubdate", "radiogroup", "readonly", "rel", "required", "rev", "reversed", "role", "rows", "rowspan", "spellcheck", "scope", "selected", "shape", "size", "sizes", "slot", "span", "srclang", "start", "src", "srcset", "step", "style", "summary", "tabindex", "title", "translate", "type", "usemap", "valign", "value", "width", "wrap", "xmlns", "slot"]);
+  const svg = freeze(["accent-height", "accumulate", "additive", "alignment-baseline", "amplitude", "ascent", "attributename", "attributetype", "azimuth", "basefrequency", "baseline-shift", "begin", "bias", "by", "class", "clip", "clippathunits", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "cx", "cy", "d", "dx", "dy", "diffuseconstant", "direction", "display", "divisor", "dur", "edgemode", "elevation", "end", "exponent", "fill", "fill-opacity", "fill-rule", "filter", "filterunits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "fx", "fy", "g1", "g2", "glyph-name", "glyphref", "gradientunits", "gradienttransform", "height", "href", "id", "image-rendering", "in", "in2", "intercept", "k", "k1", "k2", "k3", "k4", "kerning", "keypoints", "keysplines", "keytimes", "lang", "lengthadjust", "letter-spacing", "kernelmatrix", "kernelunitlength", "lighting-color", "local", "marker-end", "marker-mid", "marker-start", "markerheight", "markerunits", "markerwidth", "maskcontentunits", "maskunits", "max", "mask", "mask-type", "media", "method", "mode", "min", "name", "numoctaves", "offset", "operator", "opacity", "order", "orient", "orientation", "origin", "overflow", "paint-order", "path", "pathlength", "patterncontentunits", "patterntransform", "patternunits", "points", "preservealpha", "preserveaspectratio", "primitiveunits", "r", "rx", "ry", "radius", "refx", "refy", "repeatcount", "repeatdur", "restart", "result", "rotate", "scale", "seed", "shape-rendering", "slope", "specularconstant", "specularexponent", "spreadmethod", "startoffset", "stddeviation", "stitchtiles", "stop-color", "stop-opacity", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke", "stroke-width", "style", "surfacescale", "systemlanguage", "tabindex", "tablevalues", "targetx", "targety", "transform", "transform-origin", "text-anchor", "text-decoration", "text-rendering", "textlength", "type", "u1", "u2", "unicode", "values", "viewbox", "visibility", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "width", "word-spacing", "wrap", "writing-mode", "xchannelselector", "ychannelselector", "x", "x1", "x2", "xmlns", "y", "y1", "y2", "z", "zoomandpan"]);
+  const mathMl = freeze(["accent", "accentunder", "align", "bevelled", "close", "columnsalign", "columnlines", "columnspan", "denomalign", "depth", "dir", "display", "displaystyle", "encoding", "fence", "frame", "height", "href", "id", "largeop", "length", "linethickness", "lspace", "lquote", "mathbackground", "mathcolor", "mathsize", "mathvariant", "maxsize", "minsize", "movablelimits", "notation", "numalign", "open", "rowalign", "rowlines", "rowspacing", "rowspan", "rspace", "rquote", "scriptlevel", "scriptminsize", "scriptsizemultiplier", "selection", "separator", "separators", "stretchy", "subscriptshift", "supscriptshift", "symmetric", "voffset", "width", "xmlns"]);
+  const xml = freeze(["xlink:href", "xml:id", "xlink:title", "xml:space", "xmlns:xlink"]);
+  const MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm);
+  const ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
+  const TMPLIT_EXPR = seal(/\$\{[\w\W]*/gm);
+  const DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]+$/);
+  const ARIA_ATTR = seal(/^aria-[\-\w]+$/);
+  const IS_ALLOWED_URI = seal(
+    /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+    // eslint-disable-line no-useless-escape
+  );
+  const IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
+  const ATTR_WHITESPACE = seal(
+    /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
+    // eslint-disable-line no-control-regex
+  );
+  const DOCTYPE_NAME = seal(/^html$/i);
+  const CUSTOM_ELEMENT = seal(/^[a-z][.\w]*(-[.\w]+)+$/i);
+  var EXPRESSIONS = /* @__PURE__ */ Object.freeze({
+    __proto__: null,
+    ARIA_ATTR,
+    ATTR_WHITESPACE,
+    CUSTOM_ELEMENT,
+    DATA_ATTR,
+    DOCTYPE_NAME,
+    ERB_EXPR,
+    IS_ALLOWED_URI,
+    IS_SCRIPT_OR_DATA,
+    MUSTACHE_EXPR,
+    TMPLIT_EXPR
+  });
+  const NODE_TYPE = {
+    element: 1,
+    text: 3,
+    // Deprecated
+    progressingInstruction: 7,
+    comment: 8,
+    document: 9
+  };
+  const getGlobal = function getGlobal2() {
+    return typeof window === "undefined" ? null : window;
+  };
+  const _createTrustedTypesPolicy = function _createTrustedTypesPolicy2(trustedTypes, purifyHostElement) {
+    if (typeof trustedTypes !== "object" || typeof trustedTypes.createPolicy !== "function") {
+      return null;
+    }
+    let suffix = null;
+    const ATTR_NAME = "data-tt-policy-suffix";
+    if (purifyHostElement && purifyHostElement.hasAttribute(ATTR_NAME)) {
+      suffix = purifyHostElement.getAttribute(ATTR_NAME);
+    }
+    const policyName = "dompurify" + (suffix ? "#" + suffix : "");
+    try {
+      return trustedTypes.createPolicy(policyName, {
+        createHTML(html2) {
+          return html2;
+        },
+        createScriptURL(scriptUrl) {
+          return scriptUrl;
+        }
+      });
+    } catch (_) {
+      console.warn("TrustedTypes policy " + policyName + " could not be created.");
+      return null;
+    }
+  };
+  const _createHooksMap = function _createHooksMap2() {
+    return {
+      afterSanitizeAttributes: [],
+      afterSanitizeElements: [],
+      afterSanitizeShadowDOM: [],
+      beforeSanitizeAttributes: [],
+      beforeSanitizeElements: [],
+      beforeSanitizeShadowDOM: [],
+      uponSanitizeAttribute: [],
+      uponSanitizeElement: [],
+      uponSanitizeShadowNode: []
+    };
+  };
+  function createDOMPurify() {
+    let window2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
+    const DOMPurify2 = (root2) => createDOMPurify(root2);
+    DOMPurify2.version = "3.3.0";
+    DOMPurify2.removed = [];
+    if (!window2 || !window2.document || window2.document.nodeType !== NODE_TYPE.document || !window2.Element) {
+      DOMPurify2.isSupported = false;
+      return DOMPurify2;
+    }
+    let {
+      document: document2
+    } = window2;
+    const originalDocument = document2;
+    const currentScript = originalDocument.currentScript;
+    const {
+      DocumentFragment,
+      HTMLTemplateElement,
+      Node: Node2,
+      Element,
+      NodeFilter,
+      NamedNodeMap = window2.NamedNodeMap || window2.MozNamedAttrMap,
+      HTMLFormElement,
+      DOMParser,
+      trustedTypes
+    } = window2;
+    const ElementPrototype = Element.prototype;
+    const cloneNode = lookupGetter(ElementPrototype, "cloneNode");
+    const remove2 = lookupGetter(ElementPrototype, "remove");
+    const getNextSibling = lookupGetter(ElementPrototype, "nextSibling");
+    const getChildNodes = lookupGetter(ElementPrototype, "childNodes");
+    const getParentNode = lookupGetter(ElementPrototype, "parentNode");
+    if (typeof HTMLTemplateElement === "function") {
+      const template = document2.createElement("template");
+      if (template.content && template.content.ownerDocument) {
+        document2 = template.content.ownerDocument;
+      }
+    }
+    let trustedTypesPolicy;
+    let emptyHTML = "";
+    const {
+      implementation,
+      createNodeIterator,
+      createDocumentFragment,
+      getElementsByTagName
+    } = document2;
+    const {
+      importNode
+    } = originalDocument;
+    let hooks = _createHooksMap();
+    DOMPurify2.isSupported = typeof entries === "function" && typeof getParentNode === "function" && implementation && implementation.createHTMLDocument !== void 0;
+    const {
+      MUSTACHE_EXPR: MUSTACHE_EXPR2,
+      ERB_EXPR: ERB_EXPR2,
+      TMPLIT_EXPR: TMPLIT_EXPR2,
+      DATA_ATTR: DATA_ATTR2,
+      ARIA_ATTR: ARIA_ATTR2,
+      IS_SCRIPT_OR_DATA: IS_SCRIPT_OR_DATA2,
+      ATTR_WHITESPACE: ATTR_WHITESPACE2,
+      CUSTOM_ELEMENT: CUSTOM_ELEMENT2
+    } = EXPRESSIONS;
+    let {
+      IS_ALLOWED_URI: IS_ALLOWED_URI$1
+    } = EXPRESSIONS;
+    let ALLOWED_TAGS = null;
+    const DEFAULT_ALLOWED_TAGS = addToSet({}, [...html$1, ...svg$1, ...svgFilters, ...mathMl$1, ...text]);
+    let ALLOWED_ATTR = null;
+    const DEFAULT_ALLOWED_ATTR = addToSet({}, [...html, ...svg, ...mathMl, ...xml]);
+    let CUSTOM_ELEMENT_HANDLING = Object.seal(create2(null, {
+      tagNameCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      },
+      attributeNameCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      },
+      allowCustomizedBuiltInElements: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: false
+      }
+    }));
+    let FORBID_TAGS = null;
+    let FORBID_ATTR = null;
+    const EXTRA_ELEMENT_HANDLING = Object.seal(create2(null, {
+      tagCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      },
+      attributeCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      }
+    }));
+    let ALLOW_ARIA_ATTR = true;
+    let ALLOW_DATA_ATTR = true;
+    let ALLOW_UNKNOWN_PROTOCOLS = false;
+    let ALLOW_SELF_CLOSE_IN_ATTR = true;
+    let SAFE_FOR_TEMPLATES = false;
+    let SAFE_FOR_XML = true;
+    let WHOLE_DOCUMENT = false;
+    let SET_CONFIG = false;
+    let FORCE_BODY = false;
+    let RETURN_DOM = false;
+    let RETURN_DOM_FRAGMENT = false;
+    let RETURN_TRUSTED_TYPE = false;
+    let SANITIZE_DOM = true;
+    let SANITIZE_NAMED_PROPS = false;
+    const SANITIZE_NAMED_PROPS_PREFIX = "user-content-";
+    let KEEP_CONTENT = true;
+    let IN_PLACE = false;
+    let USE_PROFILES = {};
+    let FORBID_CONTENTS = null;
+    const DEFAULT_FORBID_CONTENTS = addToSet({}, ["annotation-xml", "audio", "colgroup", "desc", "foreignobject", "head", "iframe", "math", "mi", "mn", "mo", "ms", "mtext", "noembed", "noframes", "noscript", "plaintext", "script", "style", "svg", "template", "thead", "title", "video", "xmp"]);
+    let DATA_URI_TAGS = null;
+    const DEFAULT_DATA_URI_TAGS = addToSet({}, ["audio", "video", "img", "source", "image", "track"]);
+    let URI_SAFE_ATTRIBUTES = null;
+    const DEFAULT_URI_SAFE_ATTRIBUTES = addToSet({}, ["alt", "class", "for", "id", "label", "name", "pattern", "placeholder", "role", "summary", "title", "value", "style", "xmlns"]);
+    const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+    const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+    const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+    let NAMESPACE = HTML_NAMESPACE;
+    let IS_EMPTY_INPUT = false;
+    let ALLOWED_NAMESPACES = null;
+    const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
+    let MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ["mi", "mo", "mn", "ms", "mtext"]);
+    let HTML_INTEGRATION_POINTS = addToSet({}, ["annotation-xml"]);
+    const COMMON_SVG_AND_HTML_ELEMENTS = addToSet({}, ["title", "style", "font", "a", "script"]);
+    let PARSER_MEDIA_TYPE = null;
+    const SUPPORTED_PARSER_MEDIA_TYPES = ["application/xhtml+xml", "text/html"];
+    const DEFAULT_PARSER_MEDIA_TYPE = "text/html";
+    let transformCaseFunc = null;
+    let CONFIG = null;
+    const formElement = document2.createElement("form");
+    const isRegexOrFunction = function isRegexOrFunction2(testValue) {
+      return testValue instanceof RegExp || testValue instanceof Function;
+    };
+    const _parseConfig = function _parseConfig2() {
+      let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      if (CONFIG && CONFIG === cfg) {
+        return;
+      }
+      if (!cfg || typeof cfg !== "object") {
+        cfg = {};
+      }
+      cfg = clone(cfg);
+      PARSER_MEDIA_TYPE = // eslint-disable-next-line unicorn/prefer-includes
+      SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? DEFAULT_PARSER_MEDIA_TYPE : cfg.PARSER_MEDIA_TYPE;
+      transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? stringToString : stringToLowerCase;
+      ALLOWED_TAGS = objectHasOwnProperty(cfg, "ALLOWED_TAGS") ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
+      ALLOWED_ATTR = objectHasOwnProperty(cfg, "ALLOWED_ATTR") ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
+      ALLOWED_NAMESPACES = objectHasOwnProperty(cfg, "ALLOWED_NAMESPACES") ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
+      URI_SAFE_ATTRIBUTES = objectHasOwnProperty(cfg, "ADD_URI_SAFE_ATTR") ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), cfg.ADD_URI_SAFE_ATTR, transformCaseFunc) : DEFAULT_URI_SAFE_ATTRIBUTES;
+      DATA_URI_TAGS = objectHasOwnProperty(cfg, "ADD_DATA_URI_TAGS") ? addToSet(clone(DEFAULT_DATA_URI_TAGS), cfg.ADD_DATA_URI_TAGS, transformCaseFunc) : DEFAULT_DATA_URI_TAGS;
+      FORBID_CONTENTS = objectHasOwnProperty(cfg, "FORBID_CONTENTS") ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
+      FORBID_TAGS = objectHasOwnProperty(cfg, "FORBID_TAGS") ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : clone({});
+      FORBID_ATTR = objectHasOwnProperty(cfg, "FORBID_ATTR") ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : clone({});
+      USE_PROFILES = objectHasOwnProperty(cfg, "USE_PROFILES") ? cfg.USE_PROFILES : false;
+      ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false;
+      ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false;
+      ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false;
+      ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false;
+      SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false;
+      SAFE_FOR_XML = cfg.SAFE_FOR_XML !== false;
+      WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false;
+      RETURN_DOM = cfg.RETURN_DOM || false;
+      RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false;
+      RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false;
+      FORCE_BODY = cfg.FORCE_BODY || false;
+      SANITIZE_DOM = cfg.SANITIZE_DOM !== false;
+      SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false;
+      KEEP_CONTENT = cfg.KEEP_CONTENT !== false;
+      IN_PLACE = cfg.IN_PLACE || false;
+      IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
+      NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
+      MATHML_TEXT_INTEGRATION_POINTS = cfg.MATHML_TEXT_INTEGRATION_POINTS || MATHML_TEXT_INTEGRATION_POINTS;
+      HTML_INTEGRATION_POINTS = cfg.HTML_INTEGRATION_POINTS || HTML_INTEGRATION_POINTS;
+      CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
+      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) {
+        CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
+      }
+      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) {
+        CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
+      }
+      if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === "boolean") {
+        CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
+      }
+      if (SAFE_FOR_TEMPLATES) {
+        ALLOW_DATA_ATTR = false;
+      }
+      if (RETURN_DOM_FRAGMENT) {
+        RETURN_DOM = true;
+      }
+      if (USE_PROFILES) {
+        ALLOWED_TAGS = addToSet({}, text);
+        ALLOWED_ATTR = [];
+        if (USE_PROFILES.html === true) {
+          addToSet(ALLOWED_TAGS, html$1);
+          addToSet(ALLOWED_ATTR, html);
+        }
+        if (USE_PROFILES.svg === true) {
+          addToSet(ALLOWED_TAGS, svg$1);
+          addToSet(ALLOWED_ATTR, svg);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+        if (USE_PROFILES.svgFilters === true) {
+          addToSet(ALLOWED_TAGS, svgFilters);
+          addToSet(ALLOWED_ATTR, svg);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+        if (USE_PROFILES.mathMl === true) {
+          addToSet(ALLOWED_TAGS, mathMl$1);
+          addToSet(ALLOWED_ATTR, mathMl);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+      }
+      if (cfg.ADD_TAGS) {
+        if (typeof cfg.ADD_TAGS === "function") {
+          EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
+        } else {
+          if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
+            ALLOWED_TAGS = clone(ALLOWED_TAGS);
+          }
+          addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
+        }
+      }
+      if (cfg.ADD_ATTR) {
+        if (typeof cfg.ADD_ATTR === "function") {
+          EXTRA_ELEMENT_HANDLING.attributeCheck = cfg.ADD_ATTR;
+        } else {
+          if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
+            ALLOWED_ATTR = clone(ALLOWED_ATTR);
+          }
+          addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
+        }
+      }
+      if (cfg.ADD_URI_SAFE_ATTR) {
+        addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
+      }
+      if (cfg.FORBID_CONTENTS) {
+        if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
+          FORBID_CONTENTS = clone(FORBID_CONTENTS);
+        }
+        addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
+      }
+      if (KEEP_CONTENT) {
+        ALLOWED_TAGS["#text"] = true;
+      }
+      if (WHOLE_DOCUMENT) {
+        addToSet(ALLOWED_TAGS, ["html", "head", "body"]);
+      }
+      if (ALLOWED_TAGS.table) {
+        addToSet(ALLOWED_TAGS, ["tbody"]);
+        delete FORBID_TAGS.tbody;
+      }
+      if (cfg.TRUSTED_TYPES_POLICY) {
+        if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== "function") {
+          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');
+        }
+        if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== "function") {
+          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');
+        }
+        trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY;
+        emptyHTML = trustedTypesPolicy.createHTML("");
+      } else {
+        if (trustedTypesPolicy === void 0) {
+          trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+        }
+        if (trustedTypesPolicy !== null && typeof emptyHTML === "string") {
+          emptyHTML = trustedTypesPolicy.createHTML("");
+        }
+      }
+      if (freeze) {
+        freeze(cfg);
+      }
+      CONFIG = cfg;
+    };
+    const ALL_SVG_TAGS = addToSet({}, [...svg$1, ...svgFilters, ...svgDisallowed]);
+    const ALL_MATHML_TAGS = addToSet({}, [...mathMl$1, ...mathMlDisallowed]);
+    const _checkValidNamespace = function _checkValidNamespace2(element) {
+      let parent = getParentNode(element);
+      if (!parent || !parent.tagName) {
+        parent = {
+          namespaceURI: NAMESPACE,
+          tagName: "template"
+        };
+      }
+      const tagName = stringToLowerCase(element.tagName);
+      const parentTagName = stringToLowerCase(parent.tagName);
+      if (!ALLOWED_NAMESPACES[element.namespaceURI]) {
+        return false;
+      }
+      if (element.namespaceURI === SVG_NAMESPACE) {
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === "svg";
+        }
+        if (parent.namespaceURI === MATHML_NAMESPACE) {
+          return tagName === "svg" && (parentTagName === "annotation-xml" || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
+        }
+        return Boolean(ALL_SVG_TAGS[tagName]);
+      }
+      if (element.namespaceURI === MATHML_NAMESPACE) {
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === "math";
+        }
+        if (parent.namespaceURI === SVG_NAMESPACE) {
+          return tagName === "math" && HTML_INTEGRATION_POINTS[parentTagName];
+        }
+        return Boolean(ALL_MATHML_TAGS[tagName]);
+      }
+      if (element.namespaceURI === HTML_NAMESPACE) {
+        if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        }
+        if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        }
+        return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+      }
+      if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[element.namespaceURI]) {
+        return true;
+      }
+      return false;
+    };
+    const _forceRemove = function _forceRemove2(node2) {
+      arrayPush(DOMPurify2.removed, {
+        element: node2
+      });
+      try {
+        getParentNode(node2).removeChild(node2);
+      } catch (_) {
+        remove2(node2);
+      }
+    };
+    const _removeAttribute = function _removeAttribute2(name, element) {
+      try {
+        arrayPush(DOMPurify2.removed, {
+          attribute: element.getAttributeNode(name),
+          from: element
+        });
+      } catch (_) {
+        arrayPush(DOMPurify2.removed, {
+          attribute: null,
+          from: element
+        });
+      }
+      element.removeAttribute(name);
+      if (name === "is") {
+        if (RETURN_DOM || RETURN_DOM_FRAGMENT) {
+          try {
+            _forceRemove(element);
+          } catch (_) {
+          }
+        } else {
+          try {
+            element.setAttribute(name, "");
+          } catch (_) {
+          }
+        }
+      }
+    };
+    const _initDocument = function _initDocument2(dirty) {
+      let doc = null;
+      let leadingWhitespace = null;
+      if (FORCE_BODY) {
+        dirty = "<remove></remove>" + dirty;
+      } else {
+        const matches = stringMatch(dirty, /^[\r\n\t ]+/);
+        leadingWhitespace = matches && matches[0];
+      }
+      if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && NAMESPACE === HTML_NAMESPACE) {
+        dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + "</body></html>";
+      }
+      const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+      if (NAMESPACE === HTML_NAMESPACE) {
+        try {
+          doc = new DOMParser().parseFromString(dirtyPayload, PARSER_MEDIA_TYPE);
+        } catch (_) {
+        }
+      }
+      if (!doc || !doc.documentElement) {
+        doc = implementation.createDocument(NAMESPACE, "template", null);
+        try {
+          doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
+        } catch (_) {
+        }
+      }
+      const body = doc.body || doc.documentElement;
+      if (dirty && leadingWhitespace) {
+        body.insertBefore(document2.createTextNode(leadingWhitespace), body.childNodes[0] || null);
+      }
+      if (NAMESPACE === HTML_NAMESPACE) {
+        return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? "html" : "body")[0];
+      }
+      return WHOLE_DOCUMENT ? doc.documentElement : body;
+    };
+    const _createNodeIterator = function _createNodeIterator2(root2) {
+      return createNodeIterator.call(
+        root2.ownerDocument || root2,
+        root2,
+        // eslint-disable-next-line no-bitwise
+        NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION,
+        null
+      );
+    };
+    const _isClobbered = function _isClobbered2(element) {
+      return element instanceof HTMLFormElement && (typeof element.nodeName !== "string" || typeof element.textContent !== "string" || typeof element.removeChild !== "function" || !(element.attributes instanceof NamedNodeMap) || typeof element.removeAttribute !== "function" || typeof element.setAttribute !== "function" || typeof element.namespaceURI !== "string" || typeof element.insertBefore !== "function" || typeof element.hasChildNodes !== "function");
+    };
+    const _isNode = function _isNode2(value) {
+      return typeof Node2 === "function" && value instanceof Node2;
+    };
+    function _executeHooks(hooks2, currentNode, data) {
+      arrayForEach(hooks2, (hook) => {
+        hook.call(DOMPurify2, currentNode, data, CONFIG);
+      });
+    }
+    const _sanitizeElements = function _sanitizeElements2(currentNode) {
+      let content = null;
+      _executeHooks(hooks.beforeSanitizeElements, currentNode, null);
+      if (_isClobbered(currentNode)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      const tagName = transformCaseFunc(currentNode.nodeName);
+      _executeHooks(hooks.uponSanitizeElement, currentNode, {
+        tagName,
+        allowedTags: ALLOWED_TAGS
+      });
+      if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(/<[/\w!]/g, currentNode.innerHTML) && regExpTest(/<[/\w!]/g, currentNode.textContent)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(/<[/\w]/g, currentNode.data)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      if (!(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName])) {
+        if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) {
+            return false;
+          }
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) {
+            return false;
+          }
+        }
+        if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+          const parentNode = getParentNode(currentNode) || currentNode.parentNode;
+          const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
+          if (childNodes && parentNode) {
+            const childCount = childNodes.length;
+            for (let i = childCount - 1; i >= 0; --i) {
+              const childClone = cloneNode(childNodes[i], true);
+              childClone.__removalCount = (currentNode.__removalCount || 0) + 1;
+              parentNode.insertBefore(childClone, getNextSibling(currentNode));
+            }
+          }
+        }
+        _forceRemove(currentNode);
+        return true;
+      }
+      if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      if ((tagName === "noscript" || tagName === "noembed" || tagName === "noframes") && regExpTest(/<\/no(script|embed|frames)/i, currentNode.innerHTML)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+      if (SAFE_FOR_TEMPLATES && currentNode.nodeType === NODE_TYPE.text) {
+        content = currentNode.textContent;
+        arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
+          content = stringReplace(content, expr, " ");
+        });
+        if (currentNode.textContent !== content) {
+          arrayPush(DOMPurify2.removed, {
+            element: currentNode.cloneNode()
+          });
+          currentNode.textContent = content;
+        }
+      }
+      _executeHooks(hooks.afterSanitizeElements, currentNode, null);
+      return false;
+    };
+    const _isValidAttribute = function _isValidAttribute2(lcTag, lcName, value) {
+      if (SANITIZE_DOM && (lcName === "id" || lcName === "name") && (value in document2 || value in formElement)) {
+        return false;
+      }
+      if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR2, lcName)) ;
+      else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR2, lcName)) ;
+      else if (EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag)) ;
+      else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
+        if (
+          // First condition does a very basic check if a) it's basically a valid custom element tagname AND
+          // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+          // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
+          _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName, lcTag)) || // Alternative, second condition checks if it's an `is`-attribute, AND
+          // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+          lcName === "is" && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))
+        ) ;
+        else {
+          return false;
+        }
+      } else if (URI_SAFE_ATTRIBUTES[lcName]) ;
+      else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE2, ""))) ;
+      else if ((lcName === "src" || lcName === "xlink:href" || lcName === "href") && lcTag !== "script" && stringIndexOf(value, "data:") === 0 && DATA_URI_TAGS[lcTag]) ;
+      else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA2, stringReplace(value, ATTR_WHITESPACE2, ""))) ;
+      else if (value) {
+        return false;
+      } else ;
+      return true;
+    };
+    const _isBasicCustomElement = function _isBasicCustomElement2(tagName) {
+      return tagName !== "annotation-xml" && stringMatch(tagName, CUSTOM_ELEMENT2);
+    };
+    const _sanitizeAttributes = function _sanitizeAttributes2(currentNode) {
+      _executeHooks(hooks.beforeSanitizeAttributes, currentNode, null);
+      const {
+        attributes
+      } = currentNode;
+      if (!attributes || _isClobbered(currentNode)) {
+        return;
+      }
+      const hookEvent = {
+        attrName: "",
+        attrValue: "",
+        keepAttr: true,
+        allowedAttributes: ALLOWED_ATTR,
+        forceKeepAttr: void 0
+      };
+      let l = attributes.length;
+      while (l--) {
+        const attr = attributes[l];
+        const {
+          name,
+          namespaceURI,
+          value: attrValue
+        } = attr;
+        const lcName = transformCaseFunc(name);
+        const initValue = attrValue;
+        let value = name === "value" ? initValue : stringTrim(initValue);
+        hookEvent.attrName = lcName;
+        hookEvent.attrValue = value;
+        hookEvent.keepAttr = true;
+        hookEvent.forceKeepAttr = void 0;
+        _executeHooks(hooks.uponSanitizeAttribute, currentNode, hookEvent);
+        value = hookEvent.attrValue;
+        if (SANITIZE_NAMED_PROPS && (lcName === "id" || lcName === "name")) {
+          _removeAttribute(name, currentNode);
+          value = SANITIZE_NAMED_PROPS_PREFIX + value;
+        }
+        if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title|textarea)/i, value)) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+        if (lcName === "attributename" && stringMatch(value, "href")) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+        if (hookEvent.forceKeepAttr) {
+          continue;
+        }
+        if (!hookEvent.keepAttr) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+        if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+        if (SAFE_FOR_TEMPLATES) {
+          arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
+            value = stringReplace(value, expr, " ");
+          });
+        }
+        const lcTag = transformCaseFunc(currentNode.nodeName);
+        if (!_isValidAttribute(lcTag, lcName, value)) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+        if (trustedTypesPolicy && typeof trustedTypes === "object" && typeof trustedTypes.getAttributeType === "function") {
+          if (namespaceURI) ;
+          else {
+            switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+              case "TrustedHTML": {
+                value = trustedTypesPolicy.createHTML(value);
+                break;
+              }
+              case "TrustedScriptURL": {
+                value = trustedTypesPolicy.createScriptURL(value);
+                break;
+              }
+            }
+          }
+        }
+        if (value !== initValue) {
+          try {
+            if (namespaceURI) {
+              currentNode.setAttributeNS(namespaceURI, name, value);
+            } else {
+              currentNode.setAttribute(name, value);
+            }
+            if (_isClobbered(currentNode)) {
+              _forceRemove(currentNode);
+            } else {
+              arrayPop(DOMPurify2.removed);
+            }
+          } catch (_) {
+            _removeAttribute(name, currentNode);
+          }
+        }
+      }
+      _executeHooks(hooks.afterSanitizeAttributes, currentNode, null);
+    };
+    const _sanitizeShadowDOM = function _sanitizeShadowDOM2(fragment) {
+      let shadowNode = null;
+      const shadowIterator = _createNodeIterator(fragment);
+      _executeHooks(hooks.beforeSanitizeShadowDOM, fragment, null);
+      while (shadowNode = shadowIterator.nextNode()) {
+        _executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
+        _sanitizeElements(shadowNode);
+        _sanitizeAttributes(shadowNode);
+        if (shadowNode.content instanceof DocumentFragment) {
+          _sanitizeShadowDOM2(shadowNode.content);
+        }
+      }
+      _executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
+    };
+    DOMPurify2.sanitize = function(dirty) {
+      let cfg = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+      let body = null;
+      let importedNode = null;
+      let currentNode = null;
+      let returnNode = null;
+      IS_EMPTY_INPUT = !dirty;
+      if (IS_EMPTY_INPUT) {
+        dirty = "<!-->";
+      }
+      if (typeof dirty !== "string" && !_isNode(dirty)) {
+        if (typeof dirty.toString === "function") {
+          dirty = dirty.toString();
+          if (typeof dirty !== "string") {
+            throw typeErrorCreate("dirty is not a string, aborting");
+          }
+        } else {
+          throw typeErrorCreate("toString is not a function");
+        }
+      }
+      if (!DOMPurify2.isSupported) {
+        return dirty;
+      }
+      if (!SET_CONFIG) {
+        _parseConfig(cfg);
+      }
+      DOMPurify2.removed = [];
+      if (typeof dirty === "string") {
+        IN_PLACE = false;
+      }
+      if (IN_PLACE) {
+        if (dirty.nodeName) {
+          const tagName = transformCaseFunc(dirty.nodeName);
+          if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+            throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
+          }
+        }
+      } else if (dirty instanceof Node2) {
+        body = _initDocument("<!---->");
+        importedNode = body.ownerDocument.importNode(dirty, true);
+        if (importedNode.nodeType === NODE_TYPE.element && importedNode.nodeName === "BODY") {
+          body = importedNode;
+        } else if (importedNode.nodeName === "HTML") {
+          body = importedNode;
+        } else {
+          body.appendChild(importedNode);
+        }
+      } else {
+        if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && // eslint-disable-next-line unicorn/prefer-includes
+        dirty.indexOf("<") === -1) {
+          return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
+        }
+        body = _initDocument(dirty);
+        if (!body) {
+          return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : "";
+        }
+      }
+      if (body && FORCE_BODY) {
+        _forceRemove(body.firstChild);
+      }
+      const nodeIterator = _createNodeIterator(IN_PLACE ? dirty : body);
+      while (currentNode = nodeIterator.nextNode()) {
+        _sanitizeElements(currentNode);
+        _sanitizeAttributes(currentNode);
+        if (currentNode.content instanceof DocumentFragment) {
+          _sanitizeShadowDOM(currentNode.content);
+        }
+      }
+      if (IN_PLACE) {
+        return dirty;
+      }
+      if (RETURN_DOM) {
+        if (RETURN_DOM_FRAGMENT) {
+          returnNode = createDocumentFragment.call(body.ownerDocument);
+          while (body.firstChild) {
+            returnNode.appendChild(body.firstChild);
+          }
+        } else {
+          returnNode = body;
+        }
+        if (ALLOWED_ATTR.shadowroot || ALLOWED_ATTR.shadowrootmode) {
+          returnNode = importNode.call(originalDocument, returnNode, true);
+        }
+        return returnNode;
+      }
+      let serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+      if (WHOLE_DOCUMENT && ALLOWED_TAGS["!doctype"] && body.ownerDocument && body.ownerDocument.doctype && body.ownerDocument.doctype.name && regExpTest(DOCTYPE_NAME, body.ownerDocument.doctype.name)) {
+        serializedHTML = "<!DOCTYPE " + body.ownerDocument.doctype.name + ">\n" + serializedHTML;
+      }
+      if (SAFE_FOR_TEMPLATES) {
+        arrayForEach([MUSTACHE_EXPR2, ERB_EXPR2, TMPLIT_EXPR2], (expr) => {
+          serializedHTML = stringReplace(serializedHTML, expr, " ");
+        });
+      }
+      return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+    };
+    DOMPurify2.setConfig = function() {
+      let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      _parseConfig(cfg);
+      SET_CONFIG = true;
+    };
+    DOMPurify2.clearConfig = function() {
+      CONFIG = null;
+      SET_CONFIG = false;
+    };
+    DOMPurify2.isValidAttribute = function(tag, attr, value) {
+      if (!CONFIG) {
+        _parseConfig({});
+      }
+      const lcTag = transformCaseFunc(tag);
+      const lcName = transformCaseFunc(attr);
+      return _isValidAttribute(lcTag, lcName, value);
+    };
+    DOMPurify2.addHook = function(entryPoint, hookFunction) {
+      if (typeof hookFunction !== "function") {
+        return;
+      }
+      arrayPush(hooks[entryPoint], hookFunction);
+    };
+    DOMPurify2.removeHook = function(entryPoint, hookFunction) {
+      if (hookFunction !== void 0) {
+        const index = arrayLastIndexOf(hooks[entryPoint], hookFunction);
+        return index === -1 ? void 0 : arraySplice(hooks[entryPoint], index, 1)[0];
+      }
+      return arrayPop(hooks[entryPoint]);
+    };
+    DOMPurify2.removeHooks = function(entryPoint) {
+      hooks[entryPoint] = [];
+    };
+    DOMPurify2.removeAllHooks = function() {
+      hooks = _createHooksMap();
+    };
+    return DOMPurify2;
+  }
+  var purify = createDOMPurify();
+  purify_cjs = purify;
+  return purify_cjs;
+}
+var browser;
+var hasRequiredBrowser;
+function requireBrowser() {
+  if (hasRequiredBrowser) return browser;
+  hasRequiredBrowser = 1;
+  browser = window.DOMPurify || (window.DOMPurify = requirePurify_cjs().default || requirePurify_cjs());
+  return browser;
+}
+var browserExports = requireBrowser();
+const DOMPurify = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+const renderMarkdownToHTML = (markdown) => {
+  if (!markdown || typeof markdown !== "string") {
+    return "";
+  }
+  let html = markdown;
+  html = html.replace(
+    /\|(.+)\|\n\|[-s|:]+\|\n((?:\|.+\|\n?)*)/gim,
+    (match2, header, rows) => {
+      const headerCells = header.split("|").map((cell) => cell.trim()).filter((cell) => cell);
+      const headerRow = "<tr>" + headerCells.map((cell) => `<th>${cell}</th>`).join("") + "</tr>";
+      const bodyRows = rows.trim().split("\n").map((row) => {
+        const cells = row.split("|").map((cell) => cell.trim()).filter((cell) => cell);
+        return "<tr>" + cells.map((cell) => `<td>${cell}</td>`).join("") + "</tr>";
+      }).join("");
+      return `<table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>`;
+    }
+  );
+  html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+  html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+  html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
+  html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
+  html = html.replace(/__(.*?)__/gim, "<strong>$1</strong>");
+  html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
+  html = html.replace(/_(.*?)_/gim, "<em>$1</em>");
+  html = html.replace(
+    /```(\w+)?\n([\s\S]*?)```/gim,
+    '<pre><code class="language-$1">$2</code></pre>'
+  );
+  html = html.replace(/`([^`]+)`/gim, "<code>$1</code>");
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/gim,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+  html = html.replace(/^\d+\.\s(.+)$/gim, "<li>$1</li>");
+  html = html.replace(/^[*-]\s(.+)$/gim, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>)/gims, (match2) => {
+    const originalText = markdown.substring(
+      markdown.indexOf(match2.replace(/<\/?li>/g, ""))
+    );
+    if (/^\d+\./.test(originalText)) {
+      return "<ol>" + match2 + "</ol>";
+    }
+    return "<ul>" + match2 + "</ul>";
+  });
+  html = html.replace(/<\/(ul|ol)>\s*<\1>/gim, "");
+  html = html.replace(/\n\s*\n/gim, "</p><p>");
+  html = html.replace(/\n/gim, "<br>");
+  html = "<p>" + html + "</p>";
+  html = html.replace(/<p><\/p>/gim, "");
+  html = html.replace(/<p><br><\/p>/gim, "");
+  html = html.replace(/<p>(<table>.*?<\/table>)<\/p>/gims, "$1");
+  html = html.replace(/<p>(<[uo]l>.*?<\/[uo]l>)<\/p>/gims, "$1");
+  html = html.replace(/<p>(<h[1-6]>.*?<\/h[1-6]>)<\/p>/gims, "$1");
+  return html;
+};
+const HTMLRenderer = ({ content, className = "", fontSize }) => {
+  const style2 = fontSize ? { fontSize } : {};
+  const sanitisedContent = DOMPurify.sanitize(content || "");
+  const htmlContent = renderMarkdownToHTML(sanitisedContent);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: classnames("html-renderer", className),
+      style: style2,
+      dangerouslySetInnerHTML: { __html: htmlContent }
+    }
+  );
+};
+const ExpandIcon = ({ className }) => /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className, viewBox: "0 0 24 24", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 5v16H5v-8h2v6h12V7h-6.116V5H21zM8 3v2H6.415l6.292 6.293-1.414 1.414L5 6.415V8H3V3h5z" }) });
+const PreviewWrapper = ({
+  children: children2,
+  onExpand,
+  className = "pipeline-metadata__preview",
+  showShadows = true,
+  onClick
+}) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className, onClick, children: [
+      showShadows && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "scrollable-container", children: children2 }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-right" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-bottom" })
+      ] }),
+      !showShadows && children2
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("button", { className: "pipeline-metadata__link", onClick: onExpand, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
+    ] })
+  ] });
+};
+const getDefaultConfig = () => ({
+  securityLevel: "strict",
+  fontFamily: "ui-sans-serif, system-ui, sans-serif",
+  flowchart: {
+    htmlLabels: true,
+    curve: "basis",
+    wrappingWidth: 250,
+    useMaxWidth: true,
+    nodeSpacing: 50,
+    rankSpacing: 50
+  },
+  themeVariables: {
+    fontSize: "14px"
+  },
+  textStyle: {
+    whiteSpace: "normal",
+    wordBreak: "normal",
+    overflowWrap: "normal",
+    overflow: "visible",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    width: "100%",
+    height: "100%",
+    padding: "4px",
+    lineHeight: "1.2"
+  }
+});
+const MermaidRenderer = ({ content, theme, view = "preview", config: config2 = {} }) => {
+  const containerRef = reactExports.useRef(null);
+  const [error, setError] = reactExports.useState(null);
+  const mergedConfig = reactExports.useMemo(() => {
+    const defaultConfig = getDefaultConfig();
+    return deepmerge$2(defaultConfig, config2);
+  }, [JSON.stringify(config2)]);
+  reactExports.useEffect(() => {
+    const { textStyle, ...mermaidConfig } = mergedConfig;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: theme === "dark" ? "dark" : "default",
+      ...mermaidConfig
+    });
+  }, [theme, mergedConfig]);
+  reactExports.useEffect(() => {
+    const renderDiagram = async () => {
+      if (!containerRef.current || !content) {
+        return;
+      }
+      try {
+        setError(null);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        const id2 = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
+        const { svg } = await mermaid.render(id2, content);
+        containerRef.current.innerHTML = svg;
+        const textStyle = mergedConfig.textStyle;
+        const foreignObjects = containerRef.current.querySelectorAll("foreignObject");
+        foreignObjects.forEach((foreignObject) => {
+          const div = foreignObject.querySelector("div");
+          if (div) {
+            Object.keys(textStyle).forEach((key) => {
+              div.style[key] = textStyle[key];
+            });
+          }
+        });
+      } catch (err) {
+        setError(err.message || "Failed to render diagram");
+        console.error("Mermaid rendering error:", err);
+      }
+    };
+    renderDiagram();
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+      }
+    };
+  }, [content, theme, mergedConfig]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: classnames(
+        "pipeline-mermaid-renderer",
+        `pipeline-mermaid-renderer--${view}`
+      ),
+      children: error ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-mermaid-renderer__error", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Failed to render diagram:" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("code", { children: error })
+      ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          ref: containerRef,
+          className: "pipeline-mermaid-renderer__content"
+        }
+      )
+    }
+  );
+};
+const mapStateToProps$h = (state) => ({
+  theme: state.theme
+});
+const MermaidRenderer$1 = connect(mapStateToProps$h)(MermaidRenderer);
+const TextRenderer = ({ content, meta = {}, view = "preview" }) => {
+  const { language } = meta;
+  const isCode = Boolean(language);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: classnames(
+        "pipeline-text-renderer",
+        `pipeline-text-renderer--${view}`
+      ),
+      children: isCode ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-text-renderer__code", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SyntaxHighlighter, { code: content, language }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("pre", { className: "pipeline-text-renderer__content", children: content })
+    }
+  );
+};
+const PreviewRenderer = ({
+  normalizedPreview,
+  view = "preview",
+  theme,
+  onExpand
+}) => {
+  var _a;
+  if (!normalizedPreview) {
+    return null;
+  }
+  const { kind, content, meta, isDataNode } = normalizedPreview;
+  const isModal = view === "modal";
+  switch (kind) {
+    // Handle image previews (supported by both DataNode and TaskNode)
+    case "image": {
+      const imageSrc = isDataNode ? `data:image/png;base64,${content}` : content.startsWith("data:") ? content : `data:image/png;base64,${content}`;
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-matplotlib-chart", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__plot-image-container", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "img",
+          {
+            alt: "Matplotlib rendering",
+            className: "pipeline-metadata__plot-image--expanded",
+            src: imageSrc
+          }
+        ) }) });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PreviewWrapper,
+        {
+          onExpand,
+          className: "pipeline-metadata__plot",
+          showShadows: false,
+          onClick: onExpand,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "img",
+            {
+              alt: "Preview visualization",
+              className: "pipeline-metadata__plot-image",
+              src: imageSrc
+            }
+          )
+        }
+      );
+    }
+    // Handle text previews (TaskNode only)
+    case "text": {
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview", children: /* @__PURE__ */ jsxRuntimeExports.jsx(TextRenderer, { content, meta, view: "modal" }) });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(PreviewWrapper, { onExpand, children: /* @__PURE__ */ jsxRuntimeExports.jsx(TextRenderer, { content, meta, view: "preview" }) });
+    }
+    // Handle mermaid previews (TaskNode only)
+    case "mermaid": {
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview", children: /* @__PURE__ */ jsxRuntimeExports.jsx(MermaidRenderer$1, { content, view: "modal", config: meta }) });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(PreviewWrapper, { onExpand, children: /* @__PURE__ */ jsxRuntimeExports.jsx(MermaidRenderer$1, { content, view: "preview", config: meta }) });
+    }
+    // Handle plotly previews (DataNode only)
+    case "plotly": {
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PlotlyRenderer$1,
+          {
+            data: content.data,
+            layout: content.layout,
+            view: "modal"
+          }
+        );
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(PreviewWrapper, { onExpand, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PlotlyRenderer$1,
+        {
+          data: content.data,
+          layout: content.layout,
+          view: "preview"
+        }
+      ) });
+    }
+    // Handle table previews (DataNode only)
+    case "table": {
+      const rowCount = ((_a = content == null ? void 0 : content.data) == null ? void 0 : _a.length) || 0;
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+          rowCount > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-metadata-modal__preview-text", children: [
+            "Previewing first ",
+            rowCount,
+            " rows"
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview", children: /* @__PURE__ */ jsxRuntimeExports.jsx(TableRenderer, { data: content, size: "large" }) })
+        ] });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(PreviewWrapper, { onExpand, children: /* @__PURE__ */ jsxRuntimeExports.jsx(TableRenderer, { data: content, size: "small", onClick: onExpand }) });
+    }
+    // Handle JSON previews (DataNode only)
+    case "json": {
+      const jsonValue = JSON.parse(content);
+      const fontSize = isModal ? "15px" : "14px";
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview-json", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          JsonRenderer,
+          {
+            value: jsonValue,
+            theme,
+            style: { background: "transparent", fontSize },
+            collapsed: 3
+          }
+        ) });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PreviewWrapper,
+        {
+          onExpand,
+          className: "pipeline-metadata__preview-json",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            JsonRenderer,
+            {
+              value: jsonValue,
+              theme,
+              style: { background: "transparent", fontSize },
+              collapsed: 3
+            }
+          )
+        }
+      );
+    }
+    // Handle HTML previews (DataNode only)
+    case "html": {
+      const fontSize = isModal ? "15px" : void 0;
+      if (isModal) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview-markdown", children: /* @__PURE__ */ jsxRuntimeExports.jsx(HTMLRenderer, { content, fontSize }) });
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PreviewWrapper,
+        {
+          onExpand,
+          className: "pipeline-metadata__preview-html",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(HTMLRenderer, { content })
+        }
+      );
+    }
+    default:
+      return null;
+  }
+};
+const normalizePreview = (metadata) => {
+  if (!(metadata && (metadata == null ? void 0 : metadata.preview))) {
+    return null;
+  }
+  if (Object.hasOwn(metadata, "previewType") && metadata.previewType) {
+    const previewType = metadata.previewType;
+    const typeMap2 = {
+      PlotlyPreview: "plotly",
+      ImagePreview: "image",
+      TablePreview: "table",
+      JSONPreview: "json",
+      HTMLPreview: "html"
+    };
+    return {
+      kind: typeMap2[previewType] || previewType.toLowerCase().replace("preview", ""),
+      content: metadata.preview,
+      meta: {},
+      isDataNode: true
+    };
+  }
+  if (Object.hasOwn(metadata.preview, "kind") && metadata.preview.kind) {
+    return {
+      kind: metadata.preview.kind,
+      content: metadata.preview.content,
+      meta: metadata.preview.meta || {},
+      isDataNode: false
+    };
+  }
+  return null;
+};
 const MetaDataStats = ({ stats }) => {
   const [hasOverflow, setHasOverflow] = reactExports.useState(false);
   const statsContainerRef = reactExports.useRef(null);
@@ -40386,12 +40710,6 @@ const MetaData = ({
   const isDataNode = (metadata == null ? void 0 : metadata.type) === "data";
   const isParametersNode = (metadata == null ? void 0 : metadata.type) === "parameters";
   const nodeTypeIcon = getShortType(metadata == null ? void 0 : metadata.datasetType, metadata == null ? void 0 : metadata.type);
-  const hasPreview = showDatasetPreviews && (metadata == null ? void 0 : metadata.preview);
-  const hasPlot = hasPreview && (metadata == null ? void 0 : metadata.previewType) === "PlotlyPreview";
-  const hasImage = hasPreview && (metadata == null ? void 0 : metadata.previewType) === "ImagePreview";
-  const hasTablePreview = hasPreview && (metadata == null ? void 0 : metadata.previewType) === "TablePreview";
-  const hasJSONPreview = hasPreview && (metadata == null ? void 0 : metadata.previewType) === "JSONPreview";
-  const hasHTMLPreview = hasPreview && (metadata == null ? void 0 : metadata.previewType) === "HTMLPreview";
   const hasCode = Boolean(metadata == null ? void 0 : metadata.code);
   const isTranscoded = Boolean(metadata == null ? void 0 : metadata.originalType);
   const isWorkflowView = view === VIEW.WORKFLOW;
@@ -40455,6 +40773,24 @@ const MetaData = ({
     if (event == null ? void 0 : event.target) {
       onToggleTraceback(event.target.checked);
     }
+  };
+  const renderPreview = () => {
+    if (isDataNode && showDatasetPreviews || isTaskNode) {
+      const normalizedPreview = normalizePreview(metadata);
+      if (!normalizedPreview) {
+        return null;
+      }
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PreviewRenderer,
+        {
+          normalizedPreview,
+          view: "preview",
+          theme,
+          onExpand: onExpandMetaDataClick
+        }
+      );
+    }
+    return null;
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -40640,131 +40976,7 @@ const MetaData = ({
             /* @__PURE__ */ jsxRuntimeExports.jsx(MetaDataStats, { stats: metadata == null ? void 0 : metadata.stats })
           ] })
         ] }),
-        hasPlot && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              className: "pipeline-metadata__plot",
-              onClick: onExpandMetaDataClick,
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                PlotlyChart$1,
-                {
-                  data: metadata == null ? void 0 : metadata.preview.data,
-                  layout: metadata == null ? void 0 : metadata.preview.layout,
-                  view: "preview"
-                }
-              )
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              className: "pipeline-metadata__link",
-              onClick: onExpandMetaDataClick,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
-              ]
-            }
-          )
-        ] }),
-        hasImage && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              className: "pipeline-metadata__plot",
-              onClick: onExpandMetaDataClick,
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "img",
-                {
-                  alt: "Matplotlib rendering",
-                  className: "pipeline-metadata__plot-image",
-                  src: `data:image/png;base64,${metadata == null ? void 0 : metadata.preview}`
-                }
-              )
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              className: "pipeline-metadata__link",
-              onClick: onExpandMetaDataClick,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
-              ]
-            }
-          )
-        ] }),
-        hasTablePreview && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-metadata__preview", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "scrollable-container", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-              PreviewTable,
-              {
-                data: metadata == null ? void 0 : metadata.preview,
-                size: "small",
-                onClick: onExpandMetaDataClick
-              }
-            ) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-right" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-bottom" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              className: "pipeline-metadata__link",
-              onClick: onExpandMetaDataClick,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
-              ]
-            }
-          )
-        ] }),
-        hasJSONPreview && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-metadata__preview-json", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "scrollable-container", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-              JSONObject,
-              {
-                value: JSON.parse(metadata.preview),
-                theme,
-                style: { background: "transparent", fontSize: "14px" },
-                collapsed: 3
-              }
-            ) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-right" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-bottom" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              className: "pipeline-metadata__link",
-              onClick: onExpandMetaDataClick,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
-              ]
-            }
-          )
-        ] }),
-        hasHTMLPreview && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-metadata__preview-html", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "scrollable-container", children: /* @__PURE__ */ jsxRuntimeExports.jsx(HTMLRenderer, { content: metadata.preview }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-right" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__preview-shadow-box-bottom" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              className: "pipeline-metadata__link",
-              onClick: onExpandMetaDataClick,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(ExpandIcon, { className: "pipeline-metadata__link-icon" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata__link-text", children: "Expand preview" })
-              ]
-            }
-          )
-        ] })
+        renderPreview()
       ] })
     ] }) })
   ] });
@@ -40799,13 +41011,8 @@ const mapDispatchToProps$b = (dispatch2) => ({
 const MetaData$1 = connect(mapStateToProps$g, mapDispatchToProps$b)(MetaData);
 const BackIcon = ({ className }) => /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className, viewBox: "0 0 24 24", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M14.312 5.244c.387.336.454.905.172 1.318l-.071.093-3.574 4.122 31.684-.058c.552-.001 1 .446 1.002.998 0 .513-.385.936-.882.995l-.117.007-31.323.058 3.225 3.9c.326.395.298.967-.048 1.328l-.086.08c-.395.326-.967.298-1.328-.048l-.08-.086-5.326-6.443L12.9 5.345c.362-.417.994-.462 1.41-.1z" }) });
 const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
-  const hasPlot = (metadata == null ? void 0 : metadata.previewType) === "PlotlyPreview";
-  const hasImage = (metadata == null ? void 0 : metadata.previewType) === "ImagePreview";
-  const hasTable = (metadata == null ? void 0 : metadata.previewType) === "TablePreview";
-  const hasJSON = (metadata == null ? void 0 : metadata.previewType) === "JSONPreview";
-  const hasHTML = (metadata == null ? void 0 : metadata.previewType) === "HTMLPreview";
-  const hasMetadataContent = hasPlot || hasImage || hasTable || hasJSON || hasHTML;
-  if (!visible.metadataModal || !hasMetadataContent) {
+  const normalizedPreview = normalizePreview(metadata);
+  if (!visible.metadataModal || !normalizedPreview) {
     return null;
   }
   const nodeTypeIcon = getShortType(metadata == null ? void 0 : metadata.datasetType, metadata == null ? void 0 : metadata.type);
@@ -40834,41 +41041,16 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "pipeline-metadata-modal__title", children: metadata.name })
-      ] }),
-      hasTable && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pipeline-metadata-modal__preview-text", children: [
-        "Previewing first",
-        " ",
-        metadata.preview.data && metadata.preview.data.length,
-        " rows"
       ] })
     ] }),
-    hasPlot && /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      PlotlyChart$1,
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      PreviewRenderer,
       {
-        data: metadata.preview.data,
-        layout: metadata.preview.layout,
-        view: "modal"
+        normalizedPreview,
+        view: "modal",
+        theme
       }
-    ) }),
-    hasImage && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-matplotlib-chart", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata__plot-image-container", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "img",
-      {
-        alt: "Matplotlib rendering",
-        className: "pipeline-metadata__plot-image--expanded",
-        src: `data:image/png;base64,${metadata.preview}`
-      }
-    ) }) }),
-    hasTable && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PreviewTable, { data: metadata.preview, size: "large" }) }),
-    hasJSON && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview-json", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      JSONObject,
-      {
-        value: JSON.parse(metadata.preview),
-        theme,
-        style: { background: "transparent", fontSize: "15px" },
-        collapsed: 3
-      }
-    ) }),
-    hasHTML && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pipeline-metadata-modal__preview-markdown", children: /* @__PURE__ */ jsxRuntimeExports.jsx(HTMLRenderer, { content: metadata.preview, fontSize: "15px" }) })
+    )
   ] });
 };
 const mapStateToProps$f = (state) => ({
@@ -41288,8 +41470,8 @@ class MiniMap extends reactExports.Component {
   update(prevProps = {}) {
     const { miniMapVisible, chartZoom } = this.props;
     if (miniMapVisible) {
-      const changed = (...names) => this.changed(names, prevProps, this.props);
-      if (changed(
+      const hasChanged = (...names) => changed(names, prevProps, this.props);
+      if (hasChanged(
         "miniMapVisible",
         "nodes",
         "clickedNodes",
@@ -41299,20 +41481,13 @@ class MiniMap extends reactExports.Component {
       )) {
         drawNodes.call(this);
       }
-      if (changed("miniMapVisible", "chartZoom") && chartZoom.applied) {
+      if (hasChanged("miniMapVisible", "chartZoom") && chartZoom.applied) {
         drawViewport.call(this);
       }
-      if (changed("miniMapVisible", "nodes", "textLabels", "chartSize")) {
+      if (hasChanged("miniMapVisible", "nodes", "textLabels", "chartSize")) {
         this.resetView();
       }
     }
-  }
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop]);
   }
   /**
    * Create D3 element selectors
@@ -54535,12 +54710,12 @@ class Workflow extends reactExports.Component {
    */
   update(prevProps = {}) {
     const { chartZoom } = this.props;
-    const changed = (...names) => this.changed(names, prevProps, this.props);
+    const hasChanged = (...names) => changed(names, prevProps, this.props);
     const preventZoom = this.props.visibleMetaSidebar;
-    if (changed("visibleSidebar", "visibleCode", "visibleMetaSidebar")) {
+    if (hasChanged("visibleSidebar", "visibleCode", "visibleMetaSidebar")) {
       this.updateChartSize();
     }
-    if (changed("edges", "nodes", "layers", "chartSize", "clickedNode")) {
+    if (hasChanged("edges", "nodes", "layers", "chartSize", "clickedNode")) {
       const metaSidebarViewChanged = prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
       const codeViewChangedWithoutMetaSidebar = prevProps.visibleCode !== this.props.visibleCode && !this.props.visibleMetaSidebar;
       const clickedNodeChangedWithoutReFocus = prevProps.clickedNode !== this.props.clickedNode && !this.props.nodeReFocus;
@@ -54551,13 +54726,6 @@ class Workflow extends reactExports.Component {
     } else {
       this.onChartZoomChanged(chartZoom);
     }
-  }
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return objectA && objectB && props.some((prop) => objectA[prop] !== objectB[prop]);
   }
   /**
    * Update the chart size in state from chart container bounds.
@@ -54905,7 +55073,7 @@ class Workflow extends reactExports.Component {
             ]
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(PipelineLoading, { loading, sidebarVisibl: sidebarVisible }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(PipelineLoading, { loading, sidebarVisible }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(PipelineWarning$1, {})
       ] }),
       displayExportBtn && /* @__PURE__ */ jsxRuntimeExports.jsx(ExportModal$1, {}),
