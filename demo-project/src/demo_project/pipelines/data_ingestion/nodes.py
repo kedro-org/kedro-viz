@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
+from kedro.pipeline.preview_contract import TextPreview
 
 
 def _is_true(column: pd.Series) -> pd.Series:
@@ -22,6 +23,41 @@ def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:
         companies["company_rating"].str.replace("%", "").astype(float) / 100
     )
     return companies
+
+
+def preview_apply_types_to_companies() -> TextPreview:
+    """Generate a preview showing how to test apply_types_to_companies in isolation."""
+    content = """Usage Example:
+
+# Test with sample data
+import pandas as pd
+
+companies = pd.DataFrame({
+    'id': [35029, 30292, 19032, 8238],
+    'company_rating': ['100%', '67%', '67%', '91%'],
+    'company_location': ['Niue', 'Anguilla', 'Russian Federation', 'Barbados'],
+    'total_fleet_count': [4.0, 6.0, 4.0, 15.0],
+    'iata_approved': ['f', 'f', 'f', 't']
+})
+
+result = apply_types_to_companies(companies)
+
+# Expected output:
+>> company_rating converted from string (e.g., '100%') to float (1.0)
+>> iata_approved converted from 't'/'f' to True/False
+
+# Verify transformations:
+print(result['company_rating'].dtype)  # float64
+print(result['iata_approved'].dtype)   # bool
+print(result.iloc[0]['company_rating']) # 1.0
+print(result.iloc[3]['iata_approved'])  # True
+
+Notes:
+- Input company_rating must be in format 'XX%' (e.g., '67%')
+- Input iata_approved uses 't' for True, 'f' for False
+- Function modifies the DataFrame in place"""
+
+    return TextPreview(content=content, meta={"language": "python"})
 
 
 def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:
