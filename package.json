@@ -99,7 +99,8 @@
       "react": "$react",
       "react-dom": "$react-dom",
       "react-json-view": "^1.21.3"
-    }
+    },
+    "form-data": ">=4.0.4"
   },
   "peerDependencies": {
     "react": "^18.2.0",
