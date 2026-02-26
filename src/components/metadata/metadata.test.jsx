@@ -394,7 +394,7 @@ describe('MetaData', () => {
           mockMetadata: nodePlot,
         });
         expect(
-          container.querySelectorAll('.pipeline-metadata__plot').length
+          container.querySelectorAll('.pipeline-metadata__preview').length
         ).toBe(1);
       });
 
