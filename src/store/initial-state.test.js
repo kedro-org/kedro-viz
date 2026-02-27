@@ -4,9 +4,18 @@ import getInitialState, {
   preparePipelineState,
   prepareNonPipelineState,
 } from './initial-state';
-import { saveLocalStorage } from './helpers';
+import {
+  saveLocalStorage,
+  getProjectStorageKey,
+  buildStorageKey,
+} from './helpers';
 import { localStorageName } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
+
+const getSpaceflightsStorageKey = () => {
+  const pipelineIds = spaceflights.pipelines.map((pipeline) => pipeline.id);
+  return buildStorageKey(localStorageName, getProjectStorageKey(pipelineIds));
+};
 
 describe('createInitialState', () => {
   it('returns an object', () => {
@@ -57,13 +66,13 @@ describe('preparePipelineState', () => {
   };
 
   it('applies localStorage values on top of normalised pipeline data', () => {
-    saveLocalStorage(localStorageName, localStorageState);
+    saveLocalStorage(getSpaceflightsStorageKey(), localStorageState);
     expect(preparePipelineState(spaceflights)).toMatchObject(localStorageState);
     window.localStorage.clear();
   });
 
   it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
-    saveLocalStorage(localStorageName, localStorageState);
+    saveLocalStorage(getSpaceflightsStorageKey(), localStorageState);
     const { active } = preparePipelineState(spaceflights, true).pipeline;
     expect(active).toBe(spaceflights.selected_pipeline);
     window.localStorage.clear();
@@ -155,5 +164,29 @@ describe('getInitialState', () => {
       theme: 'dark',
     });
     window.localStorage.clear();
+  });
+
+  it('applies URL tag parameters over localStorage tag settings', () => {
+    saveLocalStorage(getSpaceflightsStorageKey(), {
+      tag: {
+        enabled: {
+          features: false,
+          preprocessing: false,
+          split: false,
+          train: false,
+        },
+      },
+    });
+    window.history.pushState({}, '', '?tags=preprocessing');
+
+    const state = getInitialState(props);
+
+    window.history.pushState({}, '', window.location.pathname);
+    window.localStorage.clear();
+
+    expect(state.tag.enabled.preprocessing).toBe(true);
+    expect(state.tag.enabled.features).toBe(false);
+    expect(state.tag.enabled.split).toBe(false);
+    expect(state.tag.enabled.train).toBe(false);
   });
 });

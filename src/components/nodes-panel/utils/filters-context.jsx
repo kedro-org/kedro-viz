@@ -2,7 +2,12 @@ import React, { useState, useEffect, createContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useGeneratePathname } from '../../../utils/hooks/use-generate-pathname';
-import { loadLocalStorage, saveLocalStorage } from '../../../store/helpers';
+import {
+  loadLocalStorage,
+  saveLocalStorage,
+  getProjectStorageKey,
+  buildStorageKey,
+} from '../../../store/helpers';
 
 import { getTagData, getTagNodeCounts } from '../../../selectors/tags';
 import {
@@ -25,8 +30,8 @@ import {
   getGroups,
 } from '../../../selectors/filtered-node-list-items';
 
-// Load the stored state from local storage
-const storedState = loadLocalStorage(localStorageName);
+// Selector to get pipeline IDs for project-specific storage
+const getPipelineIds = (state) => state.pipeline.ids;
 
 // Custom hook to group useSelector calls
 const useFiltersContextSelector = () => {
@@ -37,6 +42,7 @@ const useFiltersContextSelector = () => {
   const tagNodeCounts = useSelector(getTagNodeCounts);
   const nodeSelected = useSelector(getNodeSelected);
   const focusMode = useSelector(getFocusedModularPipeline);
+  const pipelineIds = useSelector(getPipelineIds);
   const inputOutputDataNodes = useSelector(
     getInputOutputNodesForFocusedModularPipeline
   );
@@ -64,6 +70,7 @@ const useFiltersContextSelector = () => {
     tagNodeCounts,
     nodeSelected,
     focusMode,
+    pipelineIds,
     inputOutputDataNodes,
     onToggleTypeDisabled,
     onToggleTagFilter,
@@ -82,6 +89,7 @@ export const FiltersContextProvider = ({ children }) => {
     nodeTypes,
     tagNodeCounts,
     nodeSelected,
+    pipelineIds,
     focusMode,
     inputOutputDataNodes,
     onToggleTypeDisabled,
@@ -90,9 +98,12 @@ export const FiltersContextProvider = ({ children }) => {
     onToggleNodeHovered,
   } = useFiltersContextSelector();
 
-  const [groupCollapsed, setGroupCollapsed] = useState(
-    storedState.groupsCollapsed || {}
-  );
+  const [groupCollapsed, setGroupCollapsed] = useState(() => {
+    const projectKey = getProjectStorageKey(pipelineIds);
+    const storageKey = buildStorageKey(localStorageName, projectKey);
+    const stored = loadLocalStorage(storageKey);
+    return stored.groupsCollapsed || {};
+  });
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
   // Helper function to check if NodeTypes are modified
@@ -132,7 +143,9 @@ export const FiltersContextProvider = ({ children }) => {
       [groupID]: !groupCollapsed[groupID],
     };
     setGroupCollapsed(updatedGroupCollapsed);
-    saveLocalStorage(localStorageName, {
+    const projectKey = getProjectStorageKey(pipelineIds);
+    const storageKey = buildStorageKey(localStorageName, projectKey);
+    saveLocalStorage(storageKey, {
       groupsCollapsed: updatedGroupCollapsed,
     });
   };

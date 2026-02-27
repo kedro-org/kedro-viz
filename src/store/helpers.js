@@ -3,6 +3,35 @@ import { localStorageName } from '../config';
 const noWindow = typeof window === 'undefined';
 
 /**
+ * Generate a project-specific storage key to prevent conflicts between different projects
+ * Uses pipeline IDs to create a unique identifier for the project
+ * @param {Array} pipelineIds List of pipeline IDs from the current project
+ * @return {string} Project-specific key
+ */
+export const getProjectStorageKey = (pipelineIds = []) => {
+  // Sort pipeline IDs to ensure consistent key even if order differs
+  const sortedIds = Array.isArray(pipelineIds) ? pipelineIds.sort() : [];
+  if (sortedIds.length === 0) {
+    return '';
+  }
+  // Create a simple hash from the pipeline IDs
+  return btoa(sortedIds.join('|')).substring(0, 16);
+};
+
+/**
+ * Build the full localStorage key with project identifier
+ * @param {string} baseKey Base storage key (e.g., 'KedroViz')
+ * @param {string} projectKey Project-specific identifier
+ * @return {string} Full storage key
+ */
+export const buildStorageKey = (baseKey, projectKey) => {
+  if (!projectKey) {
+    return baseKey;
+  }
+  return `${baseKey}::${projectKey}`;
+};
+
+/**
  * Retrieve state data from localStorage
  * @param {string} itemKey localStorage name
  * @return {Object} State

@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
+import { getProjectStorageKey, buildStorageKey } from './helpers';
 import normalizeData from './normalize-data';
 import normalizeRunData from './normalize-run-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
@@ -169,10 +170,15 @@ const applyUrlParametersToNonPipelineState = (state, urlParams) => {
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
  * @param {Object} state Initial/extant state
+ * @param {Array} pipelineIds Pipeline IDs for project-specific storage key
  * @return {Object} Combined state from localStorage
  */
-export const mergeLocalStorage = (state) => {
-  const localStorageState = loadLocalStorage(localStorageName);
+export const mergeLocalStorage = (state, pipelineIds = []) => {
+  // Generate project-specific key based on pipeline IDs
+  const projectKey = getProjectStorageKey(pipelineIds);
+  const storageKey = buildStorageKey(localStorageName, projectKey);
+
+  const localStorageState = loadLocalStorage(storageKey);
 
   Object.keys(localStorageState).forEach((key) => {
     if (!(key in state)) {
@@ -202,7 +208,8 @@ export const preparePipelineState = (
   expandAllPipelines,
   urlParams
 ) => {
-  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
+  const normalizedData = normalizeData(data, expandAllPipelines);
+  let state = mergeLocalStorage(normalizedData, normalizedData.pipeline.ids);
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
@@ -222,7 +229,8 @@ export const preparePipelineState = (
   return state;
 };
 
-/** * Prepare the run status data part of the state by normalizing the raw data.
+/**
+ * Prepare the run status data part of the state by normalizing the raw data.
  * @param {Object} runData Run status data
  * @returns {Object} The new run status state with modifications applied.
  */
@@ -272,7 +280,8 @@ const getInitialState = (props = {}) => {
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines
+    expandAllPipelines,
+    urlParams
   );
 
   const runStatusState = prepareRunStatusState(props.runData);
