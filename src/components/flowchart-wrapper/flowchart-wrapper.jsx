@@ -144,7 +144,7 @@ export const FlowChartWrapper = ({
       const invalidTags = urlTags.filter((item) => !tagIds.includes(item));
 
       if (invalidTags.length > 0) {
-        setErrorMessage(errorMessages.tag(invalidTags));
+        setErrorMessage(errorMessages.tag);
         setIsInvalidUrl(true);
       }
     }

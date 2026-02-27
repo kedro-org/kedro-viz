@@ -97,23 +97,9 @@ describe('FlowChartWrapper', () => {
       expect(
         screen.getByText(/oops, this URL isn't valid/i)
       ).toBeInTheDocument();
-      expect(screen.getByText(/nonexistent-tag/i)).toBeInTheDocument();
-    });
-
-    it('shows multiple invalid tags in the warning message', async () => {
-      renderWithStore(<FlowChartWrapper {...defaultProps} />, [
-        '/?tags=bad-one,bad-two&pid=__default__',
-      ]);
-
-      await act(async () => {
-        jest.advanceTimersByTime(2000);
-      });
-
       expect(
-        screen.getByText(/oops, this URL isn't valid/i)
+        screen.getByText(/Please check the value of "tags" in the URL/i)
       ).toBeInTheDocument();
-      expect(screen.getByText(/bad-one/i)).toBeInTheDocument();
-      expect(screen.getByText(/bad-two/i)).toBeInTheDocument();
     });
 
     it('does not show warning when all tags are valid', async () => {
