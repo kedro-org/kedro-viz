@@ -1,8 +1,13 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
 import { mockState } from '../utils/state.mock';
-import { saveLocalStorage } from '../store/helpers';
+import {
+  saveLocalStorage,
+  getProjectStorageKey,
+  buildStorageKey,
+} from '../store/helpers';
 import { localStorageName } from '../config';
+import spaceflights from '../utils/data/spaceflights.mock.json';
 import {
   updateActivePipeline,
   UPDATE_ACTIVE_PIPELINE,
@@ -13,6 +18,11 @@ import {
   loadInitialPipelineData,
   loadPipelineData,
 } from './pipelines';
+
+const getSpaceflightsStorageKey = () => {
+  const pipelineIds = spaceflights.pipelines.map((pipeline) => pipeline.id);
+  return buildStorageKey(localStorageName, getProjectStorageKey(pipelineIds));
+};
 
 jest.mock('../store/load-data.js');
 
@@ -110,7 +120,7 @@ describe('pipeline actions', () => {
       });
 
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
-        saveLocalStorage(localStorageName, {
+        saveLocalStorage(getSpaceflightsStorageKey(), {
           pipeline: { active: 'unknown-id' },
         });
         const store = createStore(reducer, mockState.json);
@@ -123,7 +133,7 @@ describe('pipeline actions', () => {
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
-        saveLocalStorage(localStorageName, { pipeline: { active } });
+        saveLocalStorage(getSpaceflightsStorageKey(), { pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().pipeline.active).toBe(active);
@@ -142,7 +152,7 @@ describe('pipeline actions', () => {
         window.deletePipelines = true; // pass option to load-data mock
         const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
-        saveLocalStorage(localStorageName, { pipeline: { active } });
+        saveLocalStorage(getSpaceflightsStorageKey(), { pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.spaceflights.node);
