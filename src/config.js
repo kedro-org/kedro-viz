@@ -126,6 +126,7 @@ export const errorMessages = {
   node: 'Please check the value of "selected_id"/"sid" or "selected_name"/"sn" in the URL',
   modularPipeline: 'Please check the value of "focused_id"/"fid" in the URL',
   pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
+  tag: 'Please check the value of "tags" in the URL',
 };
 
 export const datasetStatLabels = ['rows', 'columns', 'file_size'];
