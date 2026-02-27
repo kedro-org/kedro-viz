@@ -4,7 +4,12 @@ import watch from 'redux-watch';
 import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
-import { saveLocalStorage, pruneFalseyKeys } from './helpers';
+import {
+  saveLocalStorage,
+  pruneFalseyKeys,
+  getProjectStorageKey,
+  buildStorageKey,
+} from './helpers';
 import { localStorageName } from '../config';
 import createCallbackMiddleware from './middleware';
 
@@ -37,7 +42,11 @@ const saveStateToLocalStorage = (state) => {
     ...otherVisibleProps
   } = state.visible;
 
-  saveLocalStorage(localStorageName, {
+  // Generate project-specific key based on pipeline IDs
+  const projectKey = getProjectStorageKey(state.pipeline.ids);
+  const storageKey = buildStorageKey(localStorageName, projectKey);
+
+  saveLocalStorage(storageKey, {
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
     },
