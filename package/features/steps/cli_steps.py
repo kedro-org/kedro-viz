@@ -59,7 +59,6 @@ def create_project_with_starter(context, starter):
             str(starter),
             "--config",
             str(context.config_file),
-            "--verbose",
         ],
         env=context.env,
         cwd=str(context.temp_dir),
