@@ -1,5 +1,9 @@
 // All E2E Tests Related to Flowchart Primary Toolbar goes here.
 
+beforeEach(() => {
+  cy.clearLocalStorage(); // Ensure clean state so tests don't affect each other
+});
+
 describe('Flowchart Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias

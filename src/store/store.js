@@ -4,7 +4,12 @@ import watch from 'redux-watch';
 import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
-import { saveLocalStorage, pruneFalseyKeys } from './helpers';
+import {
+  saveLocalStorage,
+  pruneFalseyKeys,
+  getProjectStorageKey,
+  buildStorageKey,
+} from './helpers';
 import { localStorageName } from '../config';
 import createCallbackMiddleware from './middleware';
 
@@ -37,7 +42,12 @@ const saveStateToLocalStorage = (state) => {
     ...otherVisibleProps
   } = state.visible;
 
-  saveLocalStorage(localStorageName, {
+  // Save pipeline-specific state under a project-specific key so settings
+  // from one project don't bleed into another.
+  const projectKey = getProjectStorageKey(state.pipeline.ids);
+  const storageKey = buildStorageKey(localStorageName, projectKey);
+
+  saveLocalStorage(storageKey, {
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
     },
@@ -53,6 +63,12 @@ const saveStateToLocalStorage = (state) => {
     tag: {
       enabled: state.tag.enabled,
     },
+  });
+
+  // Save non-pipeline preferences under the base key so they persist
+  // regardless of which project/pipeline is active, and so that
+  // prepareNonPipelineState (which has no pipeline IDs yet) can read them.
+  saveLocalStorage(localStorageName, {
     textLabels: state.textLabels,
     visible: otherVisibleProps,
     theme: state.theme,
