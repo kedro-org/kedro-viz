@@ -94,6 +94,13 @@ def _setup_context_with_venv(context, venv_dir):
     )
 
     call([context.python, "-m", "pip", "install", "."], env=context.env)
+
+    # Temporary: chardet 7.0.0 + binaryornot 0.4.4 crashes on Python <3.11
+    # See https://github.com/kedro-org/kedro-viz/issues/2588
+    call(
+        [context.python, "-m", "pip", "install", "chardet<7"],
+        env=context.env,
+    )
     return context
 
 
