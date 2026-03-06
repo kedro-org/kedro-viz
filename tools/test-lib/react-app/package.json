@@ -55,6 +55,10 @@
       "react": "$react",
       "react-dom": "$react-dom",
       "react-json-view": "^1.21.3"
-    }
+    },
+    "esbuild-style-plugin": {
+      "glob": "^10.5.0"
+    },
+    "serialize-javascript": "^7.0.3"
   }
 }
