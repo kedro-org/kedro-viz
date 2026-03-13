@@ -5,6 +5,7 @@ describe('Flowchart DAG', () => {
   });
 
   beforeEach(() => {
+    cy.clearLocalStorage(); // Ensure clean state so tests don't affect each other
     cy.enablePrettyNames(); // Enable pretty names using the custom command
     cy.wait(500);
     cy.get('.feature-hints__close').click(); // Close the feature hints so can click on a node
