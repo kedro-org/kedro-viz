@@ -61,6 +61,7 @@ export const FlowChartWrapper = ({
   sidebarVisible,
   activePipeline,
   tag,
+  tagIds,
   nodeType,
   expandAllPipelines,
   displayMetadataPanel,
@@ -133,6 +134,20 @@ export const FlowChartWrapper = ({
   const resetErrorMessage = () => {
     setErrorMessage({});
     setIsInvalidUrl(false);
+  };
+
+  const checkIfTagsExist = () => {
+    const tagsParam = searchParams.get(params.tags);
+
+    if (tagsParam) {
+      const urlTags = tagsParam.split(',').filter((item) => item !== '');
+      const invalidTags = urlTags.filter((item) => !tagIds.includes(item));
+
+      if (invalidTags.length > 0) {
+        setErrorMessage(errorMessages.tag);
+        setIsInvalidUrl(true);
+      }
+    }
   };
 
   const checkIfPipelineExists = () => {
@@ -262,6 +277,8 @@ export const FlowChartWrapper = ({
         redirectToFocusedNode();
       }
 
+      checkIfTagsExist();
+
       // Once all the matchPath checks are finished
       // ensure the local states are reset
       graphRef.current = graph;
@@ -337,6 +354,7 @@ export const mapStateToProps = (state) => ({
   activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
   tag: state.tag.enabled,
+  tagIds: state.tag.ids,
   nodeType: state.nodeType.disabled,
   expandAllPipelines: state.expandAllPipelines,
   displayMetadataPanel: state.display.metadataPanel,
