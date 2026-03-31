@@ -57,6 +57,41 @@ describe('createCallbackMiddleware', () => {
     expect(next).toHaveBeenCalledWith(action);
   });
 
+  it('should call the callback with the correct node when action type is NODE_CONTEXT_MENU', () => {
+    const nodeId = '123';
+    const node = { id: nodeId, name: 'Node 123' };
+    const action = { type: 'NODE_CONTEXT_MENU', nodeId };
+
+    store.getState.mockReturnValue({
+      graph: {
+        nodes: [node],
+      },
+    });
+
+    middleware(action);
+
+    expect(callback).toHaveBeenCalledWith({
+      type: 'NODE_CONTEXT_MENU',
+      payload: node,
+    });
+    expect(next).toHaveBeenCalledWith(action);
+  });
+
+  it('should not call the callback if NODE_CONTEXT_MENU node is not found', () => {
+    const action = { type: 'NODE_CONTEXT_MENU', nodeId: '999' };
+
+    store.getState.mockReturnValue({
+      graph: {
+        nodes: [{ id: '456', name: 'Node 456' }],
+      },
+    });
+
+    middleware(action);
+
+    expect(callback).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(action);
+  });
+
   it('should not call the callback if callback is not provided', () => {
     middleware = createCallbackMiddleware(null)(store)(next);
     const action = { type: 'TOGGLE_NODE_CLICKED', nodeClicked: '123' };

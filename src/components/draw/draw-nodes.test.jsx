@@ -30,4 +30,24 @@ describe('DrawNodes', () => {
       container.querySelector('.pipeline-flowchart__nodes')
     ).toBeInTheDocument();
   });
+
+  it('renders data-node-type attribute on nodes', () => {
+    const taskNode = { ...baseNode, type: 'task' };
+    const { container } = render(<DrawNodes nodes={[taskNode]} />);
+    const nodeEl = container.querySelector('[data-node-type="task"]');
+    expect(nodeEl).toBeInTheDocument();
+  });
+
+  it('renders data-node-fullname attribute on nodes', () => {
+    const taskNode = {
+      ...baseNode,
+      type: 'task',
+      fullName: 'my_pipeline.split_data',
+    };
+    const { container } = render(<DrawNodes nodes={[taskNode]} />);
+    const nodeEl = container.querySelector(
+      '[data-node-fullname="my_pipeline.split_data"]'
+    );
+    expect(nodeEl).toBeInTheDocument();
+  });
 });
