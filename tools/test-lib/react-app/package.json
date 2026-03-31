@@ -59,6 +59,9 @@
     "esbuild-style-plugin": {
       "glob": "^10.5.0"
     },
-    "serialize-javascript": "^7.0.3"
+    "serialize-javascript": ">=7.0.5",
+    "selfsigned": {
+      "node-forge": ">=1.4.0"
+    }
   }
 }
