@@ -43,13 +43,13 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-jsdom-global": "^4.0.0",
     "style-loader": "^1.2.1",
-    "webpack": "^5.89.0",
+    "webpack": "^5.105.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^5.2.3"
   },
   "overrides": {
     "jsdom": {
-      "tough-cookie": "4.0.0"
+      "tough-cookie": ">=5.1.1"
     },
     "react-json-view": {
       "react": "$react",
@@ -62,6 +62,19 @@
     "serialize-javascript": ">=7.0.5",
     "selfsigned": {
       "node-forge": ">=1.4.0"
-    }
+    },
+    "ajv": ">=8.18.0",
+    "brace-expansion": ">=5.0.5",
+    "js-yaml": ">=4.1.1",
+    "picomatch": ">=4.0.2",
+    "postcss": ">=8.5.8",
+    "flatted": ">=3.4.2",
+    "dompurify": ">=3.3.3",
+    "lodash": ">=4.17.23",
+    "yaml": ">=2.8.0",
+    "qs": ">=6.15.0",
+    "path-to-regexp": ">=0.1.13",
+    "diff": ">=5.2.2",
+    "d3-color": ">=3.1.0"
   }
 }
