@@ -55,6 +55,21 @@ class TestGraphNodeCreation:
         assert task_node.pipelines == set()
         assert task_node.modular_pipelines == expected_modular_pipelines
         assert task_node.namespace == namespace
+        assert task_node.kedro_node_name == kedro_node.name
+
+    def test_create_task_node_without_name(self):
+        """Test that kedro_node_name captures the full internal name including hash suffix
+        when no explicit name is provided."""
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+        )
+        task_node = GraphNode.create_task_node(kedro_node, "some_id", set())
+        assert task_node.name == "identity"
+        assert task_node.kedro_node_name == kedro_node.name
+        # Full internal name should include hash suffix, e.g. "identity__<hash>"
+        assert "__" in task_node.kedro_node_name
 
     @pytest.mark.parametrize(
         "dataset_name, expected_modular_pipelines",
