@@ -135,6 +135,7 @@ class TestSinglePipelineEndpoint:
                     "num_epochs": 1000,
                 },
                 "node_extras": None,
+                "kedro_node_name": "uk.data_science.train_model",
             },
             {
                 "id": "f1f1425b",
