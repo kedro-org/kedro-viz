@@ -36,7 +36,7 @@ const DropdownRenderer = ({
   let optionIndex = 0;
 
   /**
-   * Clone a React element and extend with extra props tieing it to a new scope
+   * Clone a React element and extend with extra props tying it to a new scope
    */
   const _extendMenuOption = (element, id, index) => {
     const extraProps = {
@@ -196,11 +196,11 @@ DropdownRenderer.propTypes = {
    */
   haveSelectedValues: PropTypes.bool,
   /**
-   * Callback function to be excecuted when a Apply and Close button is clicked
+   * Callback function to be executed when a Apply and Close button is clicked
    */
   onApplyAndClose: PropTypes.func,
   /**
-   * Callback function to be excecuted when a Cancel button is clicked
+   * Callback function to be executed when a Cancel button is clicked
    */
   onCancel: PropTypes.func,
   /**

@@ -16,7 +16,7 @@ $padding-top-bottom: 7px;
 }
 
 .search-input {
-  /** padding top can be overriden if label is generated (see below) **/
+  /** padding top can be overridden if label is generated (see below) **/
   padding: $padding-top-bottom $padding-left-right;
   border: $height-tiny solid colors.$slate-0;
   box-sizing: border-box;

@@ -52,7 +52,7 @@ Prefer:
 
 ### Class names
 
-While CSS files are split up per-component and imported via JS, all CSS is still global in scope. Hence, this project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To impove CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
+While CSS files are split up per-component and imported via JS, all CSS is still global in scope. Hence, this project uses the [BEM naming convention](http://getbem.com/), to avoid conflicts, reduce rule specificity, and make classes easier to read and understand. To improve CSS maintainability we [reduce rule specificity](https://css-tricks.com/strategies-keeping-css-specificity-low/) and avoid nesting CSS selectors.
 
 Because Kedro-Viz can be imported into other applications, we avoid ever setting global styles. We use the `pipeline-` prefix for most HTML/CSS classes, to reduce the risk of clashes in the global namespace when this project is imported into other applications. It's important never to use global element selectors or generic classes like `.header`.
 

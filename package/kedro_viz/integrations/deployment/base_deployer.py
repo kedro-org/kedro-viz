@@ -82,7 +82,7 @@ class BaseDeployer(abc.ABC):
             raise exc
 
     def _upload_deploy_viz_metadata_file(self):
-        """Create and write metadta file to api folder"""
+        """Create and write metadata file to api folder"""
 
         logger.debug(
             "Creating and Uploading deploy viz metadata file to %s.",
