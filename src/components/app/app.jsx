@@ -26,7 +26,7 @@ import './app.scss';
  * library/package into a larger application, rather than run as a standalone
  * app. If run as a standalone then 'Container' is the top-level component.
  *
- * This component intialises anything that might be needed in both use-cases,
+ * This component initialises anything that might be needed in both use-cases,
  * e.g. the Redux store, webfont loading, announcing flags, etc.
  */
 class App extends React.Component {

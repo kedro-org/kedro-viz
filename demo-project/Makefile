@@ -2,7 +2,7 @@
 clean-py:
 	find . -type d -name  "__pycache__" -exec rm -r {} +
 
-# Remove outputs created as part of the pipline
+# Remove outputs created as part of the pipeline
 clean-data:
 	find data -type f | grep -E '.+0[2-9]' | grep -v '.gitkeep' | xargs rm -fr
 	find data -type d | grep -E '.+0[2-9]_[a-z]+/.+/' | grep -o 'data/.._.*/' | sort -u | xargs rm -rf

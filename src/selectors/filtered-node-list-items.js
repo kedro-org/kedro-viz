@@ -186,7 +186,7 @@ export const getFilteredElementTypeItems = createSelector(
 
 /**
  * Compares items for sorting in groups first
- * by enabled status (by tag) and then alphabeticaly (by name)
+ * by enabled status (by tag) and then alphabetically (by name)
  * @param {Object} itemA First item to compare
  * @param {Object} itemB Second item to compare
  * @return {Number} Comparison result
@@ -199,7 +199,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 
 /**
  * Compares items for sorting in groups first
- * by enabled status (by tag) and then alphabeticaly (by name)
+ * by enabled status (by tag) and then alphabetically (by name)
  * @param {Object} itemA First item to compare
  * @param {Object} itemB Second item to compare
  * @return {Number} Comparison result
