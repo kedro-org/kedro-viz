@@ -119,7 +119,7 @@ describe('Selectors', () => {
       expect(getSidebarWidth(true, sidebarWidth)).toEqual(sidebarWidth.open);
     });
 
-    it(`if visble is false returns the 'closed' width`, () => {
+    it(`if visible is false returns the 'closed' width`, () => {
       expect(getSidebarWidth(false, sidebarWidth)).toEqual(sidebarWidth.closed);
     });
   });

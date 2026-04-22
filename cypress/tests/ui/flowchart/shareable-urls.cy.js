@@ -227,12 +227,12 @@ describe('Shareable URLs with valid localStorage', () => {
   const secondBucketName = 'mySecondBucketName';
   const secondEndpointName = 'http://www.exampleNumber2.com';
 
-  it('verifies that users can open the Published Content Kedro-Viz modal with valid URL after published it succesfully. #TC-XX', () => {
+  it('verifies that users can open the Published Content Kedro-Viz modal with valid URL after published it successfully. #TC-XX', () => {
     cy.__setupAndSubmitShareableUrlForm__(bucketName, endpointName, 'Publish');
 
     // Wait for the POST request to complete
     cy.wait('@publishRequest').then(() => {
-      // Close the modal once it publishes succesfully
+      // Close the modal once it publishes successfully
       cy.get('body').click(0, 0);
 
       // Open the deploy modal again

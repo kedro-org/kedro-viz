@@ -164,7 +164,7 @@ describe('actions', () => {
     expect(toggleHoveredFocusMode(hoveredFocusMode)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether somes nodes are disabled', () => {
+  it('should create an action to toggle whether some nodes are disabled', () => {
     const nodeIDs = ['12367890', '0987654321', 'qwertyuiop'];
     const isDisabled = false;
     const expectedAction = {

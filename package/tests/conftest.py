@@ -185,7 +185,7 @@ def example_pipeline_with_dataset_as_input_to_outer_namespace():
     )
 
     # This is the main pipeline which contains the namespace
-    # main_pipeline and uses the ouput of a nested namespace
+    # main_pipeline and uses the output of a nested namespace
     # final_customer_data (dataset) as an input
     pipeline_with_dataset_as_input_to_outer_namespace = pipeline(
         [
