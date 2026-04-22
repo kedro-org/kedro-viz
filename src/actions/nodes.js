@@ -14,6 +14,19 @@ export function toggleNodeClicked(nodeClicked) {
   };
 }
 
+export const NODE_CONTEXT_MENU = 'NODE_CONTEXT_MENU';
+
+/**
+ * Dispatch when a node is right-clicked (context menu)
+ * @param {String} nodeId The node's unique identifier
+ */
+export function nodeContextMenu(nodeId) {
+  return {
+    type: NODE_CONTEXT_MENU,
+    nodeId,
+  };
+}
+
 export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 
 /**

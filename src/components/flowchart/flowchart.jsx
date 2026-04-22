@@ -13,6 +13,7 @@ import {
   loadNodeData,
   toggleNodeHovered,
   toggleNodeClicked,
+  nodeContextMenu,
 } from '../../actions/nodes';
 import {
   applySlicePipeline,
@@ -508,6 +509,15 @@ export class FlowChart extends Component {
     event.stopPropagation();
   };
 
+  /**
+   * Handle right-click (context menu) on a node
+   * @param {Object} event Event object
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeContextMenu = (event, node) => {
+    this.props.onNodeContextMenu(node.id);
+  };
+
   resetSlicedPipeline = () => {
     this.props.onResetSlicePipeline();
     this.updateSlicedPipelineState(null, null, []);
@@ -913,6 +923,7 @@ export class FlowChart extends Component {
             focusMode={focusMode}
             orientation={orientation}
             onNodeClick={this.handleNodeClick}
+            onNodeContextMenu={this.handleNodeContextMenu}
             onNodeMouseOver={this.handleNodeMouseOver}
             onNodeMouseOut={this.handleNodeMouseOut}
             onNodeFocus={this.handleNodeMouseOver}
@@ -1070,6 +1081,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());
+  },
+  onNodeContextMenu: (nodeId) => {
+    dispatch(nodeContextMenu(nodeId));
   },
   ...ownProps,
 });
