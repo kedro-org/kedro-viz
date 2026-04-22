@@ -162,10 +162,10 @@ export const offsetEdge = (edge, offset) => {
  * Returns the point on the line segment `ax, ay, bx, by` closest to point `x, y`
  * @param {Number} x The test point x
  * @param {Number} y The test point y
- * @param {Number} ax The start of the line segement x point
- * @param {Number} ay The start of the line segement y point
- * @param {Number} bx The end of the line segement x point
- * @param {Number} by The end of the line segement y point
+ * @param {Number} ax The start of the line segment x point
+ * @param {Number} ay The start of the line segment y point
+ * @param {Number} bx The end of the line segment x point
+ * @param {Number} by The end of the line segment y point
  * @returns {Object} An object with the closest point and both line segment points
  */
 export const nearestOnLine = (x, y, ax, ay, bx, by) => {

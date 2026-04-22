@@ -28,7 +28,7 @@ We form our [constraints](https://en.wikipedia.org/wiki/Constraint_(mathematics)
 > - For every edge _A → B_
 >   - Draw path from _A<sub>p</sub>_ to _B<sub>p</sub>_ avoiding all nodes _N_
 
-In practice we've made two key simplifcations:
+In practice we've made two key simplifications:
 
 - We consider node position variables in X and Y axes as [independent](https://en.wikipedia.org/wiki/Dependent_and_independent_variables), such that a node may change position freely in X without affecting its position in Y and vice versa
 - We consider the routing problem independent from the layout problem
