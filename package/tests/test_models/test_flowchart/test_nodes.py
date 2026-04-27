@@ -306,6 +306,7 @@ class TestGraphNodeCreation:
             tags=set(),
             kedro_obj=None,
             modular_pipelines=set(),
+            full_name="my_task",
         )
 
         assert task_node.namespace is None
