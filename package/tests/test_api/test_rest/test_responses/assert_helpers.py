@@ -101,7 +101,7 @@ def assert_example_data(response_data):
             "type": "task",
             "parameters": {"uk.data_processing.train_test_split": 0.1},
             "node_extras": None,
-            "kedro_node_name": "uk.data_processing.process_data",
+            "full_name": "uk.data_processing.process_data",
         },
         {
             "id": "13399a82",
@@ -154,7 +154,7 @@ def assert_example_data(response_data):
                 "num_epochs": 1000,
             },
             "node_extras": None,
-            "kedro_node_name": "uk.data_science.train_model",
+            "full_name": "uk.data_science.train_model",
         },
         {
             "id": "f1f1425b",
@@ -305,7 +305,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk.data_processing"],
             "type": "task",
             "parameters": {"uk.data_processing.train_test_split": 0.1},
-            "kedro_node_name": "uk.data_processing.process_data",
+            "full_name": "uk.data_processing.process_data",
         },
         {
             "id": "13399a82",
@@ -348,7 +348,7 @@ def assert_example_data_from_file(response_data):
                 "train_test_split": 0.1,
                 "num_epochs": 1000,
             },
-            "kedro_node_name": "uk.data_science.train_model",
+            "full_name": "uk.data_science.train_model",
         },
         {
             "id": "f1f1425b",
@@ -488,7 +488,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "parameters": {"uk.data_processing.train_test_split": 0.1},
             "node_extras": None,
-            "kedro_node_name": "process_data",
+            "full_name": "process_data",
         },
         {
             "id": "7c58d8e6",
@@ -532,7 +532,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": None,
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
             "node_extras": None,
-            "kedro_node_name": "train_model",
+            "full_name": "train_model",
         },
         {
             "id": "f1f1425b",

@@ -8,7 +8,7 @@
       "type": "task",
       "modular_pipelines": ["uk.data_processing"],
       "parameters": { "uk.data_processing.train_test_split": 0.1 },
-      "kedro_node_name": "uk.data_processing.process_data"
+      "full_name": "uk.data_processing.process_data"
     },
     {
       "id": "f0ebef01",
@@ -48,7 +48,7 @@
       "type": "task",
       "modular_pipelines": ["uk.data_science"],
       "parameters": { "train_test_split": 0.1, "num_epochs": 1000 },
-      "kedro_node_name": "uk.data_science.train_model"
+      "full_name": "uk.data_science.train_model"
     },
     {
       "id": "f1f1425b",
