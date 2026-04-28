@@ -39,6 +39,9 @@ const createCallbackMiddleware =
         };
         callback(showPipelineFilterAction);
         break;
+      // Forwards node right-click events to the host app for embedding cases
+      // (e.g. Kedro VS Code extension) to show a custom context menu without
+      // DOM scraping.
       case NODE_CONTEXT_MENU:
         if (action.nodeId) {
           const state = store.getState();
