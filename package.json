@@ -113,7 +113,7 @@
     "tar": "^7.5.11",
     "flatted": ">=3.4.2",
     "dompurify": ">=3.3.3",
-    "postcss": ">=8.5.8",
+    "postcss": ">=8.5.13",
     "js-yaml": ">=4.1.1",
     "cosmiconfig": {
       "yaml": ">=2.8.0"
