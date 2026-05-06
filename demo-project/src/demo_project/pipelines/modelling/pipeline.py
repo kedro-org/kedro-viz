@@ -89,7 +89,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
         for model_type in model_types
     ]
 
-    # Combine modeling pipeliens into one pipeline object
+    # Combine modeling pipelines into one pipeline object
     all_modeling_pipelines = sum(model_pipelines)
 
     # Namespace consolidated modeling pipelines
