@@ -187,12 +187,12 @@ def _load_data_helper(
         runtime_params=extra_params,
     )
 
-    with kedro_session as session:
+    with kedro_session:
         # check for --include-hooks option
         if not include_hooks:
-            session._hook_manager = _VizNullPluginManager()  # type: ignore
+            kedro_session._hook_manager = _VizNullPluginManager()  # type: ignore
 
-        context = session.load_context()
+        context = kedro_session.load_context()
 
         # If user wants lite, we patch AbstractDatasetLite no matter what
         if is_lite:
