@@ -4,8 +4,8 @@ import kedro_viz
 
 
 def test_import_kedro_viz_with_no_official_support_emits_warning(mocker):
-    """Test importing kedro Viz with python>=3.14 and controlled warnings should work"""
-    mocker.patch("kedro_viz.sys.version_info", (3, 14))
+    """Test importing kedro Viz with python>=3.15 and controlled warnings should work"""
+    mocker.patch("kedro_viz.sys.version_info", (3, 15))
 
     # We use the parent class to avoid issues with `exec_module`
     with pytest.warns(UserWarning) as record:

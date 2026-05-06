@@ -9,6 +9,7 @@ Please follow the established format:
 # Release 12.3.0
 
 ## Major features and improvements
+ - Add support for Python 3.14. (#TBD)
  - Support for node previews (mermaid, text and image). (#2554)
 
 ## Bug fixes and other changes
