@@ -9,7 +9,7 @@ boto3~=1.42
 chardet<7  # Temporary: chardet 7.0.0 + binaryornot 0.4.4 crashes on Python <3.11
 matplotlib~=3.9
 mypy~=1.19
-moto~=5.1.16
+moto~=5.1.22
 psutil==7.2.2 # same as Kedro for now
 pytest~=9.0
 pytest-asyncio~=1.2
