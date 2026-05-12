@@ -11,7 +11,7 @@ import { resetData } from './index';
  * asynchronously, they also handle loading this pipeline data from different endpoints.
  *
  * Many different cases need to be addressed, including:
- * 1. Loading data synchronously, or asynchonously.
+ * 1. Loading data synchronously, or asynchronously.
  * 2. Loading data and updating the pipeline on first page load, or on user actions.
  * 3. Whether the dataset has pipelines defined in it, or not.
  * 4. Whether localStorage has an active pipeline already defined.
