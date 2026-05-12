@@ -4,12 +4,14 @@ fsspec==2021.4; python_version < '3.12'
 fsspec==2021.06.01; python_version >= '3.12'
 aiofiles==22.1.0
 uvicorn[standard]==0.22.0
-watchfiles==0.24.0
+watchfiles==0.24.0; python_version < '3.14'
+watchfiles==1.1.0; python_version >= '3.14'
 plotly==4.8
 packaging==23.0
 pandas==1.5; python_version >= '3.10' and python_version < '3.12'
 pandas==2.1.1; python_version >= '3.12' and python_version < '3.13'
-pandas==2.2.3; python_version >= '3.13'
+pandas==2.2.3; python_version >= '3.13' and python_version < '3.14'
+pandas==2.3.3; python_version >= '3.14'
 networkx==2.5; python_version < '3.13'
 networkx==2.7; python_version >= '3.13'
 orjson==3.9; python_version < '3.13'
@@ -18,5 +20,6 @@ secure==0.3.0
 # numpy 2.0 breaks with old versions of pandas and this
 # could be removed when the lowest version supported is updated
 numpy==1.26.4; python_version < '3.13'
-numpy==2.1.0; python_version >= '3.13'
+numpy==2.1.0; python_version >= '3.13' and python_version < '3.14'
+numpy==2.3.2; python_version >= '3.14'
 pathspec==0.12.1

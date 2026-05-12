@@ -24,6 +24,7 @@ export function DrawNodes({
   focusMode = null,
   orientation = 'vertical',
   onNodeClick,
+  onNodeContextMenu,
   onNodeMouseOver,
   onNodeMouseOut,
   onNodeFocus,
@@ -101,6 +102,8 @@ export function DrawNodes({
       })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
+      .attr('data-node-type', (node) => node.type)
+      .attr('data-node-fullname', (node) => node.fullName)
       .classed(
         'pipeline-node--parameters',
         (node) => node.type === 'parameters'
@@ -108,6 +111,7 @@ export function DrawNodes({
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
       .on('click', onNodeClick)
+      .on('contextmenu', onNodeContextMenu)
       .on('mouseover', onNodeMouseOver)
       .on('mouseout', onNodeMouseOut)
       .on('focus', onNodeFocus || onNodeMouseOver)
@@ -160,6 +164,7 @@ export function DrawNodes({
   }, [
     nodes,
     onNodeClick,
+    onNodeContextMenu,
     onNodeMouseOver,
     onNodeMouseOut,
     onNodeFocus,

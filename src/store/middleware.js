@@ -1,4 +1,4 @@
-import { TOGGLE_NODE_CLICKED } from '../actions/nodes';
+import { TOGGLE_NODE_CLICKED, NODE_CONTEXT_MENU } from '../actions/nodes';
 import { SHOW_PIPELINE_FILTER } from '../actions';
 
 /**
@@ -39,14 +39,24 @@ const createCallbackMiddleware =
         };
         callback(showPipelineFilterAction);
         break;
-      /** 
-      * Add additional cases here to handle other action types.
-      * Ensure on whatever action you want to trigger, It should be a Redux action. 
-      * And payload should be in Redux state.
-      * Example:
-      * const action = { type: SLICE_PIPELINE, payload: runCommand };
-        callback(action);
-      */
+      // Forwards node right-click events to the host app for embedding cases
+      // (e.g. Kedro VS Code extension) to show a custom context menu without
+      // DOM scraping.
+      case NODE_CONTEXT_MENU:
+        if (action.nodeId) {
+          const state = store.getState();
+          const node = state?.graph?.nodes?.find(
+            (node) => node.id === action.nodeId
+          );
+          if (node) {
+            const contextMenuAction = {
+              type: NODE_CONTEXT_MENU,
+              payload: node,
+            };
+            callback(contextMenuAction);
+          }
+        }
+        break;
       default:
         break;
     }
