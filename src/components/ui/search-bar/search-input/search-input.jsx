@@ -116,11 +116,11 @@ SearchInput.propTypes = {
    */
   onFocus: PropTypes.func,
   /**
-   * Event listener which will be trigerred on change of the input.
+   * Event listener which will be triggered on change of the input.
    */
   onChange: PropTypes.func,
   /**
-   * Placeholder hint text which is displayed inside the input field and dissapers when something is written inside.
+   * Placeholder hint text which is displayed inside the input field and disappears when something is written inside.
    */
   placeholder: PropTypes.string,
   /**

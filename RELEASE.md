@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.4.0
+
+## Major features and improvements
+ - Add support for Python 3.14. (#2637)
+
 # Release 12.3.0
 
 ## Major features and improvements

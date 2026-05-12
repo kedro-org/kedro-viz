@@ -51,6 +51,8 @@ jobs:
         uses: "./.github/actions/install_node_dependencies"
 
       - name: Build React application
+        env:
+          VITE_INJECT_CONSENT_SCRIPT: 'true'
         run: |-
           node -v
           make build

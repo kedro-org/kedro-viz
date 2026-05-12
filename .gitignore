@@ -70,3 +70,12 @@ coverage.xml
 # Python
 .venv/
 mise.toml
+
+# OpenSpec
+/openspec/
+
+# Claude
+.claude/
+
+# Cursor
+.cursor/
