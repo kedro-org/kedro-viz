@@ -3,7 +3,6 @@ import {
   arrayToObject,
   getUrl,
   unique,
-  replaceMatches,
   replaceAngleBracketMatches,
   isValidBoolean,
 } from './index';
@@ -52,19 +51,6 @@ describe('utils', () => {
   describe('unique', () => {
     it('removes duplicates from an array', () => {
       expect([1, 1, 2, 2, 3, 3, 1].filter(unique)).toEqual([1, 2, 3]);
-    });
-  });
-
-  describe('replaceMatches', () => {
-    const entitiesToReplace = {
-      '&lt;': '<',
-      '&gt;': '>',
-    };
-
-    it('replaces matched characters from a string', () => {
-      expect(replaceMatches('&lt;lambda&gt;', entitiesToReplace)).toEqual(
-        '<lambda>'
-      );
     });
   });
 

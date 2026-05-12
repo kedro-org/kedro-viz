@@ -95,6 +95,7 @@ class GraphNode(BaseModel, ABC):
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
             node_extras=node_extras,
+            full_name=node.name,
         )
 
     @classmethod
@@ -255,6 +256,10 @@ class TaskNode(GraphNode):
         default=None,
         validate_default=True,
         description="The original namespace on this node",
+    )
+
+    full_name: str = Field(
+        description="The full internal Kedro node name including namespace and hash suffix",
     )
 
     @model_validator(mode="before")

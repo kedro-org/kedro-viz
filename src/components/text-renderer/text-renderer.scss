@@ -1,0 +1,29 @@
+.pipeline-text-renderer {
+  padding-top: 16px;
+
+  &__content {
+    font-family: var(--font-stack-monospace);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--color-text);
+    background: var(--color-metadata-preview-bg);
+
+    &--code {
+      white-space: pre;
+      overflow-x: auto;
+    }
+  }
+
+  &--preview {
+    max-height: 300px;
+    overflow: auto;
+  }
+
+  &--modal {
+    height: 100%;
+  }
+}

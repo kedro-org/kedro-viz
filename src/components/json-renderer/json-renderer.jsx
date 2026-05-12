@@ -1,13 +1,13 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import './json-object.scss';
+import './json-renderer.scss';
 import ReactJson from 'react-json-view';
 import { darkjsonViewerTheme, lightjsonViewerTheme } from './json-theme';
 
 /**
  * Shows a metadata object
  */
-const JSONObject = ({
+const JsonRenderer = ({
   className,
   value,
   kind,
@@ -35,4 +35,4 @@ const JSONObject = ({
   </div>
 );
 
-export default JSONObject;
+export default JsonRenderer;

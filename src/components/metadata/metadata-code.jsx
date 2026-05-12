@@ -1,15 +1,8 @@
-import React, { useRef, useMemo } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import hljs from 'highlight.js/lib/core';
-import python from 'highlight.js/lib/languages/python';
-import yaml from 'highlight.js/lib/languages/yaml';
-import javascript from 'highlight.js/lib/languages/javascript';
+import SyntaxHighlighter from '../ui/syntax-highlighter';
 import modifiers from '../../utils/modifiers';
 import './styles/metadata-code.scss';
-
-hljs.registerLanguage('python', python);
-hljs.registerLanguage('yaml', yaml);
-hljs.registerLanguage('javascript', javascript);
 
 /**
  * A highlighted code panel
@@ -20,14 +13,6 @@ export const MetaDataCode = ({
   value = '',
   title = '',
 }) => {
-  const codeRef = useRef();
-
-  const highlighted = useMemo(() => {
-    const detected = hljs.highlightAuto(value);
-    const language = detected.language || detected.second_best.language;
-    return language ? hljs.highlight(value, { language }).value : value;
-  }, [value]);
-
   return (
     <div
       className={modifiers(
@@ -36,10 +21,10 @@ export const MetaDataCode = ({
         'kedro'
       )}
     >
-      <h2 className="pipeline-metadata-code__title">{title}</h2>
-      <code className="pipeline-metadata-code__code">
-        <pre ref={codeRef} dangerouslySetInnerHTML={{ __html: highlighted }} />
-      </code>
+      {title && <h2 className="pipeline-metadata-code__title">{title}</h2>}
+      <div className="pipeline-metadata-code__code">
+        <SyntaxHighlighter code={value} />
+      </div>
     </div>
   );
 };

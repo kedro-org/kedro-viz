@@ -2,7 +2,7 @@ from typing import List
 
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import evaluate_model, split_data, train_model
+from .nodes import evaluate_model, get_split_data_graph, split_data, train_model
 
 
 def new_train_eval_template() -> Pipeline:
@@ -73,6 +73,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
                 func=split_data,
                 inputs=["model_input_table", "params:split_options"],
                 outputs=test_train_refs,
+                preview_fn=get_split_data_graph,
             )
         ]
     )
@@ -88,7 +89,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
         for model_type in model_types
     ]
 
-    # Combine modeling pipeliens into one pipeline object
+    # Combine modeling pipelines into one pipeline object
     all_modeling_pipelines = sum(model_pipelines)
 
     # Namespace consolidated modeling pipelines

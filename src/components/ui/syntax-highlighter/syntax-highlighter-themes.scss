@@ -1,12 +1,12 @@
 @use 'sass:meta';
 
-.kui-theme--light .pipeline-metadata-code__code {
+.kui-theme--light .syntax-highlighter {
   @include meta.load-css(
     '../../../../node_modules/highlight.js/styles/a11y-light'
   );
 }
 
-.kui-theme--dark .pipeline-metadata-code__code {
+.kui-theme--dark .syntax-highlighter {
   @include meta.load-css(
     '../../../../node_modules/highlight.js/styles/a11y-dark'
   );

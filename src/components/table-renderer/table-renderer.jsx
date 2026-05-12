@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import className from 'classnames';
 
-import './preview-table.scss';
+import './table-renderer.scss';
 
-const PreviewTable = ({ data, size = 'small', onClick }) => {
+const TableRenderer = ({ data, size = 'small', onClick }) => {
   const [hoveredHeaderIndex, setHoveredHeaderIndex] = useState(null);
 
   return (
@@ -48,4 +48,4 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
   );
 };
 
-export default PreviewTable;
+export default TableRenderer;

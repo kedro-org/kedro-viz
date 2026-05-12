@@ -54,14 +54,17 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
 
     Attributes:
         parameters (Dict): A dictionary containing the parameters for the task node.
+        full_name (str): The full internal Kedro node name including namespace and hash suffix.
     """
 
     parameters: Dict
+    full_name: str
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "id": "6ab908b8",
                 "name": "split_data_node",
+                "full_name": "data_science.split_data_node",
                 "tags": [],
                 "pipelines": ["__default__", "ds"],
                 "modular_pipelines": [],

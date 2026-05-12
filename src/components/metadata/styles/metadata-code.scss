@@ -1,6 +1,5 @@
 @use '../../../styles/extends';
 @use '../../../styles/variables' as variables;
-@use './metadata-code-themes.scss';
 
 .kui-theme--light {
   --color-metadata-code-bg: #{variables.$grey-0};
@@ -76,8 +75,6 @@
 .pipeline-metadata-code__code {
   display: block;
   flex-grow: 1;
-  font-size: 1.25em;
-  line-height: 1.8;
   opacity: 1;
   overflow: auto;
   transition: opacity 0.4s ease 0.4s;
@@ -85,14 +82,6 @@
   .pipeline-metadata-code--no-visible & {
     opacity: 0;
     transition: opacity 0.3s ease;
-  }
-
-  * {
-    font-family: variables.$font-monospace;
-  }
-
-  .hljs-keyword {
-    color: var(--color-metadata-code-text);
   }
 }
 

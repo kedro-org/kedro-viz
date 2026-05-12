@@ -4,9 +4,35 @@ import random
 from typing import Any, Dict, Tuple
 
 import pandas as pd
+from kedro.pipeline.preview_contract import MermaidPreview
 from sklearn.base import BaseEstimator
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
+
+
+def get_split_data_graph() -> MermaidPreview:
+    return MermaidPreview(
+        content="""graph TD
+    A[Input Dataset] --> B{Split Data}
+    B -->|Features| C[X: Independent Variables]
+    B -->|Target| D[y: Target Variable]
+    C --> E[train_test_split]
+    D --> E
+    E -->|Training Set| F[X_train]
+    E -->|Training Set| G[y_train]
+    E -->|Test Set| H[X_test]
+    E -->|Test Set| I[y_test]
+
+    classDef inputNode fill:#4A90E2,stroke:#2E5C8A,color:#FFFFFF
+    classDef trainNode fill:#50C878,stroke:#2D7A4A,color:#FFFFFF
+    classDef testNode fill:#F5A623,stroke:#C17D11,color:#FFFFFF
+    classDef processNode fill:#9B59B6,stroke:#6C3A84,color:#FFFFFF
+
+    class A inputNode
+    class F,G trainNode
+    class H,I testNode
+    class E processNode"""
+    )
 
 
 def split_data(data: pd.DataFrame, split_options: Dict) -> Tuple:

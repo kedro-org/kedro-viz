@@ -240,7 +240,7 @@ class Pipeline {
 
   /**
    * Create a list of the pipelines that the node will be included in
-   * @returns {Array} Node piplines
+   * @returns {Array} Node pipelines
    */
   getNodePipelines() {
     return this.pipelines.reduce((pipelines, id, i) => {
@@ -308,7 +308,7 @@ class Pipeline {
       const sourceRankIndex = this.utils.randomIndex(ranks.length - 1);
       const source = getRandomNodeAtRank(sourceRankIndex);
 
-      // Choose a random target node after the source rank prefering nearby
+      // Choose a random target node after the source rank preferring nearby
       const remainingRankCount = ranks.length - 1 - sourceRankIndex;
       const biasedRandom = Math.round(0.5 / this.utils.random());
       const targetRankIndex =

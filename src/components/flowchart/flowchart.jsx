@@ -8,10 +8,12 @@ import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
 } from '../../actions/modular-pipelines';
+import { changed } from '../../utils';
 import {
   loadNodeData,
   toggleNodeHovered,
   toggleNodeClicked,
+  nodeContextMenu,
 } from '../../actions/nodes';
 import {
   applySlicePipeline,
@@ -180,14 +182,14 @@ export class FlowChart extends Component {
    */
   update(prevProps = {}) {
     const { chartZoom } = this.props;
-    const changed = (...names) => this.changed(names, prevProps, this.props);
+    const hasChanged = (...names) => changed(names, prevProps, this.props);
     const preventZoom = this.props.visibleMetaSidebar;
 
-    if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
+    if (hasChanged('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
       this.updateChartSize();
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
+    if (hasChanged('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
       const metaSidebarViewChanged =
         prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
@@ -213,18 +215,6 @@ export class FlowChart extends Component {
     } else {
       this.onChartZoomChanged(chartZoom);
     }
-  }
-
-  /**
-   * Returns true if any of the given props are different between given objects.
-   * Only shallow changes are detected.
-   */
-  changed(props, objectA, objectB) {
-    return (
-      objectA &&
-      objectB &&
-      props.some((prop) => objectA[prop] !== objectB[prop])
-    );
   }
 
   /**
@@ -517,6 +507,15 @@ export class FlowChart extends Component {
     }
 
     event.stopPropagation();
+  };
+
+  /**
+   * Handle right-click (context menu) on a node
+   * @param {Object} event Event object
+   * @param {Object} node Datum for a single node
+   */
+  handleNodeContextMenu = (event, node) => {
+    this.props.onNodeContextMenu(node.id);
   };
 
   resetSlicedPipeline = () => {
@@ -924,6 +923,7 @@ export class FlowChart extends Component {
             focusMode={focusMode}
             orientation={orientation}
             onNodeClick={this.handleNodeClick}
+            onNodeContextMenu={this.handleNodeContextMenu}
             onNodeMouseOver={this.handleNodeMouseOver}
             onNodeMouseOut={this.handleNodeMouseOut}
             onNodeFocus={this.handleNodeMouseOver}
@@ -1081,6 +1081,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());
+  },
+  onNodeContextMenu: (nodeId) => {
+    dispatch(nodeContextMenu(nodeId));
   },
   ...ownProps,
 });
