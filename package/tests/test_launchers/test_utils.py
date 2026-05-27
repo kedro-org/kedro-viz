@@ -121,8 +121,7 @@ def test_find_available_port_all_ports_occupied(mocker):
 
 
 def test_display_cli_message_removes_unsupported_characters(mocker):
-    stdout = Mock(encoding="cp1252")
-    mocker.patch("click.get_text_stream", return_value=stdout)
+    mocker.patch("sys.stdout", Mock(encoding="cp1252"))
     mock_echo = mocker.patch("click.echo")
 
     display_cli_message("\u2728 Kedro Viz is running", "green")
