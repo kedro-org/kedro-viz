@@ -12,7 +12,7 @@ Please follow the established format:
  - Add support for Python 3.14. (#2637)
  - Expose full internal Kedro node name as `kedro_node_name` (#2621)
  - Add NodeContextMenu support for VSCode (#2609)
- - Add CMP script to Kedro-Viz docs (#2643)
+ - Add Consent Management Platform (CMP) script to Kedro-Viz docs (#2643)
 
 ## Community contributions
 
