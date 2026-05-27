@@ -64,7 +64,7 @@
       "node-forge": ">=1.4.0"
     },
     "ajv": ">=8.18.0",
-    "brace-expansion": ">=5.0.5",
+    "brace-expansion": ">=5.0.6",
     "js-yaml": ">=4.1.1",
     "picomatch": ">=4.0.2",
     "postcss": ">=8.5.8",
