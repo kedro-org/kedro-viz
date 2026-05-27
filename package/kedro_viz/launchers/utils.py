@@ -155,6 +155,10 @@ def _find_kedro_project(current_dir: Path) -> Any:
 
 def display_cli_message(msg, msg_color=None):
     """Displays message for Kedro Viz build and deploy commands"""
+    # Sanitize against the underlying stdout encoding.
+    encoding = getattr(sys.stdout, "encoding", None)
+    if encoding:
+        msg = msg.encode(encoding, errors="ignore").decode(encoding)
     click.echo(
         click.style(
             msg,
