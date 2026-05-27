@@ -11,6 +11,7 @@ from kedro_viz.launchers.utils import (
     _find_kedro_project,
     _is_project,
     _start_browser,
+    display_cli_message,
 )
 
 
@@ -117,3 +118,13 @@ def test_find_available_port_all_ports_occupied(mocker):
     mock_display_message.assert_any_call(
         "Please specify a different port using the '--port' option.", "red"
     )
+
+
+def test_display_cli_message_removes_unsupported_characters(mocker):
+    stdout = Mock(encoding="cp1252")
+    mocker.patch("click.get_text_stream", return_value=stdout)
+    mock_echo = mocker.patch("click.echo")
+
+    display_cli_message("\u2728 Kedro Viz is running", "green")
+
+    mock_echo.assert_called_once_with("\x1b[32m Kedro Viz is running\x1b[0m")
