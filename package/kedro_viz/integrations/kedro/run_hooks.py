@@ -8,8 +8,8 @@ from typing import Any, Dict, Optional
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
+from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.hooks_utils import (
-    _hash_input_output,
     compute_size,
     generate_timestamp,
     hash_node,
@@ -41,7 +41,7 @@ def create_dataset_event(
     event: Dict[str, Any] = {
         "event": event_name,
         "dataset": dataset_name,
-        "node_id": _hash_input_output(dataset_name),
+        "node_id": node_ids.dataset_node_id(dataset_name),
         "status": "Available",
     }
 

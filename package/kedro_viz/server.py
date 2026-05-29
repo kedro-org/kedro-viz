@@ -1,18 +1,25 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
+from kedro_viz.api.data_provider import (
+    is_inspection_adapter_enabled,
+    set_inspection_adapter_provider,
+)
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
+
+logger = logging.getLogger(__name__)
 
 DEV_PORT = 4142
 
@@ -45,7 +52,22 @@ def load_and_populate_data(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ):
-    """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
+    """Loads underlying Kedro project data and populates Kedro Viz Repositories.
+
+    6.6: when the experimental adapter flag is ON **and** ``--lite`` is set, the live load is
+    skipped entirely — only the inspection snapshot is read, ``data_access_manager`` stays empty,
+    and the adapter provider answers from the snapshot alone. In every other combination, the
+    live data is loaded as before so existing behaviour is preserved.
+    """
+    if is_inspection_adapter_enabled() and is_lite and not extra_params:
+        logger.info(
+            "Inspection adapter + --lite: skipping the live project load; "
+            "graph and node metadata will be served from the snapshot only."
+        )
+        _configure_inspection_adapter_provider(
+            path, env, pipeline_name, extra_params=None
+        )
+        return
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
@@ -60,6 +82,50 @@ def load_and_populate_data(
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+
+    # Phase 6.2b: when the experimental adapter flag is set, also build a snapshot-backed provider
+    # so graph routes (/api/main, /api/pipelines/{id}) can serve from the inspection adapter. Any
+    # failure to build it falls back to the live path with a clear log line, matching D14's intent.
+    _configure_inspection_adapter_provider(path, env, pipeline_name, extra_params)
+
+
+def _configure_inspection_adapter_provider(
+    path: Path,
+    env: Optional[str],
+    pipeline_name: Optional[str],
+    extra_params: Optional[Dict[str, Any]],
+) -> None:
+    """Install the inspection-adapter provider for this process (Phase 6.2b + 6.6)."""
+    if not is_inspection_adapter_enabled():
+        set_inspection_adapter_provider(None)
+        return
+
+    # D14: the inspection snapshot API has no runtime-params path, so a project whose catalog or
+    # parameters depend on `extra_params` would silently diverge — fall back to live transparently.
+    if extra_params:
+        logger.info(
+            "Inspection adapter disabled for this run: --params is non-empty; "
+            "falling back to the live graph path (D14)."
+        )
+        set_inspection_adapter_provider(None)
+        return
+
+    try:
+        from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
+
+        provider = InspectionAdapterProvider(path, env=env, pipeline_name=pipeline_name)
+    except Exception:
+        logger.exception(
+            "Failed to build the inspection adapter; falling back to the live graph path."
+        )
+        set_inspection_adapter_provider(None)
+        return
+
+    set_inspection_adapter_provider(provider)
+    logger.info(
+        "Inspection adapter enabled (experimental): /api/main and /api/pipelines/{id} "
+        "are served from the snapshot."
+    )
 
 
 def run_server(

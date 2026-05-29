@@ -10,8 +10,8 @@ import fsspec
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash, _hash_input_output
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +20,14 @@ EVENTS_FILE = "kedro_pipeline_events.json"
 
 
 def hash_node(node: Any) -> str:
-    """Stable ID for KedroNode or I/O reference."""
-    return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
+    """Stable Viz ID for a Kedro node or dataset reference.
+
+    Routes through the shared :mod:`kedro_viz.integrations.kedro.node_ids` scheme (D9 + Phase 6.3)
+    so the run-status events emitted here use exactly the same IDs as the inspection-adapter graph.
+    """
+    if isinstance(node, KedroNode):
+        return node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))
+    return node_ids.dataset_node_id(node)
 
 
 def extract_file_paths(dataset: Any) -> List[str]:

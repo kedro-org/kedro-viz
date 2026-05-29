@@ -5,20 +5,15 @@ import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from kedro_viz.api.data_provider import get_runtime_data_provider
 from kedro_viz.api.rest.requests import DeployerConfiguration
 from kedro_viz.api.rest.responses.base import APINotFoundResponse
 from kedro_viz.api.rest.responses.metadata import (
     MetadataAPIResponse,
     get_metadata_response,
 )
-from kedro_viz.api.rest.responses.nodes import (
-    NodeMetadataAPIResponse,
-    get_node_metadata_response,
-)
-from kedro_viz.api.rest.responses.pipelines import (
-    GraphAPIResponse,
-    get_pipeline_response,
-)
+from kedro_viz.api.rest.responses.nodes import NodeMetadataAPIResponse
+from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
     get_run_status_response,
@@ -38,7 +33,7 @@ router = APIRouter(
 
 @router.get("/main", response_model=GraphAPIResponse)
 async def main():
-    return get_pipeline_response()
+    return get_runtime_data_provider().get_pipeline_response()
 
 
 @router.get(
@@ -47,7 +42,7 @@ async def main():
     response_model_exclude_none=True,
 )
 async def get_single_node_metadata(node_id: str):
-    return get_node_metadata_response(node_id)
+    return get_runtime_data_provider().get_node_metadata_response(node_id)
 
 
 @router.get(
@@ -55,7 +50,7 @@ async def get_single_node_metadata(node_id: str):
     response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(registered_pipeline_id: str):
-    return get_pipeline_response(registered_pipeline_id)
+    return get_runtime_data_provider().get_pipeline_response(registered_pipeline_id)
 
 
 @router.get(

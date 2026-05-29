@@ -1,0 +1,435 @@
+{
+  "all_graph_ids_match_runstatus": true,
+  "counts_by_kind": {
+    "auto": 16,
+    "explicit_diff_func": 2,
+    "explicit_eq_func": 3
+  },
+  "nodes": [
+    {
+      "explicit_name": null,
+      "func_name": "create_derived_features",
+      "graph_id": "04ba733a",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_spine_table",
+        "prm_shuttle_company_reviews",
+        "params:feature_engineering.feature.derived"
+      ],
+      "kind": "auto",
+      "namespace": "feature_engineering",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "feature_engineering.feat_derived_features"
+      ],
+      "runstatus_hook_id": "04ba733a",
+      "snapshot_name": "feature_engineering.create_derived_features__f9089920",
+      "str_node": "create_derived_features([prm_spine_table;prm_shuttle_company_reviews;params:feature_engineering.feature.derived]) -> [feature_engineering.feat_derived_features]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "create_feature_importance",
+      "graph_id": "7932e672",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_spine_table"
+      ],
+      "kind": "auto",
+      "namespace": "feature_engineering",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "feature_importance_output"
+      ],
+      "runstatus_hook_id": "7932e672",
+      "snapshot_name": "feature_engineering.create_feature_importance__173f2884",
+      "str_node": "create_feature_importance([prm_spine_table]) -> [feature_importance_output]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "create_static_features",
+      "graph_id": "e50f81b8",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews",
+        "params:feature_engineering.feature.static"
+      ],
+      "kind": "auto",
+      "namespace": "feature_engineering",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "feature_engineering.feat_static_features"
+      ],
+      "runstatus_hook_id": "e50f81b8",
+      "snapshot_name": "feature_engineering.create_static_features__dd7d7ef1",
+      "str_node": "create_static_features([prm_shuttle_company_reviews;params:feature_engineering.feature.static]) -> [feature_engineering.feat_static_features]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "joiner",
+      "graph_id": "6ea2ec2c",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_spine_table",
+        "feature_engineering.feat_static_features",
+        "feature_engineering.feat_derived_features"
+      ],
+      "kind": "auto",
+      "namespace": "feature_engineering",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "model_input_table"
+      ],
+      "runstatus_hook_id": "6ea2ec2c",
+      "snapshot_name": "feature_engineering.joiner__4cc9d815",
+      "str_node": "joiner([prm_spine_table;feature_engineering.feat_static_features;feature_engineering.feat_derived_features]) -> [model_input_table]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "<lambda>",
+      "graph_id": "9a6ef457",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_spine_table"
+      ],
+      "kind": "auto",
+      "namespace": "ingestion",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "ingestion.prm_spine_table_clone"
+      ],
+      "runstatus_hook_id": "9a6ef457",
+      "snapshot_name": "ingestion.<lambda>__2de1c226",
+      "str_node": "<lambda>([prm_spine_table]) -> [ingestion.prm_spine_table_clone]"
+    },
+    {
+      "explicit_name": "apply_types_to_companies",
+      "func_name": "apply_types_to_companies",
+      "graph_id": "69c523b6",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "companies"
+      ],
+      "kind": "explicit_eq_func",
+      "namespace": "ingestion",
+      "note": "reconstructable BY CONVENTION only (name == func), not a contract",
+      "outputs": [
+        "ingestion.int_typed_companies"
+      ],
+      "runstatus_hook_id": "69c523b6",
+      "snapshot_name": "ingestion.apply_types_to_companies",
+      "str_node": "apply_types_to_companies: apply_types_to_companies([companies]) -> [ingestion.int_typed_companies]"
+    },
+    {
+      "explicit_name": "apply_types_to_reviews",
+      "func_name": "apply_types_to_reviews",
+      "graph_id": "ea604da4",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "reviews",
+        "params:ingestion.typing.reviews.columns_as_floats"
+      ],
+      "kind": "explicit_eq_func",
+      "namespace": "ingestion",
+      "note": "reconstructable BY CONVENTION only (name == func), not a contract",
+      "outputs": [
+        "ingestion.int_typed_reviews"
+      ],
+      "runstatus_hook_id": "ea604da4",
+      "snapshot_name": "ingestion.apply_types_to_reviews",
+      "str_node": "apply_types_to_reviews: apply_types_to_reviews([reviews;params:ingestion.typing.reviews.columns_as_floats]) -> [ingestion.int_typed_reviews]"
+    },
+    {
+      "explicit_name": "apply_types_to_shuttles",
+      "func_name": "apply_types_to_shuttles",
+      "graph_id": "f33b9291",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "shuttles"
+      ],
+      "kind": "explicit_eq_func",
+      "namespace": "ingestion",
+      "note": "reconstructable BY CONVENTION only (name == func), not a contract",
+      "outputs": [
+        "ingestion.int_typed_shuttles@pandas1"
+      ],
+      "runstatus_hook_id": "f33b9291",
+      "snapshot_name": "ingestion.apply_types_to_shuttles",
+      "str_node": "apply_types_to_shuttles: apply_types_to_shuttles([shuttles]) -> [ingestion.int_typed_shuttles@pandas1]"
+    },
+    {
+      "explicit_name": "combine_step",
+      "func_name": "combine_shuttle_level_information",
+      "graph_id": "cb5166f3",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": false,
+      "inputs": [
+        "ingestion.int_typed_shuttles@pandas2",
+        "ingestion.prm_agg_companies",
+        "ingestion.int_typed_reviews"
+      ],
+      "kind": "explicit_diff_func",
+      "namespace": "ingestion",
+      "note": "func name absent from snapshot -> ID NOT reconstructable",
+      "outputs": [
+        "prm_shuttle_company_reviews",
+        "prm_spine_table"
+      ],
+      "runstatus_hook_id": "cb5166f3",
+      "snapshot_name": "ingestion.combine_step",
+      "str_node": "combine_step: combine_shuttle_level_information([ingestion.int_typed_shuttles@pandas2;ingestion.prm_agg_companies;ingestion.int_typed_reviews]) -> [prm_shuttle_company_reviews;prm_spine_table]"
+    },
+    {
+      "explicit_name": "company_agg",
+      "func_name": "aggregate_company_data",
+      "graph_id": "8de402c1",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": false,
+      "inputs": [
+        "ingestion.int_typed_companies"
+      ],
+      "kind": "explicit_diff_func",
+      "namespace": "ingestion",
+      "note": "func name absent from snapshot -> ID NOT reconstructable",
+      "outputs": [
+        "ingestion.prm_agg_companies"
+      ],
+      "runstatus_hook_id": "8de402c1",
+      "snapshot_name": "ingestion.company_agg",
+      "str_node": "company_agg: aggregate_company_data([ingestion.int_typed_companies]) -> [ingestion.prm_agg_companies]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "create_feature_importance_plot",
+      "graph_id": "4adb5c8b",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "feature_importance_output"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.feature_importance"
+      ],
+      "runstatus_hook_id": "4adb5c8b",
+      "snapshot_name": "reporting.create_feature_importance_plot__e7a53e99",
+      "str_node": "create_feature_importance_plot([feature_importance_output]) -> [reporting.feature_importance]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "create_matplotlib_chart",
+      "graph_id": "be6b7919",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.confusion_matrix"
+      ],
+      "runstatus_hook_id": "be6b7919",
+      "snapshot_name": "reporting.create_matplotlib_chart__15c38707",
+      "str_node": "create_matplotlib_chart([prm_shuttle_company_reviews]) -> [reporting.confusion_matrix]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "get_top_shuttles_data",
+      "graph_id": "44ef9b48",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.top_shuttle_data"
+      ],
+      "runstatus_hook_id": "44ef9b48",
+      "snapshot_name": "reporting.get_top_shuttles_data__3cb3499e",
+      "str_node": "get_top_shuttles_data([prm_shuttle_company_reviews]) -> [reporting.top_shuttle_data]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "make_cancel_policy_bar_chart",
+      "graph_id": "c7646ea1",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.cancellation_policy_breakdown"
+      ],
+      "runstatus_hook_id": "c7646ea1",
+      "snapshot_name": "reporting.make_cancel_policy_bar_chart__7c6d9304",
+      "str_node": "make_cancel_policy_bar_chart([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_breakdown]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "make_price_analysis_image",
+      "graph_id": "3fb71518",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.cancellation_policy_grid"
+      ],
+      "runstatus_hook_id": "3fb71518",
+      "snapshot_name": "reporting.make_price_analysis_image__4f97d161",
+      "str_node": "make_price_analysis_image([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_grid]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "make_price_histogram",
+      "graph_id": "40886786",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "prm_shuttle_company_reviews"
+      ],
+      "kind": "auto",
+      "namespace": "reporting",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "reporting.price_histogram"
+      ],
+      "runstatus_hook_id": "40886786",
+      "snapshot_name": "reporting.make_price_histogram__e0da8d32",
+      "str_node": "make_price_histogram([prm_shuttle_company_reviews]) -> [reporting.price_histogram]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "split_data",
+      "graph_id": "2816ba38",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "model_input_table",
+        "params:split_options"
+      ],
+      "kind": "auto",
+      "namespace": null,
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "X_train",
+        "X_test",
+        "y_train",
+        "y_test"
+      ],
+      "runstatus_hook_id": "2816ba38",
+      "snapshot_name": "split_data__3c1a939c",
+      "str_node": "split_data([model_input_table;params:split_options]) -> [X_train;X_test;y_train;y_test]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "evaluate_model",
+      "graph_id": "d2885635",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "train_evaluation.linear_regression.regressor",
+        "X_test",
+        "y_test"
+      ],
+      "kind": "auto",
+      "namespace": "train_evaluation.linear_regression",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "train_evaluation.linear_regression.r2_score"
+      ],
+      "runstatus_hook_id": "d2885635",
+      "snapshot_name": "train_evaluation.linear_regression.evaluate_model__1c49c35c",
+      "str_node": "evaluate_model([train_evaluation.linear_regression.regressor;X_test;y_test]) -> [train_evaluation.linear_regression.r2_score]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "train_model",
+      "graph_id": "af9a43c8",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "X_train",
+        "y_train",
+        "params:train_evaluation.model_options.linear_regression"
+      ],
+      "kind": "auto",
+      "namespace": "train_evaluation.linear_regression",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "train_evaluation.linear_regression.regressor",
+        "train_evaluation.linear_regression.experiment_params"
+      ],
+      "runstatus_hook_id": "af9a43c8",
+      "snapshot_name": "train_evaluation.linear_regression.train_model__199807b9",
+      "str_node": "train_model([X_train;y_train;params:train_evaluation.model_options.linear_regression]) -> [train_evaluation.linear_regression.regressor;train_evaluation.linear_regression.experiment_params]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "evaluate_model",
+      "graph_id": "bf8530bc",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "train_evaluation.random_forest.regressor",
+        "X_test",
+        "y_test"
+      ],
+      "kind": "auto",
+      "namespace": "train_evaluation.random_forest",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "train_evaluation.random_forest.r2_score"
+      ],
+      "runstatus_hook_id": "bf8530bc",
+      "snapshot_name": "train_evaluation.random_forest.evaluate_model__cefff325",
+      "str_node": "evaluate_model([train_evaluation.random_forest.regressor;X_test;y_test]) -> [train_evaluation.random_forest.r2_score]"
+    },
+    {
+      "explicit_name": null,
+      "func_name": "train_model",
+      "graph_id": "038647c7",
+      "graph_id_matches_runstatus": true,
+      "id_reconstructable_from_snapshot": true,
+      "inputs": [
+        "X_train",
+        "y_train",
+        "params:train_evaluation.model_options.random_forest"
+      ],
+      "kind": "auto",
+      "namespace": "train_evaluation.random_forest",
+      "note": "func name embedded in snapshot name",
+      "outputs": [
+        "train_evaluation.random_forest.regressor",
+        "train_evaluation.random_forest.experiment_params"
+      ],
+      "runstatus_hook_id": "038647c7",
+      "snapshot_name": "train_evaluation.random_forest.train_model__86546ff0",
+      "str_node": "train_model([X_train;y_train;params:train_evaluation.model_options.random_forest]) -> [train_evaluation.random_forest.regressor;train_evaluation.random_forest.experiment_params]"
+    }
+  ],
+  "not_reconstructable": 2,
+  "reconstructable": 19,
+  "total_task_nodes": 21
+}
