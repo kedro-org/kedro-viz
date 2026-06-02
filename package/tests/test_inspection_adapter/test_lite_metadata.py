@@ -24,7 +24,6 @@ from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
 from kedro_viz.api.data_provider import (
-    INSPECTION_ADAPTER_ENV_VAR,
     set_inspection_adapter_provider,
 )
 from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
@@ -137,7 +136,6 @@ def test_lite_metadata_response_carries_no_live_only_fields(
 def lite_client(
     lite_provider: InspectionAdapterProvider, monkeypatch: pytest.MonkeyPatch
 ) -> Iterator[TestClient]:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
     set_inspection_adapter_provider(lite_provider)
     app = FastAPI()
     app.include_router(rest_router)

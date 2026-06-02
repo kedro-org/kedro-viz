@@ -1,7 +1,7 @@
-"""End-to-end route tests under the experimental adapter flag (Phase 6.2b).
+"""End-to-end route tests for the inspection adapter.
 
 Builds a minimal FastAPI app around ``rest_router``, installs an :class:`InspectionAdapterProvider`
-built from the demo project, sets ``KEDRO_VIZ_INSPECTION_ADAPTER=1``, and asserts that the graph
+built from the demo project via ``set_inspection_adapter_provider``, and asserts that the graph
 routes (``/api/main`` and ``/api/pipelines/{id}``) come out of the adapter — structurally matching
 the captured baseline, honouring ``--pipeline``, and preserving the 404 branch.
 
@@ -19,7 +19,6 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from kedro_viz.api.data_provider import (
-    INSPECTION_ADAPTER_ENV_VAR,
     set_inspection_adapter_provider,
 )
 from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
@@ -60,7 +59,6 @@ def adapter_provider_scoped(_restore_kedro_project_state) -> InspectionAdapterPr
 def _build_client_with(
     provider: InspectionAdapterProvider, monkeypatch: pytest.MonkeyPatch
 ) -> TestClient:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
     set_inspection_adapter_provider(provider)
     app = FastAPI()
     app.include_router(rest_router)

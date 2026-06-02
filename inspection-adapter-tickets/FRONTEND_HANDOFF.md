@@ -21,7 +21,7 @@ Both modes serve the same response shapes — fields just go missing in lite. Th
 - `/api/nodes/{id}` — rich in full mode (byte-identical to today's response); sparse in lite mode (see shapes below).
 - `/api/run-status` — uses the same new-scheme IDs (after the user re-runs `kedro run`).
 - Static export (`kedro viz build` / `--save-file`) — carries new-scheme IDs end-to-end.
-- Flag flipped to ON by default. `KEDRO_VIZ_INSPECTION_ADAPTER=0 kedro viz run` opts back into the legacy graph path as a temporary safety net.
+- The adapter is installed at server startup whenever it can be built. The legacy `data_access_manager`-backed path stays in place as an automatic fallback for the cases the adapter can't cover (`--params`, Kedro too old, snapshot build failure). No user-facing opt-out switch.
 
 ## What's owed from the frontend
 
@@ -143,18 +143,15 @@ npm install
 npm run build
 ```
 
-### Run the three scenarios
+### Run the two scenarios
 
 ```bash
 cd demo-project
 
-# Today's behaviour (legacy path, for comparison)
-KEDRO_VIZ_INSPECTION_ADAPTER=0 kedro viz run
-
-# New default (adapter, full mode — rich detail panel)
+# Full mode (adapter on top of live load — rich detail panel)
 kedro viz run
 
-# Lite mode (adapter, no project load — sparse detail panel)
+# Lite mode (adapter only, no live project load — sparse detail panel)
 kedro viz run --lite
 ```
 

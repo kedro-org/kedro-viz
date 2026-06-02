@@ -20,7 +20,6 @@ from kedro.framework.startup import bootstrap_project
 from kedro.pipeline import node as kedro_node
 
 from kedro_viz.api.data_provider import (
-    INSPECTION_ADAPTER_ENV_VAR,
     set_inspection_adapter_provider,
 )
 from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
@@ -83,7 +82,6 @@ def adapter_provider(_restore_kedro_project_state) -> InspectionAdapterProvider:
 def adapter_client(
     adapter_provider: InspectionAdapterProvider, monkeypatch: pytest.MonkeyPatch
 ) -> Iterator[TestClient]:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
     set_inspection_adapter_provider(adapter_provider)
     app = FastAPI()
     app.include_router(rest_router)

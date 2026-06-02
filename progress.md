@@ -31,7 +31,7 @@ and next steps. Keep the Status Dashboard and Decision Log in sync.
 | Phase 3 | Modular-pipeline refactor | ✅ Complete (3a membership, 3b tree + modularPipeline nodes, 3c modular edges + cycle removal) — all parity-validated |
 | Phase 4 | Layers | ✅ Complete (config-based layer extractor + per-node `layer` + sorted `layers` list) — parity-validated |
 | Phase 5 | Node metadata split | ✅ Decided (D10): keep `/api/nodes` on the live path; snapshot-backed metadata deferred to Phase 6 (built with its lite-mode consumer) |
-| Phase 6 | Switch runtime path (GATED) | ✅ **Backend complete** — 6.1 through 6.7 done (flag flipped to ON by default; `KEDRO_VIZ_INSPECTION_ADAPTER=0` opts back to legacy). Frontend jest-snapshot regeneration + lite-mode degradation UX remain as cross-team follow-ups |
+| Phase 6 | Switch runtime path (GATED) | ✅ **Backend complete** — 6.1 through 6.7 done; opt-out env var removed post-review (D17). Frontend jest-snapshot regeneration + lite-mode degradation UX remain as cross-team follow-ups |
 | Phase 7 | Remove old code (GATED) | ⬜ Not started |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Complete · ⛔ Blocked
@@ -56,7 +56,8 @@ full parity on real projects + raised kedro floor.
 | D9 | 2026-05-25 | **Node IDs generated Viz-side from identity fields (name + inputs/outputs, excluding tags); shipped as a breaking release** | Agreed with Kedro + Viz teams: node ID is a Viz concern, so no Kedro API change. New scheme works for all nodes (incl. `name!=func`), drops the func-name dependency. Resolves the Phase -1 node-id gate. Parity becomes **structural** (IDs deliberately new); run-status hook switches to the same scheme in lockstep at Phase 6 |
 | D10 | 2026-05-25 | **Node metadata (`/api/nodes/{id}`) stays on the live path; defer snapshot-backed metadata to Phase 6** | The endpoint is mostly live-only (code, previews, parameter values, stats); the snapshot backs only a small subset (task io, dataset type/filepath, run_command) and has no consumer until a lite/snapshot-only mode exists. YAGNI: build the thin snapshot metadata together with that consumer in Phase 6, so the full-vs-lite contract is decided once |
 | D15 | 2026-05-26 | **Experimental flag mechanism = env var `KEDRO_VIZ_INSPECTION_ADAPTER`** (truthy: `1`/`true`/`yes`/`on`) | Internal-only per D12; an env var keeps the flag off the user-facing CLI surface until 6.7 promotes it, and is trivial to flip in tests (`monkeypatch.setenv`). Promotable to a real CLI option later without breaking callers. The adapter provider is built once at startup (load-once) and reused per request |
-| D16 | 2026-05-28 | **Flip the default: `KEDRO_VIZ_INSPECTION_ADAPTER` unset → adapter ON. `=0` opts back to the legacy graph path** (temporary safety net until Phase 7 removes the legacy code entirely) | Realises D12's intent: the experimental flag becomes the new default once parity is proven. Inverting the existing env var (rather than introducing a new opt-in name) means users who set it experimentally don't have to change anything; users who want today's behaviour get one clear knob (`=0`). The opt-out lives in `RELEASE.md` so it's discoverable, and disappears with the legacy path in Phase 7 |
+| D16 | 2026-05-28 | **Flip the default: `KEDRO_VIZ_INSPECTION_ADAPTER` unset → adapter ON. `=0` opts back to the legacy graph path** (temporary safety net until Phase 7 removes the legacy code entirely) | Realises D12's intent: the experimental flag becomes the new default once parity is proven. Inverting the existing env var (rather than introducing a new opt-in name) means users who set it experimentally don't have to change anything; users who want today's behaviour get one clear knob (`=0`). The opt-out lives in `RELEASE.md` so it's discoverable, and disappears with the legacy path in Phase 7. **Superseded by D17.** |
+| D17 | 2026-06-02 | **Remove the `KEDRO_VIZ_INSPECTION_ADAPTER` opt-out env var entirely. Adapter is installed at startup whenever it can be built; legacy is the automatic fallback when it can't.** | Pre-release review feedback (Kedro maintainer + internal): the env var existed only as a "first release" rollback safety net for real users — but we haven't released yet, so it's protecting users who don't exist. Carrying ~10 lines of env-var handling + ~25 tests for a use case that doesn't apply was scaffolding without payoff. Phase 7 (deletion of the legacy backend + `LiveDataProvider`) is a separate follow-up |
 | _ | _ | _(pending)_ Kedro ask outcome (func_name vs stable id vs id-break vs bridge) | — |
 
 ---
@@ -96,6 +97,60 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 ---
 
 ## Changelog
+
+### 2026-06-02 — Drop the opt-out env var (D17)
+
+**What was done**
+
+Pre-release review surfaced that the `KEDRO_VIZ_INSPECTION_ADAPTER` env var was scaffolding without payoff — designed as a rollback safety net for real users, but with no release out yet there are no users to protect. Step 1 of two: remove the env-var-based switch but keep the dual-implementation seam (`LiveDataProvider` + Protocol) for Phase 7 to delete next.
+
+- `package/kedro_viz/api/data_provider.py`:
+  - Removed `INSPECTION_ADAPTER_ENV_VAR`, `_FALSY`, `is_inspection_adapter_enabled`.
+  - `get_runtime_data_provider()` now returns the adapter if installed, otherwise `LiveDataProvider` — no env check.
+  - Module docstring and `LiveDataProvider` docstring updated.
+- `package/kedro_viz/server.py`:
+  - Removed the `is_inspection_adapter_enabled` import and call.
+  - Lite-mode short-circuit fires on `is_lite=True` directly, no flag gate.
+  - `_configure_inspection_adapter_provider` simplified — no flag check at the top; the function still returns `bool` so the lite short-circuit can fall through to the legacy `--lite` load when the adapter fails to build.
+  - Adapter-active log line trimmed (no env-var hint).
+- `package/tests/test_api/test_data_provider.py` — removed the env-var parametrize and the four flag-gated factory tests; kept the holder + factory + delegation tests. Net `-25` tests.
+- `package/tests/test_server.py`:
+  - `TestInspectionAdapterStartup`: removed `test_flag_off_does_not_install_adapter` and `test_env_var_unset_installs_adapter_by_default` (both flag-specific). Kept the constructor-success / `--params` fallback / constructor-raises tests, renamed for clarity.
+  - `TestLiteModeAdapter`: removed `test_flag_off_plus_lite_still_loads_live` and the `monkeypatch.setenv` calls in the remaining tests, renamed accordingly.
+- `package/tests/test_inspection_adapter/{test_router_flag_on,test_lite_metadata,test_id_lockstep,test_metadata_bridge}.py` — removed `INSPECTION_ADAPTER_ENV_VAR` imports and `monkeypatch.setenv` calls (the adapter is installed directly via `set_inspection_adapter_provider`, no env var needed).
+- Docs:
+  - `inspection-adapter-tickets/README.md` — "Decisions already in" rollout bullet updated to describe the unconditional-install + automatic-fallback model.
+  - `inspection-adapter-tickets/FRONTEND_HANDOFF.md` — opt-out env var removed from the local-testing instructions and the backend-status summary.
+  - `progress.md` — Status Dashboard row updated; Decision D16 marked superseded; new Decision D17.
+
+**Decisions made**
+
+- D17 (2026-06-02): remove the opt-out env var. The dual-implementation seam stays for Step 2 (Phase 7) to delete together with the legacy backend.
+
+**Files added** — none.
+
+**Files updated** — listed above.
+
+**Files deleted** — none (Phase 7 will delete `data_provider.py`, `test_data_provider.py`, etc.).
+
+**Tests run**
+
+- `ruff check` and `mypy` on every touched file — clean.
+- `make lint` — `Success: no issues found in 77 source files`.
+- Full suite in `viz-3-14`: **556 passed** (was 581; net −25 tests from removing the env-var-specific tests). No regressions.
+
+**Anti-drift review**
+
+- The adapter still does what it did before — graph endpoints from the snapshot, metadata bridge to live objects, lite-mode snapshot lookup, static export carrying new-scheme IDs.
+- The legacy fallback path is unchanged behaviourally: `LiveDataProvider` is still what serves when no adapter is installed.
+- What's gone is only the env-var-driven branch in `get_runtime_data_provider()` and the related test scaffolding. No production behaviour change for real flows (adapter installed → adapter serves; adapter failed → legacy serves).
+- Phase 7 will delete `data_provider.py` and `LiveDataProvider` together with the legacy backend code in `data_access/managers.py` and `data_access/repositories/modular_pipelines.py`.
+
+**Next steps**
+
+- Phase 7 (Step 2): delete `data_provider.py`, `LiveDataProvider`, the legacy graph traversal in `data_access/managers.py::add_pipelines`, the legacy modular tree builder in `data_access/repositories/modular_pipelines.py`, and the `_hash(str(node))` callsites. Update the route handlers to call the adapter directly (no factory indirection). Replace any pre-existing route tests that rely on `LiveDataProvider` with adapter-driven tests.
+
+---
 
 ### 2026-05-28 — Phase 6.7: flip the flag default — adapter is now the new default
 

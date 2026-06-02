@@ -8,10 +8,7 @@ from typing import Any, Dict, Optional
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
-from kedro_viz.api.data_provider import (
-    is_inspection_adapter_enabled,
-    set_inspection_adapter_provider,
-)
+from kedro_viz.api.data_provider import set_inspection_adapter_provider
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
@@ -54,17 +51,19 @@ def load_and_populate_data(
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories.
 
-    When the inspection adapter is enabled **and** ``--lite`` is set, the live load is skipped
-    entirely — only the inspection snapshot is read, ``data_access_manager`` stays empty, and
-    the adapter provider answers from the snapshot alone. If the adapter fails to build under
-    those conditions (e.g. a stale ``--pipeline`` argument or an old Kedro version), we fall
-    through to the legacy ``--lite`` live load so the user still gets a working visualisation
-    rather than an empty graph. In every other combination, the live data is loaded as before.
+    Under ``--lite`` the live project load is skipped entirely — only the inspection snapshot
+    is read, ``data_access_manager`` stays empty, and the adapter provider answers from the
+    snapshot alone. If the adapter fails to build under ``--lite`` (e.g. a stale ``--pipeline``
+    argument or an old Kedro version), we fall through to the legacy ``--lite`` live load so
+    the user still gets a working visualisation rather than an empty graph.
+
+    In every other case, the live data is loaded first and the adapter is then layered on top
+    when it can be built.
     """
-    if is_inspection_adapter_enabled() and is_lite and not extra_params:
+    if is_lite and not extra_params:
         logger.info(
-            "Inspection adapter + --lite: skipping the live project load; "
-            "graph and node metadata will be served from the snapshot only."
+            "--lite: skipping the live project load; graph and node metadata will be served "
+            "from the snapshot only."
         )
         if _configure_inspection_adapter_provider(
             path, env, pipeline_name, extra_params=None
@@ -103,21 +102,17 @@ def _configure_inspection_adapter_provider(
 ) -> bool:
     """Install the inspection-adapter provider for this process.
 
-    Returns ``True`` if the adapter was installed; ``False`` if the legacy path should take over
-    (flag explicitly off, ``--params`` set, or the adapter build raised). Callers that skipped
-    the live load (e.g. the lite short-circuit) should check the return value and arrange a
-    fallback when it is ``False``.
+    Returns ``True`` if the adapter was installed; ``False`` if the legacy path should take
+    over (``--params`` set or the adapter build raised). Callers that skipped the live load
+    (e.g. the lite short-circuit) should check the return value and arrange a fallback when
+    it is ``False``.
     """
-    if not is_inspection_adapter_enabled():
-        set_inspection_adapter_provider(None)
-        return False
-
     # The inspection snapshot API has no runtime-params path, so a project whose catalog or
     # parameters depend on ``extra_params`` would silently diverge — fall back to live.
     if extra_params:
         logger.info(
-            "Inspection adapter disabled for this run: --params is non-empty; "
-            "falling back to the live graph path."
+            "Inspection adapter skipped: --params is non-empty; falling back to the live "
+            "graph path."
         )
         set_inspection_adapter_provider(None)
         return False
@@ -135,9 +130,8 @@ def _configure_inspection_adapter_provider(
 
     set_inspection_adapter_provider(provider)
     logger.info(
-        "Inspection adapter active: /api/main, /api/pipelines/{id} and /api/nodes/{id} are "
-        "served from the snapshot. Set KEDRO_VIZ_INSPECTION_ADAPTER=0 to opt back into the "
-        "legacy graph path."
+        "Inspection adapter active: /api/main, /api/pipelines/{id}, /api/nodes/{id} and "
+        "/api/run-status are served from the snapshot."
     )
     return True
 

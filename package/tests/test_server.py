@@ -101,11 +101,11 @@ class TestServer:
         )
 
 
-# -- Phase 6.2b: inspection-adapter wiring at startup --------------------------------------- #
+# -- Inspection-adapter wiring at startup ---------------------------------------------------- #
 
 
 class TestInspectionAdapterStartup:
-    """Cover ``_configure_inspection_adapter_provider`` — the bridge between the env-var flag and
+    """Cover ``_configure_inspection_adapter_provider`` — the bridge between server startup and
     the runtime data provider slot."""
 
     @pytest.fixture(autouse=True)
@@ -116,59 +116,10 @@ class TestInspectionAdapterStartup:
         yield
         set_inspection_adapter_provider(None)
 
-    def test_flag_off_does_not_install_adapter(self, monkeypatch):
-        """Explicit opt-out (``KEDRO_VIZ_INSPECTION_ADAPTER=0``) keeps the legacy graph path."""
+    def test_installs_adapter_when_constructor_succeeds(self, mocker):
         from kedro_viz.api import data_provider
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
         from kedro_viz.server import _configure_inspection_adapter_provider
 
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "0")
-        _configure_inspection_adapter_provider(
-            path="anywhere", env=None, pipeline_name=None, extra_params=None
-        )
-        assert data_provider._adapter_holder.provider is None
-
-    def test_env_var_unset_installs_adapter_by_default(self, monkeypatch, mocker):
-        """6.7 flip: unset means on; the provider is built without an explicit opt-in."""
-        from kedro_viz.api import data_provider
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-        from kedro_viz.server import _configure_inspection_adapter_provider
-
-        monkeypatch.delenv(INSPECTION_ADAPTER_ENV_VAR, raising=False)
-        provider_stub = object()
-        mocker.patch(
-            "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
-            return_value=provider_stub,
-        )
-        _configure_inspection_adapter_provider(
-            path="some/path", env=None, pipeline_name=None, extra_params=None
-        )
-        assert data_provider._adapter_holder.provider is provider_stub
-
-    def test_flag_on_with_extra_params_falls_back_with_log(self, monkeypatch, caplog):
-        from kedro_viz.api import data_provider
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-        from kedro_viz.server import _configure_inspection_adapter_provider
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
-        with caplog.at_level("INFO", logger="kedro_viz.server"):
-            _configure_inspection_adapter_provider(
-                path="anywhere",
-                env=None,
-                pipeline_name=None,
-                extra_params={"runtime_param": "value"},
-            )
-        assert data_provider._adapter_holder.provider is None
-        assert any("--params" in r.message for r in caplog.records)
-
-    def test_flag_on_installs_adapter_when_constructor_succeeds(
-        self, monkeypatch, mocker
-    ):
-        from kedro_viz.api import data_provider
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-        from kedro_viz.server import _configure_inspection_adapter_provider
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
         provider_stub = object()
         cls_mock = mocker.patch(
             "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
@@ -185,14 +136,24 @@ class TestInspectionAdapterStartup:
         )
         assert data_provider._adapter_holder.provider is provider_stub
 
-    def test_flag_on_falls_back_when_adapter_construction_raises(
-        self, monkeypatch, mocker, caplog
-    ):
+    def test_extra_params_falls_back_to_live_with_log(self, caplog):
         from kedro_viz.api import data_provider
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
         from kedro_viz.server import _configure_inspection_adapter_provider
 
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
+        with caplog.at_level("INFO", logger="kedro_viz.server"):
+            _configure_inspection_adapter_provider(
+                path="anywhere",
+                env=None,
+                pipeline_name=None,
+                extra_params={"runtime_param": "value"},
+            )
+        assert data_provider._adapter_holder.provider is None
+        assert any("--params" in r.message for r in caplog.records)
+
+    def test_falls_back_when_adapter_construction_raises(self, mocker, caplog):
+        from kedro_viz.api import data_provider
+        from kedro_viz.server import _configure_inspection_adapter_provider
+
         mocker.patch(
             "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
             side_effect=RuntimeError("kedro<1.4.0"),
@@ -212,7 +173,7 @@ class TestInspectionAdapterStartup:
 
 
 class TestLiteModeAdapter:
-    """Adapter ON + ``--lite`` skips the live load when the adapter builds successfully."""
+    """``--lite`` skips the live load when the adapter builds successfully."""
 
     @pytest.fixture(autouse=True)
     def _reset_adapter_slot(self):
@@ -222,11 +183,8 @@ class TestLiteModeAdapter:
         yield
         set_inspection_adapter_provider(None)
 
-    def test_flag_on_plus_lite_skips_live_load(self, monkeypatch, mocker, caplog):
+    def test_lite_skips_live_load_when_adapter_builds(self, mocker, caplog):
         """No ``kedro_data_loader.load_data`` / ``populate_data`` calls in lite mode."""
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
         mock_load_data = mocker.patch("kedro_viz.server.kedro_data_loader.load_data")
         mock_populate_data = mocker.patch("kedro_viz.server.populate_data")
         cls_mock = mocker.patch(
@@ -239,39 +197,15 @@ class TestLiteModeAdapter:
         with caplog.at_level("INFO", logger="kedro_viz.server"):
             load_and_populate_data(path="proj/path", is_lite=True)
 
-        # Neither the live loader nor `populate_data` was invoked.
         mock_load_data.assert_not_called()
         mock_populate_data.assert_not_called()
-        # The adapter provider was still built so /api/main + /api/nodes have a backing source.
         cls_mock.assert_called_once_with("proj/path", env=None, pipeline_name=None)
         assert any(
             "skipping the live project load" in r.message for r in caplog.records
         )
 
-    def test_flag_off_plus_lite_still_loads_live(self, monkeypatch, mocker):
-        """Legacy `--lite` behaviour (partial live load) is preserved on explicit opt-out."""
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "0")
-        mock_load_data = mocker.patch(
-            "kedro_viz.server.kedro_data_loader.load_data",
-            return_value=(mocker.Mock(), {}, {}),
-        )
-        mocker.patch("kedro_viz.server.populate_data")
-
-        from kedro_viz.server import load_and_populate_data
-
-        load_and_populate_data(path="proj/path", is_lite=True)
-
-        mock_load_data.assert_called_once()
-
-    def test_flag_on_plus_lite_plus_extra_params_does_not_short_circuit(
-        self, monkeypatch, mocker
-    ):
-        """``--params`` forces the live path even under ``--lite`` (D14)."""
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
+    def test_lite_plus_extra_params_does_not_short_circuit(self, mocker):
+        """``--params`` forces the live path even under ``--lite``."""
         mock_load_data = mocker.patch(
             "kedro_viz.server.kedro_data_loader.load_data",
             return_value=(mocker.Mock(), {}, {}),
@@ -285,16 +219,13 @@ class TestLiteModeAdapter:
         mock_load_data.assert_called_once()
 
     def test_lite_falls_through_to_live_load_when_adapter_build_fails(
-        self, monkeypatch, mocker, caplog
+        self, mocker, caplog
     ):
         """If the adapter fails to build under --lite, fall through to the legacy live load.
 
         Without this fallback, ``data_access_manager`` would stay empty and any subsequent
         request would silently get an empty graph from ``LiveDataProvider``.
         """
-        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
-
-        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
         # Adapter construction raises (could be: stale --pipeline, kedro<1.4.0, etc.)
         mocker.patch(
             "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",

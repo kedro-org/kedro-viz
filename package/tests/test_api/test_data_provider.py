@@ -1,8 +1,8 @@
 """Tests for the runtime data provider.
 
-6.2a introduced the protocol and ``LiveDataProvider``; 6.2b adds the experimental flag, the
-adapter-provider slot, and the per-request factory used by ``/api/main`` and
-``/api/pipelines/{id}``.
+The Protocol + ``LiveDataProvider`` exist while the legacy backend is being phased out; the
+inspection adapter is installed at startup unconditionally when it can be built, and the live
+provider only fills in when no adapter is available (tests, kedro<1.4.0, ``--params``).
 """
 
 from unittest.mock import patch
@@ -11,11 +11,9 @@ import pytest
 
 from kedro_viz.api import data_provider
 from kedro_viz.api.data_provider import (
-    INSPECTION_ADAPTER_ENV_VAR,
     LiveDataProvider,
     RuntimeDataProvider,
     get_runtime_data_provider,
-    is_inspection_adapter_enabled,
     set_inspection_adapter_provider,
 )
 
@@ -60,97 +58,32 @@ def test_get_run_status_response_delegates() -> None:
 
 
 def test_save_api_responses_to_fs_passes_self_as_provider() -> None:
-    """Phase 6.5: the live provider passes itself so the export uses its surface."""
+    """The live provider passes itself so the export uses its surface."""
     live = LiveDataProvider()
     with patch("kedro_viz.api.data_provider.save_api_responses_to_fs") as mock:
         live.save_api_responses_to_fs("/tmp/x", "fs", True)
     mock.assert_called_once_with("/tmp/x", "fs", True, provider=live)
 
 
-# -- 6.2b: experimental flag + factory ---------------------------------------------------- #
+# -- Factory + holder ------------------------------------------------------------------------- #
 
 
-@pytest.mark.parametrize(
-    "value,expected",
-    [
-        # Canonical truthy values keep the adapter on.
-        ("1", True),
-        ("true", True),
-        ("TRUE", True),
-        ("yes", True),
-        ("on", True),
-        ("  1  ", True),
-        # Canonical falsy values opt back into the legacy path.
-        ("0", False),
-        ("false", False),
-        ("FALSE", False),
-        ("no", False),
-        ("NO", False),
-        ("off", False),
-        ("Off", False),
-        ("", False),
-        ("   ", False),
-        # Typos and unrecognised non-falsy values must keep the adapter on (the env var is an
-        # opt-OUT switch, not an opt-in). A footgun like KEDRO_VIZ_INSPECTION_ADAPTER=enabled
-        # must not silently disable the new default.
-        ("enabled", True),
-        ("yes please", True),
-        ("ON\n", True),
-        ("1.0", True),
-        ("anything-else", True),
-    ],
-)
-def test_is_inspection_adapter_enabled_reads_env_var(
-    monkeypatch: pytest.MonkeyPatch, value: str, expected: bool
-) -> None:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, value)
-    assert is_inspection_adapter_enabled() is expected
-
-
-def test_is_inspection_adapter_enabled_default_on(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """6.7 flip: with the env var unset, the adapter is on by default."""
-    monkeypatch.delenv(INSPECTION_ADAPTER_ENV_VAR, raising=False)
-    assert is_inspection_adapter_enabled() is True
-
-
-def test_get_runtime_data_provider_defaults_to_live_when_no_adapter_installed(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Flag may be on by default (6.7), but with no adapter installed we still fall back to live.
-
-    This is the common path in unit tests: ``_adapter_holder.provider`` is ``None`` because
-    nothing built it, so ``get_runtime_data_provider()`` returns ``LiveDataProvider`` regardless
-    of the flag.
-    """
-    monkeypatch.delenv(INSPECTION_ADAPTER_ENV_VAR, raising=False)
+def test_get_runtime_data_provider_defaults_to_live_when_no_adapter_installed() -> None:
+    """Without an adapter installed, the factory returns the legacy live provider."""
     assert isinstance(get_runtime_data_provider(), LiveDataProvider)
 
 
-def test_get_runtime_data_provider_uses_adapter_when_flag_on_and_installed(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
+def test_get_runtime_data_provider_uses_adapter_when_installed() -> None:
+    """When an adapter is installed, the factory returns it."""
     sentinel = object()
     set_inspection_adapter_provider(sentinel)  # type: ignore[arg-type]
     assert get_runtime_data_provider() is sentinel
 
 
-def test_get_runtime_data_provider_falls_back_when_flag_on_but_no_provider(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
-    # Slot stays None (cleared by the autouse fixture).
-    assert isinstance(get_runtime_data_provider(), LiveDataProvider)
-
-
-def test_get_runtime_data_provider_falls_back_when_flag_off_even_if_provider_installed(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Explicit opt-out (``=0``) keeps callers on the live path even with an adapter installed."""
-    monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "0")
+def test_get_runtime_data_provider_falls_back_when_adapter_is_cleared() -> None:
+    """Clearing the slot reverts subsequent calls to the live provider."""
     set_inspection_adapter_provider(object())  # type: ignore[arg-type]
+    set_inspection_adapter_provider(None)
     assert isinstance(get_runtime_data_provider(), LiveDataProvider)
 
 

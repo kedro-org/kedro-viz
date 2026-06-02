@@ -53,7 +53,7 @@ Removing the old live-graph traversal is a separate, gated follow-up that fires 
 - New node IDs are generated viz-side from `name + inputs + outputs`. **This is a breaking release** — old `?selected=<id>` deep links and previously exported sites go stale.
 - Node metadata stays on the live path until lite mode actually needs the snapshot version (ticket 7).
 - Graph, node-metadata and run-status reads plus static export move through one `RuntimeDataProvider` — no scattered `if flag else live` checks across routes.
-- Rollout: shipped initially behind an experimental env var (default OFF) so the path could be tested without affecting users; ticket 7 flipped the default to ON once parity was signed off. `KEDRO_VIZ_INSPECTION_ADAPTER=0` opts back into the legacy path as a temporary safety net until the legacy code is removed in a follow-up.
+- Rollout: the adapter is installed at server startup whenever it can be built; the legacy `data_access_manager`-backed path stays in place as an automatic fallback for the cases the adapter can't cover (`--params`, Kedro too old, build failure). There is no opt-out switch — the legacy fallback runs automatically when needed and disappears entirely in the Phase 7 follow-up.
 - When `kedro viz run --params x=y` is used, adapter mode automatically falls back to the live path and logs why (snapshot API doesn't accept runtime params).
 
 ## Trade-offs we knowingly took
