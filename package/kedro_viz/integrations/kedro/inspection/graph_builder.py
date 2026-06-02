@@ -97,7 +97,8 @@ class GraphBuilder:
         """Record, for every task and dataset, which registered pipelines contain it."""
         for pipeline_id, pipeline in self._pipelines.items():
             for node in pipeline.nodes:
-                self._task_pipelines[node.name].add(pipeline_id)
+                task_id = node_ids.task_node_id(node.name, node.inputs, node.outputs)
+                self._task_pipelines[task_id].add(pipeline_id)
                 for io in [*node.inputs, *node.outputs]:
                     self._dataset_pipelines[_strip_transcoding(io)].add(pipeline_id)
 
@@ -171,7 +172,7 @@ class GraphBuilder:
             name=_display_name(node.name, node.namespace),
             full_name=node.name,
             tags=sorted(node.tags),
-            pipelines=sorted(self._task_pipelines[node.name]),
+            pipelines=sorted(self._task_pipelines[task_id]),
             type=GraphNodeType.TASK.value,
             modular_pipelines=self._modular.for_task(node),
             parameters={},
@@ -184,7 +185,9 @@ class GraphBuilder:
         tags: list[str],
     ) -> DataNodeAPIResponse:
         is_parameter = is_dataset_param(stripped_name)
-        dataset = self._snapshot.datasets.get(original_name)
+        dataset = self._snapshot.datasets.get(
+            original_name
+        ) or self._snapshot.datasets.get(stripped_name)
         return DataNodeAPIResponse(
             id=node_ids.dataset_node_id(stripped_name),
             name=stripped_name,

@@ -123,3 +123,37 @@ def test_exported_main_carries_new_scheme_ids(
     live_ids = {n["id"] for n in live_main["nodes"]}
     exported_ids = {n["id"] for n in exported_main["nodes"]}
     assert live_ids == exported_ids
+
+
+def test_exported_main_preserves_enriched_graph_fields(
+    demo_provider: InspectionAdapterProvider, tmp_path: Path
+) -> None:
+    """Graph fields enriched from the bridge must survive static export."""
+    out_dir = tmp_path / "build"
+    demo_provider.save_api_responses_to_fs(
+        str(out_dir), fsspec.filesystem("file"), True
+    )
+
+    live_result = demo_provider.get_pipeline_response()
+    assert isinstance(live_result, GraphAPIResponse)
+    live_main = live_result.model_dump()
+    exported_main = json.loads((out_dir / "api" / "main").read_text(encoding="utf-8"))
+    exported_by_id = {node["id"]: node for node in exported_main["nodes"]}
+
+    task_with_params = next(
+        node
+        for node in live_main["nodes"]
+        if node["type"] == "task" and node["parameters"]
+    )
+    node_with_extras = next(
+        node for node in live_main["nodes"] if node.get("node_extras")
+    )
+
+    assert (
+        exported_by_id[task_with_params["id"]]["parameters"]
+        == task_with_params["parameters"]
+    )
+    assert (
+        exported_by_id[node_with_extras["id"]]["node_extras"]
+        == node_with_extras["node_extras"]
+    )

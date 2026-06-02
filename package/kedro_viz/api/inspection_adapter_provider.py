@@ -3,13 +3,14 @@
 When the inspection adapter is enabled, ``/api/main``, ``/api/pipelines/{id}``,
 ``/api/nodes/{id}``, ``/api/run-status`` and the static-export path are all served by this
 provider. The graph endpoints come from the inspection snapshot via
-:class:`~kedro_viz.integrations.kedro.inspection.graph_builder.GraphBuilder`. Node metadata is
-returned from live viz objects via the **metadata bridge** when a project is loaded, or from a
-thin **snapshot lookup** when running in lite mode without a live project. The static export
-walks ``get_pipeline_ids()`` / ``get_node_ids()`` here and re-uses the same response builders,
-so the exported file set carries new-scheme IDs end-to-end. Run status is delegated to the
-shared response builder; the ``hash_node`` hook uses the same node-ID scheme as the adapter
-graph, so the IDs already correlate.
+:class:`~kedro_viz.integrations.kedro.inspection.graph_builder.GraphBuilder`, then full-mode
+responses are enriched from the live-object **metadata bridge** with fields that the snapshot
+does not carry. Node metadata is returned from the same bridge when a project is loaded, or
+from a thin **snapshot lookup** when running in lite mode without a live project. The static
+export walks ``get_pipeline_ids()`` / ``get_node_ids()`` here and re-uses the same response
+builders, so the exported file set carries new-scheme IDs end-to-end. Run status is delegated
+to the shared response builder; the ``hash_node`` hook uses the same node-ID scheme as the
+adapter graph, so the IDs already correlate.
 """
 
 from __future__ import annotations
@@ -25,7 +26,11 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro_viz.api.rest.responses.nodes import (
     NodeMetadataAPIResponse,
 )
-from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
+from kedro_viz.api.rest.responses.pipelines import (
+    GraphAPIResponse,
+    NodeExtrasAPIResponse,
+    TaskNodeAPIResponse,
+)
 from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
     get_run_status_response,
@@ -62,6 +67,10 @@ class InspectionAdapterProvider:
     The snapshot and layer mapping are loaded once at construction; subsequent requests reuse the
     same :class:`GraphBuilder`. When ``pipeline_name`` is set (i.e. ``kedro viz run --pipeline X``),
     only that pipeline is visible — mirroring how the live path filters ``data_access_manager``.
+
+    Graph responses are snapshot-built first, then enriched from the bridge in full mode with
+    live-only fields such as ``node_extras`` and resolved task ``parameters``. Lite mode keeps
+    the thin snapshot graph because the bridge is empty.
 
     Node-metadata resolution is two-tiered. The **metadata bridge** is a
     ``{new_id -> live viz node}`` dict built once at construction from a live
@@ -104,7 +113,10 @@ class InspectionAdapterProvider:
             return JSONResponse(
                 status_code=404, content={"message": "Invalid pipeline ID"}
             )
-        return self._builder.build(pipeline_id)
+        response = self._builder.build(pipeline_id)
+        if self._metadata_bridge:
+            self._enrich_graph_with_bridge(response)
+        return response
 
     def get_pipeline_ids(self) -> list[str]:
         """Pipeline IDs visible to this provider (honours ``--pipeline`` scope)."""
@@ -184,6 +196,26 @@ class InspectionAdapterProvider:
         )
 
     # -- helpers ------------------------------------------------------------------------- #
+
+    def _enrich_graph_with_bridge(self, response: GraphAPIResponse) -> None:
+        """Overlay live-only graph fields onto a snapshot-built graph response.
+
+        The bridge is populated only in full mode. Lite mode leaves these fields absent because
+        the inspection snapshot does not carry resolved parameter values, stats or styles.
+        """
+        for graph_node in response.nodes:
+            live_node = self._metadata_bridge.get(graph_node.id)
+            if live_node is None:
+                continue
+            if live_node.node_extras is not None:
+                graph_node.node_extras = NodeExtrasAPIResponse(
+                    stats=live_node.node_extras.stats,
+                    styles=live_node.node_extras.styles,
+                )
+            if isinstance(graph_node, TaskNodeAPIResponse) and isinstance(
+                live_node, TaskNode
+            ):
+                graph_node.parameters = live_node.parameters
 
     @staticmethod
     def _filter_to_pipeline(snapshot: Any, pipeline_name: str) -> Any:
