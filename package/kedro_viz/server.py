@@ -54,11 +54,13 @@ def load_and_populate_data(
     Under ``--lite`` the live project load is skipped entirely — only the inspection snapshot
     is read, ``data_access_manager`` stays empty, and the adapter provider answers from the
     snapshot alone. If the adapter fails to build under ``--lite`` (e.g. a stale ``--pipeline``
-    argument or an old Kedro version), we fall through to the legacy ``--lite`` live load so
-    the user still gets a working visualisation rather than an empty graph.
+    argument), we fall through to the ``--lite`` live load so the user still gets a working
+    visualisation rather than an empty graph.
 
-    In every other case, the live data is loaded first and the adapter is then layered on top
-    when it can be built.
+    In every other case the live data is loaded first and the adapter is then layered on top
+    when it can be built. The live load is not wasted: it backs the metadata bridge in full mode,
+    and it is the engine that serves ``kedro viz run --params=...`` (the snapshot API has no
+    runtime-params route, so the adapter is intentionally not installed for that case — see D14).
     """
     if is_lite and not extra_params:
         logger.info(
@@ -71,7 +73,7 @@ def load_and_populate_data(
             return
         logger.warning(
             "Inspection adapter could not be built under --lite; falling through to the "
-            "legacy --lite live load so the visualisation isn't empty."
+            "--lite live load so the visualisation isn't empty."
         )
 
     # Loads data from underlying Kedro Project
@@ -88,9 +90,9 @@ def load_and_populate_data(
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
 
-    # Also try to build the snapshot-backed adapter on top of the live load. If the build fails,
-    # the live path is already in place to serve requests — the inspection adapter just won't be
-    # installed for this process and the legacy code path will respond.
+    # Also try to build the snapshot-backed adapter on top of the live load. For ``--params`` the
+    # adapter is intentionally not installed and the live path serves (D14); if the build fails
+    # unexpectedly, the live path is already populated to serve requests as a fallback.
     _configure_inspection_adapter_provider(path, env, pipeline_name, extra_params)
 
 
@@ -102,17 +104,18 @@ def _configure_inspection_adapter_provider(
 ) -> bool:
     """Install the inspection-adapter provider for this process.
 
-    Returns ``True`` if the adapter was installed; ``False`` if the legacy path should take
-    over (``--params`` set or the adapter build raised). Callers that skipped the live load
-    (e.g. the lite short-circuit) should check the return value and arrange a fallback when
-    it is ``False``.
+    Returns ``True`` if the adapter was installed; ``False`` if the live runtime-params path
+    should serve instead (``--params`` set or the adapter build raised). Callers that skipped the
+    live load (e.g. the lite short-circuit) should check the return value and arrange a fallback
+    when it is ``False``.
     """
-    # The inspection snapshot API has no runtime-params path, so a project whose catalog or
-    # parameters depend on ``extra_params`` would silently diverge — fall back to live.
+    # The inspection snapshot API has no runtime-params route, so a project whose catalog or
+    # parameters depend on ``extra_params`` would silently diverge from a live run. This is the
+    # intentional runtime-params path (D14): serve from the live load, not the snapshot.
     if extra_params:
         logger.info(
-            "Inspection adapter skipped: --params is non-empty; falling back to the live "
-            "graph path."
+            "Inspection adapter not installed: --params is set, so the graph is served from the "
+            "live project load (the snapshot API has no runtime-params route)."
         )
         set_inspection_adapter_provider(None)
         return False
@@ -122,8 +125,12 @@ def _configure_inspection_adapter_provider(
 
         provider = InspectionAdapterProvider(path, env=env, pipeline_name=pipeline_name)
     except Exception:
+        # Unexpected: the adapter should build for any non-``--params`` project on kedro>=1.4.0.
+        # Don't break a working viz — the live load is already populated — but make it loud that
+        # the adapter is NOT active so this isn't mistaken for normal operation.
         logger.exception(
-            "Failed to build the inspection adapter; falling back to the live graph path."
+            "Inspection adapter FAILED to build; it is not active for this process. Serving the "
+            "live graph path as a fallback. This is unexpected — please report it."
         )
         set_inspection_adapter_provider(None)
         return False

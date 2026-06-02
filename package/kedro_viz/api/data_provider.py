@@ -1,19 +1,25 @@
 """Runtime data provider — the single seam every read endpoint and the static-export path share.
 
-Every read goes through a ``RuntimeDataProvider``. Two implementations exist while the legacy
-backend is being phased out:
+Every read goes through a ``RuntimeDataProvider``. Two implementations coexist by design:
 
-- :class:`LiveDataProvider` — wraps the ``data_access_manager``-backed response builders. The
-  legacy path; used when the inspection adapter has not been installed (e.g. construction
-  failed because Kedro is too old, ``--params`` was supplied, or in unit tests that don't
-  install one).
-- ``InspectionAdapterProvider`` (in :mod:`kedro_viz.api.inspection_adapter_provider`) — serves
-  the graph + node metadata from a Kedro inspection snapshot. Installed at server startup
-  whenever it can be built.
+- ``InspectionAdapterProvider`` (in :mod:`kedro_viz.api.inspection_adapter_provider`) — the
+  default. Serves the graph + node metadata from a Kedro inspection snapshot. Installed at
+  server startup whenever it can be built, which is every case except the one below.
+- :class:`LiveDataProvider` — the **runtime-params path**. Wraps the ``data_access_manager``-backed
+  response builders. Used when the adapter is deliberately not installed: ``kedro viz run
+  --params=...`` (the inspection snapshot API has no runtime-params route, so a project whose
+  catalog/parameters depend on ``--params`` must be served from a live load — see D14). It is
+  also the safety net if the adapter unexpectedly fails to build, and what unit tests that don't
+  install an adapter fall back to.
 
 ``get_runtime_data_provider()`` is the per-request factory used by the REST routes and the
 static-export path: it returns the adapter when one is installed, otherwise the live provider.
-Both this seam and the live provider are removed once the legacy backend goes away.
+
+This seam is **retained, not scaffolding**: as long as ``--params`` is served by the live load,
+the routes need a single place to choose between the two engines, and this is it. Full removal of
+the live path would only be revisited if the inspection snapshot API ever grows a runtime-params
+route. (The other historical fallback reason — Kedro older than the inspection API — no longer
+applies; ``kedro>=1.4.0`` is now the floor.)
 """
 
 from __future__ import annotations
@@ -67,11 +73,13 @@ class RuntimeDataProvider(Protocol):
 
 
 class LiveDataProvider:
-    """Legacy provider — delegates to the ``data_access_manager``-backed response builders.
+    """Runtime-params provider — delegates to the ``data_access_manager``-backed response builders.
 
-    Routes use this when no inspection-adapter provider has been installed (build failed,
-    ``--params`` was supplied, or the test fixture doesn't install one). The legacy code path
-    will be removed once the inspection adapter has had a release cycle of real-world use.
+    Routes use this when no inspection-adapter provider has been installed. In normal operation
+    that means ``kedro viz run --params=...``: the snapshot API can't reflect runtime params, so
+    the graph + metadata are served from a live project load instead (D14). It is also the
+    fallback if the adapter unexpectedly fails to build, and what test fixtures that don't install
+    an adapter use. This path is retained for the runtime-params case — it is not pending removal.
     """
 
     def get_pipeline_response(
@@ -132,10 +140,11 @@ def set_inspection_adapter_provider(provider: Optional["RuntimeDataProvider"]) -
 def get_runtime_data_provider() -> "RuntimeDataProvider":
     """Return the active runtime data provider for this request.
 
-    Returns the inspection-adapter provider when one has been installed at startup; otherwise
-    falls back to :class:`LiveDataProvider`. The legacy fallback exists only for tests and for
-    the few cases where the adapter can't be built (e.g. ``--params`` supplied, Kedro too old);
-    it will be removed when the legacy backend is removed.
+    Returns the inspection-adapter provider when one has been installed at startup (the default
+    for every ``kedro viz run`` invocation); otherwise returns :class:`LiveDataProvider`. The
+    live provider is the intentional path for ``--params`` (no runtime-params route exists in the
+    snapshot API — D14) and the safety net for an unexpected adapter build failure or for tests
+    that don't install an adapter.
     """
     adapter = _adapter_holder.provider
     if adapter is not None:

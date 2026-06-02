@@ -32,7 +32,7 @@ and next steps. Keep the Status Dashboard and Decision Log in sync.
 | Phase 4 | Layers | ✅ Complete (config-based layer extractor + per-node `layer` + sorted `layers` list) — parity-validated |
 | Phase 5 | Node metadata split | ✅ Decided (D10): keep `/api/nodes` on the live path; snapshot-backed metadata deferred to Phase 6 (built with its lite-mode consumer) |
 | Phase 6 | Switch runtime path (GATED) | ✅ **Backend complete** — 6.1 through 6.7 done; opt-out env var removed post-review (D17). Frontend jest-snapshot regeneration + lite-mode degradation UX remain as cross-team follow-ups |
-| Phase 7 | Remove old code (GATED) | ⬜ Not started |
+| Phase 7 | Remove old code (GATED) | ✅ Done — **reclassified, not deleted (D18)**. The live backend + provider seam are retained as the permanent `--params` runtime-params path; Phase 7 became a docs/comments reclassification + the in-flight 6-findings commit |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Complete · ⛔ Blocked
 
@@ -58,6 +58,7 @@ full parity on real projects + raised kedro floor.
 | D15 | 2026-05-26 | **Experimental flag mechanism = env var `KEDRO_VIZ_INSPECTION_ADAPTER`** (truthy: `1`/`true`/`yes`/`on`) | Internal-only per D12; an env var keeps the flag off the user-facing CLI surface until 6.7 promotes it, and is trivial to flip in tests (`monkeypatch.setenv`). Promotable to a real CLI option later without breaking callers. The adapter provider is built once at startup (load-once) and reused per request |
 | D16 | 2026-05-28 | **Flip the default: `KEDRO_VIZ_INSPECTION_ADAPTER` unset → adapter ON. `=0` opts back to the legacy graph path** (temporary safety net until Phase 7 removes the legacy code entirely) | Realises D12's intent: the experimental flag becomes the new default once parity is proven. Inverting the existing env var (rather than introducing a new opt-in name) means users who set it experimentally don't have to change anything; users who want today's behaviour get one clear knob (`=0`). The opt-out lives in `RELEASE.md` so it's discoverable, and disappears with the legacy path in Phase 7. **Superseded by D17.** |
 | D17 | 2026-06-02 | **Remove the `KEDRO_VIZ_INSPECTION_ADAPTER` opt-out env var entirely. Adapter is installed at startup whenever it can be built; legacy is the automatic fallback when it can't.** | Pre-release review feedback (Kedro maintainer + internal): the env var existed only as a "first release" rollback safety net for real users — but we haven't released yet, so it's protecting users who don't exist. Carrying ~10 lines of env-var handling + ~25 tests for a use case that doesn't apply was scaffolding without payoff. Phase 7 (deletion of the legacy backend + `LiveDataProvider`) is a separate follow-up |
+| D18 | 2026-06-02 | **Phase 7 reclassified from deletion to retention: keep the live backend + provider seam as the permanent `--params` runtime-params path; do not delete them.** Supersedes the "delete the legacy backend" follow-up noted in D16/D17. | `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14) — the live backend is the only engine that can reflect `--params`, and the seam (`get_runtime_data_provider`) is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive; the user chose to preserve `--params`. The other historical fallback reason (Kedro older than the inspection API) no longer applies — `kedro>=1.4.0` is the floor (D5). So Phase 7 becomes a reclassification: relabel the live path + seam in code/docs from "scaffolding to delete" to "the runtime-params path," and make an unexpected adapter build-failure log loudly (it's not normal operation) instead of silently. **Zero behaviour change.** Full deletion would only be revisited if the snapshot API ever grows a runtime-params route |
 | _ | _ | _(pending)_ Kedro ask outcome (func_name vs stable id vs id-break vs bridge) | — |
 
 ---
@@ -74,7 +75,10 @@ full parity on real projects + raised kedro floor.
   so the adapter path must be gated to `kedro>=1.4.0` with a live-path fallback below that.
 - **Secondary asks (non-blocking, to bundle later):** resolved `dataset_type` class string on
   `DatasetSnapshot`; a runtime-params/`extra_params` path through `get_project_snapshot`. Recorded
-  here; drafts to follow if/when we decide to file them.
+  here; drafts to follow if/when we decide to file them. **The runtime-params ask is the unblocker
+  for D18:** if `get_project_snapshot` ever accepts `extra_params`, the adapter could serve
+  `--params` too, the live backend would no longer be needed, and the deletion originally scoped
+  for Phase 7 could be revisited.
 
 ## Development Environment
 
@@ -97,6 +101,55 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 ---
 
 ## Changelog
+
+### 2026-06-02 — Phase 7 (Step 2): reclassify the live backend as the `--params` path (D18)
+
+**Context**
+
+Phase 7 was scoped as "delete the legacy backend + the provider seam." Working through it surfaced
+a hard collision: `kedro viz run --params=...` must keep working, and the inspection snapshot API
+has no runtime-params route (D14), so the live backend is the only engine that can serve `--params`
+— and the seam (`get_runtime_data_provider`) is the only thing that routes `--params` requests to
+it. Deleting the live backend and keeping `--params` are mutually exclusive. The user chose to
+preserve `--params`. The other historical fallback reason (Kedro < inspection API) is already moot
+(`kedro>=1.4.0` floor, D5). So Phase 7 was reclassified (D18) from a deletion to a reclassification.
+
+**What was done**
+
+- **Step 0** — committed the in-flight 6-findings work (`0c67d091`, "More cleanup and fixes"):
+  bridge-overlay graph enrichment in `inspection_adapter_provider.py`, membership-by-identity +
+  transcoded lookup in `graph_builder.py`, plus `test_export.py`, `test_graph_builder_edge_cases.py`,
+  `test_provider_graph_enrichment.py`, and `ARCHITECTURE.md`. No Claude co-author trailer.
+- **Step 1 — code docstrings/comments (no logic change):**
+  - `api/data_provider.py` — module docstring + `LiveDataProvider` + `get_runtime_data_provider`
+    docstrings reframed: the live path is the **runtime-params (`--params`) path**, retained by
+    design; the seam is "retained, not scaffolding." Removed all "legacy / phased out / removed in
+    Phase 7" language.
+  - `server.py` — `load_and_populate_data` + `_configure_inspection_adapter_provider` docstrings
+    reframed; the `--params` skip message now says the adapter is intentionally not installed; the
+    build-failure branch now logs **loudly** (the adapter FAILED and is not active — please report)
+    instead of a quiet "falling back." Still graceful: the populated live load serves. No
+    control-flow change.
+- **Step 2** — `inspection-adapter-tickets/ARCHITECTURE.md`: the "two phases" diagram, code-volume
+  table, seam/backend explainers, file-map entries, and the closing "Phase 7 deletion checklist"
+  all rewritten to the retention model. The checklist is now a "RETAINED / ALWAYS KEPT" ledger.
+- **Step 3** — this changelog entry, D18 in the Decision Log, and the Phase 7 Status Dashboard row
+  flipped to ✅ Done (reclassified).
+
+**Behaviour change:** none. `kedro viz run` serves via the adapter; `kedro viz run --params=...`
+serves via the live path; static export and `/api/*` routes are unchanged. The only observable
+difference is a louder log line if the adapter ever fails to build unexpectedly.
+
+**Files deleted:** none — that is the point of D18.
+
+**Gate:** `make lint` (ruff + mypy) clean; full `pytest package/tests/` green (env `viz-3-14`).
+
+**Why Phase 7 is "Done" without deleting anything:** the deletion it originally promised is not
+possible while `--params` is served by the live backend. The honest completion is to stop labelling
+that backend as doomed and document it as the runtime-params path. If the snapshot API ever grows a
+runtime-params route, full deletion can be revisited as a fresh piece of work.
+
+---
 
 ### 2026-06-02 — Drop the opt-out env var (D17)
 

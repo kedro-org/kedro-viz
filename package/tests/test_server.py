@@ -164,7 +164,7 @@ class TestInspectionAdapterStartup:
             )
         assert data_provider._adapter_holder.provider is None
         assert any(
-            "Failed to build the inspection adapter" in r.message
+            "Inspection adapter FAILED to build" in r.message
             for r in caplog.records
         )
 
@@ -242,11 +242,11 @@ class TestLiteModeAdapter:
         with caplog.at_level("WARNING", logger="kedro_viz.server"):
             load_and_populate_data(path="proj/path", is_lite=True)
 
-        # The legacy live load ran, so the viz has something to serve.
+        # The live load ran, so the viz has something to serve.
         mock_load_data.assert_called_once()
         mock_populate_data.assert_called_once()
         # A clear warning explains why we fell through.
         assert any(
-            "falling through to the legacy --lite live load" in r.message
+            "falling through to the --lite live load" in r.message
             for r in caplog.records
         )
