@@ -73,16 +73,31 @@ def test_save_api_responses_to_fs_passes_self_as_provider() -> None:
 @pytest.mark.parametrize(
     "value,expected",
     [
+        # Canonical truthy values keep the adapter on.
         ("1", True),
         ("true", True),
         ("TRUE", True),
         ("yes", True),
         ("on", True),
         ("  1  ", True),
+        # Canonical falsy values opt back into the legacy path.
         ("0", False),
         ("false", False),
+        ("FALSE", False),
+        ("no", False),
+        ("NO", False),
+        ("off", False),
+        ("Off", False),
         ("", False),
-        ("anything-else", False),
+        ("   ", False),
+        # Typos and unrecognised non-falsy values must keep the adapter on (the env var is an
+        # opt-OUT switch, not an opt-in). A footgun like KEDRO_VIZ_INSPECTION_ADAPTER=enabled
+        # must not silently disable the new default.
+        ("enabled", True),
+        ("yes please", True),
+        ("ON\n", True),
+        ("1.0", True),
+        ("anything-else", True),
     ],
 )
 def test_is_inspection_adapter_enabled_reads_env_var(

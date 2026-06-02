@@ -1,5 +1,5 @@
 import asyncio
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
@@ -99,20 +99,21 @@ def test_get_run_status_exception_handling():
     """Test exception handling in get_last_run_status function."""
     from kedro_viz.api.rest.router import get_last_run_status
 
-    # Mock get_run_status_response to raise an exception
+    # The route now goes through the runtime provider; mock the provider's method.
+    mock_provider = Mock()
+    mock_provider.get_run_status_response.side_effect = Exception("Test exception")
     with patch(
-        "kedro_viz.api.rest.router.get_run_status_response"
-    ) as mock_get_run_status:
+        "kedro_viz.api.rest.router.get_runtime_data_provider",
+        return_value=mock_provider,
+    ):
         with patch("kedro_viz.api.rest.router.logger") as mock_logger:
-            mock_get_run_status.side_effect = Exception("Test exception")
-
             # Call the function directly
             result = asyncio.run(get_last_run_status())
 
             # Verify that the exception was logged
             mock_logger.exception.assert_called_once_with(
                 "An exception occurred while getting run status: %s",
-                mock_get_run_status.side_effect,
+                mock_provider.get_run_status_response.side_effect,
             )
 
             # Verify that a JSONResponse with error was returned

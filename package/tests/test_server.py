@@ -208,11 +208,11 @@ class TestInspectionAdapterStartup:
         )
 
 
-# -- Phase 6.6: lite-mode short-circuit in load_and_populate_data ---------------------------- #
+# -- Lite-mode short-circuit in load_and_populate_data --------------------------------------- #
 
 
 class TestLiteModeAdapter:
-    """Flag ON + ``--lite`` skips the live load entirely (6.6)."""
+    """Adapter ON + ``--lite`` skips the live load when the adapter builds successfully."""
 
     @pytest.fixture(autouse=True)
     def _reset_adapter_slot(self):
@@ -283,3 +283,39 @@ class TestLiteModeAdapter:
         load_and_populate_data(path="proj/path", is_lite=True, extra_params={"x": 1})
 
         mock_load_data.assert_called_once()
+
+    def test_lite_falls_through_to_live_load_when_adapter_build_fails(
+        self, monkeypatch, mocker, caplog
+    ):
+        """If the adapter fails to build under --lite, fall through to the legacy live load.
+
+        Without this fallback, ``data_access_manager`` would stay empty and any subsequent
+        request would silently get an empty graph from ``LiveDataProvider``.
+        """
+        from kedro_viz.api.data_provider import INSPECTION_ADAPTER_ENV_VAR
+
+        monkeypatch.setenv(INSPECTION_ADAPTER_ENV_VAR, "1")
+        # Adapter construction raises (could be: stale --pipeline, kedro<1.4.0, etc.)
+        mocker.patch(
+            "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
+            side_effect=RuntimeError("snapshot build failed"),
+        )
+        mock_load_data = mocker.patch(
+            "kedro_viz.server.kedro_data_loader.load_data",
+            return_value=(mocker.Mock(), {}, {}),
+        )
+        mock_populate_data = mocker.patch("kedro_viz.server.populate_data")
+
+        from kedro_viz.server import load_and_populate_data
+
+        with caplog.at_level("WARNING", logger="kedro_viz.server"):
+            load_and_populate_data(path="proj/path", is_lite=True)
+
+        # The legacy live load ran, so the viz has something to serve.
+        mock_load_data.assert_called_once()
+        mock_populate_data.assert_called_once()
+        # A clear warning explains why we fell through.
+        assert any(
+            "falling through to the legacy --lite live load" in r.message
+            for r in caplog.records
+        )

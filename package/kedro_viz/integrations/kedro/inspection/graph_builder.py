@@ -1,13 +1,16 @@
 """Build a Kedro-Viz ``GraphAPIResponse`` from an inspection snapshot.
 
-Produces the graph — task, data and parameter nodes; the edges between them, including modular
-pipeline edges; the global tag and pipeline lists; per-node pipeline and modular-pipeline membership;
-data-node tags; and the modular-pipeline tree (``modularPipeline`` nodes + children). All node IDs
-come from :mod:`kedro_viz.integrations.kedro.node_ids` (Decision D9).
+Produces the full graph — task, data and parameter nodes; the edges between them, including
+modular-pipeline edges; the global tag and pipeline lists; per-node pipeline and
+modular-pipeline membership; data-node tags; the modular-pipeline tree (``modularPipeline``
+nodes + children); and per-node ``layer`` assignment with the global ``layers`` list (the layer
+mapping is passed in by the caller because the snapshot itself doesn't expose viz metadata).
 
-Out of scope here (built in later phases, hence empty/omitted for now):
-- ``layers`` and per-node ``layer`` (Phase 4),
-- ``node_extras`` stats/styles and resolved task ``parameters`` (live-only, Phase 5).
+All node IDs come from :mod:`kedro_viz.integrations.kedro.node_ids`.
+
+Live-only fields not carried by the snapshot — ``node_extras`` stats/styles, resolved task
+``parameters`` values — are populated by the metadata bridge in
+:mod:`kedro_viz.api.inspection_adapter_provider`, not here.
 """
 
 from __future__ import annotations

@@ -1,16 +1,17 @@
 """Runtime data provider — the single seam every read endpoint and the static-export path share.
 
-Decision D11 (Phase 6): rather than spreading flag-conditionals across routes when the inspection
-adapter is wired in (6.2b+), every read goes through a ``RuntimeDataProvider``. Two implementations:
+Rather than spreading flag-conditionals across routes, every read goes through a
+``RuntimeDataProvider``. Two implementations:
 
-- :class:`LiveDataProvider` — wraps today's ``data_access_manager``-backed response builders
-  byte-identically; this is the default and what 6.2b will route through when the experimental
-  adapter flag is OFF.
-- ``InspectionAdapterProvider`` — added in later sub-steps (6.2b–6.5); produces responses from the
-  inspection adapter when the flag is ON.
+- :class:`LiveDataProvider` — wraps the ``data_access_manager``-backed response builders; the
+  legacy graph path users get when ``KEDRO_VIZ_INSPECTION_ADAPTER=0``.
+- ``InspectionAdapterProvider`` (in :mod:`kedro_viz.api.inspection_adapter_provider`) — serves
+  the graph + node metadata from a Kedro inspection snapshot. This is the default since the
+  ``KEDRO_VIZ_INSPECTION_ADAPTER`` env var was flipped to opt-out.
 
-This sub-step (6.2a) introduces only the protocol and the live implementation. **No routes are wired
-yet, no flag exists yet** — behaviour is unchanged.
+``get_runtime_data_provider()`` is the per-request factory used by the REST routes and the
+static-export path. When no adapter has been installed at startup (e.g. tests), it falls back
+to ``LiveDataProvider``.
 """
 
 from __future__ import annotations
@@ -65,10 +66,11 @@ class RuntimeDataProvider(Protocol):
 
 
 class LiveDataProvider:
-    """Default provider — delegates to today's live (``data_access_manager``-backed) responses.
+    """Legacy provider — delegates to the ``data_access_manager``-backed response builders.
 
-    Byte-identical to current behaviour; the routes go through this when the experimental
-    adapter flag is OFF (the default).
+    Routes use this when the adapter is explicitly disabled (``KEDRO_VIZ_INSPECTION_ADAPTER=0``)
+    or no inspection-adapter provider has been installed (e.g. in unit tests). The legacy code
+    path will be removed once the inspection adapter has had a release cycle of real-world use.
     """
 
     def get_pipeline_response(
@@ -98,20 +100,20 @@ class LiveDataProvider:
         )
 
 
-# -- Inspection-adapter flag (Phase 6.2b → 6.7 flip) --------------------------------------- #
+# -- Inspection-adapter flag --------------------------------------------------------------- #
 
 logger = logging.getLogger(__name__)
 
 #: Env var that controls the inspection-adapter graph path.
 #:
-#: **Phase 6.7 (breaking release):** the adapter is now the **default**. Unsetting this variable
-#: means the adapter is ON. To opt back into the legacy (``data_access_manager``-backed) graph
-#: path for one ``kedro viz run`` invocation, set ``KEDRO_VIZ_INSPECTION_ADAPTER=0`` (or any of
-#: ``false`` / ``no`` / ``off``). The opt-out is a temporary safety net — Phase 7 removes the
-#: legacy code path entirely and this variable will go away with it.
+#: The adapter is the **default**. Unsetting this variable, or setting it to any non-falsy
+#: value, keeps the adapter ON. To opt back into the legacy (``data_access_manager``-backed)
+#: graph path for one ``kedro viz run`` invocation, set ``KEDRO_VIZ_INSPECTION_ADAPTER=0`` (or
+#: any of ``false`` / ``no`` / ``off``). The opt-out is a temporary safety net — the legacy
+#: code path will be removed in a follow-up release and this variable will go away with it.
 INSPECTION_ADAPTER_ENV_VAR = "KEDRO_VIZ_INSPECTION_ADAPTER"
 
-_TRUTHY = frozenset({"1", "true", "yes", "on"})
+_FALSY = frozenset({"0", "false", "no", "off", ""})
 
 
 class _AdapterProviderHolder:
@@ -130,14 +132,15 @@ _adapter_holder = _AdapterProviderHolder()
 def is_inspection_adapter_enabled() -> bool:
     """Whether the inspection adapter is enabled for this process.
 
-    The adapter is **on by default** (6.7). Setting ``KEDRO_VIZ_INSPECTION_ADAPTER`` to any
-    falsy value (``0`` / ``false`` / ``no`` / ``off`` / empty string) opts back into the legacy
-    graph path. Any other (truthy) value, or leaving it unset, keeps the adapter on.
+    The adapter is **on by default**. Setting ``KEDRO_VIZ_INSPECTION_ADAPTER`` to any value in
+    ``{"0", "false", "no", "off", ""}`` (case-insensitive, whitespace-trimmed) opts back into
+    the legacy graph path. Any other value, or leaving it unset, keeps the adapter on — so a
+    typo such as ``KEDRO_VIZ_INSPECTION_ADAPTER=enabled`` does **not** silently disable it.
     """
     value = os.environ.get(INSPECTION_ADAPTER_ENV_VAR)
     if value is None:
         return True
-    return value.strip().lower() in _TRUTHY
+    return value.strip().lower() not in _FALSY
 
 
 def set_inspection_adapter_provider(provider: Optional["RuntimeDataProvider"]) -> None:

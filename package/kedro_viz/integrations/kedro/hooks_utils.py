@@ -22,8 +22,8 @@ EVENTS_FILE = "kedro_pipeline_events.json"
 def hash_node(node: Any) -> str:
     """Stable Viz ID for a Kedro node or dataset reference.
 
-    Routes through the shared :mod:`kedro_viz.integrations.kedro.node_ids` scheme (D9 + Phase 6.3)
-    so the run-status events emitted here use exactly the same IDs as the inspection-adapter graph.
+    Routes through the shared :mod:`kedro_viz.integrations.kedro.node_ids` scheme so the
+    run-status events emitted here use exactly the same IDs as the inspection-adapter graph.
     """
     if isinstance(node, KedroNode):
         return node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))

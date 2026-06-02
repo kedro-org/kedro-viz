@@ -1,10 +1,10 @@
 """`kedro_viz.api.rest.responses.save_responses` contains response classes
 and utility functions for writing and saving REST endpoint responses to file system.
 
-Phase 6.5: every read goes through a :class:`RuntimeDataProvider` (the same seam the runtime
-routes use) rather than touching ``data_access_manager`` directly. Callers that don't pass an
-explicit provider get whatever ``get_runtime_data_provider()`` returns — i.e. ``LiveDataProvider``
-by default, ``InspectionAdapterProvider`` when the experimental flag is ON.
+Every read goes through a :class:`RuntimeDataProvider` (the same seam the runtime routes use)
+rather than touching ``data_access_manager`` directly. Callers that don't pass an explicit
+provider get whatever ``get_runtime_data_provider()`` returns — i.e. ``LiveDataProvider`` on the
+legacy path, ``InspectionAdapterProvider`` when the inspection adapter is enabled.
 """
 
 from __future__ import annotations

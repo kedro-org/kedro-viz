@@ -14,10 +14,7 @@ from kedro_viz.api.rest.responses.metadata import (
 )
 from kedro_viz.api.rest.responses.nodes import NodeMetadataAPIResponse
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
-from kedro_viz.api.rest.responses.run_events import (
-    RunStatusAPIResponse,
-    get_run_status_response,
-)
+from kedro_viz.api.rest.responses.run_events import RunStatusAPIResponse
 from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
@@ -99,7 +96,7 @@ async def get_last_run_status():
     ```
     """
     try:
-        return get_run_status_response()
+        return get_runtime_data_provider().get_run_status_response()
     except Exception as exc:
         logger.exception("An exception occurred while getting run status: %s", exc)
         return JSONResponse(

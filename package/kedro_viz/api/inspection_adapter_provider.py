@@ -1,19 +1,15 @@
-"""Inspection-adapter–backed :class:`RuntimeDataProvider` (Phase 6.2b + 6.4 + 6.5 + 6.6).
+"""Inspection-adapter–backed :class:`RuntimeDataProvider`.
 
-When the experimental adapter flag is ON, ``/api/main``, ``/api/pipelines/{id}``,
-``/api/nodes/{id}`` and the static-export path are all served by this provider. The graph
-endpoints come from the inspection snapshot via
-:class:`~kedro_viz.integrations.kedro.inspection.graph_builder.GraphBuilder`; node metadata is
-returned from live viz objects via the **metadata bridge** (6.4) when a project is loaded, or
-from a thin **snapshot lookup** (6.6) when running in lite mode without a live project; the
-static export (6.5) walks ``get_pipeline_ids()`` / ``get_node_ids()`` here and re-uses the same
-response builders, so the exported file set carries new-scheme IDs end-to-end.
-
-Out of scope here:
-
-- Run status (``/api/run-status``) — kept on the live response builder; ``hash_node`` itself was
-  switched to the shared scheme in sub-step 6.3, so its IDs already correlate with the adapter
-  graph without any change here.
+When the inspection adapter is enabled, ``/api/main``, ``/api/pipelines/{id}``,
+``/api/nodes/{id}``, ``/api/run-status`` and the static-export path are all served by this
+provider. The graph endpoints come from the inspection snapshot via
+:class:`~kedro_viz.integrations.kedro.inspection.graph_builder.GraphBuilder`. Node metadata is
+returned from live viz objects via the **metadata bridge** when a project is loaded, or from a
+thin **snapshot lookup** when running in lite mode without a live project. The static export
+walks ``get_pipeline_ids()`` / ``get_node_ids()`` here and re-uses the same response builders,
+so the exported file set carries new-scheme IDs end-to-end. Run status is delegated to the
+shared response builder; the ``hash_node`` hook uses the same node-ID scheme as the adapter
+graph, so the IDs already correlate.
 """
 
 from __future__ import annotations
@@ -67,12 +63,13 @@ class InspectionAdapterProvider:
     same :class:`GraphBuilder`. When ``pipeline_name`` is set (i.e. ``kedro viz run --pipeline X``),
     only that pipeline is visible — mirroring how the live path filters ``data_access_manager``.
 
-    The **metadata bridge** is a ``{new_id -> live viz node}`` dict built once at construction
-    from a live ``GraphNodesRepository`` (defaults to the populated module singleton; tests can
-    inject a fresh one). ``/api/nodes/{id}`` looks up the new-scheme ID in the bridge and returns
-    the same metadata payload the live path would have returned for that object. An unknown ID
-    returns 404 — the adapter graph only emits new-scheme IDs, so legacy IDs are deliberately not
-    served here.
+    Node-metadata resolution is two-tiered. The **metadata bridge** is a
+    ``{new_id -> live viz node}`` dict built once at construction from a live
+    ``GraphNodesRepository`` (defaults to the populated module singleton; tests can inject a
+    fresh one). The **snapshot lookup** is a ``{new_id -> thin payload}`` dict built from the
+    snapshot itself, so ``/api/nodes/{id}`` still answers in lite mode when no live project is
+    loaded. Lookup order is bridge first, snapshot lookup second, 404 only if neither knows the
+    ID — legacy ID schemes are deliberately not served here.
     """
 
     def __init__(
@@ -91,8 +88,8 @@ class InspectionAdapterProvider:
         self._snapshot = snapshot
         self._builder = GraphBuilder(snapshot, layer_mapping)
         self._metadata_bridge = self._build_metadata_bridge(live_nodes)
-        # 6.6: thin metadata payload keyed by new-scheme id, computed directly from the snapshot
-        # so lite mode (no live project loaded → empty bridge) still answers /api/nodes/{id}.
+        # Thin metadata payload keyed by new-scheme id, computed directly from the snapshot so
+        # lite mode (no live project loaded → empty bridge) still answers /api/nodes/{id}.
         self._snapshot_lookup = self._build_snapshot_lookup()
 
     # -- RuntimeDataProvider surface ----------------------------------------------------- #
@@ -129,17 +126,17 @@ class InspectionAdapterProvider:
     ) -> Union[NodeMetadataAPIResponse, JSONResponse]:
         """Return metadata for the node carrying the new-scheme ``node_id``.
 
-        Full mode (6.4): looks up the bridge and returns the same pydantic domain model the live
+        Full mode: looks up the bridge and returns the same pydantic domain model the live
         response builder uses, so the payload is byte-identical to the live response.
 
-        Lite mode (6.6): bridge is empty; falls back to a thin snapshot-backed payload built
-        from :class:`~kedro.inspection.models.ProjectSnapshot`. The shape matches the live
+        Lite mode: bridge is empty; falls back to a thin snapshot-backed payload built from
+        :class:`~kedro.inspection.models.ProjectSnapshot`. The shape matches the live
         ``*APIResponse`` schemas, but live-only fields (``code``, ``parameters`` values,
-        ``preview``, ``stats``, ``run_command``) are omitted — frontend treats absent fields as
-        unavailable.
+        ``preview``, ``stats``, ``run_command``) are omitted — frontend treats absent fields
+        as unavailable.
 
-        Unknown ID returns 404; a node that exists but has no metadata returns ``{}`` (matches the
-        live behaviour for free-input datasets, etc.).
+        Unknown ID returns 404; a node that exists but has no metadata returns ``{}`` (matches
+        the live behaviour for free-input datasets, etc.).
         """
         viz_node = self._metadata_bridge.get(node_id)
         if viz_node is not None:
@@ -173,15 +170,15 @@ class InspectionAdapterProvider:
         )
 
     def get_run_status_response(self) -> RunStatusAPIResponse:
-        # Kept on the live response builder; from 6.3 onward, `hash_node` already emits the shared
-        # scheme so the IDs in this payload correlate with the adapter graph automatically.
+        # Delegated to the shared response builder; ``hash_node`` emits the same node-ID scheme
+        # the adapter graph uses, so the IDs in this payload correlate without translation.
         return get_run_status_response()
 
     def save_api_responses_to_fs(
         self, path: str, remote_fs: Any, is_all_previews_enabled: bool
     ) -> None:
-        # 6.5: the export uses this provider's surface, so the exported file set carries
-        # adapter (new-scheme) IDs end-to-end.
+        # The export uses this provider's surface, so the exported file set carries the
+        # adapter's node-ID scheme end-to-end.
         save_api_responses_to_fs(
             path, remote_fs, is_all_previews_enabled, provider=self
         )
@@ -200,11 +197,12 @@ class InspectionAdapterProvider:
         return dataclasses.replace(snapshot, pipelines=filtered)
 
     def _build_metadata_bridge(self, live_nodes: Optional[Any]) -> dict[str, GraphNode]:
-        """Build the ``{new_id -> live viz node}`` map (6.4).
+        """Build the ``{new_id -> live viz node}`` map used by ``get_node_metadata_response``.
 
         ``live_nodes`` may be either a ``GraphNodesRepository`` (test injection) or ``None`` to
         read the populated module singleton — i.e. exactly what the live path uses. Returns an
-        empty dict when the singleton hasn't been populated yet (lite mode, deferred to 6.6).
+        empty dict when the singleton hasn't been populated yet (lite mode), in which case
+        ``get_node_metadata_response`` falls back to the snapshot lookup instead.
         """
         repository = live_nodes
         if repository is None:
@@ -248,7 +246,7 @@ class InspectionAdapterProvider:
         return None
 
     def _build_snapshot_lookup(self) -> dict[str, dict[str, Any]]:
-        """Build the lite-mode metadata payload keyed by new-scheme id (6.6).
+        """Build the lite-mode metadata payload keyed by new-scheme id.
 
         Walks every node and io-ref in the snapshot once and records the thin payload the
         frontend should see in lite mode. The shape matches the live ``*APIResponse`` schemas

@@ -3,9 +3,9 @@
 Thin wrapper around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``).
 
 The local Python API is the only supported source: the HTTP/REST snapshot endpoint was
-reverted upstream (kedro#5570), so remote snapshots are intentionally not handled here
-(Decision D1). Keeping the source behind this module isolates the rest of the adapter
-from how snapshots are obtained.
+reverted upstream (kedro#5570), so remote snapshots are intentionally not handled here.
+Keeping the source behind this module isolates the rest of the adapter from how snapshots
+are obtained.
 """
 
 from __future__ import annotations
