@@ -1,19 +1,16 @@
-"""Modular-pipeline membership and tree for snapshot nodes (Phase 3a + 3b).
+"""Modular-pipeline membership, tree and edges for snapshot nodes.
 
-Reproduces the current backend's modular-pipeline rules from ``NodeSnapshot.namespace`` plus the
-Kedro pipeline set-algebra, without live ``Pipeline`` objects.
+Derives modular pipelines from ``NodeSnapshot.namespace`` and the Kedro pipeline set-algebra,
+without live ``Pipeline`` objects.
 
-``ModularMembership`` (3a) — each node's ``modular_pipelines`` field:
-- a **task** belongs to its own (deepest) namespace only;
-- a **dataset** belongs to every modular pipeline ``P`` where it is an I/O of one of ``P``'s *direct*
-  nodes (``namespace == P``) or a boundary input/output of ``P``'s subtree. That dual rule is why
-  ``prm_spine_table`` (internal to ``ingestion`` but consumed by ``feature_engineering``) belongs to
-  both, while a model ``regressor`` belongs only to its sub-pipeline.
-
-``ModularTreeBuilder`` (3b) — the expand/collapse tree (``modularPipeline`` nodes + children), with
-per-modular-pipeline ``inputs``/``outputs`` from the set-algebra
-(``inputs = consumed - produced``; ``outputs = (produced - consumed) | (rest_inputs & produced)``).
-Modular graph edges + cycle removal remain a later step (Phase 3c).
+- ``ModularMembership`` — each node's ``modular_pipelines``: a task belongs to its own (deepest)
+  namespace; a dataset belongs to every modular pipeline it is an I/O of, directly or at a subtree
+  boundary.
+- ``ModularTreeBuilder`` — the expand/collapse tree (``modularPipeline`` nodes + children) with
+  per-pipeline ``inputs``/``outputs`` (``inputs = consumed - produced``;
+  ``outputs = (produced - consumed) | (rest_inputs & produced)``).
+- ``add_modular_edges`` / ``remove_cyclic_modular_edges`` — connect each modular pipeline to its
+  boundary datasets, then drop any edge that would form a cycle.
 """
 
 from __future__ import annotations
@@ -225,7 +222,7 @@ def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
     return namespace == mp_id or namespace.startswith(f"{mp_id}.")
 
 
-# -- modular graph edges (Phase 3c) ---------------------------------------------------------- #
+# -- modular graph edges --------------------------------------------------------------------- #
 
 
 def add_modular_edges(

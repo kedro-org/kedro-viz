@@ -1,13 +1,9 @@
-"""Layer extraction from raw catalog config (Phase 4).
+"""Extract dataset layers from the raw catalog config.
 
-Layer is a Kedro-Viz concept (it lives under the Viz-owned ``metadata.kedro-viz.layer`` key; Kedro
-stores the ``metadata`` dict but does not interpret it), so it stays a Viz concern — we do NOT ask
-Kedro to expose "layer". The snapshot also drops the generic ``metadata`` dict, so we read the
-catalog config here ourselves (no ``DataCatalog`` is materialised). Transcoding is stripped so
-``name@a`` and ``name@b`` map to one layer.
-
-The only non-leaky thing Kedro could expose is the raw ``metadata`` dict on ``DatasetSnapshot`` —
-purely to save this extra config read — but that is optional; layer interpretation remains in Viz.
+Layer is a Kedro-Viz concept (under ``metadata.kedro-viz.layer``); Kedro stores the ``metadata``
+dict but doesn't interpret it, and the inspection snapshot drops it. So we read the catalog config
+directly here (no ``DataCatalog`` is materialised). Transcoding is stripped, so ``name@a`` and
+``name@b`` map to one layer.
 """
 
 from __future__ import annotations

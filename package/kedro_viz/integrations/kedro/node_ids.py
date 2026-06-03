@@ -1,12 +1,11 @@
-"""Shared Kedro-Viz node-ID generation — one implementation for the adapter *and* the run-status hook.
+"""Shared Kedro-Viz node-ID generation for the adapter and the run-status hook.
 
-Single source of truth for the Viz-side node-ID scheme. Lives outside ``inspection/`` so
-non-inspection callers (notably :func:`kedro_viz.integrations.kedro.hooks_utils.hash_node`) can
-import it without depending on the inspection adapter.
+Single source of truth for the Viz node-ID scheme. Lives outside ``inspection/`` so non-inspection
+callers (notably :func:`kedro_viz.integrations.kedro.hooks_utils.hash_node`) can import it without
+depending on the adapter.
 
-The legacy backend scheme ``_hash(str(node))`` needed the function name, which the inspection
-snapshot omits. The current scheme hashes identity-defining fields only — the namespaced node
-name plus its inputs and outputs — and is shipped as a one-time breaking release.
+IDs hash only identity-defining fields — the namespaced node name plus its inputs and outputs — so
+re-tagging a node never changes its ID.
 """
 
 from __future__ import annotations

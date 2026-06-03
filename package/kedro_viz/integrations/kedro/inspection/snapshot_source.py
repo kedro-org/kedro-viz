@@ -1,11 +1,8 @@
 """Load a Kedro project inspection snapshot.
 
-Thin wrapper around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``).
-
-The local Python API is the only supported source: the HTTP/REST snapshot endpoint was
-reverted upstream (kedro#5570), so remote snapshots are intentionally not handled here.
-Keeping the source behind this module isolates the rest of the adapter from how snapshots
-are obtained.
+Thin wrapper around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``). Only the local
+Python API is supported (there is no remote snapshot endpoint); isolating it here keeps the rest
+of the adapter independent of how snapshots are obtained.
 """
 
 from __future__ import annotations
@@ -26,16 +23,12 @@ logger = logging.getLogger(__name__)
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Iterator[None]:
-    """Mock the project's unresolved imports in ``sys.modules`` for the duration of the block.
+    """Mock the project's missing imports in ``sys.modules`` for the duration of the block.
 
-    ``kedro.inspection.get_project_snapshot`` is **not import-free**: it imports the project's
-    pipeline modules to read their structure, which pulls in node-function libraries (pandas,
-    sklearn, ...). Under ``--lite`` those may not be installed. This reuses kedro-viz's
-    :class:`~kedro_viz.integrations.kedro.lite_parser.LiteParser` — the same mechanism the live
-    ``--lite`` loader uses — to mock the missing modules so the snapshot can still be built. The
-    snapshot's structure (node names, inputs, outputs) comes from the pipeline *wiring*, not from
-    executing the stubbed functions, so it stays correct; dataset types come from the catalog
-    config, so mocking dataset libraries does not corrupt them either.
+    ``get_project_snapshot`` imports the project's pipeline modules, which pull in node-function
+    libraries that may not be installed under ``--lite``. Reusing kedro-viz's ``LiteParser`` to mock
+    them lets the snapshot build anyway; its structure comes from the pipeline wiring (not from
+    running the stubbed functions), so it stays correct.
     """
     import sys
     from unittest.mock import patch
@@ -101,11 +94,10 @@ def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSn
 def load_catalog_config(
     project_path: str | Path, env: str | None = None
 ) -> dict[str, Any]:
-    """Return the project's raw catalog config (the snapshot drops layer metadata, Phase 4).
+    """Return the project's raw catalog config (the inspection snapshot drops it).
 
-    Layers live under each dataset's ``metadata.kedro-viz.layer`` in the catalog config but are not
-    part of ``ProjectSnapshot``, so they are read here from config (no ``DataCatalog`` is
-    materialised). Returns an empty dict if no catalog config is present.
+    Used to read Viz-only metadata such as layers (see :mod:`.layers`); no ``DataCatalog`` is
+    materialised. Returns an empty dict if there is no catalog config.
     """
     from kedro.config import MissingConfigException
     from kedro.framework.project import settings
