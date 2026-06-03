@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any, Optional, Union, cast
 
@@ -40,6 +41,7 @@ from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
 from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    lite_import_stubs,
     load_catalog_config,
     load_snapshot,
 )
@@ -87,12 +89,21 @@ class InspectionAdapterProvider:
         env: str | None = None,
         pipeline_name: str | None = None,
         *,
+        package_name: str | None = None,
+        is_lite: bool = False,
         live_nodes: Optional[Any] = None,
     ):
-        snapshot = load_snapshot(project_path, env=env)
+        # Under --lite the project's node-function deps may not be installed. Mock the missing
+        # imports while reading the snapshot + catalog config so the snapshot can be built without
+        # them (Path B / D19). In full mode the live load already needs the real deps, so no stubs.
+        stub_ctx = (
+            lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
+        )
+        with stub_ctx:
+            snapshot = load_snapshot(project_path, env=env)
+            catalog_config = load_catalog_config(project_path, env=env)
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
-        catalog_config = load_catalog_config(project_path, env=env)
         layer_mapping = extract_layers(catalog_config)
         self._snapshot = snapshot
         self._builder = GraphBuilder(snapshot, layer_mapping)

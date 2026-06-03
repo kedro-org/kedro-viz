@@ -10,11 +10,59 @@ are obtained.
 
 from __future__ import annotations
 
+import logging
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
+
+logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def lite_import_stubs(
+    project_path: str | Path, package_name: str | None = None
+) -> Iterator[None]:
+    """Mock the project's unresolved imports in ``sys.modules`` for the duration of the block.
+
+    ``kedro.inspection.get_project_snapshot`` is **not import-free**: it imports the project's
+    pipeline modules to read their structure, which pulls in node-function libraries (pandas,
+    sklearn, ...). Under ``--lite`` those may not be installed. This reuses kedro-viz's
+    :class:`~kedro_viz.integrations.kedro.lite_parser.LiteParser` — the same mechanism the live
+    ``--lite`` loader uses — to mock the missing modules so the snapshot can still be built. The
+    snapshot's structure (node names, inputs, outputs) comes from the pipeline *wiring*, not from
+    executing the stubbed functions, so it stays correct; dataset types come from the catalog
+    config, so mocking dataset libraries does not corrupt them either.
+    """
+    import sys
+    from unittest.mock import patch
+
+    from kedro_viz.integrations.kedro.lite_parser import LiteParser
+    from kedro_viz.models.metadata import Metadata
+
+    lite_parser = LiteParser(package_name)
+    unresolved = lite_parser.parse(Path(project_path)) or {}
+    modules_to_mock: set[str] = set()
+    for module_set in unresolved.values():
+        modules_to_mock |= module_set
+
+    sys_modules_patch = sys.modules.copy()
+    if modules_to_mock:
+        # Same banner the live --lite loader sets, so the UI flags limited functionality.
+        Metadata.set_has_missing_dependencies(True)
+        sys_modules_patch.update(lite_parser.create_mock_modules(modules_to_mock))
+        logger.warning(
+            "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
+            "mocked. Install them for full functionality:\n%s",
+            len(modules_to_mock),
+            sorted(modules_to_mock),
+        )
+
+    with patch.dict("sys.modules", sys_modules_patch):
+        yield
 
 
 def is_inspection_available() -> bool:

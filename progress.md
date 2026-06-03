@@ -59,6 +59,7 @@ full parity on real projects + raised kedro floor.
 | D16 | 2026-05-28 | **Flip the default: `KEDRO_VIZ_INSPECTION_ADAPTER` unset → adapter ON. `=0` opts back to the legacy graph path** (temporary safety net until Phase 7 removes the legacy code entirely) | Realises D12's intent: the experimental flag becomes the new default once parity is proven. Inverting the existing env var (rather than introducing a new opt-in name) means users who set it experimentally don't have to change anything; users who want today's behaviour get one clear knob (`=0`). The opt-out lives in `RELEASE.md` so it's discoverable, and disappears with the legacy path in Phase 7. **Superseded by D17.** |
 | D17 | 2026-06-02 | **Remove the `KEDRO_VIZ_INSPECTION_ADAPTER` opt-out env var entirely. Adapter is installed at startup whenever it can be built; legacy is the automatic fallback when it can't.** | Pre-release review feedback (Kedro maintainer + internal): the env var existed only as a "first release" rollback safety net for real users — but we haven't released yet, so it's protecting users who don't exist. Carrying ~10 lines of env-var handling + ~25 tests for a use case that doesn't apply was scaffolding without payoff. Phase 7 (deletion of the legacy backend + `LiveDataProvider`) is a separate follow-up |
 | D18 | 2026-06-02 | **Phase 7 reclassified from deletion to retention: keep the live backend + provider seam as the permanent `--params` runtime-params path; do not delete them.** Supersedes the "delete the legacy backend" follow-up noted in D16/D17. | `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14) — the live backend is the only engine that can reflect `--params`, and the seam (`get_runtime_data_provider`) is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive; the user chose to preserve `--params`. The other historical fallback reason (Kedro older than the inspection API) no longer applies — `kedro>=1.4.0` is the floor (D5). So Phase 7 becomes a reclassification: relabel the live path + seam in code/docs from "scaffolding to delete" to "the runtime-params path," and make an unexpected adapter build-failure log loudly (it's not normal operation) instead of silently. **Zero behaviour change.** Full deletion would only be revisited if the snapshot API ever grows a runtime-params route |
+| D19 | 2026-06-03 | **Finding (no code change yet): the Kedro snapshot is NOT import-free — `get_project_snapshot` imports the project's pipeline modules, so adapter-lite needs the node-function libraries (sklearn/pandas/…) importable. In a truly bare env the adapter build fails (`ModuleNotFoundError`) and falls through to the legacy `--lite` loader, which stubs imports. Lite mode therefore has TWO benefits and the adapter only delivers one: (a) "no project deps" → legacy-lite only; (b) "skip the heavy live load / side-effects" → adapter-lite. The fall-through covers (a) automatically. Path B (reuse kedro-viz's `LiteParser` to mock missing modules in `sys.modules` before calling `get_project_snapshot`) is PROVEN to let adapter-lite also cover (a).** | Discovered while testing `--lite` in a fresh env with no project deps: the adapter logged "FAILED to build" + a `ModuleNotFoundError: No module named 'sklearn'` traceback, then fell through to legacy lite. Root cause: `get_project_snapshot` → `_build_pipeline_snapshots` → `importlib.import_module(pipeline_registry)` imports node modules whose top-level `import sklearn` crashes. Probe (env `viz-lite-test`, sklearn absent): `LiteParser.parse` → `create_mock_modules` → `patch.dict("sys.modules", …)` → `get_project_snapshot` built the snapshot (6 pipelines, 19 datasets, 52 nodes); the adapter then produced an **identical** graph to the with-deps run (63 nodes / 110 edges / 6 pipelines) with correct `dataset_type` strings (read from catalog YAML, so mocking `kedro_datasets` doesn't corrupt them). **Decisions:** (1) ✅ **DONE 2026-06-03** — Path B implemented (`lite_import_stubs` in `snapshot_source.py`, wired through the provider + `server.py`); adapter-lite now serves the no-deps case. (2) still open — file a Kedro ask for an import-free snapshot (Path A — the clean long-term fix that would let us drop the stubbing); (3) still open — soften the build-failure log under `--lite` (a `ModuleNotFoundError` there is expected, not "please report"). |
 | _ | _ | _(pending)_ Kedro ask outcome (func_name vs stable id vs id-break vs bridge) | — |
 
 ---
@@ -79,6 +80,12 @@ full parity on real projects + raised kedro floor.
   for D18:** if `get_project_snapshot` ever accepts `extra_params`, the adapter could serve
   `--params` too, the live backend would no longer be needed, and the deletion originally scoped
   for Phase 7 could be revisited.
+- **Import-free snapshot (Path A — the unblocker for D19 / lite "no-deps"):** `get_project_snapshot`
+  currently imports the project's pipeline modules, so adapter-lite needs node-function deps
+  installed. Ask Kedro to derive the pipeline structure without importing node libraries (AST-based,
+  like kedro-viz's `LiteParser`). Until then, **Path B** (kedro-viz stubs missing modules via
+  `LiteParser` before snapshotting) is **implemented** (2026-06-03, `lite_import_stubs`) and covers
+  the no-deps case without a Kedro change. Path A would let us delete that stubbing.
 
 ## Development Environment
 
@@ -101,6 +108,107 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 ---
 
 ## Changelog
+
+### 2026-06-03 — Implement Path B: adapter-lite covers the no-deps case (D19)
+
+**What was done**
+
+Wired the proven Path B (see the spike entry below) into the adapter so `--lite` builds the
+snapshot even when the project's node-function deps (sklearn/pandas/…) aren't installed.
+
+- `integrations/kedro/inspection/snapshot_source.py` — new `lite_import_stubs(project_path,
+  package_name)` context manager. Reuses the existing `LiteParser` (the same mechanism the live
+  `--lite` loader uses): parse the project for unresolved imports, `create_mock_modules`, and
+  `patch.dict("sys.modules", …)` for the duration of the block. Sets the
+  `Metadata.has_missing_dependencies` banner and logs the install-these-deps guidance, matching
+  `data_loader`. No hand-rolled `sys.modules` mutation.
+- `api/inspection_adapter_provider.py` — `__init__` gains `is_lite` + `package_name` kwargs. When
+  `is_lite`, both `load_snapshot` **and** `load_catalog_config` run inside `lite_import_stubs`
+  (mirrors the proven probe, which wrapped both); otherwise a `nullcontext` (full mode needs the
+  real deps anyway).
+- `server.py` — `_configure_inspection_adapter_provider` gains `is_lite` + `package_name` (keyword-
+  only) and passes them to the provider. The `--lite` short-circuit calls it with `is_lite=True`
+  and the run's `package_name`; the full-mode call passes `package_name`.
+- Tests: `test_snapshot_source.py` — hermetic `lite_import_stubs` tests (mocks an unresolvable
+  import inside the context, gone after; no-op when all imports resolve) + an autouse fixture that
+  restores the global `Metadata.has_missing_dependencies` flag so it doesn't leak. The two
+  `test_server.py` provider-call assertions updated for the new `package_name`/`is_lite` kwargs.
+
+**Proof:** in the bare `viz-lite-test` env (sklearn absent), `InspectionAdapterProvider(demo,
+is_lite=True, package_name="demo_project")` now builds the full graph (63 nodes / 110 edges / 6
+pipelines) through the real code path — no manual stubbing.
+
+**Gate:** `make lint` (ruff + mypy) clean; `pytest package/tests/` — 563 passed (env `viz-3-14`).
+
+**Effect:** adapter-lite now delivers lite's "no project deps" promise (benefit (a) in D19), not just
+"skip the heavy load" (benefit (b)). The legacy-lite fall-through remains as a safety net. The
+Kedro-side import-free snapshot (Path A) is still the cleaner long-term fix and would let us drop
+this stubbing.
+
+---
+
+### 2026-06-03 — Spike: lite mode in a bare env + Path B proven (D19)
+
+**Context**
+
+Tested `kedro viz run --lite` in a fresh conda env (`viz-lite-test`, kedro 1.4.0 + kedro-viz from
+this repo, **no project deps** — no sklearn/pandas/matplotlib/kedro_datasets). The point: lite
+mode's headline promise is "visualise without installing the project's dependencies."
+
+**What happened**
+
+The adapter did **not** serve. The logs showed, in order:
+1. `Inspection adapter FAILED to build; it is not active for this process.` (our D18 message)
+2. `ModuleNotFoundError: No module named 'sklearn'`
+3. `Inspection adapter could not be built under --lite; falling through to the --lite live load`
+
+So the **legacy `--lite` loader** served (it stubs missing imports via `LiteParser`), which is why
+the UI still rendered and still showed the source-code toggle.
+
+**Root cause**
+
+`get_project_snapshot` is **not import-free**. `_build_pipeline_snapshots` →
+`importlib.import_module(<pipeline_registry>)` imports the project's node modules, and
+`modelling/nodes.py` does `from sklearn.base import BaseEstimator` at module top level → crash.
+The snapshot avoids loading the catalog / instantiating datasets / running anything, but it still
+imports the Python that *defines* the pipelines.
+
+**Implication**
+
+Lite mode has two distinct benefits: **(a)** no need to install project deps, and **(b)** skip the
+heavy live load (speed, no side-effects). Adapter-lite delivers **(b)** but not **(a)**; legacy-lite
+delivers **(a)** via import stubbing. The fall-through we built picks legacy-lite automatically when
+the snapshot can't build, so the user still gets a working lite visualisation — lite's purpose is
+**not** defeated, it's just served by the legacy engine in the no-deps case.
+
+**Path B — proven viable (probe, not yet implemented)**
+
+Reusing kedro-viz's existing, tested `LiteParser` (no hand-rolled `sys.modules` hacking), mirroring
+the exact flow in `data_loader._load_data_helper`'s lite branch:
+
+```
+lite_parser = LiteParser(package_name)
+unresolved  = lite_parser.parse(project_path)             # {file -> {missing modules}}
+mocked      = lite_parser.create_mock_modules(<union of unresolved>)
+with patch.dict("sys.modules", {**sys.modules, **mocked}):
+    snapshot = get_project_snapshot(project_path=...)     # builds against stubs
+    provider = InspectionAdapterProvider(project_path)    # adapter graph from the snapshot
+```
+
+Result in the bare env (sklearn absent, confirmed): snapshot built (6 pipelines, 19 datasets,
+52 nodes); adapter produced an **identical** graph to the with-deps run — **63 nodes / 110 edges /
+6 pipelines** — with correct `dataset_type` strings (`pandas.CSVDataset`, `pandas.ParquetDataset`,
+`pandas.ExcelDataset`), because `dataset_type` comes from the catalog YAML, not from importing the
+dataset class. So mocking `kedro_datasets` does not corrupt the output.
+
+Probe lived at `/tmp/probe_pathb.py` (throwaway); the flow above is the reproduction.
+
+**No code changed in this spike.** Recorded as D19. Open decisions: (1) implement Path B so
+adapter-lite covers the no-deps case; (2) file a Kedro ask for an import-free snapshot (Path A, the
+clean long-term fix); (3) soften the build-failure log under `--lite` (a `ModuleNotFoundError` there
+is expected behaviour, not "please report it").
+
+---
 
 ### 2026-06-02 — Phase 7 (Step 2): reclassify the live backend as the `--params` path (D18)
 

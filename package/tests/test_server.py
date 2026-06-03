@@ -132,7 +132,11 @@ class TestInspectionAdapterStartup:
             extra_params=None,
         )
         cls_mock.assert_called_once_with(
-            "some/path", env="staging", pipeline_name="modelling_stage"
+            "some/path",
+            env="staging",
+            pipeline_name="modelling_stage",
+            package_name=None,
+            is_lite=False,
         )
         assert data_provider._adapter_holder.provider is provider_stub
 
@@ -164,8 +168,7 @@ class TestInspectionAdapterStartup:
             )
         assert data_provider._adapter_holder.provider is None
         assert any(
-            "Inspection adapter FAILED to build" in r.message
-            for r in caplog.records
+            "Inspection adapter FAILED to build" in r.message for r in caplog.records
         )
 
 
@@ -199,7 +202,13 @@ class TestLiteModeAdapter:
 
         mock_load_data.assert_not_called()
         mock_populate_data.assert_not_called()
-        cls_mock.assert_called_once_with("proj/path", env=None, pipeline_name=None)
+        cls_mock.assert_called_once_with(
+            "proj/path",
+            env=None,
+            pipeline_name=None,
+            package_name=None,
+            is_lite=True,
+        )
         assert any(
             "skipping the live project load" in r.message for r in caplog.records
         )

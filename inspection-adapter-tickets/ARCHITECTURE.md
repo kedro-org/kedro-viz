@@ -38,6 +38,25 @@ Kedro-Viz used to build the graph by loading the whole Kedro project into memory
 
 Phase 7 was originally scoped to delete the live backend and the seam once parity was proven. That collides with one hard requirement: `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14). The live backend is the only engine that can reflect `--params`, and the seam is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive, so the live backend + seam are **retained as the runtime-params path**, not deleted. The other historical reason for a fallback — Kedro older than the inspection API — no longer applies (`kedro>=1.4.0` is the floor). Full removal would only be revisited if the snapshot API ever grows a runtime-params route.
 
+## Lite mode uses two engines too (D19)
+
+`--lite` is also a two-engine story. The Kedro snapshot is **not import-free**:
+`get_project_snapshot` imports the project's pipeline modules (to read their structure), which pull
+in node-function libraries (`sklearn`, `pandas`, …). So:
+
+- **Adapter-lite** (snapshot only, no catalog load) serves `--lite` when those node-function libs
+  are importable — it delivers "skip the heavy live load," but **not** "no project deps."
+- **Legacy-lite** (`data_loader` + `LiteParser`, which mocks missing imports in `sys.modules`)
+  serves `--lite` when the deps are absent — it delivers the "no project deps" promise.
+
+`server.py::load_and_populate_data` tries adapter-lite first and **falls through to legacy-lite** if
+the snapshot can't build, so `--lite` always renders. **Path B is now implemented**
+(`snapshot_source.lite_import_stubs`): under `--lite` the provider runs `LiteParser`'s stubbing
+*before* `get_project_snapshot`, so adapter-lite covers the no-deps case too (identical graph with
+zero project deps). So in a bare env `--lite` is served by adapter-lite, not the legacy fallback.
+See D19 and the 2026-06-03 entries in `progress.md`. The clean long-term fix that would let us drop
+this stubbing is a Kedro-side import-free snapshot (Path A).
+
 ## Code-volume accounting
 
 | Bucket | Lines | Disposition |

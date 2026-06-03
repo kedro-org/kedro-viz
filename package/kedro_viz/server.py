@@ -68,7 +68,12 @@ def load_and_populate_data(
             "from the snapshot only."
         )
         if _configure_inspection_adapter_provider(
-            path, env, pipeline_name, extra_params=None
+            path,
+            env,
+            pipeline_name,
+            extra_params=None,
+            is_lite=True,
+            package_name=package_name,
         ):
             return
         logger.warning(
@@ -93,7 +98,9 @@ def load_and_populate_data(
     # Also try to build the snapshot-backed adapter on top of the live load. For ``--params`` the
     # adapter is intentionally not installed and the live path serves (D14); if the build fails
     # unexpectedly, the live path is already populated to serve requests as a fallback.
-    _configure_inspection_adapter_provider(path, env, pipeline_name, extra_params)
+    _configure_inspection_adapter_provider(
+        path, env, pipeline_name, extra_params, package_name=package_name
+    )
 
 
 def _configure_inspection_adapter_provider(
@@ -101,6 +108,9 @@ def _configure_inspection_adapter_provider(
     env: Optional[str],
     pipeline_name: Optional[str],
     extra_params: Optional[Dict[str, Any]],
+    *,
+    is_lite: bool = False,
+    package_name: Optional[str] = None,
 ) -> bool:
     """Install the inspection-adapter provider for this process.
 
@@ -108,6 +118,10 @@ def _configure_inspection_adapter_provider(
     should serve instead (``--params`` set or the adapter build raised). Callers that skipped the
     live load (e.g. the lite short-circuit) should check the return value and arrange a fallback
     when it is ``False``.
+
+    Under ``is_lite`` the snapshot is built with the project's missing dependencies mocked (Path B /
+    D19), so the adapter can serve ``--lite`` even when the project's node-function libraries aren't
+    installed. ``package_name`` lets the lite import-stubber detect project-relative imports.
     """
     # The inspection snapshot API has no runtime-params route, so a project whose catalog or
     # parameters depend on ``extra_params`` would silently diverge from a live run. This is the
@@ -123,7 +137,13 @@ def _configure_inspection_adapter_provider(
     try:
         from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
 
-        provider = InspectionAdapterProvider(path, env=env, pipeline_name=pipeline_name)
+        provider = InspectionAdapterProvider(
+            path,
+            env=env,
+            pipeline_name=pipeline_name,
+            package_name=package_name,
+            is_lite=is_lite,
+        )
     except Exception:
         # Unexpected: the adapter should build for any non-``--params`` project on kedro>=1.4.0.
         # Don't break a working viz — the live load is already populated — but make it loud that
