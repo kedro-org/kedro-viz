@@ -217,9 +217,9 @@ def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -
 def test_cyclic_modular_input_edge_is_removed() -> None:
     """A modular input that is reachable from the modular pipeline must lose its input edge."""
     from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
-    from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
     from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
         ModularTreeEntry,
+        remove_cyclic_modular_edges,
     )
 
     tree = {"p": ModularTreeEntry(name="p", inputs={"A"}, outputs={"B"})}
@@ -230,6 +230,6 @@ def test_cyclic_modular_input_edge_is_removed() -> None:
             source="B", target="A"
         ),  # closes the loop p->B->A
     }
-    GraphBuilder._remove_cyclic_modular_edges(edges, tree)
+    remove_cyclic_modular_edges(edges, tree)
     assert ("A", "p") not in edges  # cyclic input edge dropped
     assert ("p", "B") in edges and ("B", "A") in edges  # others untouched

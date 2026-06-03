@@ -134,7 +134,15 @@ Deferred (judgement calls, recorded for later): split the provider's bridge/lite
 into collaborators (skipped per request); the `--params` run-status/graph ID mismatch (inherent to
 the retained legacy island — documented, not fixed); broad `except` in `server.py`; minor doc/test
 tidy-ups. The "stray telemetry `project_id`" finding was **not reproducible** (no such symbol in
-source). Moving the modular-edge/cycle logic out of `graph_builder.py` is handled in a follow-up.
+source). Skipped per request: splitting the provider's bridge/lite-lookup builders into
+collaborators.
+
+**Also done (SRP move):** relocated the modular-edge construction + cycle removal
+(`add_modular_edges`, `remove_cyclic_modular_edges`, `_reachable_from`) out of `graph_builder.py`
+into `modular_pipelines.py`, next to `ModularTreeBuilder`. They were already pure/static, so the
+move is mechanical; `graph_builder.py` now imports and calls them. Dropped the now-unused
+`ROOT_MODULAR_PIPELINE_ID` import from `graph_builder.py`. One test updated to call the relocated
+function.
 
 **Gate:** `make lint` clean; `pytest package/tests/` 563 passing (3 jupyter failures were a leftover
 dev server squatting port 4141 — environmental, cleared by killing it).

@@ -18,9 +18,11 @@ Modular graph edges + cycle removal remain a later step (Phase 3c).
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
@@ -209,7 +211,7 @@ class ModularTreeBuilder:
             if node.namespace is None:
                 root.children.add(
                     (
-                        node_ids.task_node_id(node.name, node.inputs, node.outputs),
+                        node_ids.task_node_id_for(node),
                         GraphNodeType.TASK.value,
                     )
                 )
@@ -221,3 +223,56 @@ def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
     if namespace is None:
         return False
     return namespace == mp_id or namespace.startswith(f"{mp_id}.")
+
+
+# -- modular graph edges (Phase 3c) ---------------------------------------------------------- #
+
+
+def add_modular_edges(
+    edges: dict[tuple[str, str], GraphEdgeAPIResponse],
+    tree: dict[str, ModularTreeEntry],
+) -> None:
+    """Connect each modular pipeline to its boundary datasets (input -> mp, mp -> output)."""
+    for mp_id, entry in tree.items():
+        if mp_id == ROOT_MODULAR_PIPELINE_ID:
+            continue
+        for input_id in entry.inputs:
+            edges.setdefault(
+                (input_id, mp_id),
+                GraphEdgeAPIResponse(source=input_id, target=mp_id),
+            )
+        for output_id in entry.outputs:
+            edges.setdefault(
+                (mp_id, output_id),
+                GraphEdgeAPIResponse(source=mp_id, target=output_id),
+            )
+
+
+def remove_cyclic_modular_edges(
+    edges: dict[tuple[str, str], GraphEdgeAPIResponse],
+    tree: dict[str, ModularTreeEntry],
+) -> None:
+    """Drop any ``input -> mp`` edge whose input is also reachable *from* the mp (a cycle)."""
+    adjacency: dict[str, set[str]] = defaultdict(set)
+    for source, target in edges:
+        adjacency[source].add(target)
+    for mp_id, entry in tree.items():
+        if mp_id == ROOT_MODULAR_PIPELINE_ID:
+            continue
+        reachable = _reachable_from(mp_id, adjacency)
+        for input_id in entry.inputs & reachable:
+            edges.pop((input_id, mp_id), None)
+            adjacency[input_id].discard(mp_id)
+
+
+def _reachable_from(start: str, adjacency: dict[str, set[str]]) -> set[str]:
+    """Return all nodes reachable from ``start`` (excluding ``start`` unless it is in a cycle)."""
+    seen: set[str] = set()
+    stack = list(adjacency.get(start, ()))
+    while stack:
+        node = stack.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        stack.extend(adjacency.get(node, ()))
+    return seen
