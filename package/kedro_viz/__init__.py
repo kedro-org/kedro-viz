@@ -7,14 +7,14 @@ from packaging.version import Version
 
 from kedro_viz.constants import KEDRO_VERSION
 
-__version__ = "12.3.0"
+__version__ = "12.4.0"
 
 
 class KedroVizPythonVersionWarning(UserWarning):
     """Custom class for warnings about incompatibilities with Python versions."""
 
 
-if sys.version_info >= (3, 14):
+if sys.version_info >= (3, 15):
     warnings.warn(
         """Please be advised that Kedro Viz is not yet fully
         compatible with the Python version you are currently using.""",

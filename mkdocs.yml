@@ -152,6 +152,7 @@ extra_css:
   - stylesheets/welcome.css
 
 extra_javascript:
+  - https://kedro.org/consent/kedro-consent.js
   - javascript/readthedocs.js
   - javascript/deindex-old-docs.js
 

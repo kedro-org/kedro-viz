@@ -353,11 +353,11 @@ Dropdown.propTypes = {
    */
   haveSelectedValues: PropTypes.bool,
   /**
-   * Callback function to be excecuted when a Apply and Close button is clicked
+   * Callback function to be executed when a Apply and Close button is clicked
    */
   onApplyAndClose: PropTypes.func,
   /**
-   * Callback function to be excecuted when a Cancel button is clicked
+   * Callback function to be executed when a Cancel button is clicked
    */
   onCancel: PropTypes.func,
   /**

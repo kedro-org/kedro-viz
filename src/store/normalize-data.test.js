@@ -58,7 +58,7 @@ describe('normalizeData', () => {
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);
   });
 
-  it('should add all mmodualr pipeliens and nodes if expandAllPipelines is true', () => {
+  it('should add all mmodualr pipelines and nodes if expandAllPipelines is true', () => {
     const data = Object.assign({}, spaceflights);
 
     const { modularPipeline } = normalizeData(data, true);
