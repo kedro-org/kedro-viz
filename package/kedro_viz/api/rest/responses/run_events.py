@@ -15,8 +15,8 @@ from kedro_viz.api.rest.responses.utils import (
     convert_status_to_enum,
 )
 from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
+from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash_input_output
 
 logger = logging.getLogger(__name__)
 
@@ -349,7 +349,7 @@ def _process_dataset_error_event(
 
     # Update dataset status if dataset name is provided
     if dataset_name:
-        dataset_id = _hash_input_output(dataset_name)
+        dataset_id = node_ids.dataset_node_id(dataset_name)
         dataset_error_info = DatasetErrorInfo(
             message=error_message,
             error_node=node_name,

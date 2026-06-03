@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Upcoming Release
+
+## Breaking changes
+- **BREAKING CHANGE:** Kedro-Viz now builds its graph from Kedro's lightweight inspection snapshot, and node IDs use a new scheme (hashed from each node's name + inputs/outputs, instead of the old hash of the whole node string). Two one-time impacts for users: old `?selected=<id>` deep links no longer resolve, and any previously exported static sites must be re-exported. Requires `kedro>=1.4.0`. (#2265)
+
 # Release 12.4.0
 
 ## Major features and improvements

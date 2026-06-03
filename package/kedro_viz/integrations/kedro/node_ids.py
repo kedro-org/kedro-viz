@@ -12,6 +12,7 @@ name plus its inputs and outputs — and is shipped as a one-time breaking relea
 from __future__ import annotations
 
 import json
+from typing import Any
 
 from kedro_viz.utils import _hash, _hash_input_output
 
@@ -40,3 +41,11 @@ def task_node_id(node_name: str, inputs: list[str], outputs: list[str]) -> str:
     """
     signature = json.dumps([node_name, inputs, outputs])
     return _hash(signature)
+
+
+def task_node_id_for(node: Any) -> str:
+    """``task_node_id`` for a node-like object exposing ``name``/``inputs``/``outputs``.
+
+    Works for both a Kedro ``Node`` (live path) and a snapshot ``NodeSnapshot`` (adapter).
+    """
+    return task_node_id(node.name, list(node.inputs), list(node.outputs))

@@ -109,6 +109,38 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 
 ## Changelog
 
+### 2026-06-03 — Code-review fixes (Bucket 1 + provider docstring pass)
+
+Acted on a HEAD (`bb500756`) review. Fixed the cheap, clearly-correct items; deferred the bigger
+refactors. **No behaviour change.**
+
+- **Decision tags out of code** — removed `D14`/`D18`/`D19`/`Path B` labels from comments/docstrings
+  in `data_provider.py`, `server.py`, `inspection_adapter_provider.py` (kept the plain-English
+  reason). Restores the IMP-4 convention: decision tags live in this log, not in source. The 9 tags
+  were all introduced by the recent Phase 7 / Path B edits.
+- **`run_events.py` routes through `node_ids`** — the dataset-error path now calls
+  `node_ids.dataset_node_id(...)` instead of `_hash_input_output(...)` directly (byte-identical, but
+  through the single source of truth so it can't drift).
+- **Tighter typing in the provider** — `live_nodes: GraphNodesRepository` and `_filter_to_pipeline:
+  ProjectSnapshot` (via `TYPE_CHECKING`) instead of `Any`.
+- **RELEASE.md** — added an "Upcoming Release" breaking-change note for the new node-ID scheme
+  (breaks `?selected=` deep links; static sites need re-export; requires `kedro>=1.4.0`).
+- **`task_node_id_for(node)` helper** in `node_ids.py` — removes the repeated
+  `task_node_id(node.name, list(node.inputs), list(node.outputs))` pattern (used in the provider).
+- **Provider docstring/comment pass** — every docstring and comment in
+  `inspection_adapter_provider.py` rewritten short and to the point (it was over-narrated).
+
+Deferred (judgement calls, recorded for later): split the provider's bridge/lite-lookup builders
+into collaborators (skipped per request); the `--params` run-status/graph ID mismatch (inherent to
+the retained legacy island — documented, not fixed); broad `except` in `server.py`; minor doc/test
+tidy-ups. The "stray telemetry `project_id`" finding was **not reproducible** (no such symbol in
+source). Moving the modular-edge/cycle logic out of `graph_builder.py` is handled in a follow-up.
+
+**Gate:** `make lint` clean; `pytest package/tests/` 563 passing (3 jupyter failures were a leftover
+dev server squatting port 4141 — environmental, cleared by killing it).
+
+---
+
 ### 2026-06-03 — Implement Path B: adapter-lite covers the no-deps case (D19)
 
 **What was done**

@@ -8,7 +8,7 @@ Every read goes through a ``RuntimeDataProvider``. Two implementations coexist b
 - :class:`LiveDataProvider` — the **runtime-params path**. Wraps the ``data_access_manager``-backed
   response builders. Used when the adapter is deliberately not installed: ``kedro viz run
   --params=...`` (the inspection snapshot API has no runtime-params route, so a project whose
-  catalog/parameters depend on ``--params`` must be served from a live load — see D14). It is
+  catalog/parameters depend on ``--params`` must be served from a live load). It is
   also the safety net if the adapter unexpectedly fails to build, and what unit tests that don't
   install an adapter fall back to.
 
@@ -77,7 +77,7 @@ class LiveDataProvider:
 
     Routes use this when no inspection-adapter provider has been installed. In normal operation
     that means ``kedro viz run --params=...``: the snapshot API can't reflect runtime params, so
-    the graph + metadata are served from a live project load instead (D14). It is also the
+    the graph + metadata are served from a live project load instead. It is also the
     fallback if the adapter unexpectedly fails to build, and what test fixtures that don't install
     an adapter use. This path is retained for the runtime-params case — it is not pending removal.
     """
@@ -143,8 +143,8 @@ def get_runtime_data_provider() -> "RuntimeDataProvider":
     Returns the inspection-adapter provider when one has been installed at startup (the default
     for every ``kedro viz run`` invocation); otherwise returns :class:`LiveDataProvider`. The
     live provider is the intentional path for ``--params`` (no runtime-params route exists in the
-    snapshot API — D14) and the safety net for an unexpected adapter build failure or for tests
-    that don't install an adapter.
+    snapshot API) and the safety net for an unexpected adapter build failure or for tests that
+    don't install an adapter.
     """
     adapter = _adapter_holder.provider
     if adapter is not None:

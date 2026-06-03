@@ -60,7 +60,7 @@ def load_and_populate_data(
     In every other case the live data is loaded first and the adapter is then layered on top
     when it can be built. The live load is not wasted: it backs the metadata bridge in full mode,
     and it is the engine that serves ``kedro viz run --params=...`` (the snapshot API has no
-    runtime-params route, so the adapter is intentionally not installed for that case — see D14).
+    runtime-params route, so the adapter is intentionally not installed for that case).
     """
     if is_lite and not extra_params:
         logger.info(
@@ -96,7 +96,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
 
     # Also try to build the snapshot-backed adapter on top of the live load. For ``--params`` the
-    # adapter is intentionally not installed and the live path serves (D14); if the build fails
+    # adapter is intentionally not installed and the live path serves; if the build fails
     # unexpectedly, the live path is already populated to serve requests as a fallback.
     _configure_inspection_adapter_provider(
         path, env, pipeline_name, extra_params, package_name=package_name
@@ -119,13 +119,13 @@ def _configure_inspection_adapter_provider(
     live load (e.g. the lite short-circuit) should check the return value and arrange a fallback
     when it is ``False``.
 
-    Under ``is_lite`` the snapshot is built with the project's missing dependencies mocked (Path B /
-    D19), so the adapter can serve ``--lite`` even when the project's node-function libraries aren't
-    installed. ``package_name`` lets the lite import-stubber detect project-relative imports.
+    Under ``is_lite`` the snapshot is built with the project's missing dependencies mocked, so the
+    adapter can serve ``--lite`` even when the project's node-function libraries aren't installed.
+    ``package_name`` lets the lite import-stubber detect project-relative imports.
     """
     # The inspection snapshot API has no runtime-params route, so a project whose catalog or
     # parameters depend on ``extra_params`` would silently diverge from a live run. This is the
-    # intentional runtime-params path (D14): serve from the live load, not the snapshot.
+    # intentional runtime-params path: serve from the live load, not the snapshot.
     if extra_params:
         logger.info(
             "Inspection adapter not installed: --params is set, so the graph is served from the "
