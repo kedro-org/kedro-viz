@@ -22,8 +22,14 @@ class TestBaseDeployer:
 
     def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")
-        mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")
-        mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_identity")
+        mocker.patch(
+            "kedro_viz.integrations.kedro.telemetry.get_heap_app_id",
+            return_value="fake-app-id",
+        )
+        mocker.patch(
+            "kedro_viz.integrations.kedro.telemetry.get_heap_identity",
+            return_value="fake-user-identity",
+        )
 
         build = ConcreteBaseDeployer()
         build._upload_static_files(_HTML_DIR)

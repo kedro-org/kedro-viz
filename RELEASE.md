@@ -10,6 +10,15 @@ Please follow the established format:
 
 ## Major features and improvements
  - Add support for Python 3.14. (#2637)
+ - Expose full internal Kedro node name as `kedro_node_name` (#2621)
+ - Add NodeContextMenu support for VSCode (#2609)
+ - Add Consent Management Platform (CMP) script to Kedro-Viz docs (#2643)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Eoin Shaughnessy](https://github.com/EoinTrial)
+* [tuanaiseo](https://github.com/tuanaiseo)
 
 # Release 12.3.0
 
