@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "12.3.0",
+  "version": "12.4.0",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "module": "lib/components/app/index.mjs",
@@ -112,7 +112,7 @@
     "rollup": "^4.59.0",
     "tar": "^7.5.11",
     "flatted": ">=3.4.2",
-    "dompurify": ">=3.3.3",
+    "dompurify": ">=3.4.2",
     "postcss": ">=8.5.8",
     "js-yaml": ">=4.1.1",
     "cosmiconfig": {
