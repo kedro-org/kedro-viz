@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { RowText } from './row-text';
 
 describe('RowText', () => {
-  it('renders search highlight markers as bold text', () => {
+  it('renders search highlight markers as bold text ', () => {
     const { container } = render(
       <RowText kind="element" label="before <b>match</b> after" />
     );
