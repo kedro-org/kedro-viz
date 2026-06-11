@@ -1,9 +1,18 @@
 import React from 'react';
 import classnames from 'classnames';
-import { replaceAngleBracketMatches } from '../../../utils';
 import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
 import './row-text.scss';
+
+const renderHighlightedLabel = (label) => {
+  if (typeof label !== 'string') {
+    return label;
+  }
+
+  return label
+    .split(/<b>(.*?)<\/b>/g)
+    .map((part, index) => (index % 2 ? <b key={index}>{part}</b> : part));
+};
 
 export const RowText = ({
   dataTest,
@@ -42,10 +51,9 @@ export const RowText = ({
             'row-text__label--disabled': disabled,
           }
         )}
-        dangerouslySetInnerHTML={{
-          __html: replaceAngleBracketMatches(label),
-        }}
-      />
+      >
+        {renderHighlightedLabel(label)}
+      </span>
     </button>
   );
 };
