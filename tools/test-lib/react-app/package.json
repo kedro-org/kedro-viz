@@ -30,7 +30,7 @@
     "react-router-dom": "^6.30.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
     "@testing-library/jest-dom": "^5.14.1",
