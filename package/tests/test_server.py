@@ -137,22 +137,34 @@ class TestInspectionAdapterStartup:
             pipeline_name="modelling_stage",
             package_name=None,
             is_lite=False,
+            runtime_params=None,
         )
         assert data_provider._adapter_holder.provider is provider_stub
 
-    def test_extra_params_falls_back_to_live_with_log(self, caplog):
+    def test_params_install_adapter_with_runtime_params(self, mocker):
+        """--params no longer disables the adapter; it is passed through as runtime_params
+        (Phase 2). The non-lite live load still runs alongside to back the bridge."""
         from kedro_viz.api import data_provider
         from kedro_viz.server import _configure_inspection_adapter_provider
 
-        with caplog.at_level("INFO", logger="kedro_viz.server"):
-            _configure_inspection_adapter_provider(
-                path="anywhere",
-                env=None,
-                pipeline_name=None,
-                extra_params={"runtime_param": "value"},
-            )
-        assert data_provider._adapter_holder.provider is None
-        assert any("--params" in r.message for r in caplog.records)
+        provider_stub = object()
+        cls_mock = mocker.patch(
+            "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
+            return_value=provider_stub,
+        )
+        rp = {"split_options": {"test_size": 0.3}}
+        _configure_inspection_adapter_provider(
+            path="some/path", env=None, pipeline_name=None, extra_params=rp
+        )
+        cls_mock.assert_called_once_with(
+            "some/path",
+            env=None,
+            pipeline_name=None,
+            package_name=None,
+            is_lite=False,
+            runtime_params=rp,
+        )
+        assert data_provider._adapter_holder.provider is provider_stub
 
     def test_falls_back_when_adapter_construction_raises(self, mocker, caplog):
         from kedro_viz.api import data_provider
@@ -208,6 +220,7 @@ class TestLiteModeAdapter:
             pipeline_name=None,
             package_name=None,
             is_lite=True,
+            runtime_params=None,
         )
         assert any(
             "skipping the live project load" in r.message for r in caplog.records

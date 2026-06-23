@@ -23,6 +23,8 @@ from kedro_viz.api.data_provider import (
 )
 from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
 from kedro_viz.api.rest.router import router as rest_router
+from kedro_viz.data_access.repositories import GraphNodesRepository
+from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection import snapshot_source
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -71,6 +73,44 @@ def adapter_client(
 ) -> Iterator[TestClient]:
     yield _build_client_with(adapter_provider, monkeypatch)
     set_inspection_adapter_provider(None)
+
+
+@pytest.fixture(scope="module")
+def adapter_provider_params(_restore_kedro_project_state) -> InspectionAdapterProvider:
+    # Empty bridge so parameter values can only come from the config-loader overlay (Phase 1/2).
+    return InspectionAdapterProvider(
+        DEMO_PROJECT,
+        runtime_params={"split_options": {"test_size": 0.99}},
+        live_nodes=GraphNodesRepository(),
+    )
+
+
+@pytest.fixture
+def adapter_client_params(
+    adapter_provider_params: InspectionAdapterProvider,
+) -> Iterator[TestClient]:
+    set_inspection_adapter_provider(adapter_provider_params)
+    app = FastAPI()
+    app.include_router(rest_router)
+    yield TestClient(app)
+    set_inspection_adapter_provider(None)
+
+
+def test_params_reflected_in_main_and_node_metadata(
+    adapter_client_params: TestClient,
+) -> None:
+    """End-to-end (Phase 2): a ``--params`` override shows in ``/api/main`` and ``/api/nodes/{id}``."""
+    main = adapter_client_params.get("/api/main").json()
+    split_task = next(
+        n
+        for n in main["nodes"]
+        if n["type"] == "task" and "split_options" in (n.get("parameters") or {})
+    )
+    assert split_task["parameters"]["split_options"]["test_size"] == 0.99
+
+    pid = node_ids.dataset_node_id("params:split_options")
+    node = adapter_client_params.get(f"/api/nodes/{pid}").json()
+    assert node["parameters"]["split_options"]["test_size"] == 0.99
 
 
 @pytest.fixture
