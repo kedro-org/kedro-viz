@@ -2,8 +2,8 @@
 
 Lite mode is "no live project loaded": ``data_access_manager`` stays empty, the bridge is
 empty, and ``/api/nodes/{id}`` is served from the inspection snapshot alone. The payload shape
-matches the live ``*APIResponse`` schemas but live-only fields (source code, resolved parameter
-values, previews, stats) are absent.
+matches the live ``*APIResponse`` schemas but live-only fields (source code, previews, stats) are
+absent. Parameter values are present — they come from the config loader, not the live project.
 
 Two layers:
 
@@ -106,7 +106,9 @@ def test_snapshot_lookup_synthesizes_memory_dataset_type(
 def test_snapshot_lookup_treats_parameter_refs_separately(
     lite_provider: InspectionAdapterProvider,
 ) -> None:
-    """A ``params:...`` reference resolves to the thin parameter payload, not a data payload."""
+    """A ``params:...`` reference resolves to a parameter payload (not a data payload), and in
+    lite mode it now carries the real resolved value (read from the config loader, not the live
+    project)."""
     # The demo's nodes consume parameters; find one we know is referenced.
     snapshot = lite_provider._snapshot
     param_refs = {
@@ -119,7 +121,9 @@ def test_snapshot_lookup_treats_parameter_refs_separately(
     assert param_refs, "demo project should reference parameters"
     sample_ref = next(iter(param_refs))
     payload = lite_provider._snapshot_lookup[node_ids.dataset_node_id(sample_ref)]
-    assert payload == {"parameters": {}}
+    # A parameter payload (has "parameters"), carrying the real resolved value.
+    assert set(payload) == {"parameters"}
+    assert payload["parameters"] == lite_provider._param_value(sample_ref)
 
 
 def test_get_node_ids_uses_snapshot_lookup_when_bridge_is_empty(

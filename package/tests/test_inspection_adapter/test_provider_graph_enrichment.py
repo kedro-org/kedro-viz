@@ -57,7 +57,10 @@ def _graph(
     )
 
 
-def test_full_mode_enriches_task_parameters_and_node_extras() -> None:
+def test_full_mode_enriches_node_extras() -> None:
+    # Task ``parameters`` are no longer overlaid from the bridge — they come from the
+    # config-loader values via the builder (see test_runtime_params). The bridge only overlays
+    # node_extras here (dataset_type is covered separately).
     kn = kedro_node(
         func=lambda threshold: threshold,
         inputs=["params:threshold"],
@@ -72,7 +75,6 @@ def test_full_mode_enriches_task_parameters_and_node_extras() -> None:
         modular_pipelines=set(),
         node_extras=NodeExtras(styles={"background": "#abc123"}),
     )
-    live_task.parameters = {"threshold": 0.4}
     live_data = DataNode.create_data_node(
         dataset_id="legacy-data-id",
         dataset_name="companies",
@@ -94,7 +96,6 @@ def test_full_mode_enriches_task_parameters_and_node_extras() -> None:
     assert isinstance(data_node, DataNodeAPIResponse)
     assert task_node.node_extras is not None
     assert data_node.node_extras is not None
-    assert task_node.parameters == {"threshold": 0.4}
     assert task_node.node_extras.styles == {"background": "#abc123"}
     assert data_node.node_extras.stats == {"rows": 25}
 

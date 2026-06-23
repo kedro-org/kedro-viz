@@ -91,8 +91,33 @@ def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSn
     return get_project_snapshot(project_path=Path(project_path), env=env)
 
 
+def _config_loader(
+    project_path: str | Path,
+    env: str | None,
+    runtime_params: dict[str, Any] | None,
+) -> Any:
+    """Build the project's config loader (no ``DataCatalog``, no session).
+
+    ``runtime_params`` is passed through so ``${runtime_params:...}`` templating in the catalog or
+    parameters resolves the same way a live ``--params`` run would.
+    """
+    from kedro.framework.project import settings
+    from kedro.framework.startup import bootstrap_project
+
+    project_path = Path(project_path)
+    bootstrap_project(project_path)
+    return settings.CONFIG_LOADER_CLASS(
+        conf_source=str(project_path / settings.CONF_SOURCE),
+        env=env,
+        runtime_params=runtime_params or {},
+        **settings.CONFIG_LOADER_ARGS,
+    )
+
+
 def load_catalog_config(
-    project_path: str | Path, env: str | None = None
+    project_path: str | Path,
+    env: str | None = None,
+    runtime_params: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Return the project's raw catalog config (the inspection snapshot drops it).
 
@@ -100,17 +125,44 @@ def load_catalog_config(
     materialised. Returns an empty dict if there is no catalog config.
     """
     from kedro.config import MissingConfigException
-    from kedro.framework.project import settings
-    from kedro.framework.startup import bootstrap_project
 
-    project_path = Path(project_path)
-    bootstrap_project(project_path)
-    config_loader = settings.CONFIG_LOADER_CLASS(
-        conf_source=str(project_path / settings.CONF_SOURCE),
-        env=env,
-        **settings.CONFIG_LOADER_ARGS,
-    )
     try:
-        return config_loader["catalog"]
+        return _config_loader(project_path, env, runtime_params)["catalog"]
     except (KeyError, MissingConfigException):
         return {}
+
+
+def load_parameters(
+    project_path: str | Path,
+    env: str | None = None,
+    runtime_params: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Return the project's resolved parameter values, with ``--params`` overrides applied.
+
+    The inspection snapshot carries only parameter *names*, so values are read from the config
+    loader here (no live project load). ``runtime_params`` is both passed to the loader (for
+    ``${runtime_params:...}`` templating) and merged on top of the base values, mirroring how
+    ``KedroContext`` applies ``--params``.
+    """
+    from kedro.config import MissingConfigException
+
+    try:
+        params = _config_loader(project_path, env, runtime_params)["parameters"]
+    except (KeyError, MissingConfigException):
+        params = {}
+    if runtime_params:
+        params = _merge_runtime_params(params, runtime_params)
+    return params
+
+
+def _merge_runtime_params(
+    base: dict[str, Any], overrides: dict[str, Any]
+) -> dict[str, Any]:
+    """Deep-merge ``overrides`` (the parsed ``--params``) onto ``base`` parameter values."""
+    merged = dict(base)
+    for key, value in overrides.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_runtime_params(merged[key], value)
+        else:
+            merged[key] = value
+    return merged

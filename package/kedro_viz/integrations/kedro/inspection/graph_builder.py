@@ -16,7 +16,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
@@ -69,10 +69,16 @@ class GraphBuilder:
     """
 
     def __init__(
-        self, snapshot: ProjectSnapshot, layer_mapping: dict[str, str] | None = None
+        self,
+        snapshot: ProjectSnapshot,
+        layer_mapping: dict[str, str] | None = None,
+        parameters: dict[str, Any] | None = None,
     ):
         self._snapshot = snapshot
         self._layers = layer_mapping or {}
+        # Resolved parameter values (``--params`` already applied), used to fill task-node
+        # ``parameters`` the same way the live backend does. Empty when values aren't loaded.
+        self._parameters = parameters or {}
         self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
         self._task_pipelines: dict[str, set[str]] = defaultdict(set)
         self._dataset_pipelines: dict[str, set[str]] = defaultdict(set)
@@ -177,8 +183,23 @@ class GraphBuilder:
             pipelines=sorted(self._task_pipelines[task_id]),
             type=GraphNodeType.TASK.value,
             modular_pipelines=self._modular.for_task(node),
-            parameters={},
+            parameters=self._task_parameters(node.inputs),
         )
+
+    def _task_parameters(self, inputs: list[str]) -> dict[str, Any]:
+        """Resolved parameter values a task consumes, matching the live backend's format.
+
+        A ``parameters`` input means "all parameters" → the whole dict; a ``params:x`` input
+        contributes ``{"x": <value>}`` (``x`` may be dotted, e.g. ``model_options.test_size``).
+        """
+        result: dict[str, Any] = {}
+        for ref in inputs:
+            if ref == "parameters":
+                return dict(self._parameters)
+            if ref.startswith("params:"):
+                name = ref[len("params:") :]
+                result[name] = _resolve_param(self._parameters, name)
+        return result
 
     def _build_dataset_node(
         self,
@@ -305,3 +326,14 @@ def _display_name(snapshot_name: str, namespace: str | None) -> str:
         local = local[len(prefix) :]
     auto = _AUTO_NAME_RE.match(local)
     return auto.group("func") if auto else local
+
+
+def _resolve_param(parameters: dict[str, Any], dotted: str) -> Any:
+    """Look up ``dotted`` (e.g. ``model_options.test_size``) in the parameters dict; ``None`` if absent."""
+    node: Any = parameters
+    for key in dotted.split("."):
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        else:
+            return None
+    return node

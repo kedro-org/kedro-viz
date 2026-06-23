@@ -24,7 +24,6 @@ from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
     GraphAPIResponse,
     NodeExtrasAPIResponse,
-    TaskNodeAPIResponse,
 )
 from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
@@ -35,11 +34,13 @@ from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection.graph_builder import (
     MEMORY_DATASET_TYPE,
     GraphBuilder,
+    _resolve_param,
 )
 from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     lite_import_stubs,
     load_catalog_config,
+    load_parameters,
     load_snapshot,
 )
 from kedro_viz.models.flowchart.node_metadata import (
@@ -83,21 +84,31 @@ class InspectionAdapterProvider:
         *,
         package_name: str | None = None,
         is_lite: bool = False,
+        runtime_params: dict[str, Any] | None = None,
         live_nodes: Optional["GraphNodesRepository"] = None,
     ):
-        # In lite mode the project's deps may be missing; mock them while reading the snapshot
-        # and catalog config so it can still be built. Full mode already has the deps loaded.
+        # In lite mode the project's deps may be missing; mock them while reading the snapshot,
+        # catalog config and parameters so they can still be built. Full mode has the deps loaded.
         stub_ctx = (
             lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
         )
         with stub_ctx:
             snapshot = load_snapshot(project_path, env=env)
-            catalog_config = load_catalog_config(project_path, env=env)
+            catalog_config = load_catalog_config(
+                project_path, env=env, runtime_params=runtime_params
+            )
+            # Resolved parameter values (with --params applied) — read from the config loader,
+            # not the live project, so the adapter is param-aware in every mode.
+            self._parameters = load_parameters(
+                project_path, env=env, runtime_params=runtime_params
+            )
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
         layer_mapping = extract_layers(catalog_config)
         self._snapshot = snapshot
-        self._builder = GraphBuilder(snapshot, layer_mapping)
+        self._builder = GraphBuilder(
+            snapshot, layer_mapping, parameters=self._parameters
+        )
         # Bridge → full-mode metadata; snapshot lookup → lite-mode metadata.
         self._metadata_bridge = self._build_metadata_bridge(live_nodes)
         self._snapshot_lookup = self._build_snapshot_lookup()
@@ -135,16 +146,19 @@ class InspectionAdapterProvider:
     def get_node_metadata_response(
         self, node_id: str
     ) -> Union[NodeMetadataAPIResponse, JSONResponse]:
-        """Return metadata for ``node_id``: bridge first (full mode), then snapshot lookup (lite).
+        """Return metadata for ``node_id``.
 
-        Full mode returns the same model as the live response. Lite mode returns a thin payload
-        with live-only fields (code, preview, stats, parameter values) omitted. Unknown ID → 404;
-        a known node with no metadata → ``{}``.
+        Parameter nodes are served from the resolved config-loader values (param-aware in every
+        mode, including ``--params`` and lite). Other nodes: bridge first (full mode, same model as
+        the live response), then the thin snapshot lookup (lite mode, live-only fields omitted).
+        Unknown ID → 404; a known node with no metadata → ``{}``.
         """
+        lite = self._snapshot_lookup.get(node_id)
+        if lite is not None and "parameters" in lite:
+            return JSONResponse(content=lite)
         viz_node = self._metadata_bridge.get(node_id)
         if viz_node is not None:
             return self._live_metadata_response(viz_node)
-        lite = self._snapshot_lookup.get(node_id)
         if lite is not None:
             return JSONResponse(content=lite)
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
@@ -187,11 +201,12 @@ class InspectionAdapterProvider:
     # -- helpers ------------------------------------------------------------------------- #
 
     def _enrich_graph_with_bridge(self, response: GraphAPIResponse) -> None:
-        """Overlay live-only fields (node_extras, resolved task parameters, resolved
-        ``dataset_type``) onto the graph.
+        """Overlay live-only fields (node_extras, resolved ``dataset_type``) onto the graph.
 
         Full mode only — the bridge is empty in lite mode, so the fields stay absent and
-        ``dataset_type`` keeps the raw catalog string the builder read from the snapshot.
+        ``dataset_type`` keeps the raw catalog string the builder read from the snapshot. Task
+        ``parameters`` are NOT overlaid here: the builder fills them from the config-loader values
+        (param-aware, lite-safe), not from the live bridge.
         """
         for graph_node in response.nodes:
             live_node = self._metadata_bridge.get(graph_node.id)
@@ -202,11 +217,7 @@ class InspectionAdapterProvider:
                     stats=live_node.node_extras.stats,
                     styles=live_node.node_extras.styles,
                 )
-            if isinstance(graph_node, TaskNodeAPIResponse) and isinstance(
-                live_node, TaskNode
-            ):
-                graph_node.parameters = live_node.parameters
-            elif isinstance(graph_node, DataNodeAPIResponse):
+            if isinstance(graph_node, DataNodeAPIResponse):
                 # Mirror the live graph exactly: a DataNode carries the resolved class path
                 # (e.g. ``pandas.csv_dataset.CSVDataset``, which the frontend's icon mapping
                 # keys on); transcoded and parameter nodes serialise ``dataset_type=None``
@@ -298,8 +309,9 @@ class InspectionAdapterProvider:
         if ds_id in lookup:
             return
         if is_dataset_param(ref):
-            # Snapshot has parameter names, not values — {} means "unavailable in lite mode".
-            lookup[ds_id] = {"parameters": {}}
+            # Values come from the config loader (with --params applied), so lite mode serves
+            # real parameter values too — not just names.
+            lookup[ds_id] = {"parameters": self._param_value(ref)}
             return
         stripped = _strip_transcoding(ref)
         dataset = self._snapshot.datasets.get(stripped)
@@ -311,3 +323,11 @@ class InspectionAdapterProvider:
         if dataset.filepath:
             payload["filepath"] = dataset.filepath
         lookup[ds_id] = payload
+
+    def _param_value(self, ref: str) -> Any:
+        """Resolved value for a parameter ref: the whole dict for ``parameters``, else the
+        (possibly nested) value for ``params:x``."""
+        if ref == "parameters":
+            return self._parameters
+        name = ref[len("params:") :] if ref.startswith("params:") else ref
+        return _resolve_param(self._parameters, name)
