@@ -92,3 +92,35 @@ def test_transcoded_dataset_type_resolves_from_stripped_catalog_name() -> None:
     )
     assert isinstance(ds_node, DataNodeAPIResponse)
     assert ds_node.dataset_type == "pandas.CSVDataset"
+
+
+def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
+    """A dataset with no catalog entry is in-memory; emit the same string the live path does."""
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("produce", ["raw"], ["intermediate"])])],
+            {"raw": SimpleNamespace(type="pandas.CSVDataset")},
+        )
+    )
+
+    nodes = builder.build("__default__").nodes
+    memory_node = next(
+        n for n in nodes if n.type == "data" and n.name == "intermediate"
+    )
+    assert isinstance(memory_node, DataNodeAPIResponse)
+    assert memory_node.dataset_type == "io.memory_dataset.MemoryDataset"
+
+
+def test_empty_catalog_type_string_maps_to_none() -> None:
+    """The snapshot may carry ``type=""`` for malformed entries; don't surface the empty string."""
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("consume", ["typeless"], ["out"])])],
+            {"typeless": SimpleNamespace(type="")},
+        )
+    )
+
+    nodes = builder.build("__default__").nodes
+    typeless_node = next(n for n in nodes if n.type == "data" and n.name == "typeless")
+    assert isinstance(typeless_node, DataNodeAPIResponse)
+    assert typeless_node.dataset_type is None

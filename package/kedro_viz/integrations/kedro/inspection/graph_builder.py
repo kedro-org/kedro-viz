@@ -6,8 +6,9 @@ membership; data-node tags; the modular-pipeline tree; and per-node ``layer`` wi
 ``layers`` list (the layer mapping is supplied by the caller — the snapshot omits viz metadata).
 
 Node IDs come from :mod:`kedro_viz.integrations.kedro.node_ids`. Live-only fields (``node_extras``,
-resolved task ``parameters``) are added by the metadata bridge in
-:mod:`kedro_viz.api.inspection_adapter_provider`, not here.
+resolved task ``parameters``, resolved ``dataset_type`` class paths) are added by the metadata
+bridge in :mod:`kedro_viz.api.inspection_adapter_provider`, not here — the snapshot only carries
+the raw catalog ``type`` string (e.g. ``pandas.CSVDataset``).
 """
 
 from __future__ import annotations
@@ -45,6 +46,11 @@ if TYPE_CHECKING:
     from kedro_viz.models.flowchart.nodes import GraphNode
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
+
+# What the live backend resolves for an unregistered (in-memory) dataset
+# (``get_dataset_type(MemoryDataset())``). The snapshot has no entry for these,
+# so the adapter synthesizes the same string to keep the two paths consistent.
+MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 @dataclass(frozen=True)
@@ -184,6 +190,13 @@ class GraphBuilder:
         dataset = self._snapshot.datasets.get(
             original_name
         ) or self._snapshot.datasets.get(stripped_name)
+        if is_parameter:
+            dataset_type = None
+        elif dataset is None:
+            # No catalog entry means an unregistered (in-memory) dataset.
+            dataset_type = MEMORY_DATASET_TYPE
+        else:
+            dataset_type = dataset.type or None
         return DataNodeAPIResponse(
             id=node_ids.dataset_node_id(stripped_name),
             name=stripped_name,
@@ -196,7 +209,7 @@ class GraphBuilder:
             ),
             modular_pipelines=self._modular.for_dataset(stripped_name),
             layer=None if is_parameter else self._layers.get(stripped_name),
-            dataset_type=None if is_parameter or dataset is None else dataset.type,
+            dataset_type=dataset_type,
         )
 
     def _build_tags(self) -> list[NamedEntityAPIResponse]:

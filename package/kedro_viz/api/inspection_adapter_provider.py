@@ -21,6 +21,7 @@ from kedro_viz.api.rest.responses.nodes import (
     NodeMetadataAPIResponse,
 )
 from kedro_viz.api.rest.responses.pipelines import (
+    DataNodeAPIResponse,
     GraphAPIResponse,
     NodeExtrasAPIResponse,
     TaskNodeAPIResponse,
@@ -31,7 +32,10 @@ from kedro_viz.api.rest.responses.run_events import (
 )
 from kedro_viz.api.rest.responses.save_responses import save_api_responses_to_fs
 from kedro_viz.integrations.kedro import node_ids
-from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.graph_builder import (
+    MEMORY_DATASET_TYPE,
+    GraphBuilder,
+)
 from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     lite_import_stubs,
@@ -183,9 +187,11 @@ class InspectionAdapterProvider:
     # -- helpers ------------------------------------------------------------------------- #
 
     def _enrich_graph_with_bridge(self, response: GraphAPIResponse) -> None:
-        """Overlay live-only fields (node_extras, resolved task parameters) onto the graph.
+        """Overlay live-only fields (node_extras, resolved task parameters, resolved
+        ``dataset_type``) onto the graph.
 
-        Full mode only — the bridge is empty in lite mode, so the fields stay absent.
+        Full mode only — the bridge is empty in lite mode, so the fields stay absent and
+        ``dataset_type`` keeps the raw catalog string the builder read from the snapshot.
         """
         for graph_node in response.nodes:
             live_node = self._metadata_bridge.get(graph_node.id)
@@ -200,6 +206,14 @@ class InspectionAdapterProvider:
                 live_node, TaskNode
             ):
                 graph_node.parameters = live_node.parameters
+            elif isinstance(graph_node, DataNodeAPIResponse):
+                # Mirror the live graph exactly: a DataNode carries the resolved class path
+                # (e.g. ``pandas.csv_dataset.CSVDataset``, which the frontend's icon mapping
+                # keys on); transcoded and parameter nodes serialise ``dataset_type=None``
+                # on the live path.
+                graph_node.dataset_type = (
+                    live_node.dataset_type if isinstance(live_node, DataNode) else None
+                )
 
     @staticmethod
     def _filter_to_pipeline(
@@ -290,8 +304,8 @@ class InspectionAdapterProvider:
         stripped = _strip_transcoding(ref)
         dataset = self._snapshot.datasets.get(stripped)
         if dataset is None:
-            # In-memory dataset (no catalog entry); only the type is meaningful.
-            lookup[ds_id] = {"type": "kedro.io.MemoryDataset"}
+            # In-memory dataset (no catalog entry); same string the live path resolves.
+            lookup[ds_id] = {"type": MEMORY_DATASET_TYPE}
             return
         payload: dict[str, Any] = {"type": dataset.type}
         if dataset.filepath:

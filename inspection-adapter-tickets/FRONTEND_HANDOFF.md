@@ -15,6 +15,8 @@ Two new modes:
 
 Both modes serve the same response shapes — fields just go missing in lite. The API contract is unchanged.
 
+One graph field degrades in lite mode: **`dataset_type`**. In full mode it is the resolved class path (`pandas.csv_dataset.CSVDataset`) exactly as today, so `shortTypeMapping` in `src/config.js` keeps matching and plotly/matplotlib nodes keep their plot/image icons. In lite mode no dataset class is imported, so `dataset_type` is the raw catalog string (`pandas.CSVDataset`); the mapping won't match and those nodes fall back to the generic data icon. If lite-mode icons matter, extend `shortTypeMapping` with the raw-string spellings (e.g. `plotly.PlotlyDataset`, `matplotlib.MatplotlibWriter`) — your call as part of Bucket B. In-memory (unregistered) datasets report `io.memory_dataset.MemoryDataset` in both modes.
+
 ## Backend status
 
 - `/api/main`, `/api/pipelines/{id}` — new-scheme IDs in both modes.
@@ -72,7 +74,7 @@ Data node (catalog-registered):
 
 Data node (in-memory, no catalog entry):
   {
-    "type": "kedro.io.MemoryDataset"
+    "type": "io.memory_dataset.MemoryDataset"
   }
 
 Parameter node:
@@ -105,6 +107,7 @@ The hybrid pattern: silently hide the missing fields, but show a small persisten
 - Update TypeScript types — required → optional for live-only fields.
 - Add the mode indicator if going with the hybrid option.
 - Add tests covering the lite-mode rendering for each detail-panel type.
+- Decide whether to extend `shortTypeMapping` (`src/config.js`) with raw catalog strings so dataset icons survive lite mode (see "What changed on the backend").
 
 #### Open question for the team to answer back
 

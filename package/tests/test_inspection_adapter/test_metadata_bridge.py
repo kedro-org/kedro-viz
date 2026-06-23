@@ -194,6 +194,38 @@ def _first_node_by_type(body: dict, node_type: str) -> dict:
     raise AssertionError(f"no node of type {node_type!r} in /api/main response")
 
 
+def test_full_mode_dataset_types_match_live_baseline(
+    demo_provider: InspectionAdapterProvider,
+) -> None:
+    """The bridge overlay restores exact live parity for ``dataset_type``.
+
+    The raw snapshot string (``pandas.CSVDataset``) must be replaced by the resolved class
+    path (``pandas.csv_dataset.CSVDataset``) the frontend's icon mapping keys on, and
+    unregistered datasets must carry ``io.memory_dataset.MemoryDataset`` — both compared
+    against the captured live-backend baseline, by name.
+    """
+    import json
+
+    from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
+
+    baseline = json.loads(
+        (Path(__file__).parent / "baseline" / "main.json").read_text(encoding="utf-8")
+    )
+    response = demo_provider.get_pipeline_response()
+    assert isinstance(response, GraphAPIResponse)
+
+    def types_by_name(nodes) -> dict[str, "str | None"]:
+        return {
+            node["name"]: node.get("dataset_type")
+            for node in nodes
+            if node["type"] in ("data", "parameters")
+        }
+
+    adapter_types = types_by_name(response.model_dump()["nodes"])
+    baseline_types = types_by_name(baseline["nodes"])
+    assert adapter_types == baseline_types
+
+
 def test_task_node_metadata_resolves_for_adapter_id(adapter_client: TestClient) -> None:
     main = adapter_client.get("/api/main").json()
     task = _first_node_by_type(main, "task")

@@ -84,6 +84,25 @@ def test_snapshot_lookup_populates_data_metadata(
     assert "stats" not in payload
 
 
+def test_snapshot_lookup_synthesizes_memory_dataset_type(
+    lite_provider: InspectionAdapterProvider,
+) -> None:
+    """An io-ref with no catalog entry resolves to the live path's MemoryDataset string."""
+    from kedro_viz.utils import _strip_transcoding, is_dataset_param
+
+    snapshot = lite_provider._snapshot
+    memory_ref = next(
+        ref
+        for pipeline in snapshot.pipelines
+        for node in pipeline.nodes
+        for ref in [*node.inputs, *node.outputs]
+        if not is_dataset_param(ref)
+        and _strip_transcoding(ref) not in snapshot.datasets
+    )
+    payload = lite_provider._snapshot_lookup[node_ids.dataset_node_id(memory_ref)]
+    assert payload == {"type": "io.memory_dataset.MemoryDataset"}
+
+
 def test_snapshot_lookup_treats_parameter_refs_separately(
     lite_provider: InspectionAdapterProvider,
 ) -> None:

@@ -23,7 +23,9 @@ def _provider_with_bridge(bridge: dict[str, GraphNode]) -> InspectionAdapterProv
     return provider
 
 
-def _graph(task_id: str, data_id: str) -> GraphAPIResponse:
+def _graph(
+    task_id: str, data_id: str, dataset_type: str | None = None
+) -> GraphAPIResponse:
     return GraphAPIResponse(
         nodes=[
             TaskNodeAPIResponse(
@@ -43,6 +45,7 @@ def _graph(task_id: str, data_id: str) -> GraphAPIResponse:
                 pipelines=["__default__"],
                 type="data",
                 modular_pipelines=None,
+                dataset_type=dataset_type,
             ),
         ],
         edges=[],
@@ -94,6 +97,55 @@ def test_full_mode_enriches_task_parameters_and_node_extras() -> None:
     assert task_node.parameters == {"threshold": 0.4}
     assert task_node.node_extras.styles == {"background": "#abc123"}
     assert data_node.node_extras.stats == {"rows": 25}
+
+
+def test_full_mode_overlays_resolved_dataset_type() -> None:
+    """The raw catalog string from the snapshot is replaced by the live resolved class path."""
+    from kedro.io import MemoryDataset
+
+    data_id = node_ids.dataset_node_id("companies")
+    live_data = DataNode.create_data_node(
+        dataset_id="legacy-data-id",
+        dataset_name="companies",
+        layer=None,
+        tags=set(),
+        dataset=MemoryDataset(),
+        modular_pipelines=set(),
+    )
+    assert isinstance(live_data, DataNode)  # non-transcoded name → plain DataNode
+    assert live_data.dataset_type == "io.memory_dataset.MemoryDataset"
+    response = _graph("task-id", data_id, dataset_type="pandas.CSVDataset")
+
+    _provider_with_bridge({data_id: live_data})._enrich_graph_with_bridge(response)
+
+    data_node = next(node for node in response.nodes if node.type == "data")
+    assert isinstance(data_node, DataNodeAPIResponse)
+    assert data_node.dataset_type == "io.memory_dataset.MemoryDataset"
+
+
+def test_full_mode_sets_transcoded_dataset_type_to_none() -> None:
+    """Live serialises transcoded nodes with ``dataset_type=None``; the overlay mirrors that."""
+    data_id = node_ids.dataset_node_id("companies@pandas")
+    live_transcoded = DataNode.create_data_node(
+        dataset_id="legacy-data-id",
+        dataset_name="companies@pandas",
+        layer=None,
+        tags=set(),
+        dataset=None,
+        modular_pipelines=set(),
+    )
+    assert not isinstance(
+        live_transcoded, DataNode
+    )  # factory returns TranscodedDataNode
+    response = _graph("task-id", data_id, dataset_type="pandas.CSVDataset")
+
+    _provider_with_bridge({data_id: live_transcoded})._enrich_graph_with_bridge(
+        response
+    )
+
+    data_node = next(node for node in response.nodes if node.type == "data")
+    assert isinstance(data_node, DataNodeAPIResponse)
+    assert data_node.dataset_type is None
 
 
 def test_lite_mode_graph_enrichment_is_noop_with_empty_bridge() -> None:

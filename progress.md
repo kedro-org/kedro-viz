@@ -60,6 +60,7 @@ full parity on real projects + raised kedro floor.
 | D17 | 2026-06-02 | **Remove the `KEDRO_VIZ_INSPECTION_ADAPTER` opt-out env var entirely. Adapter is installed at startup whenever it can be built; legacy is the automatic fallback when it can't.** | Pre-release review feedback (Kedro maintainer + internal): the env var existed only as a "first release" rollback safety net for real users — but we haven't released yet, so it's protecting users who don't exist. Carrying ~10 lines of env-var handling + ~25 tests for a use case that doesn't apply was scaffolding without payoff. Phase 7 (deletion of the legacy backend + `LiveDataProvider`) is a separate follow-up |
 | D18 | 2026-06-02 | **Phase 7 reclassified from deletion to retention: keep the live backend + provider seam as the permanent `--params` runtime-params path; do not delete them.** Supersedes the "delete the legacy backend" follow-up noted in D16/D17. | `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14) — the live backend is the only engine that can reflect `--params`, and the seam (`get_runtime_data_provider`) is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive; the user chose to preserve `--params`. The other historical fallback reason (Kedro older than the inspection API) no longer applies — `kedro>=1.4.0` is the floor (D5). So Phase 7 becomes a reclassification: relabel the live path + seam in code/docs from "scaffolding to delete" to "the runtime-params path," and make an unexpected adapter build-failure log loudly (it's not normal operation) instead of silently. **Zero behaviour change.** Full deletion would only be revisited if the snapshot API ever grows a runtime-params route |
 | D19 | 2026-06-03 | **Finding (no code change yet): the Kedro snapshot is NOT import-free — `get_project_snapshot` imports the project's pipeline modules, so adapter-lite needs the node-function libraries (sklearn/pandas/…) importable. In a truly bare env the adapter build fails (`ModuleNotFoundError`) and falls through to the legacy `--lite` loader, which stubs imports. Lite mode therefore has TWO benefits and the adapter only delivers one: (a) "no project deps" → legacy-lite only; (b) "skip the heavy live load / side-effects" → adapter-lite. The fall-through covers (a) automatically. Path B (reuse kedro-viz's `LiteParser` to mock missing modules in `sys.modules` before calling `get_project_snapshot`) is PROVEN to let adapter-lite also cover (a).** | Discovered while testing `--lite` in a fresh env with no project deps: the adapter logged "FAILED to build" + a `ModuleNotFoundError: No module named 'sklearn'` traceback, then fell through to legacy lite. Root cause: `get_project_snapshot` → `_build_pipeline_snapshots` → `importlib.import_module(pipeline_registry)` imports node modules whose top-level `import sklearn` crashes. Probe (env `viz-lite-test`, sklearn absent): `LiteParser.parse` → `create_mock_modules` → `patch.dict("sys.modules", …)` → `get_project_snapshot` built the snapshot (6 pipelines, 19 datasets, 52 nodes); the adapter then produced an **identical** graph to the with-deps run (63 nodes / 110 edges / 6 pipelines) with correct `dataset_type` strings (read from catalog YAML, so mocking `kedro_datasets` doesn't corrupt them). **Decisions:** (1) ✅ **DONE 2026-06-03** — Path B implemented (`lite_import_stubs` in `snapshot_source.py`, wired through the provider + `server.py`); adapter-lite now serves the no-deps case. (2) still open — file a Kedro ask for an import-free snapshot (Path A — the clean long-term fix that would let us drop the stubbing); (3) still open — soften the build-failure log under `--lite` (a `ModuleNotFoundError` there is expected, not "please report"). |
+| D20 | 2026-06-10 | **Full-mode graph `dataset_type` parity restored via the bridge overlay; memory datasets synthesized as `io.memory_dataset.MemoryDataset` in both modes; lite mode keeps the raw catalog string (documented degradation).** Closes the Phase-2 deferral. | Review finding: the adapter graph served the raw catalog string (`pandas.CSVDataset`) where live serves the resolved class path (`pandas.csv_dataset.CSVDataset`), and `None` for memory datasets — breaking the frontend's `shortTypeMapping` icons (plotly/matplotlib) in what became the **default** mode after 6.7. The Phase-2 deferral ("revisit in P5 or via a small mapper") was never closed before the flip. Fix: `_enrich_graph_with_bridge` overlays `dataset_type` from the live node (DataNode → resolved path; transcoded/parameters → `None`, mirroring live serialisation); `GraphBuilder` synthesizes the MemoryDataset string for unregistered datasets; the lite metadata payload reuses the same constant (removing the third format `kedro.io.MemoryDataset`). A baseline parity test now pins full-mode `dataset_type` byte-identical to live; the lite-mode raw string is the only remaining (documented) divergence |
 | _ | _ | _(pending)_ Kedro ask outcome (func_name vs stable id vs id-break vs bridge) | — |
 
 ---
@@ -108,6 +109,48 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 ---
 
 ## Changelog
+
+### 2026-06-10 — Fix: full-mode `dataset_type` parity (D20)
+
+A post-implementation review found the one Phase-2 deferral that was never closed before the 6.7
+default flip: the adapter graph's `dataset_type` diverged from the live backend in the **default**
+mode — raw catalog string (`pandas.CSVDataset`) instead of the resolved class path
+(`pandas.csv_dataset.CSVDataset`), and `None` instead of `io.memory_dataset.MemoryDataset` for
+unregistered datasets. User-visible impact: the frontend's `shortTypeMapping` (`src/config.js`)
+keys on the resolved paths, so plotly/matplotlib nodes lost their plot/image icons. Undocumented
+in RELEASE.md and the frontend handoff; no parity test covered the field.
+
+**What was done**
+
+- `api/inspection_adapter_provider.py` — `_enrich_graph_with_bridge` now also overlays
+  `dataset_type` from the bridged live node: `DataNode` → its resolved class path; transcoded and
+  parameter nodes → `None` (mirroring live serialisation, which has no `dataset_type` attr on
+  those models). Full mode (the default) is now byte-identical to live for this field.
+- `integrations/kedro/inspection/graph_builder.py` — new `MEMORY_DATASET_TYPE`
+  (`io.memory_dataset.MemoryDataset`, what `get_dataset_type(MemoryDataset())` resolves);
+  `_build_dataset_node` synthesizes it for datasets with no catalog entry (both modes), and maps a
+  snapshot `type=""` to `None` instead of surfacing the empty string.
+- `api/inspection_adapter_provider.py` — the lite metadata payload reuses `MEMORY_DATASET_TYPE`,
+  removing the third string format (`kedro.io.MemoryDataset`) the lookup used to invent.
+- Tests: `test_metadata_bridge.py::test_full_mode_dataset_types_match_live_baseline` pins
+  full-mode `dataset_type` against `baseline/main.json` by name for every data/parameter node;
+  `test_provider_graph_enrichment.py` adds hermetic overlay tests (resolved-path replacement +
+  transcoded→None); `test_graph_builder_edge_cases.py` adds memory-synthesis and empty-type
+  cases; `test_lite_metadata.py` asserts the lite memory string.
+- Docs: `RELEASE.md` — new breaking-change bullet scoping the raw-string `dataset_type` (and the
+  icon fallback) to `--lite` only; `FRONTEND_HANDOFF.md` — "What changed" now explains the
+  full-vs-lite `dataset_type` contract and adds a Bucket-B task to decide on extending
+  `shortTypeMapping` with raw strings; the lite contract example updated to the new memory string.
+
+**What deliberately stays:** lite mode serves the raw catalog string for cataloged datasets — no
+dataset class is imported there, so resolution is impossible without a name-mangling heuristic;
+documented as a lite-mode degradation instead. The transcoded full-mode `None` mirrors live
+exactly (the snapshot-side variant-type guess from the hermetic edge-case test still applies in
+lite mode only).
+
+**Gate:** `make lint` (ruff + mypy) clean; full `pytest package/tests/` green in `viz-3-14`.
+
+---
 
 ### 2026-06-03 — Code-review fixes (Bucket 1 + provider docstring pass)
 
