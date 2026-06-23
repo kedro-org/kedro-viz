@@ -159,3 +159,32 @@ def test_single_param_node_is_keyed_by_name() -> None:
     # keyed by "split_options", and the override is inside it
     assert set(adapter["parameters"]) == {"split_options"}
     assert adapter["parameters"]["split_options"]["test_size"] == 0.99
+
+
+# -- Gate 2: --params does not change graph topology --------------------------------------- #
+#
+# Pipelines are registered (register_pipelines) *before* --params is applied, for both the live
+# backend and the snapshot. So --params can only change parameter *values*, never the node/edge
+# set. This pins that invariant: the adapter's structure is identical with and without --params.
+
+
+def _adapter_structure(
+    runtime_params: dict[str, Any] | None,
+) -> tuple[frozenset[str], frozenset[tuple[str, str]]]:
+    from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
+    from kedro_viz.data_access.repositories import GraphNodesRepository
+
+    provider = InspectionAdapterProvider(
+        DEMO, runtime_params=runtime_params, live_nodes=GraphNodesRepository()
+    )
+    result = provider.get_pipeline_response()
+    assert isinstance(result, GraphAPIResponse)
+    main = result.model_dump()
+    node_ids_set = frozenset(n["id"] for n in main["nodes"])
+    edges = frozenset((e["source"], e["target"]) for e in main["edges"])
+    return node_ids_set, edges
+
+
+def test_params_do_not_change_graph_topology() -> None:
+    """The node/edge set is identical with and without --params (only values differ)."""
+    assert _adapter_structure(None) == _adapter_structure(OVERRIDE)
