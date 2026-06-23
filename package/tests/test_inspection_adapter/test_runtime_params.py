@@ -9,12 +9,14 @@ parameter values can only come from the config-loader overlay, not the live node
 proves the lite-mode path.
 """
 
+import json
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
+from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection import snapshot_source
 
 DEMO = Path(__file__).resolve().parents[3] / "demo-project"
@@ -94,3 +96,66 @@ def test_override_changes_value_from_overlay_only() -> None:
     assert any(
         p.get("split_options", {}).get("test_size") == 0.99 for p in overridden.values()
     )
+
+
+# -- /api/nodes/{id} parameter-metadata parity (the shape live uses) ----------------------- #
+#
+# ``params:x`` (single) → ``{"parameters": {x: value}}`` keyed by name; the dotted form keeps the
+# dotted name as the key. These prove the adapter's parameter-node payload matches the live
+# ``ParametersNodeMetadata`` exactly, with values from the config-loader overlay (empty bridge).
+
+# Refs the demo is known to expose: a single param node and a dotted one.
+SINGLE_REF = "params:split_options"
+DOTTED_REF = "params:ingestion.typing.reviews.columns_as_floats"
+
+
+def _adapter_param_metadata(runtime_params: dict[str, Any] | None, ref: str) -> dict:
+    from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
+    from kedro_viz.data_access.repositories import GraphNodesRepository
+
+    provider = InspectionAdapterProvider(
+        DEMO, runtime_params=runtime_params, live_nodes=GraphNodesRepository()
+    )
+    resp = provider.get_node_metadata_response(node_ids.dataset_node_id(ref))
+    return json.loads(resp.body)  # type: ignore[union-attr]
+
+
+def _live_param_metadata(runtime_params: dict[str, Any] | None, ref: str) -> dict:
+    from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
+    from kedro_viz.data_access import data_access_manager
+    from kedro_viz.data_access.managers import DataAccessManager
+    from kedro_viz.integrations.kedro import data_loader
+    from kedro_viz.models.flowchart.nodes import ParametersNode
+    from kedro_viz.server import populate_data
+
+    catalog, pipelines, extras = data_loader.load_data(
+        DEMO, extra_params=runtime_params
+    )
+    populate_data(data_access_manager, catalog, pipelines, extras)
+    try:
+        node = next(
+            n
+            for n in data_access_manager.nodes.as_list()
+            if isinstance(n, ParametersNode) and n.name == ref
+        )
+        return get_node_metadata_response(node.id).model_dump()
+    finally:
+        fresh = DataAccessManager()
+        data_access_manager.__dict__.clear()
+        data_access_manager.__dict__.update(fresh.__dict__)
+
+
+@pytest.mark.parametrize("ref", [SINGLE_REF, DOTTED_REF])
+def test_param_node_metadata_matches_live(ref: str) -> None:
+    """Adapter ``/api/nodes/{id}`` parameter payload == live, with --params applied."""
+    adapter = _adapter_param_metadata(OVERRIDE, ref)
+    live = _live_param_metadata(OVERRIDE, ref)
+    assert adapter["parameters"] == live["parameters"]
+
+
+def test_single_param_node_is_keyed_by_name() -> None:
+    """A single ``params:x`` node wraps its value under the param name (live shape), not bare."""
+    adapter = _adapter_param_metadata(OVERRIDE, SINGLE_REF)
+    # keyed by "split_options", and the override is inside it
+    assert set(adapter["parameters"]) == {"split_options"}
+    assert adapter["parameters"]["split_options"]["test_size"] == 0.99

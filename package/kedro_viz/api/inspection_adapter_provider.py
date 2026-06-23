@@ -325,9 +325,10 @@ class InspectionAdapterProvider:
         lookup[ds_id] = payload
 
     def _param_value(self, ref: str) -> Any:
-        """Resolved value for a parameter ref: the whole dict for ``parameters``, else the
-        (possibly nested) value for ``params:x``."""
+        """The ``parameters`` payload for a parameter node, matching live ``ParametersNodeMetadata``:
+        the whole dict for the ``parameters`` (all) node; ``{name: value}`` for a single ``params:x``
+        node (``name`` keeps any dotted suffix, e.g. ``model_options.test_size``)."""
         if ref == "parameters":
             return self._parameters
         name = ref[len("params:") :] if ref.startswith("params:") else ref
-        return _resolve_param(self._parameters, name)
+        return {name: _resolve_param(self._parameters, name)}
