@@ -23,6 +23,33 @@ The old live load does **two separable jobs**:
 So "delete the old backend" really means "delete the **structure** engine, keep a slim **metadata**
 path until the bridge has a snapshot-based replacement."
 
+## Gate findings — verified empirically (Phase 1)
+
+Both `--params` gates were run (see `blind_spots_demo.py` and `test_runtime_params*.py`):
+
+- **Spot 1 — catalog templating: REAL.** A dataset path templated on `${runtime_params:...}` is
+  param-blind in the snapshot (resolves the default) but param-aware in the live `context.catalog`.
+  Proven: adapter `data/01`, live `data/02`. So the **pure-snapshot / lite** path can't reflect it;
+  **full mode's live bridge covers it** (the bridge is filled by a live load that ran with
+  `--params`). Lite + catalog-templating is a documented degradation.
+- **Spot 2 — dynamic topology: CLEARED on kedro >= 1.4.** `get_current_session()` (the old way for
+  `register_pipelines` to read `--params`) was removed, and the live loader builds the graph from
+  the same param-blind global `pipelines`. So `--params` changes *values*, never the node/edge set —
+  for both engines. Proven: node counts unchanged with/without `--params`. **Not a blocker.**
+
+**Refined "bridge" scope.** The bridge's irreducible job is **source code + dataset preview** — the
+only things that fundamentally need live Python objects. Everything else has a non-bridge source:
+names + inputs/outputs from the snapshot; dataset type/filepath/layer from the catalog config
+(runtime-param-aware when read with `runtime_params`); parameter values from the config loader; stats
+from `stats.json`. So the "slim live load" we keep is small, and shrinks to nothing once Kedro exposes
+node source (`func_source`).
+
+**Consequence for deletion.** The big **graph-building engine** (~700–840 lines: the `managers.py`
+traversal, the structure repositories, the legacy response bodies) can go now — the adapter replaces
+it. What stays is a **slim live load + bridge** (~300 lines: load catalog + build the live node
+objects + the metadata extractors), which serves code/preview **and** covers the `--params` catalog
+case. The live load disappears entirely only with the Kedro `func_source` change (Phase 6).
+
 ---
 
 ## Phase 0 — Reconcile the plan with the branch

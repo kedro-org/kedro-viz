@@ -161,11 +161,13 @@ def test_single_param_node_is_keyed_by_name() -> None:
     assert adapter["parameters"]["split_options"]["test_size"] == 0.99
 
 
-# -- Gate 2: --params does not change graph topology --------------------------------------- #
+# -- Gate 2: --params does not change graph topology (kedro >= 1.4) ------------------------ #
 #
-# Pipelines are registered (register_pipelines) *before* --params is applied, for both the live
-# backend and the snapshot. So --params can only change parameter *values*, never the node/edge
-# set. This pins that invariant: the adapter's structure is identical with and without --params.
+# On kedro >= 1.4 there is no supported way for --params to reach register_pipelines:
+# get_current_session() (the old hook for this) was removed, and the live loader itself builds the
+# graph from the param-blind global ``pipelines`` (dict(pipelines)). So --params changes parameter
+# *values*, not the node/edge set — for BOTH engines. Verified empirically (see the blind-spots
+# demo). This pins that invariant for the adapter: structure is identical with/without --params.
 
 
 def _adapter_structure(
