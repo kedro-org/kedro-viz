@@ -113,6 +113,50 @@ class DataAccessManager:
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
+    def add_metadata_nodes(self, pipelines: Dict[str, KedroPipeline]):
+        """Populate ``self.nodes`` with viz node objects ONLY — the slim path that feeds the
+        metadata bridge.
+
+        This mirrors :meth:`add_pipeline`'s node creation (``add_node`` / ``add_dataset`` /
+        ``add_parameters_to_task_node`` + transcoded wiring) but skips the graph-structure work:
+        no edges, no ``node_dependencies``, no ``registered_pipelines`` lists, no modular-tree
+        expansion. The snapshot adapter owns the graph now, so the live backend only needs these
+        node objects to answer ``/api/nodes/{id}`` (source code, preview, stats, dataset type).
+        Once this fully replaces ``add_pipelines``, the graph-building code can be deleted.
+        """
+        for registered_pipeline_id, pipeline in pipelines.items():
+            modular_pipelines_repo_obj = self.modular_pipelines[registered_pipeline_id]
+            modular_pipelines_repo_obj.populate_tree(pipeline)
+            free_inputs = pipeline.inputs()
+            for node in pipeline.nodes:
+                task_node = self.add_node(
+                    registered_pipeline_id, node, modular_pipelines_repo_obj
+                )
+                for input_ in node.inputs:
+                    input_node = self.add_dataset(
+                        registered_pipeline_id,
+                        input_,
+                        modular_pipelines_repo_obj,
+                        is_free_input=input_ in free_inputs,
+                    )
+                    input_node.tags.update(task_node.tags)
+                    if isinstance(input_node, TranscodedDataNode):
+                        input_node.transcoded_versions.add(
+                            self.catalog.get_dataset(input_)
+                        )
+                    if isinstance(input_node, ParametersNode):
+                        self.add_parameters_to_task_node(
+                            parameters_node=input_node, task_node=task_node
+                        )
+                for output in node.outputs:
+                    output_node = self.add_dataset(
+                        registered_pipeline_id, output, modular_pipelines_repo_obj
+                    )
+                    output_node.tags.update(task_node.tags)
+                    if isinstance(output_node, TranscodedDataNode):
+                        output_node.original_name = output
+                        output_node.original_version = self.catalog.get_dataset(output)
+
     def add_node_extras(self, node_extras_mapping: Dict[str, NodeExtras]):
         """Add all node extras at once.
 
