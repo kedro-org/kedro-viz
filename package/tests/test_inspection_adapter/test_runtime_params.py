@@ -1,12 +1,9 @@
-"""Phase 1 — ``--params`` parity.
+"""``--params`` support in the inspection adapter.
 
-The live backend is the source of truth: the adapter is correct when it produces the same task
-parameters for the same ``--params``. The live backend is still present, so we run both engines and
-diff them (aligned by ``full_name`` — the two engines use different node-ID schemes).
-
-The adapter is built with an **empty bridge** (``live_nodes=GraphNodesRepository()``) so its
-parameter values can only come from the config-loader overlay, not the live nodes — which also
-proves the lite-mode path.
+The adapter is the only graph engine: parameter *values* are resolved from Kedro's config loader
+(with ``--params`` deep-merged), so the graph and node metadata reflect the overrides. These tests
+build the adapter with an **empty bridge** (``live_nodes=GraphNodesRepository()``) so the values can
+only come from the config-loader overlay — which also exercises the lite-mode path.
 """
 
 import json
@@ -30,34 +27,6 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def _live_task_params(runtime_params: dict[str, Any] | None) -> dict[str, dict]:
-    """Task ``parameters`` from the live backend (the trusted answer), keyed by ``full_name``."""
-    from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
-    from kedro_viz.data_access import data_access_manager
-    from kedro_viz.data_access.managers import DataAccessManager
-    from kedro_viz.integrations.kedro import data_loader
-    from kedro_viz.server import populate_data
-
-    catalog, pipelines, extras = data_loader.load_data(
-        DEMO, extra_params=runtime_params
-    )
-    populate_data(data_access_manager, catalog, pipelines, extras)
-    try:
-        result = get_pipeline_response()
-        assert isinstance(result, GraphAPIResponse)
-        main = result.model_dump()
-        return {
-            n["full_name"]: n["parameters"]
-            for n in main["nodes"]
-            if n["type"] == "task"
-        }
-    finally:
-        # Reset the module-singleton so the live load doesn't leak into other tests.
-        fresh = DataAccessManager()
-        data_access_manager.__dict__.clear()
-        data_access_manager.__dict__.update(fresh.__dict__)
-
-
 def _adapter_task_params(runtime_params: dict[str, Any] | None) -> dict[str, dict]:
     """Task ``parameters`` from the adapter (empty bridge → values from the overlay only)."""
     from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
@@ -74,22 +43,16 @@ def _adapter_task_params(runtime_params: dict[str, Any] | None) -> dict[str, dic
     }
 
 
-def test_task_parameters_match_live_no_params() -> None:
-    """With no ``--params``, the adapter's task parameters match the live backend exactly."""
-    assert _adapter_task_params(None) == _live_task_params(None)
-
-
-def test_task_parameters_match_live_with_override() -> None:
-    """With ``--params``, the adapter matches live and the override is reflected."""
+def test_override_is_reflected_in_task_parameters() -> None:
+    """With ``--params``, the overridden value lands on the task that consumes it."""
     adapter = _adapter_task_params(OVERRIDE)
-    assert adapter == _live_task_params(OVERRIDE)
     assert any(
         p.get("split_options", {}).get("test_size") == 0.99 for p in adapter.values()
     ), "the overridden split_options.test_size=0.99 should appear on a task"
 
 
 def test_override_changes_value_from_overlay_only() -> None:
-    """Layer-3 isolation: with an empty bridge, the override still lands (from the overlay)."""
+    """With an empty bridge, the override still lands (resolved from the config-loader overlay)."""
     base = _adapter_task_params(None)
     overridden = _adapter_task_params(OVERRIDE)
     assert base != overridden
@@ -98,11 +61,10 @@ def test_override_changes_value_from_overlay_only() -> None:
     )
 
 
-# -- /api/nodes/{id} parameter-metadata parity (the shape live uses) ----------------------- #
+# -- /api/nodes/{id} parameter-metadata shape ---------------------------------------------- #
 #
 # ``params:x`` (single) → ``{"parameters": {x: value}}`` keyed by name; the dotted form keeps the
-# dotted name as the key. These prove the adapter's parameter-node payload matches the live
-# ``ParametersNodeMetadata`` exactly, with values from the config-loader overlay (empty bridge).
+# dotted name as the key. Values come from the config-loader overlay (empty bridge).
 
 # Refs the demo is known to expose: a single param node and a dotted one.
 SINGLE_REF = "params:split_options"
@@ -120,39 +82,6 @@ def _adapter_param_metadata(runtime_params: dict[str, Any] | None, ref: str) -> 
     return json.loads(resp.body)  # type: ignore[union-attr]
 
 
-def _live_param_metadata(runtime_params: dict[str, Any] | None, ref: str) -> dict:
-    from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
-    from kedro_viz.data_access import data_access_manager
-    from kedro_viz.data_access.managers import DataAccessManager
-    from kedro_viz.integrations.kedro import data_loader
-    from kedro_viz.models.flowchart.nodes import ParametersNode
-    from kedro_viz.server import populate_data
-
-    catalog, pipelines, extras = data_loader.load_data(
-        DEMO, extra_params=runtime_params
-    )
-    populate_data(data_access_manager, catalog, pipelines, extras)
-    try:
-        node = next(
-            n
-            for n in data_access_manager.nodes.as_list()
-            if isinstance(n, ParametersNode) and n.name == ref
-        )
-        return get_node_metadata_response(node.id).model_dump()
-    finally:
-        fresh = DataAccessManager()
-        data_access_manager.__dict__.clear()
-        data_access_manager.__dict__.update(fresh.__dict__)
-
-
-@pytest.mark.parametrize("ref", [SINGLE_REF, DOTTED_REF])
-def test_param_node_metadata_matches_live(ref: str) -> None:
-    """Adapter ``/api/nodes/{id}`` parameter payload == live, with --params applied."""
-    adapter = _adapter_param_metadata(OVERRIDE, ref)
-    live = _live_param_metadata(OVERRIDE, ref)
-    assert adapter["parameters"] == live["parameters"]
-
-
 def test_single_param_node_is_keyed_by_name() -> None:
     """A single ``params:x`` node wraps its value under the param name (live shape), not bare."""
     adapter = _adapter_param_metadata(OVERRIDE, SINGLE_REF)
@@ -161,13 +90,19 @@ def test_single_param_node_is_keyed_by_name() -> None:
     assert adapter["parameters"]["split_options"]["test_size"] == 0.99
 
 
-# -- Gate 2: --params does not change graph topology (kedro >= 1.4) ------------------------ #
+def test_dotted_param_node_is_keyed_by_dotted_name() -> None:
+    """A dotted ``params:a.b.c`` node keeps the dotted name as the key."""
+    adapter = _adapter_param_metadata(None, DOTTED_REF)
+    key = DOTTED_REF[len("params:") :]
+    assert key in adapter["parameters"]
+
+
+# -- --params does not change graph topology (kedro >= 1.4) -------------------------------- #
 #
 # On kedro >= 1.4 there is no supported way for --params to reach register_pipelines:
-# get_current_session() (the old hook for this) was removed, and the live loader itself builds the
-# graph from the param-blind global ``pipelines`` (dict(pipelines)). So --params changes parameter
-# *values*, not the node/edge set — for BOTH engines. Verified empirically (see the blind-spots
-# demo). This pins that invariant for the adapter: structure is identical with/without --params.
+# get_current_session() (the old hook for this) was removed, and the snapshot builds the graph from
+# the param-blind global ``pipelines``. So --params changes parameter *values*, not the node/edge
+# set. This pins that invariant: structure is identical with/without --params.
 
 
 def _adapter_structure(

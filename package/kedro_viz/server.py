@@ -29,15 +29,18 @@ def populate_data(
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
+
+    Builds only the viz node objects that back the metadata bridge (``/api/nodes/{id}``); the graph
+    itself is served by the inspection adapter from the Kedro snapshot.
     """
 
     data_access_manager.add_catalog(catalog, pipelines)
 
-    # add node_extras like dataset stats, styles before adding pipelines as the data nodes
-    # need stats information and they are created during add_pipelines
+    # add node_extras (dataset stats, styles) before building the nodes, since the data nodes
+    # need stats information and they are created during add_metadata_nodes
     data_access_manager.add_node_extras(node_extras_dict)
 
-    data_access_manager.add_pipelines(pipelines)
+    data_access_manager.add_metadata_nodes(pipelines)
 
 
 def load_and_populate_data(
@@ -51,35 +54,32 @@ def load_and_populate_data(
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories.
 
-    Under ``--lite`` the live project load is skipped entirely — only the inspection snapshot
-    is read, ``data_access_manager`` stays empty, and the adapter provider answers from the
-    snapshot alone. If the adapter fails to build under ``--lite`` (e.g. a stale ``--pipeline``
-    argument), we fall through to the ``--lite`` live load so the user still gets a working
-    visualisation rather than an empty graph.
+    The inspection adapter is the only graph engine: ``/api/main``, ``/api/pipelines/{id}``,
+    ``/api/nodes/{id}`` and ``/api/run-status`` are served from the Kedro snapshot.
 
-    In every other case the live data is loaded first and the adapter is then layered on top.
-    The live load backs the metadata bridge (source code, previews, stats) and makes
-    ``kedro viz run --params=...`` fully correct: the adapter resolves parameter *values* itself,
-    while the live bridge covers catalog paths templated on ``--params``.
+    Under ``--lite`` the live project load is skipped entirely — only the snapshot is read and the
+    adapter answers from it alone. In every other case the live data is loaded first to back the
+    metadata bridge (source code, previews, stats) and to make ``kedro viz run --params=...`` fully
+    correct (the adapter resolves parameter *values* itself, while the live bridge covers catalog
+    paths templated on ``--params``); the adapter is then layered on top.
+
+    The adapter must build for the visualisation to work; a build failure is raised (fail fast at
+    startup) rather than silently degraded — there is no live-graph fallback.
     """
     if is_lite and not extra_params:
         logger.info(
             "--lite: skipping the live project load; graph and node metadata will be served "
             "from the snapshot only."
         )
-        if _configure_inspection_adapter_provider(
+        _configure_inspection_adapter_provider(
             path,
             env,
             pipeline_name,
             extra_params=None,
             is_lite=True,
             package_name=package_name,
-        ):
-            return
-        logger.warning(
-            "Inspection adapter could not be built under --lite; falling through to the "
-            "--lite live load so the visualisation isn't empty."
         )
+        return
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
@@ -92,12 +92,11 @@ def load_and_populate_data(
         else {pipeline_name: pipelines[pipeline_name]}
     )
 
-    # Creates data repositories which are used by Kedro Viz Backend APIs
+    # Build the node objects that back the metadata bridge (source code, previews, stats).
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
 
     # Build the snapshot-backed adapter on top of the live load, passing --params as
-    # runtime_params. The live load backs the bridge (and catalog --params templating); if the
-    # adapter build fails unexpectedly, the populated live path still serves requests.
+    # runtime_params. The live load backs the bridge (and catalog --params templating).
     _configure_inspection_adapter_provider(
         path, env, pipeline_name, extra_params, package_name=package_name
     )
@@ -111,11 +110,12 @@ def _configure_inspection_adapter_provider(
     *,
     is_lite: bool = False,
     package_name: Optional[str] = None,
-) -> bool:
+) -> None:
     """Install the inspection-adapter provider for this process.
 
-    Returns ``True`` if the adapter was installed; ``False`` if the build raised (callers that
-    skipped the live load — e.g. the lite short-circuit — check this and arrange a fallback).
+    The adapter is the only graph engine, so a build failure is re-raised (fail fast at startup):
+    Kedro-Viz cannot serve the graph without it. The adapter should build for any project on
+    kedro>=1.4.0.
 
     ``extra_params`` (``--params``) is passed to the adapter as ``runtime_params``: parameter
     *values* are resolved from the config loader, so the graph and node metadata reflect the
@@ -127,9 +127,9 @@ def _configure_inspection_adapter_provider(
     adapter can serve ``--lite`` even when the project's node-function libraries aren't installed.
     ``package_name`` lets the lite import-stubber detect project-relative imports.
     """
-    try:
-        from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
+    from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
 
+    try:
         provider = InspectionAdapterProvider(
             path,
             env=env,
@@ -139,22 +139,18 @@ def _configure_inspection_adapter_provider(
             runtime_params=extra_params,
         )
     except Exception:
-        # Unexpected: the adapter should build for any project on kedro>=1.4.0.
-        # Don't break a working viz — the live load is already populated — but make it loud that
-        # the adapter is NOT active so this isn't mistaken for normal operation.
-        logger.exception(
-            "Inspection adapter FAILED to build; it is not active for this process. Serving the "
-            "live graph path as a fallback. This is unexpected — please report it."
-        )
         set_inspection_adapter_provider(None)
-        return False
+        logger.exception(
+            "Inspection adapter FAILED to build. Kedro-Viz serves the graph only from the Kedro "
+            "inspection snapshot (kedro>=1.4.0) and cannot continue without it."
+        )
+        raise
 
     set_inspection_adapter_provider(provider)
     logger.info(
         "Inspection adapter active: /api/main, /api/pipelines/{id}, /api/nodes/{id} and "
         "/api/run-status are served from the snapshot."
     )
-    return True
 
 
 def run_server(

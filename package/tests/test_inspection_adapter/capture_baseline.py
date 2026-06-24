@@ -1,14 +1,11 @@
-"""Phase 0 parity harness: capture the current Kedro-Viz backend output as a golden baseline.
+"""Capture the Kedro-Viz backend output as a golden baseline.
 
-Runs the live-object backend against ``demo-project`` and writes normalized JSON for ``/api/main``
-and every ``/api/pipelines/{id}``, plus a per task-node ID classification report. The inspection
-adapter (Phase 1+) is later diffed against these files to prove parity.
+Runs the inspection adapter against ``demo-project`` and writes normalized JSON for ``/api/main``
+and every ``/api/pipelines/{id}``, plus a per task-node ID classification report.
 
 Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
-
-See ``INSPECTION_ADAPTER_PLAN.md`` §7 (Phase 0) and §8 (parity matrix).
 """
 
 from __future__ import annotations
@@ -144,25 +141,32 @@ def build_node_id_report() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+def _graph_dict(provider, pipeline_id: str | None = None) -> dict:
+    """A GraphAPIResponse from the adapter as a plain dict."""
+    from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
+
+    result = provider.get_pipeline_response(pipeline_id)
+    assert isinstance(result, GraphAPIResponse)
+    return result.model_dump()
+
+
 def main() -> None:
     import os
 
     os.chdir(DEMO_PROJECT)
-    from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
-    from kedro_viz.server import load_and_populate_data
+    from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
 
     print(f"Loading demo project: {DEMO_PROJECT}")
-    load_and_populate_data(DEMO_PROJECT)
+    provider = InspectionAdapterProvider(DEMO_PROJECT)
 
-    main_resp = normalize_graph(get_kedro_project_json_data())
+    main_resp = normalize_graph(_graph_dict(provider))
     _write_json(OUT_DIR / "main.json", main_resp)
     print(
         f"  wrote main.json  (nodes={len(main_resp['nodes'])} edges={len(main_resp['edges'])})"
     )
 
-    pipeline_ids = [p["id"] for p in main_resp.get("pipelines", [])]
-    for pid in pipeline_ids:
-        resp = normalize_graph(get_kedro_project_json_data(pid))
+    for pid in provider.get_pipeline_ids():
+        resp = normalize_graph(_graph_dict(provider, pid))
         _write_json(OUT_DIR / "pipelines" / f"{pid}.json", resp)
         print(f"  wrote pipelines/{pid}.json  (nodes={len(resp['nodes'])})")
 

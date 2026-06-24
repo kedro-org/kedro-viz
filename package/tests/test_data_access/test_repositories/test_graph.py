@@ -1,10 +1,6 @@
 from kedro.pipeline import node
 
-from kedro_viz.data_access.repositories import (
-    GraphEdgesRepository,
-    GraphNodesRepository,
-)
-from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.data_access.repositories import GraphNodesRepository
 from kedro_viz.models.flowchart.nodes import GraphNode
 
 
@@ -44,18 +40,3 @@ class TestGraphNodeRepository:
         )
         repo.add_node(task_node)
         assert repo.get_node_ids() == ["identity_node"]
-
-
-class TestGraphEdgesRepository:
-    def test_filter_by_node_is(self):
-        ab = GraphEdge(source="a", target="b")
-        bc = GraphEdge(source="b", target="c")
-        cd = GraphEdge(source="c", target="d")
-        da = GraphEdge(source="d", target="a")
-        repo = GraphEdgesRepository()
-        for edge in [ab, bc, cd, da]:
-            repo.add_edge(edge)
-        assert set(repo.get_edges_by_node_ids({"a", "b", "d"})) == {
-            ab,
-            da,
-        }

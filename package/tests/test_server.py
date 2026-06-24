@@ -45,6 +45,12 @@ def patched_load_data(
 
 
 class TestServer:
+    @pytest.fixture(autouse=True)
+    def _stub_adapter_config(self, mocker):
+        # run_server now requires the inspection adapter to build; these tests exercise the
+        # data-loading + app-creation path, so stub the adapter configuration out.
+        yield mocker.patch("kedro_viz.server._configure_inspection_adapter_provider")
+
     def test_run_server_from_project(
         self,
         patched_create_api_app_from_project,
@@ -57,7 +63,7 @@ class TestServer:
         patched_data_access_manager.add_catalog.assert_called_once_with(
             example_catalog, example_pipelines
         )
-        patched_data_access_manager.add_pipelines.assert_called_once_with(
+        patched_data_access_manager.add_metadata_nodes.assert_called_once_with(
             example_pipelines
         )
 
@@ -75,7 +81,7 @@ class TestServer:
         run_server(pipeline_name="data_science")
 
         # assert that when running server, data are added correctly to the data access manager
-        patched_data_access_manager.add_pipelines.assert_called_once_with(
+        patched_data_access_manager.add_metadata_nodes.assert_called_once_with(
             {"data_science": example_pipelines["data_science"]}
         )
 
@@ -166,7 +172,9 @@ class TestInspectionAdapterStartup:
         )
         assert data_provider._adapter_holder.provider is provider_stub
 
-    def test_falls_back_when_adapter_construction_raises(self, mocker, caplog):
+    def test_raises_when_adapter_construction_fails(self, mocker, caplog):
+        """The adapter is the only graph engine, so a build failure is raised (fail fast) with the
+        slot cleared — there is no live-graph fallback."""
         from kedro_viz.api import data_provider
         from kedro_viz.server import _configure_inspection_adapter_provider
 
@@ -175,9 +183,10 @@ class TestInspectionAdapterStartup:
             side_effect=RuntimeError("kedro<1.4.0"),
         )
         with caplog.at_level("ERROR", logger="kedro_viz.server"):
-            _configure_inspection_adapter_provider(
-                path="bad/path", env=None, pipeline_name=None, extra_params=None
-            )
+            with pytest.raises(RuntimeError, match="kedro<1.4.0"):
+                _configure_inspection_adapter_provider(
+                    path="bad/path", env=None, pipeline_name=None, extra_params=None
+                )
         assert data_provider._adapter_holder.provider is None
         assert any(
             "Inspection adapter FAILED to build" in r.message for r in caplog.records
@@ -233,6 +242,7 @@ class TestLiteModeAdapter:
             return_value=(mocker.Mock(), {}, {}),
         )
         mocker.patch("kedro_viz.server.populate_data")
+        mocker.patch("kedro_viz.server._configure_inspection_adapter_provider")
 
         from kedro_viz.server import load_and_populate_data
 
@@ -240,35 +250,21 @@ class TestLiteModeAdapter:
 
         mock_load_data.assert_called_once()
 
-    def test_lite_falls_through_to_live_load_when_adapter_build_fails(
-        self, mocker, caplog
-    ):
-        """If the adapter fails to build under --lite, fall through to the legacy live load.
-
-        Without this fallback, ``data_access_manager`` would stay empty and any subsequent
-        request would silently get an empty graph from ``LiveDataProvider``.
-        """
-        # Adapter construction raises (could be: stale --pipeline, kedro<1.4.0, etc.)
+    def test_lite_raises_when_adapter_build_fails(self, mocker):
+        """Under --lite the snapshot is the only source; an adapter build failure raises (there is
+        no live-graph fallback)."""
         mocker.patch(
             "kedro_viz.api.inspection_adapter_provider.InspectionAdapterProvider",
             side_effect=RuntimeError("snapshot build failed"),
         )
-        mock_load_data = mocker.patch(
-            "kedro_viz.server.kedro_data_loader.load_data",
-            return_value=(mocker.Mock(), {}, {}),
-        )
+        mock_load_data = mocker.patch("kedro_viz.server.kedro_data_loader.load_data")
         mock_populate_data = mocker.patch("kedro_viz.server.populate_data")
 
         from kedro_viz.server import load_and_populate_data
 
-        with caplog.at_level("WARNING", logger="kedro_viz.server"):
+        with pytest.raises(RuntimeError, match="snapshot build failed"):
             load_and_populate_data(path="proj/path", is_lite=True)
 
-        # The live load ran, so the viz has something to serve.
-        mock_load_data.assert_called_once()
-        mock_populate_data.assert_called_once()
-        # A clear warning explains why we fell through.
-        assert any(
-            "falling through to the --lite live load" in r.message
-            for r in caplog.records
-        )
+        # No fallback live load.
+        mock_load_data.assert_not_called()
+        mock_populate_data.assert_not_called()

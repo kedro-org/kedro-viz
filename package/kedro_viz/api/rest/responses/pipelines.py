@@ -1,18 +1,11 @@
-"""`kedro_viz.api.rest.responses.pipelines` contains response classes
-and utility functions for the `/main` and `/pipelines/* REST endpoints"""
+"""`kedro_viz.api.rest.responses.pipelines` contains the response models for the `/main` and
+`/pipelines/*` REST endpoints. The endpoints themselves are served by the inspection adapter."""
 
-import json
-import logging
 from typing import Any, Dict, List, Optional, Union
 
-from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
 
 from kedro_viz.api.rest.responses.base import BaseAPIResponse
-from kedro_viz.api.rest.responses.utils import get_encoded_response
-from kedro_viz.data_access import data_access_manager
-
-logger = logging.getLogger(__name__)
 
 
 class NodeExtrasAPIResponse(BaseAPIResponse):
@@ -216,56 +209,3 @@ class GraphAPIResponse(BaseAPIResponse):
     pipelines: List[NamedEntityAPIResponse]
     modular_pipelines: ModularPipelinesTreeAPIResponse
     selected_pipeline: str
-
-
-def get_pipeline_response(
-    pipeline_id: Union[str, None] = None,
-) -> Union[GraphAPIResponse, JSONResponse]:
-    """API response for `/api/pipelines/pipeline_id`."""
-    if pipeline_id is None:
-        pipeline_id = data_access_manager.get_default_selected_pipeline().id
-
-    if not data_access_manager.registered_pipelines.has_pipeline(pipeline_id):
-        return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
-
-    modular_pipelines_tree = (
-        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            pipeline_id
-        )
-    )
-
-    return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(pipeline_id),
-        edges=data_access_manager.get_edges_for_registered_pipeline(pipeline_id),
-        tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
-            pipeline_id
-        ),
-        pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=modular_pipelines_tree,
-        selected_pipeline=pipeline_id,
-    )
-
-
-def get_kedro_project_json_data(pipeline_name: Optional[str] = None):
-    """Decodes the response for the specified pipeline_name and returns the Kedro project JSON data.
-    This will be used in VSCode extension to get current Kedro project data."""
-    pipeline_response = (
-        get_pipeline_response()
-        if pipeline_name is None
-        else get_pipeline_response(pipeline_name)
-    )
-
-    encoded_response = get_encoded_response(pipeline_response)
-
-    try:
-        response_str = encoded_response.decode("utf-8")
-        json_data = json.loads(response_str)
-    except UnicodeDecodeError as exc:  # pragma: no cover
-        json_data = None
-        logger.error("Failed to decode response string. Error: %s", str(exc))
-    except json.JSONDecodeError as exc:  # pragma: no cover
-        json_data = None
-        logger.error("Failed to parse JSON data. Error: %s", str(exc))
-
-    return json_data

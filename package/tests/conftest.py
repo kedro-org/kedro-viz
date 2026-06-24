@@ -502,134 +502,16 @@ def example_api(
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     example_node_extras_dict: Dict[str, NodeExtras],
-    mocker,
 ):
+    # Builds the app shell for non-graph endpoint tests (deploy, metadata, version, index, reload,
+    # favicon). The graph itself is served by the inspection adapter, so graph routes (/api/main,
+    # /api/pipelines, /api/nodes) are covered by the adapter test suite, not via this fixture.
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
         data_access_manager,
         example_catalog,
         example_pipelines,
         example_node_extras_dict,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
-        new=data_access_manager,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.nodes.data_access_manager",
-        new=data_access_manager,
-    )
-    yield api
-
-
-@pytest.fixture
-def example_api_no_default_pipeline(
-    data_access_manager: DataAccessManager,
-    example_pipelines: Dict[str, Pipeline],
-    example_catalog: DataCatalog,
-    mocker,
-):
-    del example_pipelines["__default__"]
-    api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines, {})
-    mocker.patch(
-        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
-        new=data_access_manager,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.nodes.data_access_manager",
-        new=data_access_manager,
-    )
-    yield api
-
-
-@pytest.fixture
-def example_api_for_edge_case_pipelines(
-    data_access_manager: DataAccessManager,
-    edge_case_example_pipelines: Dict[str, Pipeline],
-    example_catalog: DataCatalog,
-    mocker,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-
-    # For readability we are not hashing the node id
-    mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
-    mocker.patch(
-        "kedro_viz.data_access.repositories.modular_pipelines._hash",
-        side_effect=lambda value: value,
-    )
-
-    populate_data(
-        data_access_manager,
-        example_catalog,
-        edge_case_example_pipelines,
-        {},
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
-        new=data_access_manager,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.nodes.data_access_manager",
-        new=data_access_manager,
-    )
-    yield api
-
-
-@pytest.fixture
-def example_api_for_pipelines_with_additional_tags(
-    data_access_manager: DataAccessManager,
-    example_pipelines_with_additional_tags: Dict[str, Pipeline],
-    example_catalog: DataCatalog,
-    mocker,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-
-    # For readability we are not hashing the node id
-    mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
-    mocker.patch(
-        "kedro_viz.data_access.repositories.modular_pipelines._hash",
-        side_effect=lambda value: value,
-    )
-
-    populate_data(
-        data_access_manager,
-        example_catalog,
-        example_pipelines_with_additional_tags,
-        {},
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
-        new=data_access_manager,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.nodes.data_access_manager",
-        new=data_access_manager,
-    )
-    yield api
-
-
-@pytest.fixture
-def example_transcoded_api(
-    data_access_manager: DataAccessManager,
-    example_transcoded_pipelines: Dict[str, Pipeline],
-    example_transcoded_catalog: DataCatalog,
-    mocker,
-):
-    api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(
-        data_access_manager,
-        example_transcoded_catalog,
-        example_transcoded_pipelines,
-        {},
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
-        new=data_access_manager,
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.responses.nodes.data_access_manager",
-        new=data_access_manager,
     )
     yield api
 

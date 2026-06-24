@@ -2,7 +2,6 @@
 centralise access to application data."""
 
 from .catalog import CatalogRepository
-from .graph import GraphEdgesRepository, GraphNodesRepository
+from .graph import GraphNodesRepository
 from .modular_pipelines import ModularPipelinesRepository
-from .registered_pipelines import RegisteredPipelinesRepository
 from .tags import TagsRepository

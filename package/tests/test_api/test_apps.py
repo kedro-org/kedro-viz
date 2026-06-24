@@ -76,41 +76,5 @@ class TestFaviconEndpoint:
         ]
 
 
-class TestNodeMetadataEndpoint:
-    @pytest.mark.parametrize(
-        "node_id, expected_status, expected_response",
-        [
-            ("test", 404, {"message": "Invalid node ID"}),
-            (
-                "13399a82",
-                200,
-                {
-                    "filepath": "raw_data.csv",
-                    "preview_type": "TablePreview",
-                    "type": "pandas.csv_dataset.CSVDataset",
-                },
-            ),
-        ],
-    )
-    def test_get_node_metadata(
-        self, node_id, expected_status, expected_response, client
-    ):
-        response = client.get(f"/api/nodes/{node_id}")
-        assert response.status_code == expected_status
-        assert response.json() == expected_response
-
-
-class TestRegisteredPipelineEndpoint:
-    @pytest.mark.parametrize(
-        "pipeline_id, expected_status",
-        [
-            ("test", 404),
-            ("data_science", 200),
-        ],
-    )
-    def test_get_registered_pipeline(self, pipeline_id, expected_status, client):
-        response = client.get(f"/api/pipelines/{pipeline_id}")
-        assert response.status_code == expected_status
-
-        if response.status_code == 200:
-            assert response.json()["selected_pipeline"] == pipeline_id
+# /api/nodes and /api/pipelines are served by the inspection adapter; their behaviour is covered
+# by the adapter test suite (test_inspection_adapter/), not via the app-shell ``client`` fixture.
