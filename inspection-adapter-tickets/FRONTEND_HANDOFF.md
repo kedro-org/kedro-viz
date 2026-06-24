@@ -23,7 +23,7 @@ One graph field degrades in lite mode: **`dataset_type`**. In full mode it is th
 - `/api/nodes/{id}` — rich in full mode (byte-identical to today's response); sparse in lite mode (see shapes below).
 - `/api/run-status` — uses the same new-scheme IDs (after the user re-runs `kedro run`).
 - Static export (`kedro viz build` / `--save-file`) — carries new-scheme IDs end-to-end.
-- The adapter is installed at server startup whenever it can be built. The legacy `data_access_manager`-backed path stays in place as an automatic fallback for the cases the adapter can't cover (`--params`, Kedro too old, snapshot build failure). No user-facing opt-out switch.
+- The adapter is installed at server startup and is the **only** graph engine — there is no legacy fallback. `kedro viz run --params=...` is served by the adapter (parameter values resolved from Kedro's config loader), and a snapshot build failure is raised rather than silently degraded (`kedro>=1.4.0` is required). No user-facing opt-out switch.
 
 ## What's owed from the frontend
 

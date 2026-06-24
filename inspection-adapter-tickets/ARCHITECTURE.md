@@ -8,9 +8,16 @@
 > The project-level `architecture.md` at the repo root is unrelated — it
 > describes the general kedro-viz architecture.
 
+> **⚠️ Superseded (Phase 4, 2026-06-24).** The live backend has been **deleted**. The inspection
+> adapter is now the **only** graph engine; `kedro viz run --params=...` is served by the adapter
+> (parameter values resolved from Kedro's config loader), and there is **no live-graph fallback** —
+> a snapshot build failure is raised. Any section below that describes the live backend /
+> `LiveDataProvider` as "retained" (decisions **D14/D18**) is **historical**; the current state is
+> in [`phase4_deletion_decisions.md`](phase4_deletion_decisions.md).
+
 ## The big picture in one paragraph
 
-Kedro-Viz used to build the graph by loading the whole Kedro project into memory and walking it (the **live backend**). We replaced that — for the common case — with a thin **adapter** that reads a lightweight Kedro snapshot and emits the same `GraphAPIResponse` JSON the frontend already consumes. The adapter is installed at startup whenever a snapshot can be built, which is every `kedro viz run` except one: `kedro viz run --params=...`. The snapshot API has no runtime-params route, so for `--params` the adapter is intentionally not installed and the **live backend serves instead** (decision D14). **Phase 7 was originally scoped to delete the live backend; it was reclassified (D18) to retain it as the permanent runtime-params path** — see the Decision Log in `progress.md`. The provider seam (`get_runtime_data_provider`) is what routes each request to whichever engine is active, so it is retained too.
+Kedro-Viz used to build the graph by loading the whole Kedro project into memory and walking it (the **live backend**). That has been **replaced**: a thin **adapter** reads a lightweight Kedro snapshot and emits the same `GraphAPIResponse` JSON the frontend already consumes. The adapter is installed at startup for **every** `kedro viz run` — including `kedro viz run --params=...`, where parameter *values* are resolved from Kedro's config loader. The live backend has been **deleted** (Phase 4): the adapter is the only graph engine, there is no live-graph fallback, and a build failure is raised rather than silently degraded. The provider seam (`get_runtime_data_provider`) simply returns the installed adapter. _(Historical note: decisions D14/D18 originally retained the live backend as the permanent `--params` path; Phase 4 reversed that — see `phase4_deletion_decisions.md`. The two notebook/VSCode consumers that still relied on the live builders were deliberately deferred.)_
 
 ## The two engines — at a glance
 

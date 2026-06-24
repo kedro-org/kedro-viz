@@ -96,9 +96,17 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
 
     # Build the snapshot-backed adapter on top of the live load, passing --params as
-    # runtime_params. The live load backs the bridge (and catalog --params templating).
+    # runtime_params. ``is_lite`` is forwarded so ``--lite --params`` builds the adapter with the
+    # project's missing deps mocked (matching the lite live load above); without it, the adapter
+    # build would hard-fail in a bare env now that there is no live-graph fallback. The live load
+    # backs the bridge (and catalog --params templating).
     _configure_inspection_adapter_provider(
-        path, env, pipeline_name, extra_params, package_name=package_name
+        path,
+        env,
+        pipeline_name,
+        extra_params,
+        is_lite=is_lite,
+        package_name=package_name,
     )
 
 

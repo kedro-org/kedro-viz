@@ -236,19 +236,26 @@ class TestLiteModeAdapter:
         )
 
     def test_lite_plus_extra_params_does_not_short_circuit(self, mocker):
-        """``--params`` forces the live path even under ``--lite``."""
+        """``--params`` forces the live path even under ``--lite`` — and the adapter is still built
+        with lite stubs (``is_lite=True``) plus the runtime params, since there is no fallback."""
         mock_load_data = mocker.patch(
             "kedro_viz.server.kedro_data_loader.load_data",
             return_value=(mocker.Mock(), {}, {}),
         )
         mocker.patch("kedro_viz.server.populate_data")
-        mocker.patch("kedro_viz.server._configure_inspection_adapter_provider")
+        mock_configure = mocker.patch(
+            "kedro_viz.server._configure_inspection_adapter_provider"
+        )
 
         from kedro_viz.server import load_and_populate_data
 
         load_and_populate_data(path="proj/path", is_lite=True, extra_params={"x": 1})
 
         mock_load_data.assert_called_once()
+        # The adapter is built with lite stubs AND the runtime params.
+        mock_configure.assert_called_once_with(
+            "proj/path", None, None, {"x": 1}, is_lite=True, package_name=None
+        )
 
     def test_lite_raises_when_adapter_build_fails(self, mocker):
         """Under --lite the snapshot is the only source; an adapter build failure raises (there is
