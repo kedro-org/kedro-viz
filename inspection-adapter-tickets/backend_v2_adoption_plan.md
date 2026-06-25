@@ -3,6 +3,14 @@
 Replace the hand-rolled graph backend with the snapshot adapter, **without losing any UI
 functionality** (graph, detail panel, run-status, lite, export, `--params`).
 
+> **Status (2026-06-24).** Done through the engine deletion (Phase 4 / D21): the live backend is
+> **deleted**, the adapter is the only graph engine, and `--params` runs through it. We kept the
+> slim metadata-bridge load (and `sort_layers`) as recommended below — but the deletion went ahead
+> now, and two consumers were **deliberately left behind** rather than migrated: the notebook
+> visualizer and the VSCode JSON path (so this dropped one piece of UI functionality on purpose,
+> to be restored next). Remaining: restore those two consumers, the frontend handoff, slim the
+> models, and the Kedro asks. See [`phase4_deletion_decisions.md`](phase4_deletion_decisions.md).
+
 ## Governing rule
 
 > **Parity drives deletion — not the other way around.**

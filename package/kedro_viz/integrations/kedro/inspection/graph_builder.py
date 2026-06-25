@@ -47,9 +47,9 @@ if TYPE_CHECKING:
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
-# What the live backend resolves for an unregistered (in-memory) dataset
+# The dataset_type string for an unregistered (in-memory) dataset
 # (``get_dataset_type(MemoryDataset())``). The snapshot has no entry for these,
-# so the adapter synthesizes the same string to keep the two paths consistent.
+# so the adapter synthesizes this string, which the frontend's icon mapping expects.
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
@@ -77,7 +77,7 @@ class GraphBuilder:
         self._snapshot = snapshot
         self._layers = layer_mapping or {}
         # Resolved parameter values (``--params`` already applied), used to fill task-node
-        # ``parameters`` the same way the live backend does. Empty when values aren't loaded.
+        # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
         self._parameters = parameters or {}
         self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
         self._task_pipelines: dict[str, set[str]] = defaultdict(set)
@@ -94,7 +94,7 @@ class GraphBuilder:
         # Tags are global and invariant across pipeline views, so build them once.
         self._tags = self._build_tags()
         # Layer presence is global (every project layer can appear in any view); only the ordering is
-        # per-pipeline. Mirror the live backend by seeding the layer sort with all layered datasets.
+        # per-pipeline. Seed the layer sort with all layered datasets so the order is stable.
         self._global_layer_nodes: dict[str, _LayerNode] = {
             node_ids.dataset_node_id(name): _LayerNode(layer)
             for name, layer in self._layers.items()
@@ -187,7 +187,7 @@ class GraphBuilder:
         )
 
     def _task_parameters(self, inputs: list[str]) -> dict[str, Any]:
-        """Resolved parameter values a task consumes, matching the live backend's format.
+        """Resolved parameter values a task consumes, in the format the detail panel expects.
 
         A ``parameters`` input means "all parameters" → the whole dict; a ``params:x`` input
         contributes ``{"x": <value>}`` (``x`` may be dotted, e.g. ``model_options.test_size``).

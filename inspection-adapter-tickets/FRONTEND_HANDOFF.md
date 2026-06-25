@@ -1,7 +1,7 @@
 # Frontend handoff — inspection adapter
 
 **Parent issue:** #2265
-**Companion tickets:** [01](01-foundations.md) – [07](07-lite-mode-and-flip-default.md)
+**Background:** [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`phase4_deletion_decisions.md`](phase4_deletion_decisions.md)
 **Backend status:** Done
 
 ## What changed on the backend (one minute)

@@ -1,5 +1,10 @@
 # Phase 1 — `--params` Test Plan
 
+> **Done / historical (2026-06-24).** Phase 1 is complete and `--params` now runs through the
+> adapter. The live backend has since been deleted (Phase 4 / D21), so the "diff against the live
+> backend" principle below no longer applies — the adapter is the source of truth. Current
+> `--params` tests live in `package/tests/test_inspection_adapter/test_runtime_params.py`.
+
 **Goal:** prove the adapter serves `kedro viz run --params=...` identically to the old backend.
 **Principle:** the live backend is the source of truth — the adapter is "correct" when it produces
 the **same** output for the same params. (The live backend is still present in Phase 1, so we can

@@ -1,5 +1,13 @@
 # Kedro Inspection Adapter Plan (Final)
 
+> **⚠️ Superseded (2026-06-24).** This is the original plan. It has been superseded by
+> [`inspection-adapter-tickets/backend_v2_adoption_plan.md`](inspection-adapter-tickets/backend_v2_adoption_plan.md)
+> and overtaken by Phase 4: the live backend has been **deleted**, the inspection adapter is the
+> **only** graph engine, and `--params` runs through it (the "kept on the live path" scope notes
+> below — node metadata, parameters, source code — no longer hold). Current state:
+> [`inspection-adapter-tickets/phase4_deletion_decisions.md`](inspection-adapter-tickets/phase4_deletion_decisions.md).
+> Kept for historical context.
+
 ## 1. Goal & Scope
 
 Use Kedro's inspection snapshot (`kedro.inspection.get_project_snapshot()`) as the source of project

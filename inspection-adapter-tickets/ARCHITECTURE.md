@@ -21,6 +21,9 @@ Kedro-Viz used to build the graph by loading the whole Kedro project into memory
 
 ## The two engines — at a glance
 
+> _Historical (pre–Phase 4). There is now **one** engine — the adapter. The "two engines / retained
+> live backend" material below records the D14/D18 state that Phase 4 reversed._
+
 ```
               Phase 6 (this PR)            Phase 7 (reclassified, D18)
               ─────────────────            ──────────────────────────
@@ -42,6 +45,9 @@ Kedro-Viz used to build the graph by loading the whole Kedro project into memory
 ```
 
 ## Why the live backend is retained (D18)
+
+> _Historical. D18 was reversed by **D21 (Phase 4)** — the live backend was deleted and `--params`
+> now runs through the adapter. The rationale below is kept as a record of the earlier decision._
 
 Phase 7 was originally scoped to delete the live backend and the seam once parity was proven. That collides with one hard requirement: `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14). The live backend is the only engine that can reflect `--params`, and the seam is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive, so the live backend + seam are **retained as the runtime-params path**, not deleted. The other historical reason for a fallback — Kedro older than the inspection API — no longer applies (`kedro>=1.4.0` is the floor). Full removal would only be revisited if the snapshot API ever grows a runtime-params route.
 

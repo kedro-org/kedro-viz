@@ -218,10 +218,10 @@ class InspectionAdapterProvider:
                     styles=live_node.node_extras.styles,
                 )
             if isinstance(graph_node, DataNodeAPIResponse):
-                # Mirror the live graph exactly: a DataNode carries the resolved class path
-                # (e.g. ``pandas.csv_dataset.CSVDataset``, which the frontend's icon mapping
-                # keys on); transcoded and parameter nodes serialise ``dataset_type=None``
-                # on the live path.
+                # A DataNode carries the resolved class path (e.g. ``pandas.csv_dataset.CSVDataset``,
+                # which the frontend's icon mapping keys on); transcoded and parameter nodes
+                # serialise ``dataset_type=None``. ``live_node`` is the bridge node built from the
+                # loaded project.
                 graph_node.dataset_type = (
                     live_node.dataset_type if isinstance(live_node, DataNode) else None
                 )

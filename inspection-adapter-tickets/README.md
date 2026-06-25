@@ -1,5 +1,11 @@
 # Inspection Adapter — Sub-tickets
 
+> **Status (2026-06-24):** backend complete and the live backend has been **deleted** — the
+> inspection adapter is the only graph engine and `--params` runs through it. The numbered
+> sub-tickets (01–07) below were planning placeholders and were never created as separate files;
+> read the table as a status list. Current state:
+> [`phase4_deletion_decisions.md`](phase4_deletion_decisions.md).
+
 This folder breaks the inspection-adapter work on issue #2265 into a small set of focused sub-tickets. Each numbered file is one ticket, structured the same way so reviewers always know where to look. The repo-root files `INSPECTION_ADAPTER_PLAN.md` and `progress.md` remain the source of truth for the implementation; this folder is the GitHub-shaped view.
 
 ## What we're building
@@ -44,7 +50,7 @@ flowchart TB
 
 All seven sub-tickets are implemented in this branch / workstream (not yet merged to `main`). Two follow-ups remain outside the seven tickets: frontend jest-snapshot regeneration and the lite-mode degradation UX — both owed to the frontend team.
 
-Removing the old live-graph traversal is a separate, gated follow-up that fires after parity is signed off and the Kedro floor is raised — out of scope of these seven tickets.
+Removing the old live-graph traversal is **done** (Phase 4 / D21): the adapter is the only graph engine and there is no live fallback. The two consumers that still relied on the old builders — the notebook visualizer and the VSCode extension — were deliberately deferred (see `phase4_deletion_decisions.md`).
 
 ## Decisions already in
 
@@ -53,8 +59,8 @@ Removing the old live-graph traversal is a separate, gated follow-up that fires 
 - New node IDs are generated viz-side from `name + inputs + outputs`. **This is a breaking release** — old `?selected=<id>` deep links and previously exported sites go stale.
 - Node metadata stays on the live path until lite mode actually needs the snapshot version (ticket 7).
 - Graph, node-metadata and run-status reads plus static export move through one `RuntimeDataProvider` — no scattered `if flag else live` checks across routes.
-- Rollout: the adapter is installed at server startup whenever it can be built; the legacy `data_access_manager`-backed path stays in place as an automatic fallback for the cases the adapter can't cover (`--params`, Kedro too old, build failure). There is no opt-out switch — the legacy fallback runs automatically when needed and disappears entirely in the Phase 7 follow-up.
-- When `kedro viz run --params x=y` is used, adapter mode automatically falls back to the live path and logs why (snapshot API doesn't accept runtime params).
+- Rollout: the adapter is installed at server startup and is the only graph engine — there is no legacy fallback (a build failure is raised). `kedro>=1.4.0` is required. _(Originally there was a live fallback; it was removed in Phase 4 / D21.)_
+- `kedro viz run --params x=y` is served by the adapter — parameter values are resolved from Kedro's config loader, and topology is param-invariant on `kedro>=1.4`. _(Originally `--params` fell back to the live path; D21 routed it through the adapter.)_
 
 ## Trade-offs we knowingly took
 

@@ -32,7 +32,7 @@ and next steps. Keep the Status Dashboard and Decision Log in sync.
 | Phase 4 | Layers | ✅ Complete (config-based layer extractor + per-node `layer` + sorted `layers` list) — parity-validated |
 | Phase 5 | Node metadata split | ✅ Decided (D10): keep `/api/nodes` on the live path; snapshot-backed metadata deferred to Phase 6 (built with its lite-mode consumer) |
 | Phase 6 | Switch runtime path (GATED) | ✅ **Backend complete** — 6.1 through 6.7 done; opt-out env var removed post-review (D17). Frontend jest-snapshot regeneration + lite-mode degradation UX remain as cross-team follow-ups |
-| Phase 7 | Remove old code (GATED) | ✅ Done — **reclassified, not deleted (D18)**. The live backend + provider seam are retained as the permanent `--params` runtime-params path; Phase 7 became a docs/comments reclassification + the in-flight 6-findings commit |
+| Phase 7 | Remove old code (GATED) | ✅ **Done — live backend deleted (D21, supersedes D18).** The inspection adapter is the only graph engine; `--params` runs through it; no live fallback. Notebook + VSCode consumers deliberately deferred — see `inspection-adapter-tickets/phase4_deletion_decisions.md` |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Complete · ⛔ Blocked
 
@@ -61,6 +61,7 @@ full parity on real projects + raised kedro floor.
 | D18 | 2026-06-02 | **Phase 7 reclassified from deletion to retention: keep the live backend + provider seam as the permanent `--params` runtime-params path; do not delete them.** Supersedes the "delete the legacy backend" follow-up noted in D16/D17. | `kedro viz run --params=...` must keep working, and the inspection snapshot API has no runtime-params route (D14) — the live backend is the only engine that can reflect `--params`, and the seam (`get_runtime_data_provider`) is the only thing that routes `--params` requests to it. "Delete the live backend" and "keep `--params`" are mutually exclusive; the user chose to preserve `--params`. The other historical fallback reason (Kedro older than the inspection API) no longer applies — `kedro>=1.4.0` is the floor (D5). So Phase 7 becomes a reclassification: relabel the live path + seam in code/docs from "scaffolding to delete" to "the runtime-params path," and make an unexpected adapter build-failure log loudly (it's not normal operation) instead of silently. **Zero behaviour change.** Full deletion would only be revisited if the snapshot API ever grows a runtime-params route |
 | D19 | 2026-06-03 | **Finding (no code change yet): the Kedro snapshot is NOT import-free — `get_project_snapshot` imports the project's pipeline modules, so adapter-lite needs the node-function libraries (sklearn/pandas/…) importable. In a truly bare env the adapter build fails (`ModuleNotFoundError`) and falls through to the legacy `--lite` loader, which stubs imports. Lite mode therefore has TWO benefits and the adapter only delivers one: (a) "no project deps" → legacy-lite only; (b) "skip the heavy live load / side-effects" → adapter-lite. The fall-through covers (a) automatically. Path B (reuse kedro-viz's `LiteParser` to mock missing modules in `sys.modules` before calling `get_project_snapshot`) is PROVEN to let adapter-lite also cover (a).** | Discovered while testing `--lite` in a fresh env with no project deps: the adapter logged "FAILED to build" + a `ModuleNotFoundError: No module named 'sklearn'` traceback, then fell through to legacy lite. Root cause: `get_project_snapshot` → `_build_pipeline_snapshots` → `importlib.import_module(pipeline_registry)` imports node modules whose top-level `import sklearn` crashes. Probe (env `viz-lite-test`, sklearn absent): `LiteParser.parse` → `create_mock_modules` → `patch.dict("sys.modules", …)` → `get_project_snapshot` built the snapshot (6 pipelines, 19 datasets, 52 nodes); the adapter then produced an **identical** graph to the with-deps run (63 nodes / 110 edges / 6 pipelines) with correct `dataset_type` strings (read from catalog YAML, so mocking `kedro_datasets` doesn't corrupt them). **Decisions:** (1) ✅ **DONE 2026-06-03** — Path B implemented (`lite_import_stubs` in `snapshot_source.py`, wired through the provider + `server.py`); adapter-lite now serves the no-deps case. (2) still open — file a Kedro ask for an import-free snapshot (Path A — the clean long-term fix that would let us drop the stubbing); (3) still open — soften the build-failure log under `--lite` (a `ModuleNotFoundError` there is expected, not "please report"). |
 | D20 | 2026-06-10 | **Full-mode graph `dataset_type` parity restored via the bridge overlay; memory datasets synthesized as `io.memory_dataset.MemoryDataset` in both modes; lite mode keeps the raw catalog string (documented degradation).** Closes the Phase-2 deferral. | Review finding: the adapter graph served the raw catalog string (`pandas.CSVDataset`) where live serves the resolved class path (`pandas.csv_dataset.CSVDataset`), and `None` for memory datasets — breaking the frontend's `shortTypeMapping` icons (plotly/matplotlib) in what became the **default** mode after 6.7. The Phase-2 deferral ("revisit in P5 or via a small mapper") was never closed before the flip. Fix: `_enrich_graph_with_bridge` overlays `dataset_type` from the live node (DataNode → resolved path; transcoded/parameters → `None`, mirroring live serialisation); `GraphBuilder` synthesizes the MemoryDataset string for unregistered datasets; the lite metadata payload reuses the same constant (removing the third format `kedro.io.MemoryDataset`). A baseline parity test now pins full-mode `dataset_type` byte-identical to live; the lite-mode raw string is the only remaining (documented) divergence |
+| D21 | 2026-06-24 | **Reverse D18: delete the live graph engine. The inspection adapter is the only graph engine and `--params` runs through it (no live fallback).** Supersedes D14/D16/D17/D18. | The user chose to complete the original Phase-7 deletion. `--params` was routed through the adapter (parameter values resolved from Kedro's config loader — Phase 2), so the live backend was no longer needed to serve it. Deleted `LiveDataProvider`, the `DataAccessManager` graph traversal, the edges + registered-pipelines repos, and the module `get_pipeline_response` / `get_node_metadata_response` / `get_kedro_project_json_data`; kept the slim metadata-bridge builders, the response models, and `sort_layers`. `get_runtime_data_provider()` now raises if no adapter is installed. Two consumers still depended on the deleted builders and were **deliberately deferred, not migrated**: the notebook visualizer (in-memory pipeline/catalog, no snapshot — temporarily disabled with a clear message) and the VSCode extension (external; reroute through the adapter later). Gate: ruff + mypy clean, 551 tests passing. Full detail in `inspection-adapter-tickets/phase4_deletion_decisions.md` |
 | _ | _ | _(pending)_ Kedro ask outcome (func_name vs stable id vs id-break vs bridge) | — |
 
 ---
@@ -109,6 +110,27 @@ kedro-viz installed editable from this repo (`package/`). The real `get_project_
 ---
 
 ## Changelog
+
+### 2026-06-24 — Delete the live graph engine; adapter is the only graph path (D21)
+
+Reversed D18 and completed the original Phase-7 deletion. The inspection adapter is now the only
+graph engine for `kedro viz run`; `--params` runs through it; there is no live-graph fallback
+(`get_runtime_data_provider()` raises if no adapter is installed).
+
+- **Deleted:** `LiveDataProvider`; the `DataAccessManager` graph traversal (`add_pipelines`,
+  `add_node_input/output`, `get_*_for_registered_pipeline`, `create_modular_pipelines_tree`,
+  `get_default_selected_pipeline` + the `registered_pipelines`/`edges`/`node_dependencies` fields);
+  `RegisteredPipelinesRepository` + the edges repo; module `get_pipeline_response` /
+  `get_kedro_project_json_data` / `get_node_metadata_response`.
+- **Kept:** the slim metadata-bridge builders (`add_metadata_nodes` + `add_node`/`add_dataset`/…),
+  the response models, `sort_layers`. `server.populate_data` now builds only the slim nodes.
+- **Deferred consumers (broken on purpose, to migrate later):** notebook visualizer (disabled with a
+  "pending snapshot migration" message) and the VSCode extension (external; reroute through the
+  adapter). Also `--lite --params` now forwards `is_lite` so the adapter builds with lite stubs.
+- **Tests:** ported the deep graph-shape coverage onto the adapter (`test_graph_shape.py`); deleted
+  the dead live tests; trimmed `test_managers`; repointed `capture_baseline` at the adapter.
+- **Gate:** ruff + mypy clean; `pytest` 551 passed. Decisions recorded in
+  `inspection-adapter-tickets/phase4_deletion_decisions.md`.
 
 ### 2026-06-10 — Fix: full-mode `dataset_type` parity (D20)
 
