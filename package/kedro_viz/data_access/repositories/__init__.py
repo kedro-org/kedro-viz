@@ -4,4 +4,3 @@ centralise access to application data."""
 from .catalog import CatalogRepository
 from .graph import GraphNodesRepository
 from .modular_pipelines import ModularPipelinesRepository
-from .tags import TagsRepository

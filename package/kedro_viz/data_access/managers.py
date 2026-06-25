@@ -27,7 +27,6 @@ from .repositories import (
     CatalogRepository,
     GraphNodesRepository,
     ModularPipelinesRepository,
-    TagsRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,7 +48,6 @@ class DataAccessManager:
         """Initialize or reset all instance variables."""
         self.catalog = CatalogRepository()
         self.nodes = GraphNodesRepository()
-        self.tags = TagsRepository()
 
         # One modular-pipelines repository per registered pipeline — used only to derive node ids
         # and each node's ``modular_pipelines`` membership (no tree expansion / edges).
@@ -187,7 +185,6 @@ class DataAccessManager:
             )
         )
         task_node.add_pipeline(registered_pipeline_id)
-        self.tags.add_tags(task_node.tags)
         return task_node
 
     def add_dataset(

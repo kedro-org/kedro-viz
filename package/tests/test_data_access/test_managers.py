@@ -12,9 +12,7 @@ from kedro_viz.data_access.repositories.graph import GraphNodesRepository
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
-from kedro_viz.data_access.repositories.tags import TagsRepository
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart.named_entities import Tag
 from kedro_viz.models.flowchart.nodes import (
     DataNode,
     ParametersNode,
@@ -33,7 +31,6 @@ class TestDataAccessManager:
         """Test that all instance variables are correctly initialized."""
         assert isinstance(data_access_manager.catalog, CatalogRepository)
         assert isinstance(data_access_manager.nodes, GraphNodesRepository)
-        assert isinstance(data_access_manager.tags, TagsRepository)
         assert isinstance(data_access_manager.modular_pipelines, defaultdict)
         assert data_access_manager.node_extras == {}
 
@@ -83,7 +80,8 @@ class TestAddNode:
         assert "my_pipeline" in graph_node.pipelines
         assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
-        assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
+        # The node carries its own tags (the data-access tags repo was removed as dead code).
+        assert graph_node.tags == {"tag1", "tag2"}
 
     def test_add_node_with_modular_pipeline(
         self,
