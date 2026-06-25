@@ -30,10 +30,6 @@ class NamedEntity(BaseModel):
         return info.data["id"]
 
 
-class RegisteredPipeline(NamedEntity):
-    """Represent a registered pipeline in a Kedro project."""
-
-
 class Tag(NamedEntity):
     """Represent a tag in a Kedro project."""
 

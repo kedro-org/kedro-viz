@@ -80,7 +80,7 @@ class TestAddNode:
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
         assert isinstance(graph_node, TaskNode)
-        assert graph_node.belongs_to_pipeline("my_pipeline")
+        assert "my_pipeline" in graph_node.pipelines
         assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
         assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
@@ -137,7 +137,7 @@ class TestAddDataset:
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
         assert graph_node.kedro_obj is dataset
-        assert graph_node.belongs_to_pipeline("my_pipeline")
+        assert "my_pipeline" in graph_node.pipelines
         assert not graph_node.modular_pipelines
 
     def test_add_memory_dataset_when_dataset_not_in_catalog(
