@@ -76,8 +76,8 @@ def test_is_inspection_available_returns_bool() -> None:
 def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
     """Inside the context a missing project import resolves to a mock; outside it is gone.
 
-    This is the core of Path B (D19): it lets ``get_project_snapshot`` import the project's
-    pipeline modules under ``--lite`` even when their node-function deps aren't installed.
+    This lets ``get_project_snapshot`` import the project's pipeline modules under ``--lite``
+    even when their node-function deps aren't installed.
     """
     (tmp_path / "uses_missing.py").write_text(
         f"import {_MISSING_MODULE}\n", encoding="utf-8"

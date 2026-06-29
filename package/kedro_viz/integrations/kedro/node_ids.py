@@ -1,8 +1,8 @@
-"""Shared Kedro-Viz node-ID generation for the adapter and the run-status hook.
+"""Kedro-Viz node-ID generation.
 
-Single source of truth for the Viz node-ID scheme. Lives outside ``inspection/`` so non-inspection
-callers (notably :func:`kedro_viz.integrations.kedro.hooks_utils.hash_node`) can import it without
-depending on the adapter.
+Single source of truth for the Viz node-ID scheme, intended to be shared by node-ID consumers such
+as the inspection adapter and the run-status hook. It lives outside ``inspection/`` so non-inspection
+callers can import it without depending on the adapter.
 
 IDs hash only identity-defining fields — the namespaced node name plus its inputs and outputs — so
 re-tagging a node never changes its ID.
@@ -11,6 +11,7 @@ re-tagging a node never changes its ID.
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from typing import Any
 
 from kedro_viz.utils import _hash, _hash_input_output
@@ -24,7 +25,7 @@ def dataset_node_id(dataset_name: str) -> str:
     return _hash_input_output(dataset_name)
 
 
-def task_node_id(node_name: str, inputs: list[str], outputs: list[str]) -> str:
+def task_node_id(node_name: str, inputs: Sequence[str], outputs: Sequence[str]) -> str:
     """Return the Viz graph ID for a task node.
 
     Hashes only identity-defining fields — the namespaced node name plus its inputs and
@@ -38,7 +39,7 @@ def task_node_id(node_name: str, inputs: list[str], outputs: list[str]) -> str:
         inputs: Node input names, in declaration order.
         outputs: Node output names, in declaration order.
     """
-    signature = json.dumps([node_name, inputs, outputs])
+    signature = json.dumps([node_name, list(inputs), list(outputs)])
     return _hash(signature)
 
 

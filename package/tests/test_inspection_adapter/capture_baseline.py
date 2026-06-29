@@ -1,14 +1,14 @@
-"""Phase 0 parity harness: capture the current Kedro-Viz backend output as a golden baseline.
+"""Capture the current Kedro-Viz backend output as a golden baseline.
 
 Runs the live-object backend against ``demo-project`` and writes normalized JSON for ``/api/main``
 and every ``/api/pipelines/{id}``, plus a per task-node ID classification report. The inspection
-adapter (Phase 1+) is later diffed against these files to prove parity.
+adapter is later diffed against these files to prove parity.
 
 Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
 
-See the Foundations sub-task (#2655) for the Phase 0 parity-harness rationale.
+See the Foundations sub-task (#2655) for the parity-harness rationale.
 """
 
 from __future__ import annotations
@@ -64,7 +64,7 @@ def _write_json(path: Path, data: Any) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Node-ID classification (the Phase -1 gating evidence).
+# Node-ID classification (per task node: ID, run-status match, reconstructability).
 # --------------------------------------------------------------------------- #
 def classify_node(node) -> dict:
     """Classify one live KedroNode for ID reconstructability from the snapshot."""
@@ -119,13 +119,20 @@ def build_node_id_report() -> dict:
     """Walk all registered pipelines' live nodes and classify their IDs."""
     from kedro.framework.project import pipelines as kedro_pipelines
 
-    seen: dict[str, dict] = {}
+    seen: dict[tuple[str, tuple[str, ...], tuple[str, ...]], dict] = {}
     for pipe in kedro_pipelines.values():
         if pipe is None:
             continue
         for node in pipe.nodes:
             entry = classify_node(node)
-            seen.setdefault(entry["graph_id"], entry)
+            # Key by node identity, not graph_id, so an ID collision between two distinct nodes is
+            # preserved for test_task_node_ids_are_unique to catch (not silently deduped away).
+            identity = (
+                entry["snapshot_name"],
+                tuple(entry["inputs"]),
+                tuple(entry["outputs"]),
+            )
+            seen.setdefault(identity, entry)
 
     nodes = sorted(seen.values(), key=lambda e: e["snapshot_name"])
     counts: dict[str, int] = {}
