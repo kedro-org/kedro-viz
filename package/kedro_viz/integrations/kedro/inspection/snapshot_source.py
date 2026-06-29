@@ -1,8 +1,8 @@
-"""Load a Kedro project inspection snapshot.
+"""Load a Kedro project's inspection snapshot and raw config for the adapter.
 
-Thin wrapper around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``). Only the local
-Python API is supported (there is no remote snapshot endpoint); isolating it here keeps the rest
-of the adapter independent of how snapshots are obtained.
+Thin wrappers around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``) and the project
+config loader; isolating them here keeps the rest of the adapter independent of how snapshots and
+config are obtained.
 """
 
 from __future__ import annotations
@@ -121,8 +121,15 @@ def load_catalog_config(
 ) -> dict[str, Any]:
     """Return the project's raw catalog config (the inspection snapshot drops it).
 
-    Used to read Viz-only metadata such as layers (see :mod:`.layers`); no ``DataCatalog`` is
-    materialised. Returns an empty dict if there is no catalog config.
+    Used to read Viz-only metadata such as layers; no ``DataCatalog`` is materialised.
+
+    Args:
+        project_path: Path to the project root (the directory with ``pyproject.toml``).
+        env: Optional Kedro environment override; ``None`` uses the project default.
+        runtime_params: Parsed ``--params`` overrides for ``${runtime_params:...}`` templating.
+
+    Returns:
+        The raw catalog config, or an empty dict if the project has none.
     """
     from kedro.config import MissingConfigException
 
@@ -143,6 +150,14 @@ def load_parameters(
     loader here (no live project load). ``runtime_params`` is both passed to the loader (for
     ``${runtime_params:...}`` templating) and merged on top of the base values, mirroring how
     ``KedroContext`` applies ``--params``.
+
+    Args:
+        project_path: Path to the project root (the directory with ``pyproject.toml``).
+        env: Optional Kedro environment override; ``None`` uses the project default.
+        runtime_params: Parsed ``--params`` overrides, merged on top of the base values.
+
+    Returns:
+        The resolved parameter values.
     """
     from kedro.config import MissingConfigException
 

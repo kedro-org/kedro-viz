@@ -1,11 +1,7 @@
-"""Kedro-Viz node-ID generation.
+"""Kedro-Viz node-ID generation — the single source of truth for the Viz node-ID scheme.
 
-Single source of truth for the Viz node-ID scheme, intended to be shared by node-ID consumers such
-as the inspection adapter and the run-status hook. It lives outside ``inspection/`` so non-inspection
-callers can import it without depending on the adapter.
-
-IDs hash only identity-defining fields — the namespaced node name plus its inputs and outputs — so
-re-tagging a node never changes its ID.
+Lives outside ``inspection/`` so non-inspection callers (such as the run-status hook) can import
+it without depending on the adapter.
 """
 
 from __future__ import annotations
@@ -38,13 +34,16 @@ def task_node_id(node_name: str, inputs: Sequence[str], outputs: Sequence[str]) 
         node_name: ``NodeSnapshot.name`` (already namespace-prefixed).
         inputs: Node input names, in declaration order.
         outputs: Node output names, in declaration order.
+
+    Returns:
+        The task node's Viz graph ID.
     """
     signature = json.dumps([node_name, list(inputs), list(outputs)])
     return _hash(signature)
 
 
 def task_node_id_for(node: Any) -> str:
-    """``task_node_id`` for a node-like object exposing ``name``/``inputs``/``outputs``.
+    """Return the task node ID for any object exposing ``name``/``inputs``/``outputs``.
 
     Works for both a Kedro ``Node`` (live path) and a snapshot ``NodeSnapshot`` (adapter).
     """

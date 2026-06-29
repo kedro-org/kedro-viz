@@ -59,6 +59,7 @@ def normalize_graph(resp: dict) -> dict:
 
 
 def _write_json(path: Path, data: Any) -> None:
+    """Write ``data`` to ``path`` as indented, key-sorted JSON."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -154,6 +155,7 @@ def build_node_id_report() -> dict:
 
 # --------------------------------------------------------------------------- #
 def main() -> None:
+    """Capture the baseline graph responses and node-ID report into ``baseline/``."""
     import os
 
     os.chdir(DEMO_PROJECT)

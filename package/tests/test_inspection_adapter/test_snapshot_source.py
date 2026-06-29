@@ -22,6 +22,7 @@ _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
 
 def test_merge_runtime_params_simple() -> None:
+    """Test that a flat override replaces its key and leaves siblings untouched."""
     base = {"test_size": 0.2, "random_state": 3}
     assert snapshot_source._merge_runtime_params(base, {"test_size": 0.3}) == {
         "test_size": 0.3,
@@ -30,6 +31,7 @@ def test_merge_runtime_params_simple() -> None:
 
 
 def test_merge_runtime_params_nested_preserves_siblings() -> None:
+    """Test that a nested override replaces only the targeted key, preserving siblings."""
     base = {"split_options": {"test_size": 0.2, "random_state": 3, "target": "price"}}
     merged = snapshot_source._merge_runtime_params(
         base, {"split_options": {"test_size": 0.99}}
@@ -41,10 +43,12 @@ def test_merge_runtime_params_nested_preserves_siblings() -> None:
 
 
 def test_merge_runtime_params_adds_missing_key() -> None:
+    """Test that an override key absent from the base is added."""
     assert snapshot_source._merge_runtime_params({}, {"new": 1}) == {"new": 1}
 
 
 def test_merge_runtime_params_preserves_types() -> None:
+    """Test that merged values keep their original types (no stringifying or coercion)."""
     # runtime_params arrive already parsed; the merge must not stringify or coerce them.
     overrides = {"i": 1, "f": 0.5, "b": True, "lst": [1, 2], "d": {"k": "v"}}
     merged = snapshot_source._merge_runtime_params({}, overrides)
@@ -53,6 +57,7 @@ def test_merge_runtime_params_preserves_types() -> None:
 
 
 def test_merge_runtime_params_does_not_mutate_base() -> None:
+    """Test that the base dict is not mutated by the merge."""
     base = {"a": {"x": 1}}
     snapshot_source._merge_runtime_params(base, {"a": {"y": 2}})
     assert base == {"a": {"x": 1}}  # original untouched
@@ -60,8 +65,7 @@ def test_merge_runtime_params_does_not_mutate_base() -> None:
 
 @pytest.fixture(autouse=True)
 def _restore_missing_deps_flag():
-    """``lite_import_stubs`` flips the global ``Metadata.has_missing_dependencies`` banner when it
-    mocks modules; restore it so the flag doesn't leak into other test modules."""
+    """Restore the global ``Metadata.has_missing_dependencies`` banner after each test."""
     from kedro_viz.models.metadata import Metadata
 
     original = Metadata.has_missing_dependencies
@@ -70,15 +74,12 @@ def _restore_missing_deps_flag():
 
 
 def test_is_inspection_available_returns_bool() -> None:
+    """Test that ``is_inspection_available`` returns a bool."""
     assert isinstance(snapshot_source.is_inspection_available(), bool)
 
 
 def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
-    """Inside the context a missing project import resolves to a mock; outside it is gone.
-
-    This lets ``get_project_snapshot`` import the project's pipeline modules under ``--lite``
-    even when their node-function deps aren't installed.
-    """
+    """Test that a missing project import resolves to a mock inside the context and is gone outside."""
     (tmp_path / "uses_missing.py").write_text(
         f"import {_MISSING_MODULE}\n", encoding="utf-8"
     )
@@ -93,7 +94,7 @@ def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
 
 
 def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> None:
-    """Nothing to mock when every import is already importable; the context is a clean no-op."""
+    """Test that the context is a clean no-op when every import is already importable."""
     (tmp_path / "ok.py").write_text("import os\nimport sys\n", encoding="utf-8")
     before = set(sys.modules)
     with snapshot_source.lite_import_stubs(tmp_path):
@@ -107,6 +108,7 @@ def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> N
     reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
 )
 def test_load_snapshot_returns_demo_pipelines() -> None:
+    """Test that loading the demo project's snapshot yields the ``__default__`` pipeline."""
     snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
     pipeline_names = {pipeline.name for pipeline in snapshot.pipelines}
     assert "__default__" in pipeline_names
