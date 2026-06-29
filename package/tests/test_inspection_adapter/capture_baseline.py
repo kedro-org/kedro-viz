@@ -8,7 +8,7 @@ Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
 
-See ``INSPECTION_ADAPTER_PLAN.md`` §7 (Phase 0) and §8 (parity matrix).
+See the Foundations sub-task (#2655) for the Phase 0 parity-harness rationale.
 """
 
 from __future__ import annotations
@@ -71,9 +71,11 @@ def classify_node(node) -> dict:
     from kedro_viz.integrations.kedro import node_ids
     from kedro_viz.integrations.kedro.hooks_utils import hash_node
 
-    # Post-6.3: both the adapter graph and the run-status hook use the shared scheme, so re-running
-    # this script should always show graph_id == runstatus_id (and `id_reconstructable_from_snapshot`
-    # is now `True` for every node — the `explicit_diff_func` reconstructability gap is closed).
+    # graph_id uses the new Viz scheme (node_ids.task_node_id: a hash of name + inputs + outputs).
+    # runstatus_id still uses the legacy run-status hook scheme (_hash(str(node))), so the two are
+    # NOT equal yet — aligning the hook onto the shared scheme is deferred to #2660. Likewise,
+    # `id_reconstructable_from_snapshot` is False for explicit_diff_func nodes (their func name is
+    # absent from the snapshot) until that lockstep lands.
     graph_id = node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))
     runstatus_id = hash_node(node)
 

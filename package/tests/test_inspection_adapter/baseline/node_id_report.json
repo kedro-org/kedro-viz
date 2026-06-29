@@ -1,5 +1,5 @@
 {
-  "all_graph_ids_match_runstatus": true,
+  "all_graph_ids_match_runstatus": false,
   "counts_by_kind": {
     "auto": 16,
     "explicit_diff_func": 2,
@@ -9,8 +9,8 @@
     {
       "explicit_name": null,
       "func_name": "create_derived_features",
-      "graph_id": "04ba733a",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "5a554db0",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_spine_table",
@@ -30,8 +30,8 @@
     {
       "explicit_name": null,
       "func_name": "create_feature_importance",
-      "graph_id": "7932e672",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "5f5354c3",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_spine_table"
@@ -49,8 +49,8 @@
     {
       "explicit_name": null,
       "func_name": "create_static_features",
-      "graph_id": "e50f81b8",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "1410236a",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews",
@@ -69,8 +69,8 @@
     {
       "explicit_name": null,
       "func_name": "joiner",
-      "graph_id": "6ea2ec2c",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "b8508277",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_spine_table",
@@ -90,8 +90,8 @@
     {
       "explicit_name": null,
       "func_name": "<lambda>",
-      "graph_id": "9a6ef457",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "b4ea78d1",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_spine_table"
@@ -109,8 +109,8 @@
     {
       "explicit_name": "apply_types_to_companies",
       "func_name": "apply_types_to_companies",
-      "graph_id": "69c523b6",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "ddf2cb7b",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "companies"
@@ -128,8 +128,8 @@
     {
       "explicit_name": "apply_types_to_reviews",
       "func_name": "apply_types_to_reviews",
-      "graph_id": "ea604da4",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "b13269ab",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "reviews",
@@ -148,8 +148,8 @@
     {
       "explicit_name": "apply_types_to_shuttles",
       "func_name": "apply_types_to_shuttles",
-      "graph_id": "f33b9291",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "1e8b70c6",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "shuttles"
@@ -167,8 +167,8 @@
     {
       "explicit_name": "combine_step",
       "func_name": "combine_shuttle_level_information",
-      "graph_id": "cb5166f3",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "bd791a76",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": false,
       "inputs": [
         "ingestion.int_typed_shuttles@pandas2",
@@ -189,8 +189,8 @@
     {
       "explicit_name": "company_agg",
       "func_name": "aggregate_company_data",
-      "graph_id": "8de402c1",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "b89f3534",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": false,
       "inputs": [
         "ingestion.int_typed_companies"
@@ -208,8 +208,8 @@
     {
       "explicit_name": null,
       "func_name": "create_feature_importance_plot",
-      "graph_id": "4adb5c8b",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "f704e743",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "feature_importance_output"
@@ -227,8 +227,8 @@
     {
       "explicit_name": null,
       "func_name": "create_matplotlib_chart",
-      "graph_id": "be6b7919",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "50c9d800",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews"
@@ -246,8 +246,8 @@
     {
       "explicit_name": null,
       "func_name": "get_top_shuttles_data",
-      "graph_id": "44ef9b48",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "bf00c16a",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews"
@@ -265,8 +265,8 @@
     {
       "explicit_name": null,
       "func_name": "make_cancel_policy_bar_chart",
-      "graph_id": "c7646ea1",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "8d6b0db5",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews"
@@ -284,8 +284,8 @@
     {
       "explicit_name": null,
       "func_name": "make_price_analysis_image",
-      "graph_id": "3fb71518",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "77137c94",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews"
@@ -303,8 +303,8 @@
     {
       "explicit_name": null,
       "func_name": "make_price_histogram",
-      "graph_id": "40886786",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "cb37bd4b",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "prm_shuttle_company_reviews"
@@ -322,8 +322,8 @@
     {
       "explicit_name": null,
       "func_name": "split_data",
-      "graph_id": "2816ba38",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "ff0d721b",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "model_input_table",
@@ -345,8 +345,8 @@
     {
       "explicit_name": null,
       "func_name": "evaluate_model",
-      "graph_id": "d2885635",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "bd9e8d7a",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "train_evaluation.linear_regression.regressor",
@@ -366,8 +366,8 @@
     {
       "explicit_name": null,
       "func_name": "train_model",
-      "graph_id": "af9a43c8",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "8845804e",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "X_train",
@@ -388,8 +388,8 @@
     {
       "explicit_name": null,
       "func_name": "evaluate_model",
-      "graph_id": "bf8530bc",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "01e850fd",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "train_evaluation.random_forest.regressor",
@@ -409,8 +409,8 @@
     {
       "explicit_name": null,
       "func_name": "train_model",
-      "graph_id": "038647c7",
-      "graph_id_matches_runstatus": true,
+      "graph_id": "32fc2d1c",
+      "graph_id_matches_runstatus": false,
       "id_reconstructable_from_snapshot": true,
       "inputs": [
         "X_train",

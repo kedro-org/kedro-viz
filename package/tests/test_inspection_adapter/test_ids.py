@@ -30,6 +30,20 @@ def test_task_node_id_is_deterministic(task_nodes: list[dict]) -> None:
         assert _task_id(node) == _task_id(node)
 
 
+def test_stored_graph_id_matches_current_scheme(task_nodes: list[dict]) -> None:
+    """The report's stored ``graph_id`` must equal what ``task_node_id`` computes today.
+
+    Guards against a stale baseline: if the ID scheme changes (or the hook is realigned in
+    #2660) without re-running ``capture_baseline.py``, this fails loudly instead of letting the
+    golden answer key silently drift out of sync with the algorithm.
+    """
+    for node in task_nodes:
+        assert node["graph_id"] == _task_id(node), (
+            f"stale baseline for {node['snapshot_name']!r}: regenerate "
+            "node_id_report.json via capture_baseline.py"
+        )
+
+
 def test_every_task_node_gets_an_id(task_nodes: list[dict]) -> None:
     """Unlike the old scheme, all nodes resolve — including name!=func nodes."""
     assert all(_task_id(node) for node in task_nodes)
