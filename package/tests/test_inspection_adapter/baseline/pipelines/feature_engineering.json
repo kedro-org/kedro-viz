@@ -1,0 +1,589 @@
+{
+  "edges": [
+    {
+      "source": "04ba733a",
+      "target": "7c92a703"
+    },
+    {
+      "source": "6ea2ec2c",
+      "target": "23c94afb"
+    },
+    {
+      "source": "7932e672",
+      "target": "1e3cc50a"
+    },
+    {
+      "source": "7c92a703",
+      "target": "6ea2ec2c"
+    },
+    {
+      "source": "8e4f1015",
+      "target": "6ea2ec2c"
+    },
+    {
+      "source": "9f266f06",
+      "target": "04ba733a"
+    },
+    {
+      "source": "9f266f06",
+      "target": "e50f81b8"
+    },
+    {
+      "source": "9f266f06",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "a3627e31",
+      "target": "e50f81b8"
+    },
+    {
+      "source": "a3627e31",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "abed6a4d",
+      "target": "04ba733a"
+    },
+    {
+      "source": "abed6a4d",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "e50f81b8",
+      "target": "8e4f1015"
+    },
+    {
+      "source": "f063cc82",
+      "target": "04ba733a"
+    },
+    {
+      "source": "f063cc82",
+      "target": "6ea2ec2c"
+    },
+    {
+      "source": "f063cc82",
+      "target": "7932e672"
+    },
+    {
+      "source": "f063cc82",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "feature_engineering",
+      "target": "1e3cc50a"
+    },
+    {
+      "source": "feature_engineering",
+      "target": "23c94afb"
+    }
+  ],
+  "layers": [
+    "primary",
+    "intermediate",
+    "raw",
+    "reporting",
+    "feature",
+    "model_input"
+  ],
+  "modular_pipelines": {
+    "__root__": {
+      "children": [
+        {
+          "id": "1e3cc50a",
+          "type": "data"
+        },
+        {
+          "id": "23c94afb",
+          "type": "data"
+        },
+        {
+          "id": "9f266f06",
+          "type": "data"
+        },
+        {
+          "id": "a3627e31",
+          "type": "parameters"
+        },
+        {
+          "id": "abed6a4d",
+          "type": "parameters"
+        },
+        {
+          "id": "f063cc82",
+          "type": "data"
+        },
+        {
+          "id": "feature_engineering",
+          "type": "modularPipeline"
+        }
+      ],
+      "id": "__root__",
+      "inputs": [],
+      "name": "__root__",
+      "outputs": []
+    },
+    "feature_engineering": {
+      "children": [
+        {
+          "id": "04ba733a",
+          "type": "task"
+        },
+        {
+          "id": "6ea2ec2c",
+          "type": "task"
+        },
+        {
+          "id": "7932e672",
+          "type": "task"
+        },
+        {
+          "id": "7c92a703",
+          "type": "data"
+        },
+        {
+          "id": "8e4f1015",
+          "type": "data"
+        },
+        {
+          "id": "e50f81b8",
+          "type": "task"
+        }
+      ],
+      "id": "feature_engineering",
+      "inputs": [
+        "9f266f06",
+        "a3627e31",
+        "abed6a4d",
+        "f063cc82"
+      ],
+      "name": "feature_engineering",
+      "outputs": [
+        "1e3cc50a",
+        "23c94afb"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "full_name": "feature_engineering.create_derived_features__f9089920",
+      "id": "04ba733a",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "create_derived_features",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "1px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#424242",
+              "stroke": "#636363"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#D3D6D9",
+              "stroke": "#B2B2B2"
+            }
+          }
+        }
+      },
+      "parameters": {
+        "feature_engineering.feature.derived": [
+          {
+            "column_a": "number_of_reviews",
+            "column_b": "total_fleet_count",
+            "conjunction": "over",
+            "numpy_method": "divide"
+          },
+          {
+            "column_a": "number_of_reviews",
+            "column_b": "total_fleet_count",
+            "conjunction": "over",
+            "numpy_method": "divide"
+          },
+          {
+            "column_a": "reviews_per_month",
+            "column_b": "company_rating",
+            "conjunction": "by",
+            "numpy_method": "multiply"
+          }
+        ]
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pandas.csv_dataset.CSVDataset",
+      "id": "1e3cc50a",
+      "layer": "feature",
+      "modular_pipelines": [
+        "feature_engineering",
+        "reporting"
+      ],
+      "name": "feature_importance_output",
+      "node_extras": {
+        "stats": {
+          "columns": 2,
+          "file_size": 460,
+          "rows": 15
+        },
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "23c94afb",
+      "layer": "model_input",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "model_input_table",
+      "node_extras": {
+        "stats": {
+          "columns": 12,
+          "file_size": 787351,
+          "rows": 29768
+        },
+        "styles": {
+          "opacity": "0.9",
+          "strokeWidth": "3px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#747474",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#000000",
+              "fill": "#989898",
+              "stroke": "#747474"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "modelling_stage",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "feature_engineering.joiner__4cc9d815",
+      "id": "6ea2ec2c",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "joiner",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#747474",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#000000",
+              "fill": "#989898",
+              "stroke": "#747474"
+            }
+          }
+        }
+      },
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "full_name": "feature_engineering.create_feature_importance__173f2884",
+      "id": "7932e672",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "create_feature_importance",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "7c92a703",
+      "layer": null,
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "feature_engineering.feat_derived_features",
+      "node_extras": {
+        "stats": {
+          "columns": 3,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "8e4f1015",
+      "layer": null,
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "feature_engineering.feat_static_features",
+      "node_extras": {
+        "stats": {
+          "columns": 12,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "9f266f06",
+      "layer": "primary",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion",
+        "reporting"
+      ],
+      "name": "prm_shuttle_company_reviews",
+      "node_extras": {
+        "stats": {
+          "columns": 27,
+          "file_size": 1020356,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "feature_engineering",
+        "pre_modelling",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "a3627e31",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:feature_engineering.feature.static",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "parameters"
+    },
+    {
+      "dataset_type": null,
+      "id": "abed6a4d",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:feature_engineering.feature.derived",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "parameters"
+    },
+    {
+      "full_name": "feature_engineering.create_static_features__dd7d7ef1",
+      "id": "e50f81b8",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "create_static_features",
+      "node_extras": null,
+      "parameters": {
+        "feature_engineering.feature.static": [
+          "engines",
+          "passenger_capacity",
+          "crew",
+          "d_check_complete",
+          "moon_clearance_complete",
+          "iata_approved",
+          "company_rating",
+          "review_scores_rating",
+          "price"
+        ]
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "f063cc82",
+      "layer": "primary",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion"
+      ],
+      "name": "prm_spine_table",
+      "node_extras": {
+        "stats": {
+          "columns": 3,
+          "file_size": 655994,
+          "rows": 29768
+        },
+        "styles": {
+          "opacity": "0.9",
+          "strokeWidth": "3px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "feature_engineering",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "feature_engineering",
+      "node_extras": null,
+      "pipelines": [
+        "feature_engineering"
+      ],
+      "tags": [],
+      "type": "modularPipeline"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "__default__",
+      "name": "__default__"
+    },
+    {
+      "id": "data_ingestion",
+      "name": "data_ingestion"
+    },
+    {
+      "id": "feature_engineering",
+      "name": "feature_engineering"
+    },
+    {
+      "id": "modelling_stage",
+      "name": "modelling_stage"
+    },
+    {
+      "id": "pre_modelling",
+      "name": "pre_modelling"
+    },
+    {
+      "id": "reporting_stage",
+      "name": "reporting_stage"
+    }
+  ],
+  "selected_pipeline": "feature_engineering",
+  "tags": [
+    {
+      "id": "companies",
+      "name": "companies"
+    },
+    {
+      "id": "evaluate",
+      "name": "evaluate"
+    },
+    {
+      "id": "shuttles",
+      "name": "shuttles"
+    },
+    {
+      "id": "train",
+      "name": "train"
+    }
+  ]
+}
