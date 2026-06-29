@@ -37,6 +37,39 @@ diff (~76 files) into a stack of small, reviewable phase-PRs**, each targeting a
 
 Each PR must be **green on its own**: `ruff check` + `ruff format --check` + `mypy` (prod + tests) + full `pytest package/tests/`.
 
+### 3a. Source of truth & keeping the draft from going stale
+
+Once phase PRs start merging, **`feat/backend_v2` is the canonical, reviewed code — not `feature/snapshot-adapter`.** The work branch is a **frozen draft / design reference** we extract from; we do **not** keep editing it to "stay in sync." Trying to keep both branches identical fights git and creates drift.
+
+**Why a stale draft is safe:** each file lives in exactly one phase, so a review change to a file lands in that file's phase PR → `feat/backend_v2`, and no later phase re-introduces it. The only drift risk is a review change to an *earlier* file's public API that a *later* (not-yet-extracted) file calls — and that is **caught by the gate**: when the later file is extracted onto `feat/backend_v2`, its tests fail and you adapt it in that phase's PR. Nothing breaks silently.
+
+### 3b. Per-phase extraction checklist
+
+1. `git checkout feat/backend_v2 && git pull` — get the latest reviewed truth (incl. merged prior phases).
+2. `git checkout -b snapshot/<phase>` — cut **from `feat/backend_v2`**, never from the draft.
+3. `git checkout feature/snapshot-adapter -- <this phase's new files>` — first-draft of just those files.
+4. Run the gate (ruff + mypy + pytest); adapt to any upstream review changes (the gate shows you what).
+5. PR → `feat/backend_v2`; review; merge; delete the phase branch.
+6. Update this log (§4 table + §6): mark the phase done, record the extraction commit and any adaptations.
+
+### 3c. Back-port rule (the only time you edit the draft)
+
+For **design-level** review changes that ripple across many later phases (e.g. rename a module, change the ID scheme), back-port into the draft so future extractions start from the corrected design:
+
+```bash
+git checkout feature/snapshot-adapter
+git checkout feat/backend_v2 -- <reviewed files>   # pull the reviewed version back into the draft
+git commit
+```
+
+For small, localized review tweaks, skip this — adapt-on-extract (step 4) is enough.
+
+### 3d. Nothing-is-lost guarantees
+
+- The draft (`feature/snapshot-adapter`) is **never deleted** — the full original work is preserved.
+- `feat/backend_v2`'s **git history** records every merge (what went in, when, with which review changes).
+- This log is the **human map**; per phase, record *"extracted from `feature/snapshot-adapter` @ `<commit>`; review adaptations: …"* so you can always `git diff` the draft vs. the merged version.
+
 ## 4. The PR stack (plan)
 
 ~8 backend PRs + a frontend handoff + Kedro asks. Order follows build dependency. Branch names for phases 2+ are TBD.
