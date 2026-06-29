@@ -1,10 +1,8 @@
-"""Test isolation for the inspection adapter suite.
+"""Fixtures for isolating Kedro project state in inspection adapter tests.
 
-Loading a snapshot or catalog config bootstraps the demo Kedro project, which mutates *process-global*
-Kedro state (``kedro.framework.project.PACKAGE_NAME`` and the ``pipelines``/``settings`` singletons,
-plus ``sys.path``). Left unrestored, that leaks into later tests in the same session (e.g. CLI tests
-that assert ``package_name=None``). This autouse fixture snapshots that state before each test module
-and restores it afterwards.
+Snapshot and config loading bootstrap a Kedro project, which mutates global Kedro state and
+``sys.path``. The autouse fixture snapshots that state before each module and restores it
+afterwards.
 """
 
 import sys

@@ -18,7 +18,7 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
 
-# -- _merge_runtime_params (hermetic; this is where --params override bugs would surface) -- #
+# -- Runtime parameter merging -- #
 
 
 def test_merge_runtime_params_simple() -> None:
@@ -36,7 +36,6 @@ def test_merge_runtime_params_nested_preserves_siblings() -> None:
     merged = snapshot_source._merge_runtime_params(
         base, {"split_options": {"test_size": 0.99}}
     )
-    # The override replaces only test_size; random_state/target survive.
     assert merged == {
         "split_options": {"test_size": 0.99, "random_state": 3, "target": "price"}
     }
@@ -49,7 +48,6 @@ def test_merge_runtime_params_adds_missing_key() -> None:
 
 def test_merge_runtime_params_preserves_types() -> None:
     """Test that merged values keep their original types (no stringifying or coercion)."""
-    # runtime_params arrive already parsed; the merge must not stringify or coerce them.
     overrides = {"i": 1, "f": 0.5, "b": True, "lst": [1, 2], "d": {"k": "v"}}
     merged = snapshot_source._merge_runtime_params({}, overrides)
     assert merged == overrides
@@ -60,7 +58,7 @@ def test_merge_runtime_params_does_not_mutate_base() -> None:
     """Test that the base dict is not mutated by the merge."""
     base = {"a": {"x": 1}}
     snapshot_source._merge_runtime_params(base, {"a": {"y": 2}})
-    assert base == {"a": {"x": 1}}  # original untouched
+    assert base == {"a": {"x": 1}}
 
 
 @pytest.fixture(autouse=True)
@@ -87,9 +85,8 @@ def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
 
     with snapshot_source.lite_import_stubs(tmp_path):
         mocked = importlib.import_module(_MISSING_MODULE)
-        assert mocked is not None  # a MagicMock stub
+        assert mocked is not None
 
-    # The patch is scoped to the context — no leakage into the rest of the suite.
     assert _MISSING_MODULE not in sys.modules
 
 
@@ -99,7 +96,6 @@ def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> N
     before = set(sys.modules)
     with snapshot_source.lite_import_stubs(tmp_path):
         pass
-    # No stray mock modules were left registered.
     assert set(sys.modules) - before == set()
 
 

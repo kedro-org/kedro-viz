@@ -1,9 +1,4 @@
-"""Load a Kedro project's inspection snapshot and raw config for the adapter.
-
-Thin wrappers around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``) and the project
-config loader; isolating them here keeps the rest of the adapter independent of how snapshots and
-config are obtained.
-"""
+"""Load Kedro project inspection snapshots and raw config for the adapter."""
 
 from __future__ import annotations
 
@@ -23,12 +18,11 @@ logger = logging.getLogger(__name__)
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Iterator[None]:
-    """Mock the project's missing imports in ``sys.modules`` for the duration of the block.
+    """Temporarily mock missing project imports in ``sys.modules``.
 
-    ``get_project_snapshot`` imports the project's pipeline modules, which pull in node-function
-    libraries that may not be installed under ``--lite``. Reusing kedro-viz's ``LiteParser`` to mock
-    them lets the snapshot build anyway; its structure comes from the pipeline wiring (not from
-    running the stubbed functions), so it stays correct.
+    ``get_project_snapshot`` imports pipeline modules, which can import optional node-function
+    dependencies that are absent in lite mode. This context uses ``LiteParser`` to register mock
+    modules only while the snapshot is being built.
     """
     import sys
     from unittest.mock import patch
@@ -96,10 +90,9 @@ def _config_loader(
     env: str | None,
     runtime_params: dict[str, Any] | None,
 ) -> Any:
-    """Build the project's config loader (no ``DataCatalog``, no session).
+    """Build the project's configured Kedro config loader.
 
-    ``runtime_params`` is passed through so ``${runtime_params:...}`` templating in the catalog or
-    parameters resolves the same way a live ``--params`` run would.
+    ``runtime_params`` are passed through for ``${runtime_params:...}`` config templating.
     """
     from kedro.framework.project import settings
     from kedro.framework.startup import bootstrap_project
@@ -119,9 +112,9 @@ def load_catalog_config(
     env: str | None = None,
     runtime_params: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Return the project's raw catalog config (the inspection snapshot drops it).
+    """Return the project's raw catalog configuration.
 
-    Used to read Viz-only metadata such as layers; no ``DataCatalog`` is materialised.
+    This reads configuration only; it does not instantiate a ``DataCatalog``.
 
     Args:
         project_path: Path to the project root (the directory with ``pyproject.toml``).
@@ -147,9 +140,8 @@ def load_parameters(
     """Return the project's resolved parameter values, with ``--params`` overrides applied.
 
     The inspection snapshot carries only parameter *names*, so values are read from the config
-    loader here (no live project load). ``runtime_params`` is both passed to the loader (for
-    ``${runtime_params:...}`` templating) and merged on top of the base values, mirroring how
-    ``KedroContext`` applies ``--params``.
+    loader. ``runtime_params`` is passed to the loader for config templating and merged on top of
+    the loaded values.
 
     Args:
         project_path: Path to the project root (the directory with ``pyproject.toml``).

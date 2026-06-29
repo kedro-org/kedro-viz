@@ -1,8 +1,4 @@
-"""Kedro-Viz node-ID generation — the single source of truth for the Viz node-ID scheme.
-
-Lives outside ``inspection/`` so non-inspection callers (such as the run-status hook) can import
-it without depending on the adapter.
-"""
+"""Node-ID helpers for Kedro-Viz graph objects."""
 
 from __future__ import annotations
 
@@ -16,7 +12,7 @@ from kedro_viz.utils import _hash, _hash_input_output
 def dataset_node_id(dataset_name: str) -> str:
     """Return the Viz graph ID for a data or parameter node.
 
-    Transcoded names (``name@suffix``) hash on the base name, matching the backend.
+    Transcoded names (``name@suffix``) hash on the base name.
     """
     return _hash_input_output(dataset_name)
 
@@ -24,11 +20,9 @@ def dataset_node_id(dataset_name: str) -> str:
 def task_node_id(node_name: str, inputs: Sequence[str], outputs: Sequence[str]) -> str:
     """Return the Viz graph ID for a task node.
 
-    Hashes only identity-defining fields — the namespaced node name plus its inputs and
-    outputs — and deliberately excludes tags, so re-tagging a node never changes its ID.
+    Hashes only identity-defining fields: the namespaced node name plus its inputs and outputs.
     The fields are JSON-serialized so the encoding is unambiguous (e.g. a single input
-    ``"a,b"`` never collides with two inputs ``"a"``, ``"b"``); the resulting array string
-    also keeps the hash distinct from a bare dataset name (see :func:`dataset_node_id`).
+    ``"a,b"`` never collides with two inputs ``"a"``, ``"b"``).
 
     Args:
         node_name: ``NodeSnapshot.name`` (already namespace-prefixed).
@@ -45,6 +39,6 @@ def task_node_id(node_name: str, inputs: Sequence[str], outputs: Sequence[str]) 
 def task_node_id_for(node: Any) -> str:
     """Return the task node ID for any object exposing ``name``/``inputs``/``outputs``.
 
-    Works for both a Kedro ``Node`` (live path) and a snapshot ``NodeSnapshot`` (adapter).
+    Works for both a Kedro ``Node`` and a snapshot ``NodeSnapshot``.
     """
     return task_node_id(node.name, list(node.inputs), list(node.outputs))

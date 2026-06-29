@@ -50,7 +50,7 @@ def test_task_node_ids_are_unique(task_nodes: list[dict]) -> None:
 
 
 def test_task_node_id_excludes_tags() -> None:
-    """Test that the ID hashes exactly (name, inputs, outputs) — tags are not in the signature."""
+    """Test that the ID hashes exactly ``name``, ``inputs`` and ``outputs``."""
     expected = _hash(json.dumps(["ingestion.company_agg", ["x"], ["y"]]))
     assert ids.task_node_id("ingestion.company_agg", ["x"], ["y"]) == expected
 
