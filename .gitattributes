@@ -1,0 +1,5 @@
+# Generated parity-baseline fixtures (produced by
+# package/tests/test_inspection_adapter/capture_baseline.py from the live backend). Mark as
+# generated so GitHub collapses them in diffs and excludes them from language stats — review the
+# generator script and the tests, not the JSON.
+package/tests/test_inspection_adapter/baseline/** linguist-generated=true
