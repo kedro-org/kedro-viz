@@ -108,3 +108,32 @@ def test_load_snapshot_returns_demo_pipelines() -> None:
     snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
     pipeline_names = {pipeline.name for pipeline in snapshot.pipelines}
     assert "__default__" in pipeline_names
+
+
+@pytest.mark.skipif(
+    not snapshot_source.is_inspection_available(),
+    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
+)
+def test_snapshot_exposes_fields_kedro_viz_needs() -> None:
+    """Test that the demo snapshot exposes every field kedro-viz reads (a contract guard)."""
+    snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
+
+    assert snapshot.pipelines, "expected at least one pipeline"
+    for pipeline in snapshot.pipelines:
+        assert isinstance(pipeline.name, str)
+        for node in pipeline.nodes:
+            assert isinstance(node.name, str)
+            assert isinstance(node.inputs, list)
+            assert isinstance(node.outputs, list)
+            assert isinstance(node.tags, list)
+            assert node.namespace is None or isinstance(node.namespace, str)
+
+    assert isinstance(snapshot.datasets, dict)
+    for dataset in snapshot.datasets.values():
+        assert isinstance(dataset.name, str)
+        assert isinstance(dataset.type, str)
+        assert dataset.filepath is None or isinstance(dataset.filepath, str)
+
+    # parameters are stored as key names only (no values)
+    assert isinstance(snapshot.parameters, list)
+    assert all(isinstance(name, str) for name in snapshot.parameters)

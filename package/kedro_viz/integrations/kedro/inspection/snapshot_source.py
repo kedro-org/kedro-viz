@@ -18,12 +18,7 @@ logger = logging.getLogger(__name__)
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Iterator[None]:
-    """Temporarily mock missing project imports in ``sys.modules``.
-
-    ``get_project_snapshot`` imports pipeline modules, which can import optional node-function
-    dependencies that are absent in lite mode. This context uses ``LiteParser`` to register mock
-    modules only while the snapshot is being built.
-    """
+    """Temporarily mock missing project imports for kedro-viz lite mode."""
     import sys
     from unittest.mock import patch
 
@@ -85,7 +80,7 @@ def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSn
     return get_project_snapshot(project_path=Path(project_path), env=env)
 
 
-def _config_loader(
+def _create_config_loader(
     project_path: str | Path,
     env: str | None,
     runtime_params: dict[str, Any] | None,
@@ -127,7 +122,7 @@ def load_catalog_config(
     from kedro.config import MissingConfigException
 
     try:
-        return _config_loader(project_path, env, runtime_params)["catalog"]
+        return _create_config_loader(project_path, env, runtime_params)["catalog"]
     except (KeyError, MissingConfigException):
         return {}
 
@@ -154,7 +149,7 @@ def load_parameters(
     from kedro.config import MissingConfigException
 
     try:
-        params = _config_loader(project_path, env, runtime_params)["parameters"]
+        params = _create_config_loader(project_path, env, runtime_params)["parameters"]
     except (KeyError, MissingConfigException):
         params = {}
     if runtime_params:

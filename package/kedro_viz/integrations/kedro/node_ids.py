@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from collections.abc import Sequence
-from typing import Any
 
 from kedro_viz.utils import _hash, _hash_input_output
 
@@ -34,11 +33,3 @@ def task_node_id(node_name: str, inputs: Sequence[str], outputs: Sequence[str]) 
     """
     signature = json.dumps([node_name, list(inputs), list(outputs)])
     return _hash(signature)
-
-
-def task_node_id_for(node: Any) -> str:
-    """Return the task node ID for any object exposing ``name``/``inputs``/``outputs``.
-
-    Works for both a Kedro ``Node`` and a snapshot ``NodeSnapshot``.
-    """
-    return task_node_id(node.name, list(node.inputs), list(node.outputs))
