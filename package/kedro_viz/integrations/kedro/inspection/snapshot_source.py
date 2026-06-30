@@ -1,4 +1,4 @@
-"""Load Kedro project inspection snapshots and raw config for the adapter."""
+"""Read a Kedro project's inspection snapshot and raw config for the adapter."""
 
 from __future__ import annotations
 
@@ -47,96 +47,74 @@ def lite_import_stubs(
         yield
 
 
-def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSnapshot:
-    """Return a read-only inspection snapshot for the project at ``project_path``.
+class InspectionSession:
+    """Read a project's snapshot and config, bootstrapping and building the loader once.
 
-    Args:
-        project_path: Path to the project root (the directory with ``pyproject.toml``).
-        env: Optional Kedro environment override; ``None`` uses the project default.
-
-    Returns:
-        The Kedro ``ProjectSnapshot``.
+    Create one session per request. The project is bootstrapped and the Kedro config loader is built
+    lazily on first use and then cached, so the catalog config and parameters reuse a single loader
+    instead of rebuilding it.
     """
-    from kedro.inspection import get_project_snapshot
 
-    return get_project_snapshot(project_path=Path(project_path), env=env)
+    def __init__(
+        self,
+        project_path: str | Path,
+        env: str | None = None,
+        runtime_params: dict[str, Any] | None = None,
+    ) -> None:
+        self.project_path = Path(project_path)
+        self.env = env
+        self.runtime_params = runtime_params
+        self._config_loader: Any = None
 
+    @property
+    def config_loader(self) -> Any:
+        """The project's Kedro config loader, bootstrapped and built once, then cached."""
+        if self._config_loader is None:
+            from kedro.framework.project import settings
+            from kedro.framework.startup import bootstrap_project
 
-def _create_config_loader(
-    project_path: str | Path,
-    env: str | None,
-    runtime_params: dict[str, Any] | None,
-) -> Any:
-    """Build the project's configured Kedro config loader.
+            bootstrap_project(self.project_path)
+            self._config_loader = settings.CONFIG_LOADER_CLASS(
+                conf_source=str(self.project_path / settings.CONF_SOURCE),
+                env=self.env,
+                runtime_params=self.runtime_params or {},
+                **settings.CONFIG_LOADER_ARGS,
+            )
+        return self._config_loader
 
-    ``runtime_params`` are passed through for ``${runtime_params:...}`` config templating.
-    """
-    from kedro.framework.project import settings
-    from kedro.framework.startup import bootstrap_project
+    def snapshot(self) -> ProjectSnapshot:
+        """Return the read-only inspection snapshot for the project."""
+        from kedro.inspection import get_project_snapshot
 
-    project_path = Path(project_path)
-    bootstrap_project(project_path)
-    return settings.CONFIG_LOADER_CLASS(
-        conf_source=str(project_path / settings.CONF_SOURCE),
-        env=env,
-        runtime_params=runtime_params or {},
-        **settings.CONFIG_LOADER_ARGS,
-    )
+        return get_project_snapshot(project_path=self.project_path, env=self.env)
 
+    def catalog_config(self) -> dict[str, Any]:
+        """Return the raw catalog config (no DataCatalog is built), or {} if there is none.
 
-def load_catalog_config(
-    project_path: str | Path,
-    env: str | None = None,
-    runtime_params: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Return the project's raw catalog configuration.
+        Used to read Viz-only metadata such as layers.
+        """
+        from kedro.config import MissingConfigException
 
-    This reads configuration only; it does not instantiate a ``DataCatalog``.
+        try:
+            return self.config_loader["catalog"]
+        except (KeyError, MissingConfigException):
+            return {}
 
-    Args:
-        project_path: Path to the project root (the directory with ``pyproject.toml``).
-        env: Optional Kedro environment override; ``None`` uses the project default.
-        runtime_params: Parsed ``--params`` overrides for ``${runtime_params:...}`` templating.
+    def parameters(self) -> dict[str, Any]:
+        """Return the resolved parameter values, with ``--params`` overrides applied.
 
-    Returns:
-        The raw catalog config, or an empty dict if the project has none.
-    """
-    from kedro.config import MissingConfigException
+        The snapshot carries only parameter names, so values are read from the config loader and the
+        runtime overrides are merged on top.
+        """
+        from kedro.config import MissingConfigException
 
-    try:
-        return _create_config_loader(project_path, env, runtime_params)["catalog"]
-    except (KeyError, MissingConfigException):
-        return {}
-
-
-def load_parameters(
-    project_path: str | Path,
-    env: str | None = None,
-    runtime_params: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Return the project's resolved parameter values, with ``--params`` overrides applied.
-
-    The inspection snapshot carries only parameter *names*, so values are read from the config
-    loader. ``runtime_params`` is passed to the loader for config templating and merged on top of
-    the loaded values.
-
-    Args:
-        project_path: Path to the project root (the directory with ``pyproject.toml``).
-        env: Optional Kedro environment override; ``None`` uses the project default.
-        runtime_params: Parsed ``--params`` overrides, merged on top of the base values.
-
-    Returns:
-        The resolved parameter values.
-    """
-    from kedro.config import MissingConfigException
-
-    try:
-        params = _create_config_loader(project_path, env, runtime_params)["parameters"]
-    except (KeyError, MissingConfigException):
-        params = {}
-    if runtime_params:
-        params = _merge_runtime_params(params, runtime_params)
-    return params
+        try:
+            params = self.config_loader["parameters"]
+        except (KeyError, MissingConfigException):
+            params = {}
+        if self.runtime_params:
+            params = _merge_runtime_params(params, self.runtime_params)
+        return params
 
 
 def _merge_runtime_params(

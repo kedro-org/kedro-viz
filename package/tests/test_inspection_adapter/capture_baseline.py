@@ -76,7 +76,9 @@ def classify_node(node) -> dict:
     from kedro_viz.integrations.kedro.hooks_utils import hash_node
 
     # Store both IDs so tests can detect whether graph and run-status IDs are aligned.
-    graph_id = node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))
+    graph_id = node_ids._create_task_node_id(
+        node.name, list(node.inputs), list(node.outputs)
+    )
     runstatus_id = hash_node(node)
 
     if node._name is None:

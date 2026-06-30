@@ -20,7 +20,9 @@ def task_nodes() -> list[dict]:
 
 
 def _task_id(node: dict) -> str:
-    return ids.task_node_id(node["snapshot_name"], node["inputs"], node["outputs"])
+    return ids._create_task_node_id(
+        node["snapshot_name"], node["inputs"], node["outputs"]
+    )
 
 
 def test_task_node_id_is_deterministic(task_nodes: list[dict]) -> None:
@@ -30,7 +32,7 @@ def test_task_node_id_is_deterministic(task_nodes: list[dict]) -> None:
 
 
 def test_stored_graph_id_matches_current_scheme(task_nodes: list[dict]) -> None:
-    """Test that each stored ``graph_id`` still matches what ``task_node_id`` computes."""
+    """Test that each stored ``graph_id`` still matches what ``_create_task_node_id`` computes."""
     for node in task_nodes:
         assert node["graph_id"] == _task_id(node), (
             f"stale baseline for {node['snapshot_name']!r}: regenerate "
@@ -52,14 +54,14 @@ def test_task_node_ids_are_unique(task_nodes: list[dict]) -> None:
 def test_task_node_id_excludes_tags() -> None:
     """Test that the ID hashes exactly ``name``, ``inputs`` and ``outputs``."""
     expected = _hash(json.dumps(["ingestion.company_agg", ["x"], ["y"]]))
-    assert ids.task_node_id("ingestion.company_agg", ["x"], ["y"]) == expected
+    assert ids._create_task_node_id("ingestion.company_agg", ["x"], ["y"]) == expected
 
 
 def test_task_node_id_changes_with_io() -> None:
     """Test that adding an input or output changes the ID."""
-    base = ids.task_node_id("n", ["a"], ["b"])
-    assert base != ids.task_node_id("n", ["a", "c"], ["b"])
-    assert base != ids.task_node_id("n", ["a"], ["b", "c"])
+    base = ids._create_task_node_id("n", ["a"], ["b"])
+    assert base != ids._create_task_node_id("n", ["a", "c"], ["b"])
+    assert base != ids._create_task_node_id("n", ["a"], ["b", "c"])
 
 
 def test_task_ids_do_not_collide_with_dataset_ids(task_nodes: list[dict]) -> None:
@@ -68,25 +70,25 @@ def test_task_ids_do_not_collide_with_dataset_ids(task_nodes: list[dict]) -> Non
     dataset_ids = set()
     for node in task_nodes:
         for name in node["inputs"] + node["outputs"]:
-            dataset_ids.add(ids.dataset_node_id(name))
+            dataset_ids.add(ids._create_dataset_node_id(name))
     assert task_ids.isdisjoint(dataset_ids)
 
 
 def test_dataset_node_id_matches_backend_hash() -> None:
     """Test that a dataset ID matches the backend ``_hash`` of its name."""
-    assert ids.dataset_node_id("companies") == _hash("companies")
+    assert ids._create_dataset_node_id("companies") == _hash("companies")
 
 
 def test_dataset_node_id_strips_transcoding() -> None:
     """Test that transcoded names (``name@suffix``) hash on the base name."""
-    assert ids.dataset_node_id("typed_shuttles@pandas1") == ids.dataset_node_id(
-        "typed_shuttles@pandas2"
-    )
+    assert ids._create_dataset_node_id(
+        "typed_shuttles@pandas1"
+    ) == ids._create_dataset_node_id("typed_shuttles@pandas2")
 
 
 def test_task_node_id_handles_missing_inputs_or_outputs() -> None:
     """Test that a source node (no inputs) and a sink node (no outputs) get valid, distinct IDs."""
-    source = ids.task_node_id("generator", [], ["out_c"])
-    sink = ids.task_node_id("saver", ["in_a"], [])
+    source = ids._create_task_node_id("generator", [], ["out_c"])
+    sink = ids._create_task_node_id("saver", ["in_a"], [])
     assert source and sink
     assert source != sink
