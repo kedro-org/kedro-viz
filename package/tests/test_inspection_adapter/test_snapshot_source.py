@@ -1,7 +1,7 @@
 """Tests for the inspection snapshot source.
 
-The load test requires the inspection API (``kedro>=1.4.0``) and is skipped otherwise.
-The ``lite_import_stubs`` tests are hermetic (no inspection API, no real project).
+The ``lite_import_stubs`` and fallback tests are hermetic (no real project); the rest run against
+the bundled ``demo-project``.
 """
 
 import importlib
@@ -124,3 +124,38 @@ def test_snapshot_exposes_fields_kedro_viz_needs() -> None:
     # parameters are stored as key names only (no values)
     assert isinstance(snapshot.parameters, list)
     assert all(isinstance(name, str) for name in snapshot.parameters)
+
+
+# -- load_catalog_config / load_parameters (config-loader path) ------------------------------ #
+
+
+def test_load_catalog_config_reads_the_demo_catalog() -> None:
+    """Test that the raw catalog config is read from the project (no DataCatalog instantiated)."""
+    catalog = snapshot_source.load_catalog_config(DEMO_PROJECT)
+    assert "companies" in catalog
+    assert "model_input_table" in catalog
+
+
+def test_load_parameters_reads_the_demo_parameters() -> None:
+    """Test that resolved parameter values are read from the project config."""
+    params = snapshot_source.load_parameters(DEMO_PROJECT)
+    assert "split_options" in params
+    assert "train_evaluation" in params
+
+
+def test_load_parameters_applies_runtime_overrides() -> None:
+    """Test that ``--params`` overrides are merged onto the loaded parameter values."""
+    params = snapshot_source.load_parameters(
+        DEMO_PROJECT, runtime_params={"split_options": {"test_size": 0.99}}
+    )
+    assert params["split_options"]["test_size"] == 0.99
+
+
+@pytest.mark.parametrize(
+    "loader",
+    [snapshot_source.load_catalog_config, snapshot_source.load_parameters],
+)
+def test_loaders_return_empty_when_section_missing(mocker, loader) -> None:
+    """Test that a loader falls back to {} when its config section is absent."""
+    mocker.patch.object(snapshot_source, "_create_config_loader", return_value={})
+    assert loader(DEMO_PROJECT) == {}
