@@ -10,6 +10,10 @@ Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 The generated files are committed under ``baseline/`` and used by inspection adapter tests.
 """
 
+# TODO(#2265): the generated graph baselines (baseline/main.json + baseline/pipelines/*) and this
+# parity harness are temporary scaffolding to prove the adapter matches the live backend; remove
+# them before feat/backend_v2 is merged to main.
+
 from __future__ import annotations
 
 import json

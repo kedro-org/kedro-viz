@@ -47,15 +47,6 @@ def lite_import_stubs(
         yield
 
 
-def is_inspection_available() -> bool:
-    """Return whether the installed Kedro provides the inspection API."""
-    try:
-        from kedro.inspection import get_project_snapshot  # noqa: F401
-    except ImportError:
-        return False
-    return True
-
-
 def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSnapshot:
     """Return a read-only inspection snapshot for the project at ``project_path``.
 
@@ -65,17 +56,8 @@ def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSn
 
     Returns:
         The Kedro ``ProjectSnapshot``.
-
-    Raises:
-        RuntimeError: if the installed Kedro has no inspection API (``kedro<1.4.0``).
     """
-    try:
-        from kedro.inspection import get_project_snapshot
-    except ImportError as exc:
-        raise RuntimeError(
-            "Kedro inspection API is unavailable; the inspection adapter path "
-            "requires kedro>=1.4.0."
-        ) from exc
+    from kedro.inspection import get_project_snapshot
 
     return get_project_snapshot(project_path=Path(project_path), env=env)
 

@@ -71,11 +71,6 @@ def _restore_missing_deps_flag():
     Metadata.set_has_missing_dependencies(original)
 
 
-def test_is_inspection_available_returns_bool() -> None:
-    """Test that ``is_inspection_available`` returns a bool."""
-    assert isinstance(snapshot_source.is_inspection_available(), bool)
-
-
 def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
     """Test that a missing project import resolves to a mock inside the context and is gone outside."""
     (tmp_path / "uses_missing.py").write_text(
@@ -99,10 +94,6 @@ def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> N
     assert set(sys.modules) - before == set()
 
 
-@pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
 def test_load_snapshot_returns_demo_pipelines() -> None:
     """Test that loading the demo project's snapshot yields the ``__default__`` pipeline."""
     snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
@@ -110,10 +101,6 @@ def test_load_snapshot_returns_demo_pipelines() -> None:
     assert "__default__" in pipeline_names
 
 
-@pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
 def test_snapshot_exposes_fields_kedro_viz_needs() -> None:
     """Test that the demo snapshot exposes every field kedro-viz reads (a contract guard)."""
     snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
