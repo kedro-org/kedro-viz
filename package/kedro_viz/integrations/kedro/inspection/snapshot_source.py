@@ -103,28 +103,13 @@ class InspectionSession:
     def parameters(self) -> dict[str, Any]:
         """Return the resolved parameter values, with ``--params`` overrides applied.
 
-        The snapshot carries only parameter names, so values are read from the config loader and the
-        runtime overrides are merged on top.
+        The snapshot carries only parameter names, so values are read from the config loader. We
+        pass ``runtime_params`` to that loader, so it already merges the ``--params`` overrides and
+        resolves ``${runtime_params:...}`` for us.
         """
         from kedro.config import MissingConfigException
 
         try:
-            params = self.config_loader["parameters"]
+            return self.config_loader["parameters"]
         except (KeyError, MissingConfigException):
-            params = {}
-        if self.runtime_params:
-            params = _merge_runtime_params(params, self.runtime_params)
-        return params
-
-
-def _merge_runtime_params(
-    base: dict[str, Any], overrides: dict[str, Any]
-) -> dict[str, Any]:
-    """Deep-merge ``overrides`` (the parsed ``--params``) onto ``base`` parameter values."""
-    merged = dict(base)
-    for key, value in overrides.items():
-        if isinstance(value, dict) and isinstance(merged.get(key), dict):
-            merged[key] = _merge_runtime_params(merged[key], value)
-        else:
-            merged[key] = value
-    return merged
+            return {}

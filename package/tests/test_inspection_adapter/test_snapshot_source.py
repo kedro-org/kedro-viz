@@ -20,49 +20,6 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
 
-# -- Runtime parameter merging -- #
-
-
-def test_merge_runtime_params_simple() -> None:
-    """Test that a flat override replaces its key and leaves siblings untouched."""
-    base = {"test_size": 0.2, "random_state": 3}
-    assert snapshot_source._merge_runtime_params(base, {"test_size": 0.3}) == {
-        "test_size": 0.3,
-        "random_state": 3,
-    }
-
-
-def test_merge_runtime_params_nested_preserves_siblings() -> None:
-    """Test that a nested override replaces only the targeted key, preserving siblings."""
-    base = {"split_options": {"test_size": 0.2, "random_state": 3, "target": "price"}}
-    merged = snapshot_source._merge_runtime_params(
-        base, {"split_options": {"test_size": 0.99}}
-    )
-    assert merged == {
-        "split_options": {"test_size": 0.99, "random_state": 3, "target": "price"}
-    }
-
-
-def test_merge_runtime_params_adds_missing_key() -> None:
-    """Test that an override key absent from the base is added."""
-    assert snapshot_source._merge_runtime_params({}, {"new": 1}) == {"new": 1}
-
-
-def test_merge_runtime_params_preserves_types() -> None:
-    """Test that merged values keep their original types (no stringifying or coercion)."""
-    overrides = {"i": 1, "f": 0.5, "b": True, "lst": [1, 2], "d": {"k": "v"}}
-    merged = snapshot_source._merge_runtime_params({}, overrides)
-    assert merged == overrides
-    assert isinstance(merged["f"], float) and isinstance(merged["b"], bool)
-
-
-def test_merge_runtime_params_does_not_mutate_base() -> None:
-    """Test that the base dict is not mutated by the merge."""
-    base = {"a": {"x": 1}}
-    snapshot_source._merge_runtime_params(base, {"a": {"y": 2}})
-    assert base == {"a": {"x": 1}}
-
-
 @pytest.fixture(autouse=True)
 def _restore_missing_deps_flag():
     """Restore the global ``Metadata.has_missing_dependencies`` banner after each test."""
