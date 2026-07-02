@@ -229,8 +229,8 @@ export function updateZoom(zoom) {
 export const INCREMENT_NODE_MEASURE_TOKEN = 'INCREMENT_NODE_MEASURE_TOKEN';
 
 /**
- * Bump a token that forces node label widths to be re-measured, e.g. once the
- * chart becomes visible or the web font finishes loading.
+ * Bump a token that forces node label widths to be re-measured once the chart
+ * becomes visible.
  */
 export function incrementNodeMeasureToken() {
   return {

@@ -91,7 +91,7 @@ export class Workflow extends Component {
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
 
-    // Re-measures node label widths once the chart is rendered and fonts load
+    // Re-measures node label widths if the chart was mounted while hidden
     this.nodeRemeasurer = createNodeRemeasurer(
       () => this.containerRef.current,
       () => this.props.onRemeasureNodes()

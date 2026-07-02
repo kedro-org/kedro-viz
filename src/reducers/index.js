@@ -62,12 +62,7 @@ const createReducer =
     return state;
   };
 
-/**
- * Monotonic token bumped to force node label widths to be re-measured.
- * @param {Number} state Current token
- * @param {Object} action Redux action
- * @return {Number} Updated token
- */
+/** Monotonic token bumped to force node label widths to be re-measured. */
 function nodeMeasureToken(state = 0, action) {
   return action.type === INCREMENT_NODE_MEASURE_TOKEN ? state + 1 : state;
 }
