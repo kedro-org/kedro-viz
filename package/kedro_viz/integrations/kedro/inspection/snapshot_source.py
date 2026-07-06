@@ -47,7 +47,7 @@ def lite_import_stubs(
         yield
 
 
-class InspectionSession:
+class _InspectionSession:
     """Read a project's snapshot and config, bootstrapping and building the loader once.
 
     Create one session per request. The project is bootstrapped and the Kedro config loader is built
