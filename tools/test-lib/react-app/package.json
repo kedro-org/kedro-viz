@@ -11,7 +11,7 @@
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
-      "^\\./graph-worker\\.js$": "<rootDir>/__mocks__/inline-worker-mock.js"
+      "^\\./graph-worker\\.js(\\?worker&inline)?$": "<rootDir>/__mocks__/inline-worker-mock.js"
     },
     "transformIgnorePatterns": [
       "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
@@ -73,12 +73,14 @@
     "lodash": ">=4.17.23",
     "yaml": ">=2.8.0",
     "qs": ">=6.15.2",
-    "path-to-regexp": ">=0.1.13",
+    "express": {
+      "path-to-regexp": "0.1.13"
+    },
     "diff": ">=5.2.2",
     "d3-color": ">=3.1.0",
     "shell-quote": ">=1.8.4",
     "fast-uri": "^3.1.2",
-    "@babel/plugin-transform-modules-systemjs": ">=7.29.4",
+    "@babel/plugin-transform-modules-systemjs": ">=7.29.4 <8",
     "protocol-buffers-schema": ">=3.6.1",
     "follow-redirects": ">=1.16.0"
   }
