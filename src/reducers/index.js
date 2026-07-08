@@ -62,7 +62,10 @@ const createReducer =
     return state;
   };
 
-/** Monotonic token bumped to force node label widths to be re-measured. */
+/**
+ * Monotonic token bumped to re-measure node label widths. Never resets; a
+ * pipeline change already busts getNodeTextWidth via getPipelineNodeIDs.
+ */
 function nodeMeasureToken(state = 0, action) {
   return action.type === INCREMENT_NODE_MEASURE_TOKEN ? state + 1 : state;
 }

@@ -4,9 +4,15 @@
  * measurement never re-runs on its own. This triggers a single re-measure (via
  * onReady) once the container becomes visible; a visible mount does nothing.
  *
+ * check() is wired to the caller's container ResizeObserver, so revealing a
+ * hidden tab/iframe (a 0 -> non-zero size change) triggers the re-measure. With
+ * no ResizeObserver (the legacy window-resize fallback) a reveal won't fire it;
+ * that's accepted, since ResizeObserver exists in all supported browsers.
+ *
  * @param {Function} getContainer Returns the chart container element, or null.
  * @param {Function} onReady Called once when the chart becomes visible.
- * @returns {{ start: Function, check: Function }} start on mount, check on resize.
+ * @returns {{ start: Function, check: Function }} start on mount; check when the
+ *   container size may have changed.
  */
 export const createNodeRemeasurer = (getContainer, onReady) => {
   let armed = false;
