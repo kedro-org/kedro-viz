@@ -183,7 +183,7 @@ Status: prototyped on `feat/add-fun-src-api` as `get_node_source(node_name, ...,
 | Phase | Action |
 |---|---|
 | Now (Foundation / #2689) | No source work needed |
-| Kedro ask (done) | `func_name` at the root plus a `source` object (`filepath`, `line_start`, `line_end`) on `NodeSnapshot`, on branch `feat/add-fun-src-code` |
+| Kedro ask | `func_name` at the root plus a `source` object (`filepath`, `line_start`, `line_end`) on `NodeSnapshot`, prototyped on branch `feat/add-fun-src-code` and will create a ticket to get this done next sprint. |
 | Viz metadata adapter | Replace `TaskNodeMetadata`'s dependency on `kedro_node.func` with the snapshot `source` (file read) plus `func_name`; keep the live-object `inspect` fallback for external functions (`source is None`) and during transition |
 | Optional (remote) | `get_node_source(..., include_code=True)` for remote or self-contained consumers |
 
