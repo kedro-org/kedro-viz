@@ -1,13 +1,13 @@
 """Build a Kedro-Viz ``GraphAPIResponse`` from an inspection snapshot (the main graph).
 
 Produces the main graph: task, data and parameter nodes; the edges between them; the tag and
-pipeline lists; per-node registered-pipeline membership; and data-node tags. Node IDs come from
-:mod:`kedro_viz.integrations.kedro.node_ids`.
+pipeline lists; and per-node registered-pipeline membership and tags, aggregated across all
+registered pipelines. Node IDs come from :mod:`kedro_viz.integrations.kedro.node_ids`.
 
-Modular-pipeline nodes/tree, per-node ``layer`` with the global ``layers`` list, and resolved task
-``parameters`` are later phases: here every node carries ``modular_pipelines=None`` (the tree is
-``{}``), datasets carry ``layer=None`` (``layers`` is ``[]``), and task ``parameters`` is ``{}``.
-The raw catalog ``type`` string (e.g. ``pandas.CSVDataset``) is still surfaced as ``dataset_type``.
+TODO: update below docstring when the snapshot source is fully implemented.
+This builder does not populate modular-pipeline structure, layers, or resolved task parameters;
+their response fields use empty or ``None`` placeholders. Dataset types are taken directly from
+the snapshot's raw catalog ``type`` string.
 """
 
 from __future__ import annotations
@@ -36,17 +36,16 @@ if TYPE_CHECKING:
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
-# The dataset_type string for an unregistered (in-memory) dataset
-# (``get_dataset_type(MemoryDataset())``). The snapshot has no entry for these,
-# so the adapter synthesizes this string, which the frontend's icon mapping expects.
+# Match get_dataset_type(MemoryDataset()) for datasets absent from the snapshot catalog.
+# The frontend uses this value to select the in-memory dataset icon.
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Pipeline membership and tags are global (aggregated across every registered pipeline), matching
-    the current backend; only the rendered nodes/edges are scoped to the selected pipeline.
+    Pipeline membership and tags are global (aggregated across every registered pipeline),
+    only the rendered nodes/edges are scoped to the selected pipeline.
     """
 
     def __init__(self, snapshot: ProjectSnapshot):
@@ -121,7 +120,6 @@ class GraphBuilder:
             selected_pipeline=selected,
         )
 
-    # -- node builders ---------------------------------------------------------------- #
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
         return TaskNodeAPIResponse(
             id=task_id,
