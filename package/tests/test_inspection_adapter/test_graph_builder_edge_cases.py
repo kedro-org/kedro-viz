@@ -1,11 +1,4 @@
-"""Hermetic edge-case tests for the inspection graph builder.
-
-These tests use small snapshot stand-ins instead of bootstrapping the demo project, so they run
-without a real Kedro project. The stand-ins are ``SimpleNamespace`` objects that duck-type the
-snapshot models the builder reads; calls into ``GraphBuilder`` are cast to the snapshot type
-(string-literal, resolved only under type-checking) so mypy stays honest without importing the real
-dataclass at runtime.
-"""
+"""Hermetic edge cases for the snapshot graph builder."""
 
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
@@ -18,7 +11,6 @@ if TYPE_CHECKING:
 
 
 def _builder(snapshot: SimpleNamespace) -> GraphBuilder:
-    """Build a ``GraphBuilder`` from a duck-typed snapshot stand-in."""
     return GraphBuilder(cast("ProjectSnapshot", snapshot))
 
 
@@ -51,7 +43,6 @@ def _snapshot(
 
 
 def test_task_pipeline_membership_uses_task_identity_not_name() -> None:
-    """Same-name tasks with different I/O must not inherit each other's pipelines."""
     pipe_a_node = _node("shared.task", ["a"], ["b"])
     pipe_b_node = _node("shared.task", ["x"], ["y"])
     builder = _builder(
@@ -75,7 +66,6 @@ def test_task_pipeline_membership_uses_task_identity_not_name() -> None:
 
 
 def test_transcoded_dataset_type_resolves_from_stripped_catalog_name() -> None:
-    """Snapshots key catalog datasets by base name while graph refs may be transcoded."""
     builder = _builder(
         _snapshot(
             [_pipeline("__default__", [_node("consume_ds", ["ds@pandas"], ["out"])])],
@@ -96,7 +86,6 @@ def test_transcoded_dataset_type_resolves_from_stripped_catalog_name() -> None:
 
 
 def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
-    """A dataset with no catalog entry is in-memory; emit the same string the live path does."""
     builder = _builder(
         _snapshot(
             [_pipeline("__default__", [_node("produce", ["raw"], ["intermediate"])])],
@@ -113,7 +102,6 @@ def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
 
 
 def test_empty_catalog_type_string_maps_to_none() -> None:
-    """The snapshot may carry ``type=""`` for malformed entries; don't surface the empty string."""
     builder = _builder(
         _snapshot(
             [_pipeline("__default__", [_node("consume", ["typeless"], ["out"])])],
@@ -128,7 +116,6 @@ def test_empty_catalog_type_string_maps_to_none() -> None:
 
 
 def test_default_pipeline_id_falls_back_to_first_when_no_default() -> None:
-    """With no ``__default__`` pipeline, the first registered pipeline is chosen."""
     builder = _builder(
         _snapshot(
             [
@@ -141,7 +128,6 @@ def test_default_pipeline_id_falls_back_to_first_when_no_default() -> None:
 
 
 def test_has_pipeline_reports_registered_membership() -> None:
-    """``has_pipeline`` is True for a registered pipeline and False otherwise."""
     builder = _builder(
         _snapshot([_pipeline("__default__", [_node("a", ["x"], ["y"])])])
     )
@@ -149,13 +135,20 @@ def test_has_pipeline_reports_registered_membership() -> None:
     assert builder.has_pipeline("nonexistent") is False
 
 
-def test_task_and_dataset_tags_aggregate_across_pipelines() -> None:
-    """Tags are global: a task/dataset shared by two pipelines shows the union of tags in each view.
+def test_pipeline_ids_preserve_declaration_order() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline("second", [_node("b", ["y"], ["z"])]),
+                _pipeline("first", [_node("a", ["x"], ["y"])]),
+            ]
+        )
+    )
+    assert builder.pipeline_ids() == ["second", "first"]
 
-    The same node identity (name + inputs + outputs) and the shared dataset ``ds`` are tagged ``a``
-    in one pipeline and ``b`` in the other. The live backend merges tags into one shared node, so
-    both pipeline views must show ``["a", "b"]`` rather than the selected pipeline's tags only.
-    """
+
+def test_task_and_dataset_tags_aggregate_across_pipelines() -> None:
+    """Shared node tags are global across pipeline views."""
     builder = _builder(
         _snapshot(
             [
@@ -177,8 +170,7 @@ def test_task_and_dataset_tags_aggregate_across_pipelines() -> None:
         assert dataset.tags == ["a", "b"], f"dataset tags not aggregated in {view}"
 
 
-def test_source_and_sink_nodes_build_without_error() -> None:
-    """A source node (no inputs) and a sink node (no outputs) render with the right edges."""
+def test_source_and_sink_nodes_have_expected_edges() -> None:
     builder = _builder(
         _snapshot(
             [
@@ -197,8 +189,6 @@ def test_source_and_sink_nodes_build_without_error() -> None:
         n["id"]: (n["full_name"] if n["type"] == "task" else n["name"])
         for n in graph["nodes"]
     }
-    # The source feeds its output; the output feeds the sink. No inbound edge to the source, no
-    # outbound edge from the sink.
     edges = {
         (label_by_id[e["source"]], label_by_id[e["target"]]) for e in graph["edges"]
     }

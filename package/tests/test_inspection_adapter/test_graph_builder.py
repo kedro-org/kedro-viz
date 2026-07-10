@@ -1,16 +1,4 @@
-"""Structural parity tests for the snapshot graph builder (Phase 2 — the main graph).
-
-The adapter graph is compared to the captured live-backend baseline by **structure** — node sets
-(by name/type), edge connectivity, tags, pipelines and data-node tags — NOT by literal IDs, which
-deliberately changed (Decision D9).
-
-Phase 2 builds only the main graph, so this module scopes the comparison to it: modular-pipeline
-nodes and modular edges are filtered out of the baseline, and the ``layers`` and ``modular_pipelines``
-fields are ignored. Modular membership/tree, layers and resolved parameters are asserted in later
-phases.
-
-Runs against the bundled demo project (requires ``kedro>=1.4.0``).
-"""
+"""Structural parity tests for snapshot-backed graphs, independent of node IDs."""
 
 import json
 from pathlib import Path
@@ -36,7 +24,7 @@ ALL_PIPELINES = [
 
 @pytest.fixture(scope="module")
 def builder(_restore_kedro_project_state) -> GraphBuilder:
-    # Depend on the autouse state-restore fixture so it is set up *before* this bootstraps.
+    # Start state restoration before bootstrapping the demo project.
     snapshot = _InspectionSession(DEMO_PROJECT).snapshot()
     return GraphBuilder(snapshot)
 
@@ -53,11 +41,7 @@ def _names(nodes: list[dict], node_type: str) -> set[str]:
 
 
 def _edge_keys(graph: dict) -> set[tuple[str, str]]:
-    """Translate ID-based edges to name keys (full_name for tasks, name otherwise).
-
-    Modular-pipeline edges are a later phase, so edges touching a ``modularPipeline`` node are
-    dropped — the phase-2 adapter emits none, and the baseline's are filtered out here.
-    """
+    """Return non-modular edges keyed by node names instead of IDs."""
     modular_ids = {n["id"] for n in graph["nodes"] if n["type"] == "modularPipeline"}
     key_by_id = {n["id"]: n.get("full_name", n["name"]) for n in graph["nodes"]}
     return {
@@ -70,7 +54,6 @@ def _edge_keys(graph: dict) -> set[tuple[str, str]]:
 def _field_by_name(
     nodes: list[dict], node_type: str, field: str
 ) -> dict[str, list[str]]:
-    """Map each node of ``node_type`` to its sorted ``field`` list, keyed by full_name/name."""
     key = "full_name" if node_type == "task" else "name"
     return {n[key]: sorted(n[field]) for n in nodes if n["type"] == node_type}
 
@@ -115,39 +98,25 @@ def test_task_display_names_match_baseline(builder: GraphBuilder) -> None:
     assert adapter_name_by_full == baseline_name_by_full
 
 
-def test_selected_pipeline_defaults_to_default(builder: GraphBuilder) -> None:
-    assert builder.build().model_dump()["selected_pipeline"] == "__default__"
+@pytest.mark.parametrize(
+    ("pipeline_id", "expected"),
+    [(None, "__default__"), ("data_ingestion", "data_ingestion")],
+)
+def test_selected_pipeline(
+    builder: GraphBuilder, pipeline_id: str | None, expected: str
+) -> None:
+    assert builder.build(pipeline_id).selected_pipeline == expected
 
 
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
 @pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
-def test_per_node_pipeline_membership_matches_baseline(
+def test_per_node_fields_match_baseline(
     builder: GraphBuilder, pipeline_id: str, node_type: str
 ) -> None:
-    """Each node's registered-pipeline membership matches the baseline, in every pipeline view.
-
-    Membership is global (aggregated across all pipelines), so it is invariant across views.
-    """
+    """Per-node pipeline membership and tags match every baseline view."""
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
-    assert _field_by_name(adapter["nodes"], node_type, "pipelines") == _field_by_name(
-        baseline["nodes"], node_type, "pipelines"
-    )
-
-
-@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
-@pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
-def test_per_node_tags_match_baseline(
-    builder: GraphBuilder, pipeline_id: str, node_type: str
-) -> None:
-    """Each node's tags match the baseline in every pipeline view (not just ``__default__``).
-
-    Tags are global too: a task or dataset shared by several pipelines shows the union of their
-    tags, so the sub-pipeline views must agree with the baseline, guarding against per-pipeline
-    tag scoping.
-    """
-    adapter = builder.build(pipeline_id).model_dump()
-    baseline = _baseline(pipeline_id)
-    assert _field_by_name(adapter["nodes"], node_type, "tags") == _field_by_name(
-        baseline["nodes"], node_type, "tags"
-    )
+    for field in ("pipelines", "tags"):
+        assert _field_by_name(adapter["nodes"], node_type, field) == _field_by_name(
+            baseline["nodes"], node_type, field
+        ), field
