@@ -28,13 +28,14 @@ def _node(
     outputs: list[str],
     *,
     namespace: str | None = None,
+    tags: set[str] | None = None,
 ) -> SimpleNamespace:
     return SimpleNamespace(
         name=name,
         inputs=inputs,
         outputs=outputs,
         namespace=namespace,
-        tags=set(),
+        tags=tags or set(),
     )
 
 
@@ -146,3 +147,59 @@ def test_has_pipeline_reports_registered_membership() -> None:
     )
     assert builder.has_pipeline("__default__") is True
     assert builder.has_pipeline("nonexistent") is False
+
+
+def test_task_and_dataset_tags_aggregate_across_pipelines() -> None:
+    """Tags are global: a task/dataset shared by two pipelines shows the union of tags in each view.
+
+    The same node identity (name + inputs + outputs) and the shared dataset ``ds`` are tagged ``a``
+    in one pipeline and ``b`` in the other. The live backend merges tags into one shared node, so
+    both pipeline views must show ``["a", "b"]`` rather than the selected pipeline's tags only.
+    """
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "pipe_a", [_node("shared.task", ["ds"], ["out"], tags={"a"})]
+                ),
+                _pipeline(
+                    "pipe_b", [_node("shared.task", ["ds"], ["out"], tags={"b"})]
+                ),
+            ]
+        )
+    )
+
+    for view in ("pipe_a", "pipe_b"):
+        nodes = builder.build(view).nodes
+        task = next(n for n in nodes if n.type == "task")
+        dataset = next(n for n in nodes if n.type == "data" and n.name == "ds")
+        assert task.tags == ["a", "b"], f"task tags not aggregated in {view}"
+        assert dataset.tags == ["a", "b"], f"dataset tags not aggregated in {view}"
+
+
+def test_source_and_sink_nodes_build_without_error() -> None:
+    """A source node (no inputs) and a sink node (no outputs) render with the right edges."""
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [
+                        _node("make", [], ["produced"]),
+                        _node("consume", ["produced"], []),
+                    ],
+                )
+            ]
+        )
+    )
+    graph = builder.build("__default__").model_dump()
+    label_by_id = {
+        n["id"]: (n["full_name"] if n["type"] == "task" else n["name"])
+        for n in graph["nodes"]
+    }
+    # The source feeds its output; the output feeds the sink. No inbound edge to the source, no
+    # outbound edge from the sink.
+    edges = {
+        (label_by_id[e["source"]], label_by_id[e["target"]]) for e in graph["edges"]
+    }
+    assert edges == {("make", "produced"), ("produced", "consume")}

@@ -67,6 +67,14 @@ def _edge_keys(graph: dict) -> set[tuple[str, str]]:
     }
 
 
+def _field_by_name(
+    nodes: list[dict], node_type: str, field: str
+) -> dict[str, list[str]]:
+    """Map each node of ``node_type`` to its sorted ``field`` list, keyed by full_name/name."""
+    key = "full_name" if node_type == "task" else "name"
+    return {n[key]: sorted(n[field]) for n in nodes if n["type"] == node_type}
+
+
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
 @pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
 def test_node_sets_match_baseline(
@@ -111,15 +119,35 @@ def test_selected_pipeline_defaults_to_default(builder: GraphBuilder) -> None:
     assert builder.build().model_dump()["selected_pipeline"] == "__default__"
 
 
-def test_data_node_tags_match_baseline(builder: GraphBuilder) -> None:
-    adapter = builder.build("__default__").model_dump()
-    baseline = _baseline("__default__")
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+@pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
+def test_per_node_pipeline_membership_matches_baseline(
+    builder: GraphBuilder, pipeline_id: str, node_type: str
+) -> None:
+    """Each node's registered-pipeline membership matches the baseline, in every pipeline view.
 
-    def tags_by_name(graph: dict) -> dict[str, list[str]]:
-        return {
-            n["name"]: sorted(n["tags"])
-            for n in graph["nodes"]
-            if n["type"] in ("data", "parameters")
-        }
+    Membership is global (aggregated across all pipelines), so it is invariant across views.
+    """
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert _field_by_name(adapter["nodes"], node_type, "pipelines") == _field_by_name(
+        baseline["nodes"], node_type, "pipelines"
+    )
 
-    assert tags_by_name(adapter) == tags_by_name(baseline)
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+@pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
+def test_per_node_tags_match_baseline(
+    builder: GraphBuilder, pipeline_id: str, node_type: str
+) -> None:
+    """Each node's tags match the baseline in every pipeline view (not just ``__default__``).
+
+    Tags are global too: a task or dataset shared by several pipelines shows the union of their
+    tags, so the sub-pipeline views must agree with the baseline, guarding against per-pipeline
+    tag scoping.
+    """
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert _field_by_name(adapter["nodes"], node_type, "tags") == _field_by_name(
+        baseline["nodes"], node_type, "tags"
+    )
