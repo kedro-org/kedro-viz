@@ -18,11 +18,6 @@ import pytest
 
 from kedro_viz.integrations.kedro.inspection import snapshot_source
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 @pytest.fixture(scope="module")
 def rtp_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
@@ -88,16 +83,18 @@ def rtp_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
 def test_snapshot_is_param_blind_but_config_loader_is_param_aware(
     rtp_project: Path,
 ) -> None:
-    snapshot = snapshot_source.load_snapshot(rtp_project)
+    snapshot = snapshot_source._InspectionSession(rtp_project).snapshot()
     snap_fp = str(snapshot.datasets["templated_input"].filepath)
 
     cfg_default = str(
-        snapshot_source.load_catalog_config(rtp_project)["templated_input"]["filepath"]
+        snapshot_source._InspectionSession(rtp_project).catalog_config()[
+            "templated_input"
+        ]["filepath"]
     )
     cfg_override = str(
-        snapshot_source.load_catalog_config(
+        snapshot_source._InspectionSession(
             rtp_project, runtime_params={"version": "02"}
-        )["templated_input"]["filepath"]
+        ).catalog_config()["templated_input"]["filepath"]
     )
 
     # The snapshot resolves the template with the default — no runtime params reach it.

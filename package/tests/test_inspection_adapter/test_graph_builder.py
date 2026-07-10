@@ -20,10 +20,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 BASELINE_DIR = Path(__file__).parent / "baseline"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
 
 # Every registered pipeline in the demo project (a baseline file exists for each).
 ALL_PIPELINES = [
@@ -39,8 +35,10 @@ ALL_PIPELINES = [
 @pytest.fixture(scope="module")
 def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Depend on the autouse state-restore fixture so it is set up *before* this bootstraps.
-    snapshot = snapshot_source.load_snapshot(DEMO_PROJECT)
-    layers = extract_layers(snapshot_source.load_catalog_config(DEMO_PROJECT))
+    snapshot = snapshot_source._InspectionSession(DEMO_PROJECT).snapshot()
+    layers = extract_layers(
+        snapshot_source._InspectionSession(DEMO_PROJECT).catalog_config()
+    )
     return GraphBuilder(snapshot, layers)
 
 

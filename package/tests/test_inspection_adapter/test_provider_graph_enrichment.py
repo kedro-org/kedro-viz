@@ -67,8 +67,8 @@ def test_full_mode_enriches_node_extras() -> None:
         outputs="result",
         name="my_node",
     )
-    task_id = node_ids.task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
-    data_id = node_ids.dataset_node_id("companies")
+    task_id = node_ids._create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
+    data_id = node_ids._create_dataset_node_id("companies")
     live_task = TaskNode.create_task_node(
         node=kn,
         node_id="legacy-task-id",
@@ -104,7 +104,7 @@ def test_full_mode_overlays_resolved_dataset_type() -> None:
     """The raw catalog string from the snapshot is replaced by the live resolved class path."""
     from kedro.io import MemoryDataset
 
-    data_id = node_ids.dataset_node_id("companies")
+    data_id = node_ids._create_dataset_node_id("companies")
     live_data = DataNode.create_data_node(
         dataset_id="legacy-data-id",
         dataset_name="companies",
@@ -126,7 +126,7 @@ def test_full_mode_overlays_resolved_dataset_type() -> None:
 
 def test_full_mode_sets_transcoded_dataset_type_to_none() -> None:
     """Live serialises transcoded nodes with ``dataset_type=None``; the overlay mirrors that."""
-    data_id = node_ids.dataset_node_id("companies@pandas")
+    data_id = node_ids._create_dataset_node_id("companies@pandas")
     live_transcoded = DataNode.create_data_node(
         dataset_id="legacy-data-id",
         dataset_name="companies@pandas",

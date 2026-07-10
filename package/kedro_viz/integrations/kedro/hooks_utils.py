@@ -10,7 +10,10 @@ import fsspec
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro import node_ids
+from kedro_viz.integrations.kedro.node_ids import (
+    _create_dataset_node_id,
+    _create_task_node_id,
+)
 from kedro_viz.launchers.utils import _find_kedro_project
 
 logger = logging.getLogger(__name__)
@@ -26,8 +29,8 @@ def hash_node(node: Any) -> str:
     run-status events emitted here use exactly the same IDs as the inspection-adapter graph.
     """
     if isinstance(node, KedroNode):
-        return node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))
-    return node_ids.dataset_node_id(node)
+        return _create_task_node_id(node.name, list(node.inputs), list(node.outputs))
+    return _create_dataset_node_id(node)
 
 
 def extract_file_paths(dataset: Any) -> List[str]:

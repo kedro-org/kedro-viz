@@ -26,11 +26,6 @@ from kedro_viz.integrations.kedro.inspection import snapshot_source
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 @pytest.fixture(scope="module")
 def _populated_demo(_restore_kedro_project_state) -> Iterator[None]:

@@ -28,13 +28,14 @@ def _node(
     outputs: list[str],
     *,
     namespace: str | None = None,
+    tags: set[str] | None = None,
 ) -> SimpleNamespace:
     return SimpleNamespace(
         name=name,
         inputs=inputs,
         outputs=outputs,
         namespace=namespace,
-        tags=set(),
+        tags=tags or set(),
     )
 
 
@@ -124,3 +125,33 @@ def test_empty_catalog_type_string_maps_to_none() -> None:
     typeless_node = next(n for n in nodes if n.type == "data" and n.name == "typeless")
     assert isinstance(typeless_node, DataNodeAPIResponse)
     assert typeless_node.dataset_type is None
+
+
+def test_tags_are_aggregated_globally_across_pipeline_views() -> None:
+    """A task/dataset shared by several pipelines shows the union of every pipeline's tags.
+
+    The two pipelines register the same node identity (name/inputs/outputs) and a shared
+    dataset, but tag them differently; both must surface the global tag union in either view.
+    """
+    shared_in, shared_out = "shared_in", "shared_out"
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "pipe_a",
+                    [_node("shared_task", [shared_in], [shared_out], tags={"a"})],
+                ),
+                _pipeline(
+                    "pipe_b",
+                    [_node("shared_task", [shared_in], [shared_out], tags={"b"})],
+                ),
+            ]
+        )
+    )
+
+    for pipeline_id in ("pipe_a", "pipe_b"):
+        nodes = builder.build(pipeline_id).nodes
+        task = next(n for n in nodes if n.type == "task")
+        dataset = next(n for n in nodes if n.type == "data" and n.name == shared_in)
+        assert task.tags == ["a", "b"]
+        assert dataset.tags == ["a", "b"]

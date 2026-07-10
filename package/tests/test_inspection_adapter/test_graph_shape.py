@@ -18,11 +18,6 @@ from kedro_viz.integrations.kedro.inspection import snapshot_source
 
 DEMO = Path(__file__).resolve().parents[3] / "demo-project"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 def _main(pipeline_id: str | None = None) -> dict[str, Any]:
     """``/api/main`` (or a named pipeline) from the adapter, with an empty bridge so the shape comes

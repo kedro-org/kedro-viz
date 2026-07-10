@@ -28,13 +28,16 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
-from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularMembership,
     ModularTreeBuilder,
     ModularTreeEntry,
     add_modular_edges,
     remove_cyclic_modular_edges,
+)
+from kedro_viz.integrations.kedro.node_ids import (
+    _create_dataset_node_id,
+    _create_task_node_id,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.services.layers import sort_layers
@@ -82,6 +85,10 @@ class GraphBuilder:
         self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
         self._task_pipelines: dict[str, set[str]] = defaultdict(set)
         self._dataset_pipelines: dict[str, set[str]] = defaultdict(set)
+        # Tags are global: a task/dataset carries the union of the tags from every registered
+        # pipeline it appears in, so they are aggregated once during the membership pass.
+        self._task_tags: dict[str, set[str]] = defaultdict(set)
+        self._dataset_tags: dict[str, set[str]] = defaultdict(set)
         self._compute_membership()
         # Modular-pipeline membership is global: a node carries the same membership in every view,
         # so it is computed once over all pipelines' nodes (deduplicated by name).
@@ -96,19 +103,22 @@ class GraphBuilder:
         # Layer presence is global (every project layer can appear in any view); only the ordering is
         # per-pipeline. Seed the layer sort with all layered datasets so the order is stable.
         self._global_layer_nodes: dict[str, _LayerNode] = {
-            node_ids.dataset_node_id(name): _LayerNode(layer)
+            _create_dataset_node_id(name): _LayerNode(layer)
             for name, layer in self._layers.items()
             if name in self._dataset_pipelines
         }
 
     def _compute_membership(self) -> None:
-        """Record, for every task and dataset, which registered pipelines contain it."""
+        """Record global pipeline membership and tags for every task and dataset."""
         for pipeline_id, pipeline in self._pipelines.items():
             for node in pipeline.nodes:
-                task_id = node_ids.task_node_id(node.name, node.inputs, node.outputs)
+                task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
                 self._task_pipelines[task_id].add(pipeline_id)
+                self._task_tags[task_id].update(node.tags)
                 for io in [*node.inputs, *node.outputs]:
-                    self._dataset_pipelines[_strip_transcoding(io)].add(pipeline_id)
+                    stripped = _strip_transcoding(io)
+                    self._dataset_pipelines[stripped].add(pipeline_id)
+                    self._dataset_tags[stripped].update(node.tags)
 
     def default_pipeline_id(self) -> str:
         """Return ``__default__`` if present, else the first registered pipeline."""
@@ -134,26 +144,19 @@ class GraphBuilder:
         datasets: dict[
             str, str
         ] = {}  # stripped name -> an original (maybe transcoded) name
-        dataset_tags: dict[str, set[str]] = defaultdict(set)
 
         for node in pipeline.nodes:
-            task_id = node_ids.task_node_id(node.name, node.inputs, node.outputs)
+            task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
-                self._add_edge(edges, node_ids.dataset_node_id(name), task_id)
-                self._register_dataset(name, node, datasets, dataset_tags)
+                self._add_edge(edges, _create_dataset_node_id(name), task_id)
+                self._register_dataset(name, datasets)
             for name in node.outputs:
-                self._add_edge(edges, task_id, node_ids.dataset_node_id(name))
-                self._register_dataset(name, node, datasets, dataset_tags)
+                self._add_edge(edges, task_id, _create_dataset_node_id(name))
+                self._register_dataset(name, datasets)
 
         for stripped_name, original_name in datasets.items():
-            nodes.append(
-                self._build_dataset_node(
-                    stripped_name,
-                    original_name,
-                    sorted(dataset_tags[stripped_name]),
-                )
-            )
+            nodes.append(self._build_dataset_node(stripped_name, original_name))
 
         tree_builder = ModularTreeBuilder(pipeline.nodes)
         tree = tree_builder.build()
@@ -179,7 +182,7 @@ class GraphBuilder:
             id=task_id,
             name=_display_name(node.name, node.namespace),
             full_name=node.name,
-            tags=sorted(node.tags),
+            tags=sorted(self._task_tags[task_id]),
             pipelines=sorted(self._task_pipelines[task_id]),
             type=GraphNodeType.TASK.value,
             modular_pipelines=self._modular.for_task(node),
@@ -205,7 +208,6 @@ class GraphBuilder:
         self,
         stripped_name: str,
         original_name: str,
-        tags: list[str],
     ) -> DataNodeAPIResponse:
         is_parameter = is_dataset_param(stripped_name)
         dataset = self._snapshot.datasets.get(
@@ -219,9 +221,9 @@ class GraphBuilder:
         else:
             dataset_type = dataset.type or None
         return DataNodeAPIResponse(
-            id=node_ids.dataset_node_id(stripped_name),
+            id=_create_dataset_node_id(stripped_name),
             name=stripped_name,
-            tags=tags,
+            tags=sorted(self._dataset_tags[stripped_name]),
             pipelines=sorted(self._dataset_pipelines[stripped_name]),
             type=(
                 GraphNodeType.PARAMETERS.value
@@ -280,15 +282,9 @@ class GraphBuilder:
         return sort_layers(cast("dict[str, GraphNode]", nodes_by_id), dependencies)
 
     @staticmethod
-    def _register_dataset(
-        name: str,
-        node: NodeSnapshot,
-        datasets: dict[str, str],
-        dataset_tags: dict[str, set[str]],
-    ) -> None:
-        stripped = _strip_transcoding(name)
-        datasets.setdefault(stripped, name)
-        dataset_tags[stripped].update(node.tags)
+    def _register_dataset(name: str, datasets: dict[str, str]) -> None:
+        """Record the dataset for rendering, keyed by stripped name (tags are indexed globally)."""
+        datasets.setdefault(_strip_transcoding(name), name)
 
     @staticmethod
     def _add_edge(

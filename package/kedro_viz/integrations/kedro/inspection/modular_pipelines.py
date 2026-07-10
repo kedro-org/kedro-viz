@@ -21,7 +21,10 @@ from typing import TYPE_CHECKING
 
 from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.integrations.kedro import node_ids
+from kedro_viz.integrations.kedro.node_ids import (
+    _create_dataset_node_id,
+    _create_task_node_id,
+)
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
@@ -109,10 +112,10 @@ class ModularTreeBuilder:
         for mp_id in self.ids:
             entry = tree.setdefault(mp_id, ModularTreeEntry(mp_id))
             free_inputs, free_outputs = self._free_io(mp_id)
-            entry.inputs = {node_ids.dataset_node_id(d) for d in free_inputs}
-            entry.outputs = {node_ids.dataset_node_id(d) for d in free_outputs}
+            entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
+            entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
             params |= {
-                node_ids.dataset_node_id(d) for d in free_inputs if is_dataset_param(d)
+                _create_dataset_node_id(d) for d in free_inputs if is_dataset_param(d)
             }
             boundary = entry.inputs | entry.outputs
 
@@ -161,12 +164,12 @@ class ModularTreeBuilder:
                 continue
             entry.children.add(
                 (
-                    node_ids.task_node_id(node.name, node.inputs, node.outputs),
+                    _create_task_node_id(node.name, node.inputs, node.outputs),
                     GraphNodeType.TASK.value,
                 )
             )
             io_ids = {
-                node_ids.dataset_node_id(io) for io in [*node.inputs, *node.outputs]
+                _create_dataset_node_id(io) for io in [*node.inputs, *node.outputs]
             }
             for io_id in io_ids - boundary - params:
                 entry.children.add((io_id, GraphNodeType.DATA.value))
@@ -203,12 +206,14 @@ class ModularTreeBuilder:
                     if is_dataset_param(dataset)
                     else GraphNodeType.DATA.value
                 )
-                root.children.add((node_ids.dataset_node_id(dataset), node_type))
+                root.children.add((_create_dataset_node_id(dataset), node_type))
         for node in self._nodes:
             if node.namespace is None:
                 root.children.add(
                     (
-                        node_ids.task_node_id_for(node),
+                        _create_task_node_id(
+                            node.name, list(node.inputs), list(node.outputs)
+                        ),
                         GraphNodeType.TASK.value,
                     )
                 )

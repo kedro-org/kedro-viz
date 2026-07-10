@@ -35,11 +35,6 @@ from kedro_viz.integrations.kedro.inspection import snapshot_source
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 @pytest.fixture(scope="module")
 def lite_provider(_restore_kedro_project_state) -> InspectionAdapterProvider:
@@ -62,7 +57,7 @@ def test_snapshot_lookup_populates_task_metadata(
     """Every snapshot task carries inputs + outputs in its lite payload."""
     snapshot = lite_provider._snapshot
     sample_node = snapshot.pipelines[0].nodes[0]
-    task_id = node_ids.task_node_id(
+    task_id = node_ids._create_task_node_id(
         sample_node.name, list(sample_node.inputs), list(sample_node.outputs)
     )
     payload = lite_provider._snapshot_lookup[task_id]
@@ -77,7 +72,9 @@ def test_snapshot_lookup_populates_data_metadata(
     lite_provider: InspectionAdapterProvider,
 ) -> None:
     """A catalog-registered dataset exposes its type + filepath from the snapshot."""
-    payload = lite_provider._snapshot_lookup[node_ids.dataset_node_id("companies")]
+    payload = lite_provider._snapshot_lookup[
+        node_ids._create_dataset_node_id("companies")
+    ]
     assert payload["type"] == "pandas.CSVDataset"
     assert payload["filepath"]  # demo project ships a real filepath
     assert "preview" not in payload
@@ -99,7 +96,9 @@ def test_snapshot_lookup_synthesizes_memory_dataset_type(
         if not is_dataset_param(ref)
         and _strip_transcoding(ref) not in snapshot.datasets
     )
-    payload = lite_provider._snapshot_lookup[node_ids.dataset_node_id(memory_ref)]
+    payload = lite_provider._snapshot_lookup[
+        node_ids._create_dataset_node_id(memory_ref)
+    ]
     assert payload == {"type": "io.memory_dataset.MemoryDataset"}
 
 
@@ -120,7 +119,9 @@ def test_snapshot_lookup_treats_parameter_refs_separately(
     }
     assert param_refs, "demo project should reference parameters"
     sample_ref = next(iter(param_refs))
-    payload = lite_provider._snapshot_lookup[node_ids.dataset_node_id(sample_ref)]
+    payload = lite_provider._snapshot_lookup[
+        node_ids._create_dataset_node_id(sample_ref)
+    ]
     # A parameter payload (has "parameters"), carrying the real resolved value.
     assert set(payload) == {"parameters"}
     assert payload["parameters"] == lite_provider._param_value(sample_ref)
@@ -142,7 +143,7 @@ def test_lite_metadata_response_carries_no_live_only_fields(
 
     snapshot = lite_provider._snapshot
     sample_node = snapshot.pipelines[0].nodes[0]
-    task_id = node_ids.task_node_id(
+    task_id = node_ids._create_task_node_id(
         sample_node.name, list(sample_node.inputs), list(sample_node.outputs)
     )
     response = lite_provider.get_node_metadata_response(task_id)

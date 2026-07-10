@@ -21,11 +21,6 @@ DEMO = Path(__file__).resolve().parents[3] / "demo-project"
 # The demo's ``split_data`` node consumes ``params:split_options``; override one value.
 OVERRIDE: dict[str, Any] = {"split_options": {"test_size": 0.99}}
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 def _adapter_task_params(runtime_params: dict[str, Any] | None) -> dict[str, dict]:
     """Task ``parameters`` from the adapter (empty bridge → values from the overlay only)."""
@@ -78,7 +73,7 @@ def _adapter_param_metadata(runtime_params: dict[str, Any] | None, ref: str) -> 
     provider = InspectionAdapterProvider(
         DEMO, runtime_params=runtime_params, live_nodes=GraphNodesRepository()
     )
-    resp = provider.get_node_metadata_response(node_ids.dataset_node_id(ref))
+    resp = provider.get_node_metadata_response(node_ids._create_dataset_node_id(ref))
     return json.loads(resp.body)  # type: ignore[union-attr]
 
 

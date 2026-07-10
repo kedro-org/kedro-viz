@@ -3,7 +3,7 @@
 Two layers:
 
 1. Hermetic — construct a synthetic ``KedroNode`` and assert ``hash_node(node)`` equals
-   ``node_ids.task_node_id(node.name, node.inputs, node.outputs)``. No project load.
+   ``node_ids._create_task_node_id(node.name, node.inputs, node.outputs)``. No project load.
 2. End-to-end against ``demo-project`` — hit ``/api/main`` through the inspection adapter, then
    for every task node in the response, reconstruct the matching live ``KedroNode`` and assert the
    hook would emit the same ID. This is the gate the plan calls for: graph ID == run-status ID.
@@ -31,11 +31,6 @@ from kedro_viz.integrations.kedro.inspection import snapshot_source
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 # -- Layer 1: hermetic ---------------------------------------------------------------------- #
 
@@ -44,13 +39,13 @@ def test_hash_node_for_kedro_node_matches_task_node_id() -> None:
     node = kedro_node(
         func=lambda a, b: a, inputs=["a", "b"], outputs="c", name="my_node"
     )
-    assert hash_node(node) == node_ids.task_node_id(
+    assert hash_node(node) == node_ids._create_task_node_id(
         node.name, list(node.inputs), list(node.outputs)
     )
 
 
 def test_hash_node_for_dataset_string_matches_dataset_node_id() -> None:
-    assert hash_node("companies") == node_ids.dataset_node_id("companies")
+    assert hash_node("companies") == node_ids._create_dataset_node_id("companies")
 
 
 def test_hash_node_excludes_tags_for_kedro_node() -> None:

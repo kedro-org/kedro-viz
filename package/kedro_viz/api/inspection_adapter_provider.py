@@ -30,7 +30,6 @@ from kedro_viz.api.rest.responses.run_events import (
     get_run_status_response,
 )
 from kedro_viz.api.rest.responses.save_responses import save_api_responses_to_fs
-from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.inspection.graph_builder import (
     MEMORY_DATASET_TYPE,
     GraphBuilder,
@@ -38,10 +37,12 @@ from kedro_viz.integrations.kedro.inspection.graph_builder import (
 )
 from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    _InspectionSession,
     lite_import_stubs,
-    load_catalog_config,
-    load_parameters,
-    load_snapshot,
+)
+from kedro_viz.integrations.kedro.node_ids import (
+    _create_dataset_node_id,
+    _create_task_node_id,
 )
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -93,15 +94,14 @@ class InspectionAdapterProvider:
             lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
         )
         with stub_ctx:
-            snapshot = load_snapshot(project_path, env=env)
-            catalog_config = load_catalog_config(
+            session = _InspectionSession(
                 project_path, env=env, runtime_params=runtime_params
             )
+            snapshot = session.snapshot()
+            catalog_config = session.catalog_config()
             # Resolved parameter values (with --params applied) — read from the config loader,
             # not the live project, so the adapter is param-aware in every mode.
-            self._parameters = load_parameters(
-                project_path, env=env, runtime_params=runtime_params
-            )
+            self._parameters = session.parameters()
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
         layer_mapping = extract_layers(catalog_config)
@@ -275,10 +275,11 @@ class InspectionAdapterProvider:
             if viz_node.kedro_obj is None:
                 return None
             # kedro_obj is always a KedroNode here (only DataNode holds a dataset).
-            return node_ids.task_node_id_for(cast(KedroNode, viz_node.kedro_obj))
+            kn = cast(KedroNode, viz_node.kedro_obj)
+            return _create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
         if isinstance(viz_node, (DataNode, TranscodedDataNode, ParametersNode)):
             # dataset_node_id strips transcoding, so a variant maps to the same id from either side.
-            return node_ids.dataset_node_id(viz_node.name)
+            return _create_dataset_node_id(viz_node.name)
         # ModularPipelineNode and anything else: not addressable via /api/nodes/{id}.
         return None
 
@@ -292,7 +293,9 @@ class InspectionAdapterProvider:
         lookup: dict[str, dict[str, Any]] = {}
         for pipeline in self._snapshot.pipelines:
             for node in pipeline.nodes:
-                task_id = node_ids.task_node_id_for(node)
+                task_id = _create_task_node_id(
+                    node.name, list(node.inputs), list(node.outputs)
+                )
                 lookup.setdefault(
                     task_id,
                     {"inputs": list(node.inputs), "outputs": list(node.outputs)},
@@ -305,7 +308,7 @@ class InspectionAdapterProvider:
         self, lookup: dict[str, dict[str, Any]], ref: str
     ) -> None:
         """Record the lite payload for a single input/output reference (data or parameter)."""
-        ds_id = node_ids.dataset_node_id(ref)
+        ds_id = _create_dataset_node_id(ref)
         if ds_id in lookup:
             return
         if is_dataset_param(ref):

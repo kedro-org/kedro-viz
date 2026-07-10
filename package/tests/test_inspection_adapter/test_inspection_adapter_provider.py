@@ -18,11 +18,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 BASELINE_DIR = Path(__file__).parent / "baseline"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 def _baseline(pipeline_id: str) -> dict:
     name = "main" if pipeline_id == "__default__" else pipeline_id

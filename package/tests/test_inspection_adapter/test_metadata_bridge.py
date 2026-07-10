@@ -38,11 +38,6 @@ from kedro_viz.models.flowchart.nodes import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 # -- Layer 1: hermetic bridge construction ------------------------------------------------- #
 
@@ -91,7 +86,7 @@ def test_bridge_maps_task_node_to_new_id() -> None:
 
     provider = _provider_with_repo(repo)
 
-    expected_id = node_ids.task_node_id("my_node", ["a", "b"], ["c"])
+    expected_id = node_ids._create_task_node_id("my_node", ["a", "b"], ["c"])
     assert provider._metadata_bridge[expected_id] is task
 
 
@@ -102,7 +97,9 @@ def test_bridge_maps_data_node_to_new_id() -> None:
 
     provider = _provider_with_repo(repo)
 
-    assert provider._metadata_bridge[node_ids.dataset_node_id("companies")] is data
+    assert (
+        provider._metadata_bridge[node_ids._create_dataset_node_id("companies")] is data
+    )
 
 
 def test_bridge_maps_parameters_node_to_new_id() -> None:
@@ -114,7 +111,7 @@ def test_bridge_maps_parameters_node_to_new_id() -> None:
 
     assert (
         provider._metadata_bridge[
-            node_ids.dataset_node_id("params:feature_engineering.threshold")
+            node_ids._create_dataset_node_id("params:feature_engineering.threshold")
         ]
         is params
     )
@@ -130,8 +127,8 @@ def test_bridge_collapses_transcoded_variants_to_one_entry() -> None:
 
     provider = _provider_with_repo(repo)
 
-    shared_id = node_ids.dataset_node_id("typed_shuttles@pandas1")
-    assert node_ids.dataset_node_id("typed_shuttles@pandas2") == shared_id
+    shared_id = node_ids._create_dataset_node_id("typed_shuttles@pandas1")
+    assert node_ids._create_dataset_node_id("typed_shuttles@pandas2") == shared_id
     assert provider._metadata_bridge[shared_id] is first
 
 

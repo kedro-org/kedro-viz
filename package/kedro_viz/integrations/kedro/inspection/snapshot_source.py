@@ -1,9 +1,4 @@
-"""Load a Kedro project inspection snapshot.
-
-Thin wrapper around ``kedro.inspection.get_project_snapshot`` (``kedro>=1.4.0``). Only the local
-Python API is supported (there is no remote snapshot endpoint); isolating it here keeps the rest
-of the adapter independent of how snapshots are obtained.
-"""
+"""Read a Kedro project's inspection snapshot and raw config for the adapter."""
 
 from __future__ import annotations
 
@@ -23,13 +18,7 @@ logger = logging.getLogger(__name__)
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Iterator[None]:
-    """Mock the project's missing imports in ``sys.modules`` for the duration of the block.
-
-    ``get_project_snapshot`` imports the project's pipeline modules, which pull in node-function
-    libraries that may not be installed under ``--lite``. Reusing kedro-viz's ``LiteParser`` to mock
-    them lets the snapshot build anyway; its structure comes from the pipeline wiring (not from
-    running the stubbed functions), so it stays correct.
-    """
+    """Temporarily mock missing project imports for kedro-viz lite mode."""
     import sys
     from unittest.mock import patch
 
@@ -58,111 +47,69 @@ def lite_import_stubs(
         yield
 
 
-def is_inspection_available() -> bool:
-    """Return whether the installed Kedro provides the inspection API."""
-    try:
-        from kedro.inspection import get_project_snapshot  # noqa: F401
-    except ImportError:
-        return False
-    return True
+class _InspectionSession:
+    """Read a project's snapshot and config, bootstrapping and building the loader once.
 
-
-def load_snapshot(project_path: str | Path, env: str | None = None) -> ProjectSnapshot:
-    """Return a read-only inspection snapshot for the project at ``project_path``.
-
-    Args:
-        project_path: Path to the project root (the directory with ``pyproject.toml``).
-        env: Optional Kedro environment override; ``None`` uses the project default.
-
-    Returns:
-        The Kedro ``ProjectSnapshot``.
-
-    Raises:
-        RuntimeError: if the installed Kedro has no inspection API (``kedro<1.4.0``).
+    Create one session per request. The project is bootstrapped and the Kedro config loader is built
+    lazily on first use and then cached, so the catalog config and parameters reuse a single loader
+    instead of rebuilding it.
     """
-    try:
+
+    def __init__(
+        self,
+        project_path: str | Path,
+        env: str | None = None,
+        runtime_params: dict[str, Any] | None = None,
+    ) -> None:
+        self.project_path = Path(project_path)
+        self.env = env
+        self.runtime_params = runtime_params
+        self._config_loader: Any = None
+
+    @property
+    def config_loader(self) -> Any:
+        """The project's Kedro config loader, bootstrapped and built once, then cached."""
+        if self._config_loader is None:
+            from kedro.framework.project import settings
+            from kedro.framework.startup import bootstrap_project
+
+            bootstrap_project(self.project_path)
+            self._config_loader = settings.CONFIG_LOADER_CLASS(
+                conf_source=str(self.project_path / settings.CONF_SOURCE),
+                env=self.env,
+                runtime_params=self.runtime_params or {},
+                **settings.CONFIG_LOADER_ARGS,
+            )
+        return self._config_loader
+
+    def snapshot(self) -> ProjectSnapshot:
+        """Return the read-only inspection snapshot for the project."""
         from kedro.inspection import get_project_snapshot
-    except ImportError as exc:
-        raise RuntimeError(
-            "Kedro inspection API is unavailable; the inspection adapter path "
-            "requires kedro>=1.4.0."
-        ) from exc
 
-    return get_project_snapshot(project_path=Path(project_path), env=env)
+        return get_project_snapshot(project_path=self.project_path, env=self.env)
 
+    def catalog_config(self) -> dict[str, Any]:
+        """Return the raw catalog config (no DataCatalog is built), or {} if there is none.
 
-def _config_loader(
-    project_path: str | Path,
-    env: str | None,
-    runtime_params: dict[str, Any] | None,
-) -> Any:
-    """Build the project's config loader (no ``DataCatalog``, no session).
+        Used to read Viz-only metadata such as layers.
+        """
+        from kedro.config import MissingConfigException
 
-    ``runtime_params`` is passed through so ``${runtime_params:...}`` templating in the catalog or
-    parameters resolves the same way a live ``--params`` run would.
-    """
-    from kedro.framework.project import settings
-    from kedro.framework.startup import bootstrap_project
+        try:
+            return self.config_loader["catalog"]
+        except (KeyError, MissingConfigException):
+            return {}
 
-    project_path = Path(project_path)
-    bootstrap_project(project_path)
-    return settings.CONFIG_LOADER_CLASS(
-        conf_source=str(project_path / settings.CONF_SOURCE),
-        env=env,
-        runtime_params=runtime_params or {},
-        **settings.CONFIG_LOADER_ARGS,
-    )
+    def parameters(self) -> dict[str, Any]:
+        """Return the resolved parameter values, with ``--params`` overrides applied.
 
+        The snapshot carries only parameter names, so values are read from the config loader. We
+        pass ``runtime_params`` to that loader, so it already merges the ``--params`` overrides and
+        resolves ``${runtime_params:...}`` for us.
+        """
+        from kedro.config import MissingConfigException
 
-def load_catalog_config(
-    project_path: str | Path,
-    env: str | None = None,
-    runtime_params: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Return the project's raw catalog config (the inspection snapshot drops it).
-
-    Used to read Viz-only metadata such as layers (see :mod:`.layers`); no ``DataCatalog`` is
-    materialised. Returns an empty dict if there is no catalog config.
-    """
-    from kedro.config import MissingConfigException
-
-    try:
-        return _config_loader(project_path, env, runtime_params)["catalog"]
-    except (KeyError, MissingConfigException):
-        return {}
-
-
-def load_parameters(
-    project_path: str | Path,
-    env: str | None = None,
-    runtime_params: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Return the project's resolved parameter values, with ``--params`` overrides applied.
-
-    The inspection snapshot carries only parameter *names*, so values are read from the config
-    loader here (no live project load). ``runtime_params`` is both passed to the loader (for
-    ``${runtime_params:...}`` templating) and merged on top of the base values, mirroring how
-    ``KedroContext`` applies ``--params``.
-    """
-    from kedro.config import MissingConfigException
-
-    try:
-        params = _config_loader(project_path, env, runtime_params)["parameters"]
-    except (KeyError, MissingConfigException):
-        params = {}
-    if runtime_params:
-        params = _merge_runtime_params(params, runtime_params)
-    return params
-
-
-def _merge_runtime_params(
-    base: dict[str, Any], overrides: dict[str, Any]
-) -> dict[str, Any]:
-    """Deep-merge ``overrides`` (the parsed ``--params``) onto ``base`` parameter values."""
-    merged = dict(base)
-    for key, value in overrides.items():
-        if isinstance(value, dict) and isinstance(merged.get(key), dict):
-            merged[key] = _merge_runtime_params(merged[key], value)
-        else:
-            merged[key] = value
-    return merged
+        try:
+            return self.config_loader["parameters"]
+        except (KeyError, MissingConfigException):
+            return {}

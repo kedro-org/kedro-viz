@@ -1,12 +1,18 @@
-"""Capture the Kedro-Viz backend output as a golden baseline.
+"""Capture the current Kedro-Viz backend output as a generated test baseline.
 
-Runs the inspection adapter against ``demo-project`` and writes normalized JSON for ``/api/main``
-and every ``/api/pipelines/{id}``, plus a per task-node ID classification report.
+Runs the live-object backend against ``demo-project`` and writes normalized JSON for ``/api/main``
+and every ``/api/pipelines/{id}``, plus a per task-node ID report.
 
 Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
+
+The generated files are committed under ``baseline/`` and used by inspection adapter tests.
 """
+
+# TODO(#2265): the generated graph baselines (baseline/main.json + baseline/pipelines/*) and this
+# parity harness are temporary scaffolding to prove the adapter matches the live backend; remove
+# them before feat/backend_v2 is merged to main.
 
 from __future__ import annotations
 
@@ -20,8 +26,8 @@ OUT_DIR = Path(__file__).resolve().parent / "baseline"
 
 
 # --------------------------------------------------------------------------- #
-# Normalization — make the captured JSON order-stable so diffs are meaningful.
-# (``layers`` is intentionally left untouched: its order is significant.)
+# Normalization: make captured JSON order-stable so diffs are meaningful.
+# ``layers`` is intentionally left untouched because its order is significant.
 # --------------------------------------------------------------------------- #
 def _sort_in_place(container: dict, key: str, sort_key: Any = None) -> None:
     """Sort ``container[key]`` in place when it is a list."""
@@ -56,22 +62,23 @@ def normalize_graph(resp: dict) -> dict:
 
 
 def _write_json(path: Path, data: Any) -> None:
+    """Write ``data`` to ``path`` as indented, key-sorted JSON."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 # --------------------------------------------------------------------------- #
-# Node-ID classification (the Phase -1 gating evidence).
+# Node-ID report fields for each task node.
 # --------------------------------------------------------------------------- #
 def classify_node(node) -> dict:
-    """Classify one live KedroNode for ID reconstructability from the snapshot."""
+    """Build the node-ID report entry for a Kedro node."""
     from kedro_viz.integrations.kedro import node_ids
     from kedro_viz.integrations.kedro.hooks_utils import hash_node
 
-    # Post-6.3: both the adapter graph and the run-status hook use the shared scheme, so re-running
-    # this script should always show graph_id == runstatus_id (and `id_reconstructable_from_snapshot`
-    # is now `True` for every node — the `explicit_diff_func` reconstructability gap is closed).
-    graph_id = node_ids.task_node_id(node.name, list(node.inputs), list(node.outputs))
+    # Store both IDs so tests can detect whether graph and run-status IDs are aligned.
+    graph_id = node_ids._create_task_node_id(
+        node.name, list(node.inputs), list(node.outputs)
+    )
     runstatus_id = hash_node(node)
 
     if node._name is None:
@@ -94,7 +101,7 @@ def classify_node(node) -> dict:
         )
 
     return {
-        "snapshot_name": node.name,  # what NodeSnapshot.name would carry
+        "snapshot_name": node.name,
         "namespace": node.namespace,
         "inputs": list(node.inputs),
         "outputs": list(node.outputs),
@@ -111,16 +118,23 @@ def classify_node(node) -> dict:
 
 
 def build_node_id_report() -> dict:
-    """Walk all registered pipelines' live nodes and classify their IDs."""
+    """Return the node-ID report for all registered pipelines."""
     from kedro.framework.project import pipelines as kedro_pipelines
 
-    seen: dict[str, dict] = {}
+    seen: dict[tuple[str, tuple[str, ...], tuple[str, ...]], dict] = {}
     for pipe in kedro_pipelines.values():
         if pipe is None:
             continue
         for node in pipe.nodes:
             entry = classify_node(node)
-            seen.setdefault(entry["graph_id"], entry)
+            # Key by node identity, not graph ID, so an ID collision between two distinct nodes is
+            # preserved for test_task_node_ids_are_unique to catch (not silently deduped away).
+            identity = (
+                entry["snapshot_name"],
+                tuple(entry["inputs"]),
+                tuple(entry["outputs"]),
+            )
+            seen.setdefault(identity, entry)
 
     nodes = sorted(seen.values(), key=lambda e: e["snapshot_name"])
     counts: dict[str, int] = {}
@@ -151,6 +165,7 @@ def _graph_dict(provider, pipeline_id: str | None = None) -> dict:
 
 
 def main() -> None:
+    """Capture the baseline graph responses and node-ID report into ``baseline/``."""
     import os
 
     os.chdir(DEMO_PROJECT)

@@ -31,11 +31,6 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 BASELINE_DIR = Path(__file__).parent / "baseline"
 
-pytestmark = pytest.mark.skipif(
-    not snapshot_source.is_inspection_available(),
-    reason="kedro inspection API unavailable (requires kedro>=1.4.0)",
-)
-
 
 def _baseline(pipeline_id: str) -> dict:
     name = "main" if pipeline_id == "__default__" else pipeline_id
@@ -108,7 +103,7 @@ def test_params_reflected_in_main_and_node_metadata(
     )
     assert split_task["parameters"]["split_options"]["test_size"] == 0.99
 
-    pid = node_ids.dataset_node_id("params:split_options")
+    pid = node_ids._create_dataset_node_id("params:split_options")
     node = adapter_client_params.get(f"/api/nodes/{pid}").json()
     assert node["parameters"]["split_options"]["test_size"] == 0.99
 
