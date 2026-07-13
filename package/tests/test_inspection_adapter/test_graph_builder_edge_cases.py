@@ -65,12 +65,12 @@ def test_task_pipeline_membership_uses_task_identity_not_name() -> None:
     assert pipe_b_task.pipelines == ["pipe_b"]
 
 
-def test_transcoded_dataset_type_resolves_from_stripped_catalog_name() -> None:
+def test_transcoded_dataset_type_is_none() -> None:
     builder = _builder(
         _snapshot(
             [_pipeline("__default__", [_node("consume_ds", ["ds@pandas"], ["out"])])],
             {
-                "ds": SimpleNamespace(type="pandas.CSVDataset"),
+                "ds@pandas": SimpleNamespace(type="pandas.CSVDataset"),
                 "out": SimpleNamespace(type="kedro.io.MemoryDataset"),
             },
         )
@@ -82,7 +82,28 @@ def test_transcoded_dataset_type_resolves_from_stripped_catalog_name() -> None:
         if node.type == "data" and node.name == "ds"
     )
     assert isinstance(ds_node, DataNodeAPIResponse)
-    assert ds_node.dataset_type == "pandas.CSVDataset"
+    assert ds_node.dataset_type is None
+
+
+def test_transcoded_variants_create_unique_nodes_and_edges() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [_node("consume_ds", ["ds@pandas", "ds@spark"], ["out"])],
+                )
+            ],
+            {
+                "ds@pandas": SimpleNamespace(type="pandas.CSVDataset"),
+                "ds@spark": SimpleNamespace(type="spark.SparkDataset"),
+            },
+        )
+    )
+
+    graph = builder.build("__default__")
+    assert len(graph.nodes) == len({node.id for node in graph.nodes})
+    assert len(graph.edges) == len({(edge.source, edge.target) for edge in graph.edges})
 
 
 def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
@@ -113,6 +134,24 @@ def test_empty_catalog_type_string_maps_to_none() -> None:
     typeless_node = next(n for n in nodes if n.type == "data" and n.name == "typeless")
     assert isinstance(typeless_node, DataNodeAPIResponse)
     assert typeless_node.dataset_type is None
+
+
+def test_parameter_dataset_type_is_none() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__", [_node("consume", ["params:model_options"], ["out"])]
+                )
+            ]
+        )
+    )
+
+    parameter_node = next(
+        node for node in builder.build("__default__").nodes if node.type == "parameters"
+    )
+    assert isinstance(parameter_node, DataNodeAPIResponse)
+    assert parameter_node.dataset_type is None
 
 
 def test_default_pipeline_id_falls_back_to_first_when_no_default() -> None:

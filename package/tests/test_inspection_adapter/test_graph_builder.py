@@ -98,6 +98,21 @@ def test_task_display_names_match_baseline(builder: GraphBuilder) -> None:
     assert adapter_name_by_full == baseline_name_by_full
 
 
+def test_transcoded_dataset_type_matches_baseline(builder: GraphBuilder) -> None:
+    node_name = "ingestion.int_typed_shuttles"
+    adapter = builder.build("data_ingestion").model_dump()
+    baseline = _baseline("data_ingestion")
+    adapter_node = next(
+        n for n in adapter["nodes"] if n["type"] == "data" and n["name"] == node_name
+    )
+    baseline_node = next(
+        n for n in baseline["nodes"] if n["type"] == "data" and n["name"] == node_name
+    )
+
+    assert adapter_node["dataset_type"] is None
+    assert adapter_node["dataset_type"] == baseline_node["dataset_type"]
+
+
 @pytest.mark.parametrize(
     ("pipeline_id", "expected"),
     [(None, "__default__"), ("data_ingestion", "data_ingestion")],

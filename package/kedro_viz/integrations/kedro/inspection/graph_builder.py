@@ -1,13 +1,9 @@
-"""Build a Kedro-Viz ``GraphAPIResponse`` from an inspection snapshot (the main graph).
+"""Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Produces the main graph: task, data and parameter nodes; the edges between them; the tag and
-pipeline lists; and per-node registered-pipeline membership and tags, aggregated across all
-registered pipelines. Node IDs come from :mod:`kedro_viz.integrations.kedro.node_ids`.
-
-TODO: update below docstring when the snapshot source is fully implemented.
-This builder does not populate modular-pipeline structure, layers, or resolved task parameters;
-their response fields use empty or ``None`` placeholders. Dataset types are taken directly from
-the snapshot's raw catalog ``type`` string.
+Creates task, data and parameter nodes; edges; and global tags and pipeline membership.
+Modular-pipeline structure, layers and resolved task parameters use empty placeholders. Node IDs
+come from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw
+catalog type strings from the snapshot.
 """
 
 from __future__ import annotations
@@ -36,19 +32,19 @@ if TYPE_CHECKING:
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
-# Match get_dataset_type(MemoryDataset()) for datasets absent from the snapshot catalog.
-# The frontend uses this value to select the in-memory dataset icon.
+# Match the live backend's get_dataset_type(MemoryDataset()) output for datasets
+# absent from the snapshot catalog.
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Pipeline membership and tags are global (aggregated across every registered pipeline),
-    only the rendered nodes/edges are scoped to the selected pipeline.
+    Pipeline membership and tags are global (aggregated across every registered pipeline), while
+    only the rendered nodes and edges are scoped to the selected pipeline.
     """
 
-    def __init__(self, snapshot: ProjectSnapshot):
+    def __init__(self, snapshot: ProjectSnapshot) -> None:
         self._snapshot = snapshot
         self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
         self._task_pipelines: dict[str, set[str]] = defaultdict(set)
@@ -91,22 +87,28 @@ class GraphBuilder:
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-        datasets: dict[
-            str, str
-        ] = {}  # stripped name -> an original (maybe transcoded) name
+        # Map each stripped name to one original name for catalog lookup.
+        datasets: dict[str, str] = {}
+        transcoded_datasets: set[str] = set()
 
         for node in pipeline.nodes:
             task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
-                self._register_dataset(name, datasets)
+                self._register_dataset(name, datasets, transcoded_datasets)
             for name in node.outputs:
                 self._add_edge(edges, task_id, _create_dataset_node_id(name))
-                self._register_dataset(name, datasets)
+                self._register_dataset(name, datasets, transcoded_datasets)
 
         for stripped_name, original_name in datasets.items():
-            nodes.append(self._build_dataset_node(stripped_name, original_name))
+            nodes.append(
+                self._build_dataset_node(
+                    stripped_name,
+                    original_name,
+                    is_transcoded=stripped_name in transcoded_datasets,
+                )
+            )
 
         return GraphAPIResponse(
             nodes=nodes,
@@ -136,18 +138,21 @@ class GraphBuilder:
         self,
         stripped_name: str,
         original_name: str,
+        *,
+        is_transcoded: bool,
     ) -> DataNodeAPIResponse:
         is_parameter = is_dataset_param(stripped_name)
-        dataset = self._snapshot.datasets.get(
-            original_name
-        ) or self._snapshot.datasets.get(stripped_name)
-        if is_parameter:
+        if is_parameter or is_transcoded:
             dataset_type = None
-        elif dataset is None:
-            # No catalog entry means an unregistered (in-memory) dataset.
-            dataset_type = MEMORY_DATASET_TYPE
         else:
-            dataset_type = dataset.type or None
+            dataset = self._snapshot.datasets.get(
+                original_name
+            ) or self._snapshot.datasets.get(stripped_name)
+            if dataset is None:
+                # No catalog entry means an unregistered (in-memory) dataset.
+                dataset_type = MEMORY_DATASET_TYPE
+            else:
+                dataset_type = dataset.type or None
         return DataNodeAPIResponse(
             id=_create_dataset_node_id(stripped_name),
             name=stripped_name,
@@ -173,9 +178,14 @@ class GraphBuilder:
         return [NamedEntityAPIResponse(id=tag, name=tag) for tag in sorted(tags)]
 
     @staticmethod
-    def _register_dataset(name: str, datasets: dict[str, str]) -> None:
-        """Record the dataset for rendering, keyed by stripped name (tags are indexed globally)."""
-        datasets.setdefault(_strip_transcoding(name), name)
+    def _register_dataset(
+        name: str, datasets: dict[str, str], transcoded_datasets: set[str]
+    ) -> None:
+        """Record a dataset for rendering and identify transcoded references."""
+        stripped_name = _strip_transcoding(name)
+        datasets.setdefault(stripped_name, name)
+        if stripped_name != name:
+            transcoded_datasets.add(stripped_name)
 
     @staticmethod
     def _add_edge(
