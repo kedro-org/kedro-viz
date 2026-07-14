@@ -1,9 +1,8 @@
 """Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Creates task, data and parameter nodes; edges; and global tags and pipeline membership.
-Modular-pipeline structure, layers and resolved task parameters use empty placeholders. Node IDs
-come from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw
-catalog type strings from the snapshot.
+Creates task, data, parameter nodes, edges, global tags and pipeline dictionaries. Node IDs come
+from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw catalog
+type strings from the snapshot.
 """
 
 from __future__ import annotations
@@ -28,7 +27,11 @@ from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 if TYPE_CHECKING:
-    from kedro.inspection.models import NodeSnapshot, ProjectSnapshot
+    from kedro.inspection.models import (
+        NodeSnapshot,
+        PipelineSnapshot,
+        ProjectSnapshot,
+    )
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
@@ -37,34 +40,59 @@ _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
+class _SnapshotGraphIndex:
+    """Aggregate tags and pipeline IDs by task and dataset identity."""
+
+    def __init__(self, pipelines: dict[str, PipelineSnapshot]) -> None:
+        self._pipelines_by_task_id: dict[str, set[str]] = defaultdict(set)
+        self._pipelines_by_dataset_name: dict[str, set[str]] = defaultdict(set)
+        self._tags_by_task_id: dict[str, set[str]] = defaultdict(set)
+        self._tags_by_dataset_name: dict[str, set[str]] = defaultdict(set)
+        self._all_tags: set[str] = set()
+        for pipeline_id, pipeline in pipelines.items():
+            for node in pipeline.nodes:
+                task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
+                self._pipelines_by_task_id[task_id].add(pipeline_id)
+                self._tags_by_task_id[task_id].update(node.tags)
+                self._all_tags.update(node.tags)
+                for io in [*node.inputs, *node.outputs]:
+                    stripped = _strip_transcoding(io)
+                    self._pipelines_by_dataset_name[stripped].add(pipeline_id)
+                    self._tags_by_dataset_name[stripped].update(node.tags)
+
+    def task_pipelines(self, task_id: str) -> list[str]:
+        """Sorted IDs of the registered pipelines the task node appears in."""
+        return sorted(self._pipelines_by_task_id.get(task_id, set()))
+
+    def task_tags(self, task_id: str) -> list[str]:
+        """Sorted tags aggregated across every pipeline the task node appears in."""
+        return sorted(self._tags_by_task_id.get(task_id, set()))
+
+    def dataset_pipelines(self, dataset_name: str) -> list[str]:
+        """Sorted IDs of the registered pipelines the dataset appears in."""
+        return sorted(self._pipelines_by_dataset_name.get(dataset_name, set()))
+
+    def dataset_tags(self, dataset_name: str) -> list[str]:
+        """Sorted tags aggregated across every pipeline the dataset appears in."""
+        return sorted(self._tags_by_dataset_name.get(dataset_name, set()))
+
+    def tags(self) -> list[str]:
+        """Sorted list of every tag used across the project."""
+        return sorted(self._all_tags)
+
+
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Pipeline membership and tags are global (aggregated across every registered pipeline), while
-    only the rendered nodes and edges are scoped to the selected pipeline.
+    Tags and the pipelines each node belongs to are global (aggregated across every registered
+    pipeline by :class:`_SnapshotGraphIndex`), while only the rendered nodes and edges are scoped
+    to the selected pipeline.
     """
 
     def __init__(self, snapshot: ProjectSnapshot) -> None:
         self._snapshot = snapshot
         self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
-        self._task_pipelines: dict[str, set[str]] = defaultdict(set)
-        self._dataset_pipelines: dict[str, set[str]] = defaultdict(set)
-        self._task_tags: dict[str, set[str]] = defaultdict(set)
-        self._dataset_tags: dict[str, set[str]] = defaultdict(set)
-        self._index_nodes()
-        self._tags = self._build_tags()
-
-    def _index_nodes(self) -> None:
-        """Aggregate task and dataset membership and tags globally, matching the live backend."""
-        for pipeline_id, pipeline in self._pipelines.items():
-            for node in pipeline.nodes:
-                task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
-                self._task_pipelines[task_id].add(pipeline_id)
-                self._task_tags[task_id].update(node.tags)
-                for io in [*node.inputs, *node.outputs]:
-                    stripped = _strip_transcoding(io)
-                    self._dataset_pipelines[stripped].add(pipeline_id)
-                    self._dataset_tags[stripped].update(node.tags)
+        self._index = _SnapshotGraphIndex(self._pipelines)
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.
@@ -140,7 +168,9 @@ class GraphBuilder:
             nodes=nodes,
             edges=list(edges.values()),
             layers=[],
-            tags=self._tags,
+            tags=[
+                NamedEntityAPIResponse(id=tag, name=tag) for tag in self._index.tags()
+            ],
             pipelines=[
                 NamedEntityAPIResponse(id=pid, name=pid) for pid in self._pipelines
             ],
@@ -153,8 +183,8 @@ class GraphBuilder:
             id=task_id,
             name=_display_name(node.name, node.namespace),
             full_name=node.name,
-            tags=sorted(self._task_tags[task_id]),
-            pipelines=sorted(self._task_pipelines[task_id]),
+            tags=self._index.task_tags(task_id),
+            pipelines=self._index.task_pipelines(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=None,
             parameters={},
@@ -182,8 +212,8 @@ class GraphBuilder:
         return DataNodeAPIResponse(
             id=_create_dataset_node_id(stripped_name),
             name=stripped_name,
-            tags=sorted(self._dataset_tags[stripped_name]),
-            pipelines=sorted(self._dataset_pipelines[stripped_name]),
+            tags=self._index.dataset_tags(stripped_name),
+            pipelines=self._index.dataset_pipelines(stripped_name),
             type=(
                 GraphNodeType.PARAMETERS.value
                 if is_parameter
@@ -193,15 +223,6 @@ class GraphBuilder:
             layer=None,
             dataset_type=dataset_type,
         )
-
-    def _build_tags(self) -> list[NamedEntityAPIResponse]:
-        tags = {
-            tag
-            for pipeline in self._pipelines.values()
-            for node in pipeline.nodes
-            for tag in node.tags
-        }
-        return [NamedEntityAPIResponse(id=tag, name=tag) for tag in sorted(tags)]
 
     @staticmethod
     def _register_dataset(
