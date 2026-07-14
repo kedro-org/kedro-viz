@@ -67,13 +67,25 @@ class GraphBuilder:
                     self._dataset_tags[stripped].update(node.tags)
 
     def default_pipeline_id(self) -> str:
-        """Return ``__default__`` if present, else the first registered pipeline."""
+        """Return the default pipeline ID to render.
+
+        Returns:
+            ``__default__`` when it is registered, otherwise the first registered pipeline ID
+            (declaration order).
+        """
         if DEFAULT_REGISTERED_PIPELINE_ID in self._pipelines:
             return DEFAULT_REGISTERED_PIPELINE_ID
         return next(iter(self._pipelines))
 
     def has_pipeline(self, pipeline_id: str) -> bool:
-        """Whether ``pipeline_id`` is a registered pipeline in this snapshot view."""
+        """Whether a pipeline is registered in this snapshot view.
+
+        Args:
+            pipeline_id: The pipeline ID to check.
+
+        Returns:
+            ``True`` if ``pipeline_id`` is a registered pipeline in this snapshot view.
+        """
         return pipeline_id in self._pipelines
 
     def pipeline_ids(self) -> list[str]:
@@ -81,8 +93,22 @@ class GraphBuilder:
         return list(self._pipelines)
 
     def build(self, pipeline_id: str | None = None) -> GraphAPIResponse:
-        """Build the graph response for ``pipeline_id`` (default pipeline when ``None``)."""
+        """Build the main graph response for a registered pipeline.
+
+        Args:
+            pipeline_id: The registered pipeline to render. When ``None``, the default
+                pipeline (see :meth:`default_pipeline_id`) is used.
+
+        Returns:
+            The ``GraphAPIResponse`` for the selected pipeline: its task, data and parameter
+            nodes and edges, plus the globally-aggregated tag and pipeline lists.
+
+        Raises:
+            ValueError: If ``pipeline_id`` is not a registered pipeline in this snapshot view.
+        """
         selected = pipeline_id or self.default_pipeline_id()
+        if not self.has_pipeline(selected):
+            raise ValueError(f"Invalid pipeline ID: {selected!r}")
         pipeline = self._pipelines[selected]
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []

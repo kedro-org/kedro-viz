@@ -3,8 +3,13 @@
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
 
+import pytest
+
 from kedro_viz.api.rest.responses.pipelines import DataNodeAPIResponse
-from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.graph_builder import (
+    GraphBuilder,
+    _display_name,
+)
 
 if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
@@ -232,3 +237,27 @@ def test_source_and_sink_nodes_have_expected_edges() -> None:
         (label_by_id[e["source"]], label_by_id[e["target"]]) for e in graph["edges"]
     }
     assert edges == {("make", "produced"), ("produced", "consume")}
+
+
+def test_build_rejects_unknown_pipeline_id() -> None:
+    """``build()`` raises a clear ``ValueError`` (not an opaque ``KeyError``) for a bad id."""
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("a", ["x"], ["y"])])])
+    )
+    with pytest.raises(ValueError, match="Invalid pipeline ID"):
+        builder.build("nonexistent")
+
+
+@pytest.mark.parametrize(
+    ("name", "namespace", "expected"),
+    [
+        ("clean_data__a1b2c3d4", None, "clean_data"),  # auto-named: strip __<8 hex>
+        ("my_node", None, "my_node"),  # explicit name, no namespace
+        ("ns.my_node", "ns", "my_node"),  # explicit name, namespace stripped
+        ("ns.clean_data__a1b2c3d4", "ns", "clean_data"),  # namespace strip + auto-name
+        ("report__notahex", None, "report__notahex"),  # non-hex suffix is kept as-is
+    ],
+)
+def test_display_name(name: str, namespace: str | None, expected: str) -> None:
+    """Display name strips the namespace prefix and any auto-name ``__<hash>`` suffix."""
+    assert _display_name(name, namespace) == expected
