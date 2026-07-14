@@ -2,8 +2,10 @@
 
 Lite mode is "no live project loaded": ``data_access_manager`` stays empty, the bridge is
 empty, and ``/api/nodes/{id}`` is served from the inspection snapshot alone. The payload shape
-matches the live ``*APIResponse`` schemas but live-only fields (source code, previews, stats) are
-absent. Parameter values are present — they come from the config loader, not the live project.
+matches the live ``*APIResponse`` schemas but live-only fields (previews, stats) are absent.
+Parameter values are present — they come from the config loader, not the live project. With
+Approach 1 (``NodeSnapshot.source``), task source code + filepath are also present, read from the
+snapshot's file location rather than a live function object.
 
 Two layers:
 
@@ -16,7 +18,7 @@ Two layers:
 """
 
 from pathlib import Path
-from typing import Iterator
+from typing import Any, Iterator
 
 import pytest
 from fastapi import FastAPI
@@ -34,6 +36,25 @@ from kedro_viz.integrations.kedro.inspection import snapshot_source
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
+
+from kedro.inspection.models import NodeSnapshot  # noqa: E402
+
+# Approach 1 (feat/add-fun-src-code) adds NodeSnapshot.source; source-code assertions only run
+# when the installed Kedro carries it, so this suite stays green on plain Kedro too.
+_HAS_SNAPSHOT_SOURCE = "source" in getattr(NodeSnapshot, "__dataclass_fields__", {})
+
+
+def _expected_source(node: Any) -> tuple[str, str]:
+    """(code, filepath) that Approach 1 should serve for a snapshot task node.
+
+    ``node`` is typed ``Any`` so the ``.source`` access type-checks on Kedro versions without the
+    field (the callers guard on ``_HAS_SNAPSHOT_SOURCE`` at runtime).
+    """
+    source = node.source
+    path = Path(source.filepath)
+    path = path if path.is_absolute() else DEMO_PROJECT / path
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return "\n".join(lines[source.line_start - 1 : source.line_end]), source.filepath
 
 
 @pytest.fixture(scope="module")
@@ -54,7 +75,7 @@ def test_bridge_is_empty_in_lite_mode(
 def test_snapshot_lookup_populates_task_metadata(
     lite_provider: InspectionAdapterProvider,
 ) -> None:
-    """Every snapshot task carries inputs + outputs in its lite payload."""
+    """Every snapshot task carries inputs + outputs, and (Approach 1) source, in its lite payload."""
     snapshot = lite_provider._snapshot
     sample_node = snapshot.pipelines[0].nodes[0]
     task_id = node_ids._create_task_node_id(
@@ -63,9 +84,15 @@ def test_snapshot_lookup_populates_task_metadata(
     payload = lite_provider._snapshot_lookup[task_id]
     assert payload["inputs"] == list(sample_node.inputs)
     assert payload["outputs"] == list(sample_node.outputs)
-    # Live-only keys must not leak into the lite payload.
-    assert "code" not in payload
+    # Parameter values are a separate node, never on the task payload.
     assert "parameters" not in payload
+    if _HAS_SNAPSHOT_SOURCE:
+        # Approach 1: lite mode now serves the node's code + filepath from the snapshot location.
+        code, filepath = _expected_source(sample_node)
+        assert payload["code"] == code
+        assert payload["filepath"] == filepath
+    else:
+        assert "code" not in payload
 
 
 def test_snapshot_lookup_populates_data_metadata(
@@ -150,7 +177,14 @@ def test_lite_metadata_response_carries_no_live_only_fields(
     # Lite-mode responses are always JSONResponse — narrow for mypy + read the raw body.
     assert isinstance(response, JSONResponse)
     body = json.loads(response.body)
-    assert set(body) == {"inputs", "outputs"}
+    expected = {"inputs", "outputs"}
+    if _HAS_SNAPSHOT_SOURCE:
+        # Source code + filepath now come from the snapshot location (Approach 1).
+        expected |= {"code", "filepath"}
+    assert set(body) == expected
+    # Previews and stats remain live-only and must never appear in lite mode.
+    assert "preview" not in body
+    assert "stats" not in body
 
 
 # -- Layer 2: end-to-end through the router --------------------------------------------- #

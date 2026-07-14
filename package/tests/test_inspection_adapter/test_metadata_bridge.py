@@ -12,7 +12,7 @@ Two layers:
 """
 
 from pathlib import Path
-from typing import Iterator
+from typing import Any, Iterator
 
 import pytest
 from fastapi import FastAPI
@@ -37,6 +37,25 @@ from kedro_viz.models.flowchart.nodes import (
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
+
+from kedro.inspection.models import NodeSnapshot  # noqa: E402
+
+# Approach 1 (feat/add-fun-src-code) adds NodeSnapshot.source; the source-code assertions only run
+# when the installed Kedro carries it, so this suite stays green on plain Kedro too.
+_HAS_SNAPSHOT_SOURCE = "source" in getattr(NodeSnapshot, "__dataclass_fields__", {})
+
+
+def _expected_source(node: Any) -> tuple[str, str]:
+    """(code, filepath) that Approach 1 should serve for a snapshot task node.
+
+    ``node`` is typed ``Any`` so the ``.source`` access type-checks on Kedro versions without the
+    field (the caller guards on ``_HAS_SNAPSHOT_SOURCE``).
+    """
+    source = node.source
+    path = Path(source.filepath)
+    path = path if path.is_absolute() else DEMO_PROJECT / path
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return "\n".join(lines[source.line_start - 1 : source.line_end]), source.filepath
 
 
 # -- Layer 1: hermetic bridge construction ------------------------------------------------- #
@@ -233,6 +252,32 @@ def test_task_node_metadata_resolves_for_adapter_id(adapter_client: TestClient) 
     # Live task metadata exposes at least the input/output names + code path.
     assert body.get("inputs") is not None
     assert body.get("outputs") is not None
+    if _HAS_SNAPSHOT_SOURCE:
+        # Approach 1: full-mode code/filepath now come from the snapshot location too.
+        assert body.get("code")
+        assert body.get("filepath")
+
+
+@pytest.mark.skipif(
+    not _HAS_SNAPSHOT_SOURCE,
+    reason="requires Kedro with NodeSnapshot.source (Approach 1, feat/add-fun-src-code)",
+)
+def test_full_mode_task_code_comes_from_snapshot_source(
+    demo_provider: InspectionAdapterProvider,
+) -> None:
+    """In full mode, the task's code + filepath are read from the snapshot location, not the live
+    function object."""
+    from kedro_viz.models.flowchart.node_metadata import TaskNodeMetadata
+
+    node = demo_provider._snapshot.pipelines[0].nodes[0]
+    task_id = node_ids._create_task_node_id(
+        node.name, list(node.inputs), list(node.outputs)
+    )
+    response = demo_provider.get_node_metadata_response(task_id)
+    assert isinstance(response, TaskNodeMetadata)
+    code, filepath = _expected_source(node)
+    assert response.code == code
+    assert response.filepath == filepath
 
 
 def test_data_node_metadata_resolves_for_adapter_id(adapter_client: TestClient) -> None:

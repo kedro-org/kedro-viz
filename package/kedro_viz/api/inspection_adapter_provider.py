@@ -67,6 +67,32 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _resolve_node_source(
+    project_path: Path, source: Any
+) -> tuple[Optional[str], Optional[str]]:
+    """Read a task's source (code, filepath) from a ``NodeSnapshot.source`` location.
+
+    Approach 1: Kedro puts the function's ``filepath`` (project-relative) plus ``line_start`` /
+    ``line_end`` on the snapshot, so Viz slices the file instead of holding a live function object.
+    Returns ``(None, None)`` when the snapshot carries no usable location (e.g. plain Kedro without
+    the field, or an external/dynamic function), so callers can fall back to the live object.
+    """
+    if source is None:
+        return None, None
+    filepath = getattr(source, "filepath", None)
+    line_start = getattr(source, "line_start", None)
+    line_end = getattr(source, "line_end", None)
+    if not filepath or not line_start:
+        return None, None
+    path = Path(filepath)
+    abs_path = path if path.is_absolute() else project_path / path
+    try:
+        lines = abs_path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None, filepath
+    return "\n".join(lines[line_start - 1 : line_end]), filepath
+
+
 class InspectionAdapterProvider:
     """Serve graph + node metadata from a one-shot snapshot.
 
@@ -105,7 +131,22 @@ class InspectionAdapterProvider:
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
         layer_mapping = extract_layers(catalog_config)
+        self._project_path = Path(project_path)
         self._snapshot = snapshot
+        # Approach 1: task source (code + filepath) resolved from each node's snapshot location,
+        # keyed by task-node id. Empty on Kedro without the source field (falls back to live).
+        self._task_source: dict[str, tuple[Optional[str], Optional[str]]] = {}
+        for _pipeline in snapshot.pipelines:
+            for _node in _pipeline.nodes:
+                _tid = _create_task_node_id(
+                    _node.name, list(_node.inputs), list(_node.outputs)
+                )
+                self._task_source.setdefault(
+                    _tid,
+                    _resolve_node_source(
+                        self._project_path, getattr(_node, "source", None)
+                    ),
+                )
         self._builder = GraphBuilder(
             snapshot, layer_mapping, parameters=self._parameters
         )
@@ -158,13 +199,14 @@ class InspectionAdapterProvider:
             return JSONResponse(content=lite)
         viz_node = self._metadata_bridge.get(node_id)
         if viz_node is not None:
-            return self._live_metadata_response(viz_node)
+            return self._live_metadata_response(node_id, viz_node)
         if lite is not None:
             return JSONResponse(content=lite)
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
-    @staticmethod
     def _live_metadata_response(
+        self,
+        node_id: str,
         viz_node: GraphNode,
     ) -> Union[NodeMetadataAPIResponse, JSONResponse]:
         if not viz_node.has_metadata():
@@ -172,7 +214,14 @@ class InspectionAdapterProvider:
         # Return the same domain models as the live response builder; FastAPI serialises them at
         # the route. ``cast`` is for mypy only — no runtime effect.
         if isinstance(viz_node, TaskNode):
-            return cast("NodeMetadataAPIResponse", TaskNodeMetadata(task_node=viz_node))
+            meta = TaskNodeMetadata(task_node=viz_node)
+            # Approach 1: prefer the snapshot's source location over the live function object.
+            # Keyed by the new-scheme ``node_id`` (the bridge key), not ``viz_node.id`` (live id).
+            code, filepath = self._task_source.get(node_id, (None, None))
+            if code is not None:
+                meta.code = code
+                meta.filepath = filepath
+            return cast("NodeMetadataAPIResponse", meta)
         if isinstance(viz_node, DataNode):
             return cast("NodeMetadataAPIResponse", DataNodeMetadata(data_node=viz_node))
         if isinstance(viz_node, TranscodedDataNode):
@@ -296,10 +345,17 @@ class InspectionAdapterProvider:
                 task_id = _create_task_node_id(
                     node.name, list(node.inputs), list(node.outputs)
                 )
-                lookup.setdefault(
-                    task_id,
-                    {"inputs": list(node.inputs), "outputs": list(node.outputs)},
-                )
+                task_payload: dict[str, Any] = {
+                    "inputs": list(node.inputs),
+                    "outputs": list(node.outputs),
+                }
+                # Approach 1: lite mode can now serve source too, from the snapshot location.
+                code, filepath = self._task_source.get(task_id, (None, None))
+                if code is not None:
+                    task_payload["code"] = code
+                    if filepath is not None:
+                        task_payload["filepath"] = filepath
+                lookup.setdefault(task_id, task_payload)
                 for ref in [*node.inputs, *node.outputs]:
                     self._record_io_lite_metadata(lookup, ref)
         return lookup
