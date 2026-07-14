@@ -105,7 +105,9 @@ def test_bridge_maps_task_node_to_new_id() -> None:
 
     provider = _provider_with_repo(repo)
 
-    expected_id = node_ids._create_task_node_id("my_node", ["a", "b"], ["c"])
+    # The bridge keys a live TaskNode by its live-node id; compute the expectation the same way so
+    # this holds under both id-schemes (reconstruction on branch Kedro, new scheme on released).
+    expected_id = node_ids._task_node_id_from_kedro_node(task.kedro_obj)
     assert provider._metadata_bridge[expected_id] is task
 
 
@@ -270,9 +272,7 @@ def test_full_mode_task_code_comes_from_snapshot_source(
     from kedro_viz.models.flowchart.node_metadata import TaskNodeMetadata
 
     node = demo_provider._snapshot.pipelines[0].nodes[0]
-    task_id = node_ids._create_task_node_id(
-        node.name, list(node.inputs), list(node.outputs)
-    )
+    task_id = node_ids._task_node_id_from_snapshot(node)
     response = demo_provider.get_node_metadata_response(task_id)
     assert isinstance(response, TaskNodeMetadata)
     code, filepath = _expected_source(node)

@@ -42,7 +42,8 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _task_node_id_from_kedro_node,
+    _task_node_id_from_snapshot,
 )
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -138,9 +139,7 @@ class InspectionAdapterProvider:
         self._task_source: dict[str, tuple[Optional[str], Optional[str]]] = {}
         for _pipeline in snapshot.pipelines:
             for _node in _pipeline.nodes:
-                _tid = _create_task_node_id(
-                    _node.name, list(_node.inputs), list(_node.outputs)
-                )
+                _tid = _task_node_id_from_snapshot(_node)
                 self._task_source.setdefault(
                     _tid,
                     _resolve_node_source(
@@ -325,7 +324,7 @@ class InspectionAdapterProvider:
                 return None
             # kedro_obj is always a KedroNode here (only DataNode holds a dataset).
             kn = cast(KedroNode, viz_node.kedro_obj)
-            return _create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
+            return _task_node_id_from_kedro_node(kn)
         if isinstance(viz_node, (DataNode, TranscodedDataNode, ParametersNode)):
             # dataset_node_id strips transcoding, so a variant maps to the same id from either side.
             return _create_dataset_node_id(viz_node.name)
@@ -342,9 +341,7 @@ class InspectionAdapterProvider:
         lookup: dict[str, dict[str, Any]] = {}
         for pipeline in self._snapshot.pipelines:
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(
-                    node.name, list(node.inputs), list(node.outputs)
-                )
+                task_id = _task_node_id_from_snapshot(node)
                 task_payload: dict[str, Any] = {
                     "inputs": list(node.inputs),
                     "outputs": list(node.outputs),

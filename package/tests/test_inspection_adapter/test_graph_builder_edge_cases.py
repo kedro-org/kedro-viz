@@ -29,13 +29,17 @@ def _node(
     *,
     namespace: str | None = None,
     tags: set[str] | None = None,
+    func_name: str | None = None,
 ) -> SimpleNamespace:
+    # ``func_name`` duck-types the branch-Kedro NodeSnapshot field the id-scheme reconstructs from;
+    # deriving it from ``name`` keeps ids deterministic per node identity (as the real field is).
     return SimpleNamespace(
         name=name,
         inputs=inputs,
         outputs=outputs,
         namespace=namespace,
         tags=tags or set(),
+        func_name=func_name if func_name is not None else name,
     )
 
 

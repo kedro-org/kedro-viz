@@ -39,8 +39,15 @@ def test_hash_node_for_kedro_node_matches_task_node_id() -> None:
     node = kedro_node(
         func=lambda a, b: a, inputs=["a", "b"], outputs="c", name="my_node"
     )
+    # The graph side reconstructs the live id from snapshot-shaped fields; the flag makes this the
+    # new scheme on released Kedro and the live-id reconstruction on branch Kedro. Either way it
+    # must equal the run-status hook id for the same node.
     assert hash_node(node) == node_ids._create_task_node_id(
-        node.name, list(node.inputs), list(node.outputs)
+        node.name,
+        node.inputs,
+        node.outputs,
+        func_name=node._func_name,
+        namespace=node.namespace,
     )
 
 

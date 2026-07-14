@@ -37,7 +37,7 @@ from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _task_node_id_from_snapshot,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.services.layers import sort_layers
@@ -112,7 +112,7 @@ class GraphBuilder:
         """Record global pipeline membership and tags for every task and dataset."""
         for pipeline_id, pipeline in self._pipelines.items():
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
+                task_id = _task_node_id_from_snapshot(node)
                 self._task_pipelines[task_id].add(pipeline_id)
                 self._task_tags[task_id].update(node.tags)
                 for io in [*node.inputs, *node.outputs]:
@@ -146,7 +146,7 @@ class GraphBuilder:
         ] = {}  # stripped name -> an original (maybe transcoded) name
 
         for node in pipeline.nodes:
-            task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
+            task_id = _task_node_id_from_snapshot(node)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)

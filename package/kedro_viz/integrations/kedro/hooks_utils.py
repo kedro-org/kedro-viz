@@ -12,7 +12,7 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _task_node_id_from_kedro_node,
 )
 from kedro_viz.launchers.utils import _find_kedro_project
 
@@ -29,7 +29,7 @@ def hash_node(node: Any) -> str:
     run-status events emitted here use exactly the same IDs as the inspection-adapter graph.
     """
     if isinstance(node, KedroNode):
-        return _create_task_node_id(node.name, list(node.inputs), list(node.outputs))
+        return _task_node_id_from_kedro_node(node)
     return _create_dataset_node_id(node)
 
 

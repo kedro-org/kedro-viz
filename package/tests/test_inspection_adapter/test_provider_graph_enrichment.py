@@ -67,7 +67,7 @@ def test_full_mode_enriches_node_extras() -> None:
         outputs="result",
         name="my_node",
     )
-    task_id = node_ids._create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
+    task_id = node_ids._task_node_id_from_kedro_node(kn)
     data_id = node_ids._create_dataset_node_id("companies")
     live_task = TaskNode.create_task_node(
         node=kn,
