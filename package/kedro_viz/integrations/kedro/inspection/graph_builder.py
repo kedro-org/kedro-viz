@@ -60,23 +60,23 @@ class _SnapshotGraphIndex:
                     self._pipelines_by_dataset_name[stripped].add(pipeline_id)
                     self._tags_by_dataset_name[stripped].update(node.tags)
 
-    def task_pipelines(self, task_id: str) -> list[str]:
+    def get_pipelines_for_task_id(self, task_id: str) -> list[str]:
         """Sorted IDs of the registered pipelines the task node appears in."""
         return sorted(self._pipelines_by_task_id.get(task_id, set()))
 
-    def task_tags(self, task_id: str) -> list[str]:
+    def get_tags_for_task_id(self, task_id: str) -> list[str]:
         """Sorted tags aggregated across every pipeline the task node appears in."""
         return sorted(self._tags_by_task_id.get(task_id, set()))
 
-    def dataset_pipelines(self, dataset_name: str) -> list[str]:
+    def get_pipelines_for_dataset_name(self, dataset_name: str) -> list[str]:
         """Sorted IDs of the registered pipelines the dataset appears in."""
         return sorted(self._pipelines_by_dataset_name.get(dataset_name, set()))
 
-    def dataset_tags(self, dataset_name: str) -> list[str]:
+    def get_tags_for_dataset_name(self, dataset_name: str) -> list[str]:
         """Sorted tags aggregated across every pipeline the dataset appears in."""
         return sorted(self._tags_by_dataset_name.get(dataset_name, set()))
 
-    def tags(self) -> list[str]:
+    def get_all_tags(self) -> list[str]:
         """Sorted list of every tag used across the project."""
         return sorted(self._all_tags)
 
@@ -84,9 +84,8 @@ class _SnapshotGraphIndex:
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Tags and the pipelines each node belongs to are global (aggregated across every registered
-    pipeline by :class:`_SnapshotGraphIndex`), while only the rendered nodes and edges are scoped
-    to the selected pipeline.
+    Tags and pipelines associated with each node are aggregated across all registered pipelines,
+    while rendered nodes and edges are scoped to the selected pipeline.
     """
 
     def __init__(self, snapshot: ProjectSnapshot) -> None:
@@ -169,7 +168,8 @@ class GraphBuilder:
             edges=list(edges.values()),
             layers=[],
             tags=[
-                NamedEntityAPIResponse(id=tag, name=tag) for tag in self._index.tags()
+                NamedEntityAPIResponse(id=tag, name=tag)
+                for tag in self._index.get_all_tags()
             ],
             pipelines=[
                 NamedEntityAPIResponse(id=pid, name=pid) for pid in self._pipelines
@@ -183,8 +183,8 @@ class GraphBuilder:
             id=task_id,
             name=_display_name(node.name, node.namespace),
             full_name=node.name,
-            tags=self._index.task_tags(task_id),
-            pipelines=self._index.task_pipelines(task_id),
+            tags=self._index.get_tags_for_task_id(task_id),
+            pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=None,
             parameters={},
@@ -212,8 +212,8 @@ class GraphBuilder:
         return DataNodeAPIResponse(
             id=_create_dataset_node_id(stripped_name),
             name=stripped_name,
-            tags=self._index.dataset_tags(stripped_name),
-            pipelines=self._index.dataset_pipelines(stripped_name),
+            tags=self._index.get_tags_for_dataset_name(stripped_name),
+            pipelines=self._index.get_pipelines_for_dataset_name(stripped_name),
             type=(
                 GraphNodeType.PARAMETERS.value
                 if is_parameter
