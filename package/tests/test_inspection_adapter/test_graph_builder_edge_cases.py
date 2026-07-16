@@ -47,7 +47,7 @@ def _snapshot(
     return SimpleNamespace(pipelines=pipelines, datasets=datasets or {})
 
 
-def test_task_pipeline_membership_uses_task_identity_not_name() -> None:
+def test_task_pipelines_use_task_identity_not_name() -> None:
     pipe_a_node = _node("shared.task", ["a"], ["b"])
     pipe_b_node = _node("shared.task", ["x"], ["y"])
     builder = _builder(
@@ -90,7 +90,7 @@ def test_transcoded_dataset_type_is_none() -> None:
     assert ds_node.dataset_type is None
 
 
-def test_transcoded_variants_create_unique_nodes_and_edges() -> None:
+def test_transcoded_variants_share_one_dataset_node() -> None:
     builder = _builder(
         _snapshot(
             [
@@ -107,8 +107,12 @@ def test_transcoded_variants_create_unique_nodes_and_edges() -> None:
     )
 
     graph = builder.build("__default__")
-    assert len(graph.nodes) == len({node.id for node in graph.nodes})
-    assert len(graph.edges) == len({(edge.source, edge.target) for edge in graph.edges})
+    dataset_nodes = [
+        node for node in graph.nodes if node.type == "data" and node.name == "ds"
+    ]
+    assert len(dataset_nodes) == 1
+    dataset_id = dataset_nodes[0].id
+    assert sum(edge.source == dataset_id for edge in graph.edges) == 1
 
 
 def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
@@ -171,7 +175,13 @@ def test_default_pipeline_id_falls_back_to_first_when_no_default() -> None:
     assert builder.default_pipeline_id() == "first_pipe"
 
 
-def test_has_pipeline_reports_registered_membership() -> None:
+def test_default_pipeline_id_rejects_empty_snapshot() -> None:
+    builder = _builder(_snapshot([]))
+    with pytest.raises(ValueError, match="No registered pipelines"):
+        builder.default_pipeline_id()
+
+
+def test_has_pipeline_reports_registered_pipelines() -> None:
     builder = _builder(
         _snapshot([_pipeline("__default__", [_node("a", ["x"], ["y"])])])
     )

@@ -90,8 +90,10 @@ class GraphBuilder:
 
     def __init__(self, snapshot: ProjectSnapshot) -> None:
         self._snapshot = snapshot
-        self._pipelines = {pipeline.name: pipeline for pipeline in snapshot.pipelines}
-        self._index = _SnapshotGraphIndex(self._pipelines)
+        self._pipelines_by_id = {
+            pipeline.name: pipeline for pipeline in snapshot.pipelines
+        }
+        self._index = _SnapshotGraphIndex(self._pipelines_by_id)
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.
@@ -99,10 +101,15 @@ class GraphBuilder:
         Returns:
             ``__default__`` when it is registered, otherwise the first registered pipeline ID
             (declaration order).
+
+        Raises:
+            ValueError: If the snapshot has no registered pipelines.
         """
-        if DEFAULT_REGISTERED_PIPELINE_ID in self._pipelines:
+        if not self._pipelines_by_id:
+            raise ValueError("No registered pipelines in snapshot")
+        if DEFAULT_REGISTERED_PIPELINE_ID in self._pipelines_by_id:
             return DEFAULT_REGISTERED_PIPELINE_ID
-        return next(iter(self._pipelines))
+        return next(iter(self._pipelines_by_id))
 
     def has_pipeline(self, pipeline_id: str) -> bool:
         """Whether a pipeline is registered in this snapshot view.
@@ -113,11 +120,11 @@ class GraphBuilder:
         Returns:
             ``True`` if ``pipeline_id`` is a registered pipeline in this snapshot view.
         """
-        return pipeline_id in self._pipelines
+        return pipeline_id in self._pipelines_by_id
 
     def pipeline_ids(self) -> list[str]:
         """Registered pipeline IDs in this snapshot view (preserves declaration order)."""
-        return list(self._pipelines)
+        return list(self._pipelines_by_id.keys())
 
     def build(self, pipeline_id: str | None = None) -> GraphAPIResponse:
         """Build the main graph response for a registered pipeline.
@@ -136,7 +143,7 @@ class GraphBuilder:
         selected = pipeline_id or self.default_pipeline_id()
         if not self.has_pipeline(selected):
             raise ValueError(f"Invalid pipeline ID: {selected!r}")
-        pipeline = self._pipelines[selected]
+        pipeline = self._pipelines_by_id[selected]
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
@@ -172,7 +179,8 @@ class GraphBuilder:
                 for tag in self._index.get_all_tags()
             ],
             pipelines=[
-                NamedEntityAPIResponse(id=pid, name=pid) for pid in self._pipelines
+                NamedEntityAPIResponse(id=pid, name=pid)
+                for pid in self._pipelines_by_id
             ],
             modular_pipelines={},
             selected_pipeline=selected,
