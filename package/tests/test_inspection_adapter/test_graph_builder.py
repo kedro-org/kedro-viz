@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.layers import _extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -25,8 +26,10 @@ ALL_PIPELINES = [
 @pytest.fixture(scope="module")
 def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Start state restoration before bootstrapping the demo project.
-    snapshot = _InspectionSession(DEMO_PROJECT).snapshot()
-    return GraphBuilder(snapshot)
+    session = _InspectionSession(DEMO_PROJECT)
+    snapshot = session.snapshot()
+    layer_mapping = _extract_layers(session.catalog_config())
+    return GraphBuilder(snapshot, layer_mapping)
 
 
 def _baseline(pipeline_id: str) -> dict:
@@ -135,3 +138,27 @@ def test_per_node_fields_match_baseline(
         assert _field_by_name(adapter["nodes"], node_type, field) == _field_by_name(
             baseline["nodes"], node_type, field
         ), field
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_data_node_layers_match_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Each data node's ``layer`` (read from the catalog config) matches the baseline view."""
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+
+    def layer_by_name(graph: dict) -> dict[str, "str | None"]:
+        return {
+            n["name"]: n.get("layer") for n in graph["nodes"] if n["type"] == "data"
+        }
+
+    assert layer_by_name(adapter) == layer_by_name(baseline)
+
+
+@pytest.mark.parametrize("pipeline_id", ["__default__", "reporting_stage"])
+def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -> None:
+    # The layers list is order-significant (topologically sorted).
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert adapter["layers"] == baseline["layers"]

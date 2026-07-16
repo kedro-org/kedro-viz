@@ -271,3 +271,40 @@ def test_build_rejects_unknown_pipeline_id() -> None:
 def test_display_name(name: str, namespace: str | None, expected: str) -> None:
     """Display name strips the namespace prefix and any auto-name ``__<hash>`` suffix."""
     assert _display_name(name, namespace) == expected
+
+
+def test_no_layer_mapping_yields_empty_layers() -> None:
+    """With no layer mapping, the layers list is empty and data nodes carry no layer."""
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    )
+    graph = builder.build("__default__")
+    assert graph.layers == []
+    data_node = next(n for n in graph.nodes if n.type == "data")
+    assert isinstance(data_node, DataNodeAPIResponse)
+    assert data_node.layer is None
+
+
+def test_layers_reflect_mapping_and_sort_topologically() -> None:
+    """Data nodes carry their mapped layer, and the layers list is in dependency order."""
+    snapshot = _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    builder = GraphBuilder(
+        cast("ProjectSnapshot", snapshot), {"x": "raw", "y": "model"}
+    )
+    graph = builder.build("__default__")
+    layer_by_name = {n.name: n.layer for n in graph.nodes if n.type == "data"}
+    assert layer_by_name == {"x": "raw", "y": "model"}
+    # x -> t -> y, so the raw layer sorts before the model layer.
+    assert graph.layers == ["raw", "model"]
+
+
+def test_layered_dataset_absent_from_graph_is_excluded() -> None:
+    """A layer mapped to a dataset no node uses must not leak into the layers list."""
+    snapshot = _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    builder = GraphBuilder(
+        cast("ProjectSnapshot", snapshot),
+        {"x": "raw", "y": "model", "orphan": "reporting"},
+    )
+    graph = builder.build("__default__")
+    assert "reporting" not in graph.layers
+    assert graph.layers == ["raw", "model"]
