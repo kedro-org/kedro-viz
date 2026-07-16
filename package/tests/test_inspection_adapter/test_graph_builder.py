@@ -128,7 +128,7 @@ def test_selected_pipeline(
 def test_per_node_fields_match_baseline(
     builder: GraphBuilder, pipeline_id: str, node_type: str
 ) -> None:
-    """Per-node pipeline IDs and tags match every baseline view."""
+    """Per-node pipeline dictionary and tags match every baseline view."""
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     for field in ("pipelines", "tags"):
