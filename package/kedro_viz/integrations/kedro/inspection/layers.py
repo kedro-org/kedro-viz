@@ -14,7 +14,12 @@ from kedro_viz.utils import _strip_transcoding
 
 
 def _extract_layers(catalog_config: dict[str, Any]) -> dict[str, str]:
-    """Map dataset name to its layer from ``metadata.kedro-viz.layer`` in the catalog config."""
+    """Map dataset name to its layer from ``metadata.kedro-viz.layer`` in the catalog config.
+
+    Raises:
+        ValueError: If transcoded variants of one dataset (``name@a``, ``name@b``) declare
+            different layers, matching the legacy backend's validation.
+    """
     mapping: dict[str, str] = {}
     for name, config in catalog_config.items():
         if not isinstance(config, dict):
@@ -23,5 +28,13 @@ def _extract_layers(catalog_config: dict[str, Any]) -> dict[str, str]:
             layer = config["metadata"]["kedro-viz"]["layer"]
         except (KeyError, TypeError):
             continue
-        mapping[_strip_transcoding(name)] = layer
+        stripped = _strip_transcoding(name)
+        existing = mapping.get(stripped)
+        if existing is not None and existing != layer:
+            raise ValueError(
+                "Transcoded datasets should have the same layer. "
+                "Please ensure consistent layering in your Kedro catalog. "
+                f"Mismatch found for: {stripped}"
+            )
+        mapping[stripped] = layer
     return mapping
