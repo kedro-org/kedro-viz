@@ -20,6 +20,43 @@ def test_strips_transcoding() -> None:
     assert _extract_layers(config) == {"shuttles": "primary"}
 
 
+def test_resolves_dataset_factory_layer() -> None:
+    config = {
+        "{namespace}.int_{name}": {
+            "type": "pandas.ParquetDataset",
+            "metadata": {"kedro-viz": {"layer": "intermediate"}},
+        }
+    }
+    assert _extract_layers(config, ["processing.int_companies"]) == {
+        "processing.int_companies": "intermediate"
+    }
+
+
+def test_explicit_dataset_takes_precedence_over_factory_layer() -> None:
+    config = {
+        "{name}": {
+            "type": "pandas.ParquetDataset",
+            "metadata": {"kedro-viz": {"layer": "factory"}},
+        },
+        "companies": {
+            "type": "pandas.CSVDataset",
+            "metadata": {"kedro-viz": {"layer": "raw"}},
+        },
+    }
+    assert _extract_layers(config, ["companies"]) == {"companies": "raw"}
+
+
+def test_more_specific_factory_without_layer_takes_precedence() -> None:
+    config = {
+        "{name}": {
+            "type": "pandas.ParquetDataset",
+            "metadata": {"kedro-viz": {"layer": "factory"}},
+        },
+        "{namespace}.int_{name}": {"type": "pandas.ParquetDataset"},
+    }
+    assert _extract_layers(config, ["processing.int_companies"]) == {}
+
+
 def test_skips_entries_without_a_layer() -> None:
     config = {
         "no_metadata": {"type": "pandas.CSVDataset"},  # KeyError on "metadata"

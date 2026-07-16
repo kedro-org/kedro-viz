@@ -28,7 +28,13 @@ def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Start state restoration before bootstrapping the demo project.
     session = _InspectionSession(DEMO_PROJECT)
     snapshot = session.snapshot()
-    layer_mapping = _extract_layers(session.catalog_config())
+    dataset_names = {
+        name
+        for pipeline in snapshot.pipelines
+        for node in pipeline.nodes
+        for name in [*node.inputs, *node.outputs]
+    }
+    layer_mapping = _extract_layers(session.catalog_config(), dataset_names)
     return GraphBuilder(snapshot, layer_mapping)
 
 
