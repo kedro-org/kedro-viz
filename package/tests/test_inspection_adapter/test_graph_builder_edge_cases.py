@@ -292,7 +292,9 @@ def test_layers_reflect_mapping_and_sort_topologically() -> None:
         cast("ProjectSnapshot", snapshot), {"x": "raw", "y": "model"}
     )
     graph = builder.build("__default__")
-    layer_by_name = {n.name: n.layer for n in graph.nodes if n.type == "data"}
+    layer_by_name = {
+        n.name: n.layer for n in graph.nodes if isinstance(n, DataNodeAPIResponse)
+    }
     assert layer_by_name == {"x": "raw", "y": "model"}
     # x -> t -> y, so the raw layer sorts before the model layer.
     assert graph.layers == ["raw", "model"]
