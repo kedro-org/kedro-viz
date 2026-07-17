@@ -334,12 +334,18 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
   }, {})
 );
 
+// Incremented to re-measure node label widths once the chart becomes visible
+// (see createNodeRemeasurer).
+const getNodeMeasureToken = (state) => state.nodeMeasureToken;
+
 /**
  * Temporarily create a new SVG container in the DOM, write a node to it,
- * measure its width with getBBox, then delete the container and store the value
+ * measure its width with getBBox, then delete the container and store the value.
+ * getNodeMeasureToken is an input only to bust the memo, so the measurement
+ * re-runs once the chart becomes visible.
  */
 export const getNodeTextWidth = createSelector(
-  [getPipelineNodeIDs, getNodeLabel],
+  [getPipelineNodeIDs, getNodeLabel, getNodeMeasureToken],
   (nodeIDs, nodeLabel) => {
     const nodeTextWidth = {};
     const svg = select(document.body)
