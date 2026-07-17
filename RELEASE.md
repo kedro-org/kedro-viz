@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.5.0
+
+## Bug fixes and other changes
+
+- Align pandas requirement with Kedro (`pandas>=2.0,<4.0`)
+
 # Release 12.4.0
 
 ## Major features and improvements
