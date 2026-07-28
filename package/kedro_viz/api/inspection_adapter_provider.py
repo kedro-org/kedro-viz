@@ -35,7 +35,6 @@ from kedro_viz.integrations.kedro.inspection.graph_builder import (
     GraphBuilder,
     _resolve_param,
 )
-from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     _InspectionSession,
     lite_import_stubs,
@@ -104,10 +103,9 @@ class InspectionAdapterProvider:
             self._parameters = session.parameters()
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
-        layer_mapping = extract_layers(catalog_config)
         self._snapshot = snapshot
         self._builder = GraphBuilder(
-            snapshot, layer_mapping, parameters=self._parameters
+            snapshot, catalog_config, parameters=self._parameters
         )
         # Bridge → full-mode metadata; snapshot lookup → lite-mode metadata.
         self._metadata_bridge = self._build_metadata_bridge(live_nodes)

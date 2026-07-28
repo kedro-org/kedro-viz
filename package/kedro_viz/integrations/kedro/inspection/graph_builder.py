@@ -3,7 +3,7 @@
 Produces the full graph: task, data and parameter nodes; the edges between them (including
 modular-pipeline edges); the tag and pipeline lists; per-node pipeline and modular-pipeline
 membership; data-node tags; the modular-pipeline tree; and per-node ``layer`` with the global
-``layers`` list (the layer mapping is supplied by the caller — the snapshot omits viz metadata).
+``layers`` list (layers are read from the catalog config, which the snapshot omits).
 
 Node IDs come from :mod:`kedro_viz.integrations.kedro.node_ids`. Live-only fields (``node_extras``,
 resolved task ``parameters``, resolved ``dataset_type`` class paths) are added by the metadata
@@ -15,8 +15,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
@@ -28,6 +27,10 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.integrations.kedro.inspection.layers import (
+    _extract_layers,
+    sort_layers,
+)
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularMembership,
     ModularTreeBuilder,
@@ -40,13 +43,10 @@ from kedro_viz.integrations.kedro.node_ids import (
     _create_task_node_id,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
-from kedro_viz.services.layers import sort_layers
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot, ProjectSnapshot
-
-    from kedro_viz.models.flowchart.nodes import GraphNode
 
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
@@ -54,13 +54,6 @@ _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 # (``get_dataset_type(MemoryDataset())``). The snapshot has no entry for these,
 # so the adapter synthesizes this string, which the frontend's icon mapping expects.
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
-
-
-@dataclass(frozen=True)
-class _LayerNode:
-    """Minimal stand-in carrying just ``.layer`` for the layer sorter."""
-
-    layer: str
 
 
 class GraphBuilder:
@@ -74,11 +67,13 @@ class GraphBuilder:
     def __init__(
         self,
         snapshot: ProjectSnapshot,
-        layer_mapping: dict[str, str] | None = None,
+        catalog_config: dict[str, Any] | None = None,
         parameters: dict[str, Any] | None = None,
     ):
         self._snapshot = snapshot
-        self._layers = layer_mapping or {}
+        self._layer_by_dataset = _extract_layers(
+            catalog_config or {}, _dataset_names_from_snapshot(snapshot)
+        )
         # Resolved parameter values (``--params`` already applied), used to fill task-node
         # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
         self._parameters = parameters or {}
@@ -100,13 +95,6 @@ class GraphBuilder:
         self._modular = ModularMembership(list(unique_nodes.values()))
         # Tags are global and invariant across pipeline views, so build them once.
         self._tags = self._build_tags()
-        # Layer presence is global (every project layer can appear in any view); only the ordering is
-        # per-pipeline. Seed the layer sort with all layered datasets so the order is stable.
-        self._global_layer_nodes: dict[str, _LayerNode] = {
-            _create_dataset_node_id(name): _LayerNode(layer)
-            for name, layer in self._layers.items()
-            if name in self._dataset_pipelines
-        }
 
     def _compute_membership(self) -> None:
         """Record global pipeline membership and tags for every task and dataset."""
@@ -167,7 +155,7 @@ class GraphBuilder:
         return GraphAPIResponse(
             nodes=nodes,
             edges=list(edges.values()),
-            layers=self._sorted_layers(nodes, edges),
+            layers=self._sorted_layers_for_pipeline(nodes, edges),
             tags=self._tags,
             pipelines=[
                 NamedEntityAPIResponse(id=pid, name=pid) for pid in self._pipelines
@@ -231,7 +219,9 @@ class GraphBuilder:
                 else GraphNodeType.DATA.value
             ),
             modular_pipelines=self._modular.for_dataset(stripped_name),
-            layer=None if is_parameter else self._layers.get(stripped_name),
+            layer=(
+                None if is_parameter else self._layer_by_dataset.get(stripped_name)
+            ),
             dataset_type=dataset_type,
         )
 
@@ -263,23 +253,30 @@ class GraphBuilder:
             for mp_id in tree_builder.ids
         ]
 
-    def _sorted_layers(
+    def _sorted_layers_for_pipeline(
         self,
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
         edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     ) -> list[str]:
-        """Topologically sort the data-node layers, reusing the existing layers service."""
-        if not self._layers:
+        """Sort the project-wide layer set using the selected pipeline's edges."""
+        if not self._layer_by_dataset:
             return []
         dependencies: dict[str, set[str]] = defaultdict(set)
         for source, target in edges:
             dependencies[source].add(target)
-        # Global layered datasets give layer *presence*; this view's nodes give the *ordering*.
-        nodes_by_id: dict[str, object] = dict(self._global_layer_nodes)
-        nodes_by_id.update({node.id: node for node in nodes})
-        # ``sort_layers`` only reads ``.layer`` off each node, so these stand in for the domain
-        # ``GraphNode`` it is typed against.
-        return sort_layers(cast("dict[str, GraphNode]", nodes_by_id), dependencies)
+        layer_by_node_id: dict[str, str | None] = {
+            node.id: node.layer if isinstance(node, DataNodeAPIResponse) else None
+            for node in nodes
+        }
+        # Include layered datasets used by any pipeline so every view exposes the
+        # project-wide layer set; this view's edges determine their order.
+        for dataset_name, layer in self._layer_by_dataset.items():
+            if is_dataset_param(dataset_name) or dataset_name not in (
+                self._dataset_pipelines
+            ):
+                continue
+            layer_by_node_id.setdefault(_create_dataset_node_id(dataset_name), layer)
+        return sort_layers(layer_by_node_id, dependencies)
 
     @staticmethod
     def _register_dataset(name: str, datasets: dict[str, str]) -> None:
@@ -322,6 +319,17 @@ def _display_name(snapshot_name: str, namespace: str | None) -> str:
         local = local[len(prefix) :]
     auto = _AUTO_NAME_RE.match(local)
     return auto.group("func") if auto else local
+
+
+def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
+    """Return non-parameter dataset names referenced by registered pipelines."""
+    return {
+        name
+        for pipeline in snapshot.pipelines
+        for node in pipeline.nodes
+        for name in (*node.inputs, *node.outputs)
+        if not is_dataset_param(name)
+    }
 
 
 def _resolve_param(parameters: dict[str, Any], dotted: str) -> Any:

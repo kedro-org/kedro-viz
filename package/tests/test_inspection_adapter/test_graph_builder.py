@@ -14,7 +14,6 @@ import pytest
 
 from kedro_viz.integrations.kedro.inspection import snapshot_source
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
-from kedro_viz.integrations.kedro.inspection.layers import extract_layers
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
@@ -35,11 +34,8 @@ ALL_PIPELINES = [
 @pytest.fixture(scope="module")
 def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Depend on the autouse state-restore fixture so it is set up *before* this bootstraps.
-    snapshot = snapshot_source._InspectionSession(DEMO_PROJECT).snapshot()
-    layers = extract_layers(
-        snapshot_source._InspectionSession(DEMO_PROJECT).catalog_config()
-    )
-    return GraphBuilder(snapshot, layers)
+    session = snapshot_source._InspectionSession(DEMO_PROJECT)
+    return GraphBuilder(session.snapshot(), session.catalog_config())
 
 
 def _baseline(pipeline_id: str) -> dict:
