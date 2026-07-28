@@ -1,19 +1,18 @@
-"""Extract dataset layers from the raw catalog config.
-
-Layer is a Kedro-Viz concept (under ``metadata.kedro-viz.layer``); Kedro stores the ``metadata``
-dict but doesn't interpret it, and the inspection snapshot drops it. So we read the catalog config
-directly here (no ``DataCatalog`` is materialised). Transcoding is stripped, so ``name@a`` and
-``name@b`` map to one layer.
-"""
+"""Extract and sort dataset layers for the inspection adapter."""
 
 from __future__ import annotations
 
+import logging
+from collections import defaultdict
 from collections.abc import Iterable
+from graphlib import CycleError, TopologicalSorter
 from typing import Any
 
 from kedro.io import CatalogConfigResolver
 
 from kedro_viz.utils import _strip_transcoding
+
+logger = logging.getLogger(__name__)
 
 
 def _extract_layers(
@@ -28,7 +27,7 @@ def _extract_layers(
         ValueError: If transcoded variants of one dataset (``name@a``, ``name@b``) declare
             different layers, matching the legacy backend's validation.
     """
-    mapping: dict[str, str] = {}
+    layer_by_dataset: dict[str, str] = {}
     resolver_config: dict[str, dict[str, Any]] = {}
     has_patterns = False
     for name, config in catalog_config.items():
@@ -44,7 +43,7 @@ def _extract_layers(
         if CatalogConfigResolver.is_pattern(name):
             has_patterns = True
             continue
-        _set_layer(mapping, name, layer)
+        _set_layer(layer_by_dataset, name, layer)
 
     if has_patterns:
         resolver = CatalogConfigResolver(
@@ -57,19 +56,76 @@ def _extract_layers(
                 layer = resolved_config["metadata"]["kedro-viz"]["layer"]
             except (KeyError, TypeError):
                 continue
-            _set_layer(mapping, name, layer)
+            _set_layer(layer_by_dataset, name, layer)
 
-    return mapping
+    return layer_by_dataset
 
 
-def _set_layer(mapping: dict[str, str], name: str, layer: str) -> None:
+def _set_layer(layer_by_dataset: dict[str, str], name: str, layer: str) -> None:
     """Store a layer under the dataset's non-transcoded name."""
     stripped = _strip_transcoding(name)
-    existing = mapping.get(stripped)
+    existing = layer_by_dataset.get(stripped)
     if existing is not None and existing != layer:
         raise ValueError(
             "Transcoded datasets should have the same layer. "
             "Please ensure consistent layering in your Kedro catalog. "
             f"Mismatch found for: {stripped}"
         )
-    mapping[stripped] = layer
+    layer_by_dataset[stripped] = layer
+
+
+def sort_layers(
+    layer_by_node_id: dict[str, str | None],
+    dependencies: dict[str, set[str]],
+) -> list[str]:
+    """Return dataset layers in graph dependency order."""
+    child_layers_by_node: dict[str, set[str]] = {}
+
+    def find_child_layers(node_id: str) -> set[str]:
+        if node_id in child_layers_by_node:
+            return child_layers_by_node[node_id]
+
+        child_layers = child_layers_by_node[node_id] = set()
+        node_layer = layer_by_node_id[node_id]
+        if node_layer is not None:
+            child_layers.add(node_layer)
+
+        for child_id in dependencies.get(node_id, set()):
+            child_layer = layer_by_node_id[child_id]
+            if child_layer is not None:
+                child_layers.add(child_layer)
+            child_layers.update(find_child_layers(child_id))
+
+        return child_layers
+
+    for node_id in sorted(layer_by_node_id):
+        find_child_layers(node_id)
+
+    layer_dependencies: dict[str, set[str]] = defaultdict(set)
+    all_layers: set[str] = set()
+    for node_id, child_layers in child_layers_by_node.items():
+        node_layer = layer_by_node_id[node_id]
+        if node_layer is None:
+            continue
+        all_layers.add(node_layer)
+        for child_layer in child_layers:
+            all_layers.add(child_layer)
+            if child_layer != node_layer:
+                layer_dependencies[child_layer].add(node_layer)
+
+    for layer in all_layers:
+        layer_dependencies.setdefault(layer, set())
+
+    ordered_dependencies = {
+        layer: layer_dependencies[layer] for layer in sorted(layer_dependencies)
+    }
+    try:
+        return list(TopologicalSorter(ordered_dependencies).static_order())
+    except CycleError as exc:
+        logger.warning(
+            "Layers visualisation is disabled as circular dependency detected among layers. "
+            "Circular dependency detected: %s. "
+            "Please check the `layer` configuration in your catalog for the datasets to avoid circular references. ",
+            str(exc),
+        )
+        return []

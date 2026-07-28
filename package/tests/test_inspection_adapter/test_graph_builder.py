@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
-from kedro_viz.integrations.kedro.inspection.layers import _extract_layers
 from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -27,15 +26,7 @@ ALL_PIPELINES = [
 def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Start state restoration before bootstrapping the demo project.
     session = _InspectionSession(DEMO_PROJECT)
-    snapshot = session.snapshot()
-    dataset_names = {
-        name
-        for pipeline in snapshot.pipelines
-        for node in pipeline.nodes
-        for name in [*node.inputs, *node.outputs]
-    }
-    layer_mapping = _extract_layers(session.catalog_config(), dataset_names)
-    return GraphBuilder(snapshot, layer_mapping)
+    return GraphBuilder(session.snapshot(), session.catalog_config())
 
 
 def _baseline(pipeline_id: str) -> dict:
@@ -162,7 +153,7 @@ def test_data_node_layers_match_baseline(
     assert layer_by_name(adapter) == layer_by_name(baseline)
 
 
-@pytest.mark.parametrize("pipeline_id", ["__default__", "reporting_stage"])
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
 def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -> None:
     # The layers list is order-significant (topologically sorted).
     adapter = builder.build(pipeline_id).model_dump()

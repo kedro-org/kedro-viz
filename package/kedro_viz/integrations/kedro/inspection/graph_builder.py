@@ -9,8 +9,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
@@ -20,12 +19,15 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.integrations.kedro.inspection.layers import (
+    _extract_layers,
+    sort_layers,
+)
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
     _create_task_node_id,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
-from kedro_viz.services.layers import sort_layers
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 if TYPE_CHECKING:
@@ -35,20 +37,11 @@ if TYPE_CHECKING:
         ProjectSnapshot,
     )
 
-    from kedro_viz.models.flowchart.nodes import GraphNode
-
 _AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
 # Match the live backend's get_dataset_type(MemoryDataset()) output for datasets
 # absent from the snapshot catalog.
 MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
-
-
-@dataclass(frozen=True)
-class _LayerNode:
-    """Minimal stand-in carrying just ``.layer`` for the layer sorter."""
-
-    layer: str
 
 
 class _SnapshotGraphIndex:
@@ -102,21 +95,16 @@ class GraphBuilder:
     def __init__(
         self,
         snapshot: ProjectSnapshot,
-        layer_mapping: dict[str, str] | None = None,
+        catalog_config: dict[str, Any] | None = None,
     ) -> None:
         self._snapshot = snapshot
-        self._layers = layer_mapping or {}
+        self._layer_by_dataset = _extract_layers(
+            catalog_config or {}, _dataset_names_from_snapshot(snapshot)
+        )
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
-        # Seed the sort with every layered dataset in the graph so the layer order stays
-        # consistent across pipeline views.
-        self._global_layer_nodes: dict[str, _LayerNode] = {
-            _create_dataset_node_id(name): _LayerNode(layer)
-            for name, layer in self._layers.items()
-            if self._index.get_pipelines_for_dataset_name(name)
-        }
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.
@@ -196,7 +184,7 @@ class GraphBuilder:
         return GraphAPIResponse(
             nodes=nodes,
             edges=list(edges.values()),
-            layers=self._sorted_layers(nodes, edges),
+            layers=self._sorted_layers_for_pipeline(nodes, edges),
             tags=[
                 NamedEntityAPIResponse(id=tag, name=tag)
                 for tag in self._index.get_all_tags()
@@ -251,27 +239,33 @@ class GraphBuilder:
                 else GraphNodeType.DATA.value
             ),
             modular_pipelines=None,
-            layer=None if is_parameter else self._layers.get(stripped_name),
+            layer=(None if is_parameter else self._layer_by_dataset.get(stripped_name)),
             dataset_type=dataset_type,
         )
 
-    def _sorted_layers(
+    def _sorted_layers_for_pipeline(
         self,
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
         edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     ) -> list[str]:
-        """Topologically sort the data-node layers, reusing the existing layers service."""
-        if not self._layers:
+        """Sort the project-wide layer set using the selected pipeline's edges."""
+        if not self._layer_by_dataset:
             return []
         dependencies: dict[str, set[str]] = defaultdict(set)
         for source, target in edges:
             dependencies[source].add(target)
-        # Global layered datasets give layer presence; this view's nodes give the ordering.
-        nodes_by_id: dict[str, object] = dict(self._global_layer_nodes)
-        nodes_by_id.update({node.id: node for node in nodes})
-        # sort_layers only reads ``.layer`` off each node, so these stand in for the domain
-        # ``GraphNode`` it is typed against.
-        return sort_layers(cast("dict[str, GraphNode]", nodes_by_id), dependencies)
+        layer_by_node_id: dict[str, str | None] = {
+            node.id: node.layer if isinstance(node, DataNodeAPIResponse) else None
+            for node in nodes
+        }
+        # Include layered datasets used by any pipeline so every view exposes the
+        # project-wide layer set; this view's edges determine their order.
+        for dataset_name, layer in self._layer_by_dataset.items():
+            dataset_pipelines = self._index.get_pipelines_for_dataset_name(dataset_name)
+            if is_dataset_param(dataset_name) or not dataset_pipelines:
+                continue
+            layer_by_node_id.setdefault(_create_dataset_node_id(dataset_name), layer)
+        return sort_layers(layer_by_node_id, dependencies)
 
     @staticmethod
     def _register_dataset(
@@ -300,3 +294,14 @@ def _display_name(snapshot_name: str, namespace: str | None) -> str:
         local = local[len(prefix) :]
     auto = _AUTO_NAME_RE.match(local)
     return auto.group("func") if auto else local
+
+
+def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
+    """Return non-parameter dataset names referenced by registered pipelines."""
+    return {
+        name
+        for pipeline in snapshot.pipelines
+        for node in pipeline.nodes
+        for name in (*node.inputs, *node.outputs)
+        if not is_dataset_param(name)
+    }
