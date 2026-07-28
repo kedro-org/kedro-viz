@@ -110,7 +110,7 @@
     },
     "serialize-javascript": ">=7.0.5",
     "rollup": "^4.59.0",
-    "tar": "^7.5.11",
+    "tar": "^7.5.22",
     "flatted": ">=3.4.2",
     "dompurify": ">=3.4.12",
     "postcss": ">=8.5.10",
