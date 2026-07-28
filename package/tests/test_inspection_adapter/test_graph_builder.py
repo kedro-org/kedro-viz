@@ -227,3 +227,18 @@ def test_cyclic_modular_input_edge_is_removed() -> None:
     remove_cyclic_modular_edges(edges, tree)
     assert ("A", "p") not in edges  # cyclic input edge dropped
     assert ("p", "B") in edges and ("B", "A") in edges  # others untouched
+
+
+def test_transcoded_dataset_type_matches_baseline(builder: GraphBuilder) -> None:
+    node_name = "ingestion.int_typed_shuttles"
+    adapter = builder.build("data_ingestion").model_dump()
+    baseline = _baseline("data_ingestion")
+    adapter_node = next(
+        n for n in adapter["nodes"] if n["type"] == "data" and n["name"] == node_name
+    )
+    baseline_node = next(
+        n for n in baseline["nodes"] if n["type"] == "data" and n["name"] == node_name
+    )
+
+    assert adapter_node["dataset_type"] is None
+    assert adapter_node["dataset_type"] == baseline_node["dataset_type"]
