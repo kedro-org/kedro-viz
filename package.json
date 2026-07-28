@@ -122,7 +122,7 @@
     "brace-expansion": ">=5.0.6",
     "tough-cookie": ">=5.1.1",
     "qs": ">=6.15.2",
-    "shell-quote": ">=1.8.4",
+    "shell-quote": ">=1.10.0",
     "tmp": ">=0.2.6",
     "@babel/plugin-transform-modules-systemjs": ">=7.29.4",
     "fast-uri": "^3.1.2",
