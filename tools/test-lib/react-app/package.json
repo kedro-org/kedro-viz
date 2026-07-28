@@ -79,7 +79,7 @@
     "diff": ">=5.2.2",
     "d3-color": ">=3.1.0",
     "shell-quote": ">=1.8.4",
-    "fast-uri": "^3.1.2",
+    "fast-uri": "^3.1.4",
     "@babel/plugin-transform-modules-systemjs": ">=7.29.4 <8",
     "protocol-buffers-schema": ">=3.6.1",
     "follow-redirects": ">=1.16.0"
