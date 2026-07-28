@@ -33,6 +33,7 @@ def _extract_layers(
     for name, config in catalog_config.items():
         if not isinstance(config, dict):
             continue
+        # Include entries without layers to preserve Kedro's resolver precedence.
         resolver_entry: dict[str, Any] = {"type": "kedro.io.MemoryDataset"}
         resolver_config[name] = resolver_entry
         try:

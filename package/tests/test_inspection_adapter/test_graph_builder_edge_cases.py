@@ -371,4 +371,4 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
     }
 
     graph = _builder(snapshot, catalog_config).build("pipe_a")
-    assert set(graph.layers) == {"raw", "model", "external", "reporting"}
+    assert graph.layers == ["external", "raw", "reporting", "model"]
