@@ -99,7 +99,8 @@ class GraphBuilder:
     ) -> None:
         self._snapshot = snapshot
         self._layer_by_dataset = _extract_layers(
-            catalog_config or {}, _dataset_names_from_snapshot(snapshot)
+            catalog_config=catalog_config or {},
+            dataset_names=_dataset_names_from_snapshot(snapshot),
         )
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
