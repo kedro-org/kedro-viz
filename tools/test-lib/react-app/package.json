@@ -26,7 +26,7 @@
     "react": "^18.2.0",
     "react-dev-utils": "^12.0.1",
     "react-dom": "^18.2.0",
-    "react-router": "^6.30.4",
+    "react-router": "^8.3.0",
     "react-router-dom": "^6.30.4"
   },
   "devDependencies": {
