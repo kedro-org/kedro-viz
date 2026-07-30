@@ -77,28 +77,20 @@ def classify_node(node) -> dict:
 
     # Store both IDs so tests can detect whether graph and run-status IDs are aligned.
     graph_id = node_ids._create_task_node_id(
-        node.name, list(node.inputs), list(node.outputs)
+        node_name=node.name,
+        func_name=node._func_name,
+        namespace=node.namespace,
+        inputs=node.inputs,
+        outputs=node.outputs,
     )
     runstatus_id = hash_node(node)
 
     if node._name is None:
-        kind, reconstructable, note = (
-            "auto",
-            True,
-            "func name embedded in snapshot name",
-        )
+        kind = "auto"
     elif node._name == node._func_name:
-        kind, reconstructable, note = (
-            "explicit_eq_func",
-            True,
-            "reconstructable BY CONVENTION only (name == func), not a contract",
-        )
+        kind = "explicit_eq_func"
     else:
-        kind, reconstructable, note = (
-            "explicit_diff_func",
-            False,
-            "func name absent from snapshot -> ID NOT reconstructable",
-        )
+        kind = "explicit_diff_func"
 
     return {
         "snapshot_name": node.name,
@@ -112,8 +104,6 @@ def classify_node(node) -> dict:
         "graph_id_matches_runstatus": graph_id == runstatus_id,
         "str_node": str(node),
         "kind": kind,
-        "id_reconstructable_from_snapshot": reconstructable,
-        "note": note,
     }
 
 
@@ -121,7 +111,7 @@ def build_node_id_report() -> dict:
     """Return the node-ID report for all registered pipelines."""
     from kedro.framework.project import pipelines as kedro_pipelines
 
-    seen: dict[tuple[str, tuple[str, ...], tuple[str, ...]], dict] = {}
+    seen: dict[tuple[str, str, tuple[str, ...], tuple[str, ...]], dict] = {}
     for pipe in kedro_pipelines.values():
         if pipe is None:
             continue
@@ -131,6 +121,7 @@ def build_node_id_report() -> dict:
             # preserved for test_task_node_ids_are_unique to catch (not silently deduped away).
             identity = (
                 entry["snapshot_name"],
+                entry["func_name"],
                 tuple(entry["inputs"]),
                 tuple(entry["outputs"]),
             )
@@ -141,12 +132,9 @@ def build_node_id_report() -> dict:
     for e in nodes:
         counts[e["kind"]] = counts.get(e["kind"], 0) + 1
 
-    reconstructable = sum(1 for e in nodes if e["id_reconstructable_from_snapshot"])
     return {
         "total_task_nodes": len(nodes),
         "counts_by_kind": counts,
-        "reconstructable": reconstructable,
-        "not_reconstructable": len(nodes) - reconstructable,
         "all_graph_ids_match_runstatus": all(
             e["graph_id_matches_runstatus"] for e in nodes
         ),
@@ -182,10 +170,7 @@ def main() -> None:
     _write_json(OUT_DIR / "node_id_report.json", report)
     print(
         f"  wrote node_id_report.json  "
-        f"(total={report['total_task_nodes']} "
-        f"reconstructable={report['reconstructable']} "
-        f"not={report['not_reconstructable']} "
-        f"counts={report['counts_by_kind']})"
+        f"(total={report['total_task_nodes']} counts={report['counts_by_kind']})"
     )
     print(
         f"  graph ids all match run-status hook ids: {report['all_graph_ids_match_runstatus']}"

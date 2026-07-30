@@ -7,7 +7,6 @@ type strings from the snapshot.
 
 from __future__ import annotations
 
-import re
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
@@ -26,6 +25,7 @@ from kedro_viz.integrations.kedro.inspection.layers import (
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
     _create_task_node_id,
+    _is_auto_node_name,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
@@ -36,8 +36,6 @@ if TYPE_CHECKING:
         PipelineSnapshot,
         ProjectSnapshot,
     )
-
-_AUTO_NAME_RE = re.compile(r"^(?P<func>.+)__[0-9a-f]{8}$")
 
 # Match the live backend's get_dataset_type(MemoryDataset()) output for datasets
 # absent from the snapshot catalog.
@@ -55,7 +53,13 @@ class _SnapshotGraphIndex:
         self._all_tags: set[str] = set()
         for pipeline_id, pipeline in pipelines.items():
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
+                task_id = _create_task_node_id(
+                    node_name=node.name,
+                    func_name=node.func_name,
+                    namespace=node.namespace,
+                    inputs=node.inputs,
+                    outputs=node.outputs,
+                )
                 self._pipelines_by_task_id[task_id].add(pipeline_id)
                 self._tags_by_task_id[task_id].update(node.tags)
                 self._all_tags.update(node.tags)
@@ -164,7 +168,13 @@ class GraphBuilder:
         transcoded_datasets: set[str] = set()
 
         for node in pipeline.nodes:
-            task_id = _create_task_node_id(node.name, node.inputs, node.outputs)
+            task_id = _create_task_node_id(
+                node_name=node.name,
+                func_name=node.func_name,
+                namespace=node.namespace,
+                inputs=node.inputs,
+                outputs=node.outputs,
+            )
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
@@ -201,7 +211,7 @@ class GraphBuilder:
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
         return TaskNodeAPIResponse(
             id=task_id,
-            name=_display_name(node.name, node.namespace),
+            name=_display_name(node.name, node.func_name, node.namespace),
             full_name=node.name,
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
@@ -287,14 +297,12 @@ class GraphBuilder:
         )
 
 
-def _display_name(snapshot_name: str, namespace: str | None) -> str:
-    """Derive the UI display name: strip the namespace and any auto-name ``__<hash>`` suffix."""
-    local = snapshot_name
-    prefix = f"{namespace}."
-    if namespace and local.startswith(prefix):
-        local = local[len(prefix) :]
-    auto = _AUTO_NAME_RE.match(local)
-    return auto.group("func") if auto else local
+def _display_name(snapshot_name: str, func_name: str, namespace: str | None) -> str:
+    """Return the function name for auto-named nodes, otherwise the local node name."""
+    local_name = (
+        snapshot_name.removeprefix(f"{namespace}.") if namespace else snapshot_name
+    )
+    return func_name if _is_auto_node_name(local_name, func_name) else local_name
 
 
 def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:

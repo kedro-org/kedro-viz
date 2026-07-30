@@ -1,4 +1,4 @@
-"""Tests for the Viz node-ID scheme.
+"""Tests for legacy-compatible Viz node IDs.
 
 The node list is read hermetically from ``baseline/node_id_report.json`` (no Kedro project load).
 """
@@ -21,47 +21,87 @@ def task_nodes() -> list[dict]:
 
 def _task_id(node: dict) -> str:
     return ids._create_task_node_id(
-        node["snapshot_name"], node["inputs"], node["outputs"]
+        node_name=node["snapshot_name"],
+        func_name=node["func_name"],
+        namespace=node["namespace"],
+        inputs=node["inputs"],
+        outputs=node["outputs"],
     )
 
 
-def test_task_node_id_is_deterministic(task_nodes: list[dict]) -> None:
-    """Test that the same inputs always hash to the same ID."""
+def test_task_node_ids_match_legacy_backend(task_nodes: list[dict]) -> None:
+    """Reconstructed IDs match the graph and run-status baseline."""
     for node in task_nodes:
-        assert _task_id(node) == _task_id(node)
-
-
-def test_stored_graph_id_matches_current_scheme(task_nodes: list[dict]) -> None:
-    """Test that each stored ``graph_id`` still matches what ``_create_task_node_id`` computes."""
-    for node in task_nodes:
-        assert node["graph_id"] == _task_id(node), (
-            f"stale baseline for {node['snapshot_name']!r}: regenerate "
-            "node_id_report.json via capture_baseline.py"
-        )
-
-
-def test_every_task_node_gets_an_id(task_nodes: list[dict]) -> None:
-    """Test that every task node resolves to an ID, including ``name != func`` nodes."""
-    assert all(_task_id(node) for node in task_nodes)
+        assert (
+            _task_id(node)
+            == _hash(node["str_node"])
+            == node["graph_id"]
+            == node["runstatus_hook_id"]
+        ), f"ID mismatch for {node['snapshot_name']!r}"
 
 
 def test_task_node_ids_are_unique(task_nodes: list[dict]) -> None:
-    """Test that distinct task nodes get distinct IDs."""
+    """Distinct demo tasks have distinct IDs."""
     computed = [_task_id(node) for node in task_nodes]
     assert len(set(computed)) == len(computed)
 
 
-def test_task_node_id_excludes_tags() -> None:
-    """Test that the ID hashes exactly ``name``, ``inputs`` and ``outputs``."""
-    expected = _hash(json.dumps(["ingestion.company_agg", ["x"], ["y"]]))
-    assert ids._create_task_node_id("ingestion.company_agg", ["x"], ["y"]) == expected
+def test_explicit_task_name_and_function_name_are_preserved() -> None:
+    expected = _hash("company_agg: aggregate_company_data([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="ingestion.company_agg",
+            func_name="aggregate_company_data",
+            namespace="ingestion",
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
 
 
-def test_task_node_id_changes_with_io() -> None:
-    """Test that adding an input or output changes the ID."""
-    base = ids._create_task_node_id("n", ["a"], ["b"])
-    assert base != ids._create_task_node_id("n", ["a", "c"], ["b"])
-    assert base != ids._create_task_node_id("n", ["a"], ["b", "c"])
+def test_auto_name_is_omitted_from_task_string() -> None:
+    expected = _hash("clean_data([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="processing.clean_data__a1b2c3d4",
+            func_name="clean_data",
+            namespace="processing",
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
+
+
+def test_hash_like_explicit_name_is_preserved() -> None:
+    expected = _hash("report__deadbeef: build_report([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="report__deadbeef",
+            func_name="build_report",
+            namespace=None,
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    ("func_name", "node_string"),
+    [("<partial>", "<partial>([x]) -> [y]"), ("clean_data", "clean_data([x]) -> [y]")],
+)
+def test_partial_auto_name_is_omitted_from_task_string(
+    func_name: str, node_string: str
+) -> None:
+    assert ids._create_task_node_id(
+        node_name="partial(clean_data)__a1b2c3d4",
+        func_name=func_name,
+        namespace=None,
+        inputs=["x"],
+        outputs=["y"],
+    ) == _hash(node_string)
 
 
 def test_task_ids_do_not_collide_with_dataset_ids(task_nodes: list[dict]) -> None:
@@ -86,9 +126,24 @@ def test_dataset_node_id_strips_transcoding() -> None:
     ) == ids._create_dataset_node_id("typed_shuttles@pandas2")
 
 
-def test_task_node_id_handles_missing_inputs_or_outputs() -> None:
-    """Test that a source node (no inputs) and a sink node (no outputs) get valid, distinct IDs."""
-    source = ids._create_task_node_id("generator", [], ["out_c"])
-    sink = ids._create_task_node_id("saver", ["in_a"], [])
-    assert source and sink
-    assert source != sink
+@pytest.mark.parametrize(
+    ("name", "func_name", "inputs", "outputs", "node_string"),
+    [
+        ("generator__a1b2c3d4", "generator", [], ["out"], "generator(None) -> [out]"),
+        ("saver__a1b2c3d4", "saver", ["in"], [], "saver([in]) -> None"),
+    ],
+)
+def test_task_node_id_handles_empty_io(
+    name: str,
+    func_name: str,
+    inputs: list[str],
+    outputs: list[str],
+    node_string: str,
+) -> None:
+    assert ids._create_task_node_id(
+        node_name=name,
+        func_name=func_name,
+        namespace=None,
+        inputs=inputs,
+        outputs=outputs,
+    ) == _hash(node_string)

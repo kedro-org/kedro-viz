@@ -1,4 +1,4 @@
-"""Structural parity tests for snapshot-backed graphs, independent of node IDs."""
+"""Structural and ID parity tests for snapshot-backed graphs."""
 
 import json
 from pathlib import Path
@@ -58,6 +58,14 @@ def _field_by_name(
     return {n[key]: sorted(n[field]) for n in nodes if n["type"] == node_type}
 
 
+def _id_by_name(nodes: list[dict]) -> dict[tuple[str, str], str]:
+    return {
+        (node["type"], node.get("full_name", node["name"])): node["id"]
+        for node in nodes
+        if node["type"] in {"task", "data", "parameters"}
+    }
+
+
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
 @pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
 def test_node_sets_match_baseline(
@@ -66,6 +74,13 @@ def test_node_sets_match_baseline(
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     assert _names(adapter["nodes"], node_type) == _names(baseline["nodes"], node_type)
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_node_ids_match_baseline(builder: GraphBuilder, pipeline_id: str) -> None:
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert _id_by_name(adapter["nodes"]) == _id_by_name(baseline["nodes"])
 
 
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
