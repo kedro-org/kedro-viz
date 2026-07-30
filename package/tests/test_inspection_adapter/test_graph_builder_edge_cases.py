@@ -1,7 +1,7 @@
 """Hermetic edge cases for the snapshot graph builder."""
 
 from types import SimpleNamespace
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 
@@ -15,8 +15,10 @@ if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
 
 
-def _builder(snapshot: SimpleNamespace) -> GraphBuilder:
-    return GraphBuilder(cast("ProjectSnapshot", snapshot))
+def _builder(
+    snapshot: SimpleNamespace, catalog_config: dict[str, Any] | None = None
+) -> GraphBuilder:
+    return GraphBuilder(cast("ProjectSnapshot", snapshot), catalog_config)
 
 
 def _node(
@@ -271,3 +273,102 @@ def test_build_rejects_unknown_pipeline_id() -> None:
 def test_display_name(name: str, namespace: str | None, expected: str) -> None:
     """Display name strips the namespace prefix and any auto-name ``__<hash>`` suffix."""
     assert _display_name(name, namespace) == expected
+
+
+def test_no_catalog_config_yields_empty_layers() -> None:
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    )
+    graph = builder.build("__default__")
+    assert graph.layers == []
+    data_nodes = [
+        node
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+    ]
+    assert data_nodes
+    assert all(node.layer is None for node in data_nodes)
+
+
+def test_layers_from_catalog_config_are_sorted_topologically() -> None:
+    snapshot = _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    catalog_config = {
+        "x": {"metadata": {"kedro-viz": {"layer": "raw"}}},
+        "y": {"metadata": {"kedro-viz": {"layer": "model"}}},
+    }
+    graph = _builder(snapshot, catalog_config).build("__default__")
+    layer_by_name = {
+        node.name: node.layer
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+    }
+    assert layer_by_name == {"x": "raw", "y": "model"}
+    assert graph.layers == ["raw", "model"]
+
+
+def test_factory_layer_is_resolved_for_concrete_dataset() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline(
+                "__default__",
+                [_node("t", ["processing.int_companies"], ["model"])],
+            )
+        ]
+    )
+    catalog_config = {
+        "{namespace}.int_{name}": {
+            "metadata": {"kedro-viz": {"layer": "intermediate"}}
+        },
+        "model": {"metadata": {"kedro-viz": {"layer": "model"}}},
+    }
+
+    graph = _builder(snapshot, catalog_config).build("__default__")
+    layer_by_name = {
+        node.name: node.layer
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+    }
+    assert layer_by_name["processing.int_companies"] == "intermediate"
+
+
+def test_factory_layer_does_not_apply_to_parameters() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline(
+                "__default__",
+                [_node("t", ["params:model_options"], ["result"])],
+            )
+        ]
+    )
+    catalog_config = {
+        "{name}": {"metadata": {"kedro-viz": {"layer": "factory"}}},
+        "result": {"type": "kedro.io.MemoryDataset"},
+    }
+
+    graph = _builder(snapshot, catalog_config).build("__default__")
+    parameter = next(
+        node
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "parameters"
+    )
+    assert parameter.layer is None
+    assert graph.layers == []
+
+
+def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("a", ["raw_data"], ["model"])]),
+            _pipeline("pipe_b", [_node("b", ["external"], ["report"])]),
+        ]
+    )
+    catalog_config = {
+        "raw_data": {"metadata": {"kedro-viz": {"layer": "raw"}}},
+        "model": {"metadata": {"kedro-viz": {"layer": "model"}}},
+        "external": {"metadata": {"kedro-viz": {"layer": "external"}}},
+        "report": {"metadata": {"kedro-viz": {"layer": "reporting"}}},
+        "orphan": {"metadata": {"kedro-viz": {"layer": "unused"}}},
+    }
+
+    graph = _builder(snapshot, catalog_config).build("pipe_a")
+    assert graph.layers == ["external", "raw", "reporting", "model"]

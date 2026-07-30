@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
@@ -19,6 +19,10 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.integrations.kedro.inspection.layers import (
+    _extract_layers,
+    sort_layers,
+)
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
     _create_task_node_id,
@@ -88,8 +92,16 @@ class GraphBuilder:
     while rendered nodes and edges are scoped to the selected pipeline.
     """
 
-    def __init__(self, snapshot: ProjectSnapshot) -> None:
+    def __init__(
+        self,
+        snapshot: ProjectSnapshot,
+        catalog_config: dict[str, Any] | None = None,
+    ) -> None:
         self._snapshot = snapshot
+        self._layer_by_dataset = _extract_layers(
+            catalog_config=catalog_config or {},
+            dataset_names=_dataset_names_from_snapshot(snapshot),
+        )
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
@@ -173,7 +185,7 @@ class GraphBuilder:
         return GraphAPIResponse(
             nodes=nodes,
             edges=list(edges.values()),
-            layers=[],
+            layers=self._sorted_layers_for_pipeline(nodes, edges),
             tags=[
                 NamedEntityAPIResponse(id=tag, name=tag)
                 for tag in self._index.get_all_tags()
@@ -228,9 +240,33 @@ class GraphBuilder:
                 else GraphNodeType.DATA.value
             ),
             modular_pipelines=None,
-            layer=None,
+            layer=(None if is_parameter else self._layer_by_dataset.get(stripped_name)),
             dataset_type=dataset_type,
         )
+
+    def _sorted_layers_for_pipeline(
+        self,
+        nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
+        edges: dict[tuple[str, str], GraphEdgeAPIResponse],
+    ) -> list[str]:
+        """Sort the project-wide layer set using the selected pipeline's edges."""
+        if not self._layer_by_dataset:
+            return []
+        dependencies: dict[str, set[str]] = defaultdict(set)
+        for source, target in edges:
+            dependencies[source].add(target)
+        layer_by_node_id: dict[str, str | None] = {
+            node.id: node.layer if isinstance(node, DataNodeAPIResponse) else None
+            for node in nodes
+        }
+        # Include layered datasets used by any pipeline so every view exposes the
+        # project-wide layer set; this view's edges determine their order.
+        for dataset_name, layer in self._layer_by_dataset.items():
+            dataset_pipelines = self._index.get_pipelines_for_dataset_name(dataset_name)
+            if is_dataset_param(dataset_name) or not dataset_pipelines:
+                continue
+            layer_by_node_id.setdefault(_create_dataset_node_id(dataset_name), layer)
+        return sort_layers(layer_by_node_id, dependencies)
 
     @staticmethod
     def _register_dataset(
@@ -259,3 +295,14 @@ def _display_name(snapshot_name: str, namespace: str | None) -> str:
         local = local[len(prefix) :]
     auto = _AUTO_NAME_RE.match(local)
     return auto.group("func") if auto else local
+
+
+def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
+    """Return non-parameter dataset names referenced by registered pipelines."""
+    return {
+        name
+        for pipeline in snapshot.pipelines
+        for node in pipeline.nodes
+        for name in (*node.inputs, *node.outputs)
+        if not is_dataset_param(name)
+    }
