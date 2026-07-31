@@ -64,7 +64,7 @@ import {
 import { TOGGLE_TYPE_DISABLED, toggleTypeDisabled } from '../actions/node-type';
 
 describe('actions', () => {
-  it('should create an action to reset pipeline data', () => {
+  it('should create an action to reset pipeline data blah blah', () => {
     const expectedAction = {
       type: RESET_DATA,
       data: spaceflights,
