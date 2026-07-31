@@ -1,0 +1,380 @@
+name: Slash Merge
+
+# Two-stage auto-merge for backend-only PRs.
+#
+# Stage 1 — eligibility check (pull_request events):
+#   Runs automatically on every push. Classifies changed files as
+#   backend (Python, config, docs) or frontend (JS/TS/SCSS, src/, public/).
+#   Posts (or updates) a single comment on the PR with the result:
+#     - Eligible  → tells the PR author to comment "@kedro-viz-bot merge"
+#     - Ineligible → explains which frontend files block auto-merge
+#
+# Stage 2 — slash merge (issue_comment "@kedro-viz-bot merge"):
+#   Triggered by the PR author commenting "@kedro-viz-bot merge".
+#   Re-runs the eligibility check (never trusts the previous comment),
+#   then approves via github-actions[bot] and squash-merges.
+#
+# Frontend extensions / paths that BLOCK auto-merge:
+#   Extensions : .js .ts .tsx .jsx .mjs .cjs .scss .css .less
+#   Paths      : src/** public/**
+#
+# Backend files (Python, config, docs, etc.) are ALLOWED.
+# A PR is eligible only if every changed file is backend.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED HELPER (inlined as a JS expression used by both jobs)
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB 1 — Eligibility check
+  # Runs on every PR push. Posts/updates a single sticky comment.
+  # ───────────────────────────────────────────────────────────────────────────
+  check-eligibility:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+
+    steps:
+      - name: Classify changed files and post eligibility comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const MARKER = '<!-- kedro-viz-bot-eligibility -->';
+
+            // ── Frontend detector ──────────────────────────────────────────
+            const FRONTEND_EXTENSIONS = new Set([
+              '.js', '.ts', '.tsx', '.jsx', '.mjs', '.cjs',
+              '.scss', '.css', '.less',
+            ]);
+            const FRONTEND_PATH_PREFIXES = ['src/', 'public/'];
+
+            function isFrontend(filename) {
+              if (FRONTEND_PATH_PREFIXES.some(p => filename.startsWith(p))) return true;
+              const dot = filename.lastIndexOf('.');
+              const ext = dot === -1 ? '' : filename.slice(dot).toLowerCase();
+              return FRONTEND_EXTENSIONS.has(ext);
+            }
+
+            // ── Fetch changed files ────────────────────────────────────────
+            const PR_NUMBER = context.payload.pull_request.number;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: PR_NUMBER,
+              per_page: 100,
+            });
+
+            const frontendFiles = files.filter(f => isFrontend(f.filename));
+            const backendFiles  = files.filter(f => !isFrontend(f.filename));
+            const eligible = frontendFiles.length === 0;
+
+            // ── Build comment body ─────────────────────────────────────────
+            let body;
+            if (eligible) {
+              const fileList = backendFiles
+                .map(f => `- \`${f.filename}\``)
+                .join('\n');
+              body = [
+                MARKER,
+                '## ✅ This PR is eligible for auto-merge',
+                '',
+                'All changed files are backend (Python / config / docs) — no frontend changes detected.',
+                '',
+                backendFiles.length > 0 ? `**Changed files (${backendFiles.length}):**\n${fileList}` : '',
+                '',
+                '---',
+                `**PR author:** comment \`@kedro-viz-bot merge\` to auto-approve and squash-merge this PR.`,
+              ].join('\n');
+            } else {
+              const blockedList = frontendFiles
+                .map(f => `- \`${f.filename}\` — frontend file`)
+                .join('\n');
+              body = [
+                MARKER,
+                '## ❌ This PR is not eligible for auto-merge',
+                '',
+                'The following frontend file(s) require human review:',
+                '',
+                blockedList,
+                '',
+                'Remove or move the frontend changes to a separate PR if you want the backend changes to be auto-merged.',
+              ].join('\n');
+            }
+
+            // ── Find existing bot eligibility comment (update instead of spamming) ──
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: PR_NUMBER,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              c => c.user?.login === 'github-actions[bot]' && c.body?.includes(MARKER)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log(`Updated existing eligibility comment (#${existing.id}) on PR #${PR_NUMBER}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: PR_NUMBER,
+                body,
+              });
+              console.log(`Posted new eligibility comment on PR #${PR_NUMBER}`);
+            }
+
+            console.log(eligible
+              ? `PR #${PR_NUMBER} is ELIGIBLE (${backendFiles.length} backend file(s), 0 frontend)`
+              : `PR #${PR_NUMBER} is INELIGIBLE (${frontendFiles.length} frontend file(s) block auto-merge)`
+            );
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB 2 — Slash merge
+  # Triggered by a PR comment containing "@kedro-viz-bot merge".
+  # Re-validates eligibility from scratch before acting.
+  # ───────────────────────────────────────────────────────────────────────────
+  slash-merge:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, '@kedro-viz-bot merge')
+
+    steps:
+      # Acknowledge immediately so the author knows the bot saw the command
+      - name: Acknowledge command (👀)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+      - name: Validate: PR state, authorship, and eligibility
+        id: validate
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const FRONTEND_EXTENSIONS = new Set([
+              '.js', '.ts', '.tsx', '.jsx', '.mjs', '.cjs',
+              '.scss', '.css', '.less',
+            ]);
+            const FRONTEND_PATH_PREFIXES = ['src/', 'public/'];
+
+            function isFrontend(filename) {
+              if (FRONTEND_PATH_PREFIXES.some(p => filename.startsWith(p))) return true;
+              const dot = filename.lastIndexOf('.');
+              const ext = dot === -1 ? '' : filename.slice(dot).toLowerCase();
+              return FRONTEND_EXTENSIONS.has(ext);
+            }
+
+            const PR_NUMBER = context.issue.number;
+            const commenter = context.actor;
+
+            // ── PR state ──────────────────────────────────────────────────
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: PR_NUMBER,
+            });
+
+            if (commenter !== pr.user.login) {
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason',
+                `Only the PR author (@${pr.user.login}) can trigger \`@kedro-viz-bot merge\`.`);
+              return;
+            }
+            if (pr.state !== 'open') {
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason', `PR is already \`${pr.state}\`.`);
+              return;
+            }
+            if (pr.draft) {
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason', 'PR is a draft — mark it "Ready for review" first.');
+              return;
+            }
+
+            // ── Re-run eligibility check (authoritative, never trust comment) ──
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: PR_NUMBER,
+              per_page: 100,
+            });
+            const frontendFiles = files.filter(f => isFrontend(f.filename));
+
+            if (frontendFiles.length > 0) {
+              const list = frontendFiles.map(f => `- \`${f.filename}\``).join('\n');
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason',
+                `This PR contains frontend file(s) — human review required:\n\n${list}`);
+              return;
+            }
+
+            // ── All clear ─────────────────────────────────────────────────
+            console.log(`PR #${PR_NUMBER} passed all checks — proceeding with approve + merge.`);
+            core.setOutput('eligible', 'true');
+            core.setOutput('pr_number', String(PR_NUMBER));
+            core.setOutput('pr_title', pr.title);
+            core.setOutput('base_ref', pr.base.ref);
+
+      - name: Post ineligible comment
+        if: steps.validate.outputs.eligible == 'false' && steps.validate.outputs.reason != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `❌ \`@kedro-viz-bot merge\` not processed:\n\n${{ steps.validate.outputs.reason }}`,
+            });
+
+      - name: Approve PR
+        if: steps.validate.outputs.eligible == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const PR_NUMBER = Number('${{ steps.validate.outputs.pr_number }}');
+
+            // Idempotent — skip if already approved by this bot
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: PR_NUMBER,
+            });
+            const botReviews = reviews.filter(r => r.user?.login === 'github-actions[bot]');
+            const alreadyApproved =
+              botReviews.length > 0 &&
+              botReviews[botReviews.length - 1].state === 'APPROVED';
+
+            if (alreadyApproved) {
+              console.log('github-actions[bot] already approved — skipping duplicate.');
+            } else {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: PR_NUMBER,
+                event: 'APPROVE',
+                body: [
+                  '✅ **Auto-approved via `@kedro-viz-bot merge`.**',
+                  '',
+                  'All changed files are backend — no frontend changes detected.',
+                  'Triggered by the PR author.',
+                ].join('\n'),
+              });
+              console.log(`Approved PR #${PR_NUMBER}`);
+            }
+
+      # Wait for required status checks (dynamically discovered from branch protection),
+      # then squash-merge. Mirrors the strategy from the client workflow.
+      - name: Wait for required checks and merge
+        if: steps.validate.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${{ steps.validate.outputs.pr_number }}"
+          PR_TITLE="${{ steps.validate.outputs.pr_title }}"
+          BASE_REF="${{ steps.validate.outputs.base_ref }}"
+          REPO="${{ github.repository }}"
+
+          # Discover required checks from branch protection (empty if none configured)
+          REQUIRED_CHECKS=$(gh api "repos/$REPO/branches/$BASE_REF/protection/required_status_checks" \
+            --jq '(((.contexts // []) + ((.checks // []) | map(.context))) | unique)' \
+            2>/dev/null || echo '[]')
+          REQUIRED_COUNT=$(echo "$REQUIRED_CHECKS" | jq 'length')
+
+          if [ "$REQUIRED_COUNT" -eq 0 ]; then
+            echo "No required status checks on '$BASE_REF' — merging immediately."
+          else
+            echo "Required checks for '$BASE_REF': $(echo "$REQUIRED_CHECKS" | jq -r 'join(", ")')"
+          fi
+
+          wait_for_checks() {
+            local max="$1"
+            [ "$REQUIRED_COUNT" -eq 0 ] && return 0
+            for i in $(seq 1 "$max"); do
+              SHA=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.head.sha' 2>/dev/null || echo "")
+              if [ -z "$SHA" ]; then sleep 10; continue; fi
+              RUNS=$(gh api --paginate "repos/$REPO/commits/$SHA/check-runs" \
+                --jq '.check_runs[]' 2>/dev/null | jq -s '.' 2>/dev/null || echo "[]")
+              REQ=$(echo "$RUNS" | jq --argjson req "$REQUIRED_CHECKS" \
+                '[.[] | select(.name as $n | $req | index($n))] | group_by(.name) | map(max_by(.id))')
+              PRESENT=$(echo "$REQ" | jq 'length')
+              FAILED=$(echo "$REQ" | jq \
+                '[.[] | select((.conclusion // "") | test("failure|timed_out|cancelled|action_required|startup_failure"; "i"))] | length')
+              PENDING=$(echo "$REQ" | jq '[.[] | select(.status != "completed")] | length')
+              if [ "$FAILED" -gt 0 ]; then
+                echo "::error::A required check failed on PR #$PR_NUMBER — not merging"; return 1
+              fi
+              if [ "$PRESENT" -ge "$REQUIRED_COUNT" ] && [ "$PENDING" -eq 0 ]; then
+                echo "All $REQUIRED_COUNT required check(s) passed."; return 0
+              fi
+              echo "Waiting for checks ($PRESENT/$REQUIRED_COUNT present, $PENDING pending)... [$i/$max]"
+              sleep 10
+            done
+            echo "::error::Timed out waiting for required checks on PR #$PR_NUMBER — left open"
+            return 1
+          }
+
+          merge_pr() {
+            gh api --method PUT "repos/$REPO/pulls/$PR_NUMBER/merge" \
+              -f merge_method=squash \
+              -f commit_title="$PR_TITLE (#$PR_NUMBER)"
+          }
+
+          wait_for_checks 60 || exit 1
+
+          if ! merge_pr; then
+            echo "Merge rejected (branch may be behind) — updating branch and retrying..."
+            gh pr update-branch "$PR_NUMBER" 2>/dev/null || true
+            sleep 15
+            wait_for_checks 30 || exit 1
+            merge_pr || { echo "::error::Merge failed for PR #$PR_NUMBER — left open"; exit 1; }
+          fi
+
+          echo "Auto-merged PR #$PR_NUMBER via @kedro-viz-bot merge command."
+
+      # Update reaction to 🚀 on success
+      - name: React with rocket on success
+        if: steps.validate.outputs.eligible == 'true' && success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket',
+            });
