@@ -1,6 +1,5 @@
 """Behave step definitions for the cli_scenarios feature."""
 
-import sys
 from pathlib import Path
 from time import sleep, time
 
@@ -28,26 +27,6 @@ def _create_config_file(context, include_example):
     }
     with context.config_file.open("w") as config_file:
         yaml.dump(config, config_file, default_flow_style=False)
-
-
-def _numpy_pin_for_python() -> str | None:
-    """Return the numpy pin used by lower_requirements.txt for this Python version."""
-    version = sys.version_info
-    if version >= (3, 14):
-        return "2.3.2"
-    if version >= (3, 13):
-        return "2.1.0"
-    if version >= (3, 12):
-        return "2.0.2"
-    if version >= (3, 10):
-        return "1.26.4"
-    return None
-
-
-def _add_package_pin(requirements_path: str, package_name: str, version: str) -> None:
-    """Append a package pin to a requirements file."""
-    with open(requirements_path, "a", encoding="utf-8") as req_file:
-        req_file.write(f"\n{package_name}=={version}\n")
 
 
 @given("I have prepared a config file with example code")
@@ -101,11 +80,6 @@ def install_project_requirements(context):
     """Run ``pip install -r requirements.txt``."""
     requirements_path = str(context.root_project_dir) + "/requirements.txt"
 
-    if getattr(context, "lower_bound_requirements_installed", False):
-        numpy_pin = _numpy_pin_for_python()
-        if numpy_pin:
-            _add_package_pin(requirements_path, "numpy", numpy_pin)
-
     cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 
@@ -126,8 +100,6 @@ def install_lower_bound_requirements(context):
         print(res.stdout)
         print(res.stderr)
         assert False
-
-    context.lower_bound_requirements_installed = True
 
 
 @given('I have installed kedro version "{version}"')
