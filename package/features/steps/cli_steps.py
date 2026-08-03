@@ -50,7 +50,7 @@ def _add_package_pin(requirements_path: str, package_name: str, version: str) ->
         req_file.write(f"\n{package_name}=={version}\n")
 
 
-def _ensure_kedro_cli(context) -> None:
+def _ensure_kedro_cli(context):
     """Ensure the kedro CLI entry point exists after pip installs."""
     kedro_path = Path(context.kedro)
     if kedro_path.exists():
