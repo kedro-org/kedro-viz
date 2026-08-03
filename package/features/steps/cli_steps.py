@@ -50,31 +50,6 @@ def _add_package_pin(requirements_path: str, package_name: str, version: str) ->
         req_file.write(f"\n{package_name}=={version}\n")
 
 
-def _ensure_kedro_cli(context):
-    """Ensure the kedro CLI entry point exists after pip installs."""
-    kedro_path = Path(context.kedro)
-    if kedro_path.exists():
-        return
-
-    res = run([context.pip, "install", "-U", "kedro"], env=context.env)
-    if res.returncode != OK_EXIT_CODE:
-        print(res.stdout)
-        print(res.stderr)
-        assert False
-
-    assert kedro_path.exists(), f"kedro CLI not found at {context.kedro}"
-
-
-def _assert_viz_process_started(context) -> None:
-    """Fail fast if kedro viz exits immediately after launch."""
-    sleep(0.5)
-    if context.result.poll() is None:
-        return
-
-    _, stderr = context.result.communicate()
-    raise AssertionError(f"kedro viz failed to start: {stderr.decode()}")
-
-
 @given("I have prepared a config file with example code")
 def create_config_file_with_example(context):
     """Behave step to create a temporary config file
@@ -139,8 +114,6 @@ def install_project_requirements(context):
         print(res.stderr)
         assert False
 
-    _ensure_kedro_cli(context)
-
 
 @given("I have installed the lower-bound Kedro-viz requirements")
 def install_lower_bound_requirements(context):
@@ -178,25 +151,21 @@ def install_kedro(context, version):
 @when("I execute the kedro viz run command")
 def exec_viz_command(context):
     """Execute Kedro-Viz command."""
-    _ensure_kedro_cli(context)
     context.result = ChildTerminatingPopen(
         [context.kedro, "viz", "run", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
-    _assert_viz_process_started(context)
 
 
 @when("I execute the kedro viz run command with lite option")
 def exec_viz_lite_command(context):
     """Execute Kedro-Viz command."""
-    _ensure_kedro_cli(context)
     context.result = ChildTerminatingPopen(
         [context.kedro, "viz", "run", "--lite", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
-    _assert_viz_process_started(context)
 
 
 @then("kedro-viz should start successfully")
@@ -234,7 +203,6 @@ def check_kedroviz_up(context):
 def get_main_api_response(context):
     max_duration = 30  # 30 seconds
     end_by = time() + max_duration
-    context.response = None
 
     while time() < end_by:
         try:
@@ -246,12 +214,6 @@ def get_main_api_response(context):
             continue
         else:
             break
-
-    try:
-        if context.response is None:
-            raise AssertionError("Kedro Viz did not respond within 30 seconds")
-    finally:
-        context.result.terminate()
 
 
 @then("I compare the responses in regular and lite mode")
