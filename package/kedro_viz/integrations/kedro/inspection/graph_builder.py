@@ -298,7 +298,17 @@ class GraphBuilder:
 
 
 def _display_name(snapshot_name: str, func_name: str, namespace: str | None) -> str:
-    """Return the function name for auto-named nodes, otherwise the local node name."""
+    """Return the task name shown in the graph.
+
+    Args:
+        snapshot_name: Snapshot node name, including its namespace.
+        func_name: Underlying function name.
+        namespace: Node namespace, if any.
+
+    Returns:
+        The function name when the node name matches Kedro's generated format;
+        otherwise, the node name without its namespace.
+    """
     local_name = (
         snapshot_name.removeprefix(f"{namespace}.") if namespace else snapshot_name
     )

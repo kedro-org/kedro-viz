@@ -60,6 +60,21 @@ def test_explicit_task_name_and_function_name_are_preserved() -> None:
     )
 
 
+def test_task_node_id_changes_with_io() -> None:
+    def task_id(inputs: list[str], outputs: list[str]) -> str:
+        return ids._create_task_node_id(
+            node_name="my_node",
+            func_name="build_data",
+            namespace=None,
+            inputs=inputs,
+            outputs=outputs,
+        )
+
+    base = task_id(["a"], ["b"])
+    assert task_id(["a", "c"], ["b"]) != base
+    assert task_id(["a"], ["b", "c"]) != base
+
+
 def test_auto_name_is_omitted_from_task_string() -> None:
     expected = _hash("clean_data([x]) -> [y]")
     assert (
