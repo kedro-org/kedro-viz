@@ -155,7 +155,7 @@ if __name__ == "__main__":  # pragma: no cover
             "port": args.port,
             "project_path": str(project_path),
         },
-        "watch_filter": AutoreloadFileFilter(),
+        "watch_filter": AutoreloadFileFilter(base_path=project_path),
     }
 
     process_context = multiprocessing.get_context("spawn")

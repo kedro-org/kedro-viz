@@ -139,3 +139,31 @@ def test_filtered_out_by_default_filter(file_filter, tmp_path, mocker):
 
     result = file_filter(Change.modified, str(filtered_file))
     assert not result, "File should be filtered out by DefaultFilter"
+
+
+def test_ignored_notebooks_folder(tmp_path):
+    """
+    Test that files under the notebooks folder do not pass the filter.
+    """
+    notebooks_dir = tmp_path / "notebooks"
+    notebooks_dir.mkdir()
+    notebook_file = notebooks_dir / "experiment.py"
+    notebook_file.touch()
+
+    file_filter = AutoreloadFileFilter(base_path=tmp_path)
+
+    result = file_filter(Change.modified, str(notebook_file))
+    assert not result, "Files under notebooks/ should not pass the filter"
+
+
+def test_allowed_file_outside_notebooks_folder(tmp_path):
+    """
+    Test that files outside the notebooks folder still pass the filter.
+    """
+    pipeline_file = tmp_path / "pipeline.py"
+    pipeline_file.touch()
+
+    file_filter = AutoreloadFileFilter(base_path=tmp_path)
+
+    result = file_filter(Change.modified, str(pipeline_file))
+    assert result, "Files outside notebooks/ should pass the filter"
