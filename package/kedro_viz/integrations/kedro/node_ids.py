@@ -11,7 +11,22 @@ _AUTO_NAME_RE = re.compile(r"^(?P<base>.+)__[0-9a-f]{8}$")
 
 
 def _is_auto_node_name(local_name: str, func_name: str) -> bool:
-    """Whether a local snapshot name has Kedro's generated node-name form."""
+    """Return whether Kedro generated this node's name, rather than the user supplying one.
+
+    The caller removes any namespace prefix before passing the name. When ``name=`` is
+    omitted, Kedro appends ``__`` and an eight-character hexadecimal hash to the function
+    name. Partial functions use ``partial(<function>)`` as the base. The base is checked
+    against ``func_name`` so an explicit name that merely looks generated is not mistaken
+    for one.
+
+    Examples:
+        >>> _is_auto_node_name("clean_data__a1b2c3d4", "clean_data")
+        True
+        >>> _is_auto_node_name("partial(clean_data)__a1b2c3d4", "<partial>")
+        True
+        >>> _is_auto_node_name("report__deadbeef", "build_report")
+        False
+    """
     match = _AUTO_NAME_RE.fullmatch(local_name)
     if match is None:
         return False
