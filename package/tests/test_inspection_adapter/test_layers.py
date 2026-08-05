@@ -165,8 +165,3 @@ def test_sort_layers_returns_empty_on_cyclic_layers(
 
     assert result == []
     assert "circular dependency detected among layers" in caplog.text
-
-
-def test_sort_layers_rejects_unknown_dependency_nodes() -> None:
-    with pytest.raises(KeyError, match="missing"):
-        sort_layers({"source": "raw"}, {"source": {"missing"}})

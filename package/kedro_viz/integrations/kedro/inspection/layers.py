@@ -33,6 +33,7 @@ def _extract_layers(
     for name, config in catalog_config.items():
         if not isinstance(config, dict):
             continue
+        # Include entries without layers to preserve Kedro's resolver precedence.
         resolver_entry: dict[str, Any] = {"type": "kedro.io.MemoryDataset"}
         resolver_config[name] = resolver_entry
         try:
@@ -86,12 +87,12 @@ def sort_layers(
             return child_layers_by_node[node_id]
 
         child_layers = child_layers_by_node[node_id] = set()
-        node_layer = layer_by_node_id[node_id]
+        node_layer = layer_by_node_id.get(node_id)
         if node_layer is not None:
             child_layers.add(node_layer)
 
         for child_id in dependencies.get(node_id, set()):
-            child_layer = layer_by_node_id[child_id]
+            child_layer = layer_by_node_id.get(child_id)
             if child_layer is not None:
                 child_layers.add(child_layer)
             child_layers.update(find_child_layers(child_id))
@@ -104,7 +105,7 @@ def sort_layers(
     layer_dependencies: dict[str, set[str]] = defaultdict(set)
     all_layers: set[str] = set()
     for node_id, child_layers in child_layers_by_node.items():
-        node_layer = layer_by_node_id[node_id]
+        node_layer = layer_by_node_id.get(node_id)
         if node_layer is None:
             continue
         all_layers.add(node_layer)

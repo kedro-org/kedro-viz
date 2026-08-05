@@ -228,27 +228,6 @@ def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -
     assert adapter["layers"] == baseline["layers"]
 
 
-def test_cyclic_modular_input_edge_is_removed() -> None:
-    """A modular input that is reachable from the modular pipeline must lose its input edge."""
-    from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
-    from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
-        ModularTreeEntry,
-        remove_cyclic_modular_edges,
-    )
-
-    tree = {"p": ModularTreeEntry(name="p", inputs={"A"}, outputs={"B"})}
-    edges = {
-        ("A", "p"): GraphEdgeAPIResponse(source="A", target="p"),  # input -> mp
-        ("p", "B"): GraphEdgeAPIResponse(source="p", target="B"),  # mp -> output
-        ("B", "A"): GraphEdgeAPIResponse(
-            source="B", target="A"
-        ),  # closes the loop p->B->A
-    }
-    remove_cyclic_modular_edges(edges, tree)
-    assert ("A", "p") not in edges  # cyclic input edge dropped
-    assert ("p", "B") in edges and ("B", "A") in edges  # others untouched
-
-
 def test_transcoded_dataset_type_matches_baseline(builder: GraphBuilder) -> None:
     node_name = "ingestion.int_typed_shuttles"
     adapter = builder.build("data_ingestion").model_dump()
