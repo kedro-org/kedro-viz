@@ -1,8 +1,9 @@
 """Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Creates task, data, parameter nodes, edges, global tags and pipeline dictionaries. Node IDs come
-from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw catalog
-type strings from the snapshot.
+Creates task, data, parameter and modular-pipeline nodes; the edges between them, including
+modular edges; the modular-pipeline tree; and global tags and pipeline dictionaries. Node IDs
+come from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw
+catalog type strings from the snapshot.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularMembership,
     ModularTreeBuilder,
     ModularTreeEntry,
+    _task_node_id,
     add_modular_edges,
     remove_cyclic_modular_edges,
 )
@@ -120,9 +122,11 @@ class GraphBuilder:
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
         # A node belongs to the same modular pipelines in every view, so membership is resolved
-        # once across all pipelines' nodes (deduplicated by name).
+        # once across all pipelines' nodes. Deduplicate by task ID, not by name: two pipelines
+        # can register same-named tasks with different I/O, and dropping either one would lose
+        # its datasets from membership.
         unique_nodes = {
-            node.name: node
+            _task_node_id(node): node
             for pipeline in snapshot.pipelines
             for node in pipeline.nodes
         }
@@ -167,8 +171,9 @@ class GraphBuilder:
                 pipeline (see :meth:`default_pipeline_id`) is used.
 
         Returns:
-            The ``GraphAPIResponse`` for the selected pipeline: its task, data and parameter
-            nodes and edges, plus the globally-aggregated tag and pipeline lists.
+            The ``GraphAPIResponse`` for the selected pipeline: its task, data, parameter and
+            modular-pipeline nodes; the edges between them, including modular edges; the
+            modular-pipeline tree; and the globally-aggregated tag and pipeline lists.
 
         Raises:
             ValueError: If ``pipeline_id`` is not a registered pipeline in this snapshot view.

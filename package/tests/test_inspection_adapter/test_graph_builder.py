@@ -174,10 +174,16 @@ def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -
     assert adapter["layers"] == baseline["layers"]
 
 
-def _modular_pipelines_by_name(graph: dict) -> dict[str, list[str] | None]:
-    """Each task/data/parameter node's ``modular_pipelines``, keyed by node name."""
+def _modular_pipelines_by_name(graph: dict) -> dict[tuple[str, str], list[str] | None]:
+    """Each node's ``modular_pipelines``, keyed by (type, name).
+
+    Keyed by type as well as name so a task and a dataset sharing a name cannot overwrite
+    one another and hide a mismatch.
+    """
     return {
-        node.get("full_name", node["name"]): node.get("modular_pipelines")
+        (node["type"], node.get("full_name", node["name"])): node.get(
+            "modular_pipelines"
+        )
         for node in graph["nodes"]
         if node["type"] in {"task", "data", "parameters"}
     }
@@ -219,9 +225,14 @@ def test_modular_tree_io_matches_baseline(
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
 
-    def tree_io(graph: dict) -> dict[str, tuple[list[str], list[str]]]:
+    def tree_io(graph: dict) -> dict[str, tuple[str, str, list[str], list[str]]]:
         return {
-            mp_id: (sorted(entry["inputs"]), sorted(entry["outputs"]))
+            mp_id: (
+                entry["id"],
+                entry["name"],
+                sorted(entry["inputs"]),
+                sorted(entry["outputs"]),
+            )
             for mp_id, entry in graph["modular_pipelines"].items()
         }
 
@@ -232,10 +243,11 @@ def test_modular_tree_io_matches_baseline(
 def test_modular_tree_children_match_baseline(
     builder: GraphBuilder, pipeline_id: str
 ) -> None:
-    """Each modular pipeline holds the same children, by ID and type.
+    """Each modular pipeline holds the same children, compared by ID and type.
 
-    ``__root__`` is compared by ID only: the legacy backend lists a parameter node twice
-    there, once as ``parameters`` and once as ``data``, which is not reproduced here.
+    The legacy backend lists a parameter in ``__root__`` twice, once as ``parameters`` and
+    once as ``data``. Only that known duplicate is normalised away; every other child is
+    still compared by both ID and type, so a wrong child type cannot slip through.
     """
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
@@ -246,11 +258,19 @@ def test_modular_tree_children_match_baseline(
             for child in graph["modular_pipelines"][mp_id]["children"]
         }
 
+    def drop_legacy_duplicate(entries: set[tuple[str, str]]) -> set[tuple[str, str]]:
+        """Remove a ``data`` entry whose ID also appears as ``parameters``."""
+        parameter_ids = {cid for cid, ctype in entries if ctype == "parameters"}
+        return {
+            (cid, ctype)
+            for cid, ctype in entries
+            if not (ctype == "data" and cid in parameter_ids)
+        }
+
     assert set(adapter["modular_pipelines"]) == set(baseline["modular_pipelines"])
     for mp_id in baseline["modular_pipelines"]:
+        expected = children(baseline, mp_id)
+        actual = children(adapter, mp_id)
         if mp_id == ROOT_MODULAR_PIPELINE_ID:
-            assert {cid for cid, _ in children(adapter, mp_id)} == {
-                cid for cid, _ in children(baseline, mp_id)
-            }, mp_id
-        else:
-            assert children(adapter, mp_id) == children(baseline, mp_id), mp_id
+            expected = drop_legacy_duplicate(expected)
+        assert actual == expected, mp_id

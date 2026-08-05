@@ -9,6 +9,7 @@ from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularMembership,
     ModularTreeBuilder,
     _ancestor_namespaces,
+    _task_node_id,
     add_modular_edges,
     remove_cyclic_modular_edges,
 )
@@ -114,9 +115,13 @@ def test_nested_pipeline_is_a_child_of_its_parent() -> None:
 
 
 def test_root_holds_nodes_without_a_namespace() -> None:
-    tree = _tree_builder([_node("task", ["x"], ["y"])]).build()
-    root_children = tree[ROOT_MODULAR_PIPELINE_ID].children
-    assert {node_type for _, node_type in root_children} == {"task", "data"}
+    node = _node("task", ["x"], ["y"])
+    tree = _tree_builder([node]).build()
+    assert tree[ROOT_MODULAR_PIPELINE_ID].children == {
+        (_task_node_id(cast("NodeSnapshot", node)), "task"),
+        (_create_dataset_node_id("x"), "data"),
+        (_create_dataset_node_id("y"), "data"),
+    }
 
 
 def test_tree_without_namespaces_has_only_root() -> None:
@@ -178,3 +183,66 @@ def test_acyclic_modular_edges_are_kept() -> None:
     before = set(edges)
     remove_cyclic_modular_edges(edges, tree)
     assert set(edges) == before
+
+
+def test_membership_agrees_with_the_tree_for_an_ancestor_boundary() -> None:
+    """A dataset on an ancestor's boundary belongs to that ancestor too.
+
+    ``mid`` is produced and consumed inside ``a.b``, and consumed outside ``a``. It is therefore
+    a boundary output of both ``a.b`` and ``a``, and membership must say so — otherwise the
+    dataset node disagrees with the folder it is drawn on.
+    """
+    nodes = [
+        _node("a.b.make", ["x"], ["mid"], namespace="a.b"),
+        _node("a.b.use", ["mid"], ["y"], namespace="a.b"),
+        _node("outside", ["mid"], ["z"]),
+    ]
+    tree = _tree_builder(nodes).build()
+    mid_id = _create_dataset_node_id("mid")
+
+    assert mid_id in tree["a"].outputs
+    assert mid_id in tree["a.b"].outputs
+    assert _membership(nodes).for_dataset("mid") == ["a", "a.b"]
+
+
+def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
+    """Transcoded names are compared unstripped, as Kedro's ``Pipeline`` does.
+
+    ``shared@pandas1`` is produced inside and ``shared@pandas2`` consumed inside, so ``shared``
+    is internal. The outside consumer reads ``shared@pandas3``, which does not match the
+    produced name, so legacy does not treat it as a boundary output and neither do we.
+    """
+    nodes = [
+        _node("ns.make", ["x"], ["shared@pandas1"], namespace="ns"),
+        _node("ns.use", ["shared@pandas2"], ["y"], namespace="ns"),
+        _node("outside", ["shared@pandas3"], ["z"]),
+    ]
+    tree = _tree_builder(nodes).build()
+    assert _create_dataset_node_id("shared") not in tree["ns"].outputs
+
+
+def test_for_dataset_accepts_a_transcoded_name() -> None:
+    nodes = [_node("ns.task", ["ds@pandas"], ["y"], namespace="ns")]
+    membership = _membership(nodes)
+    assert membership.for_dataset("ds@pandas") == membership.for_dataset("ds") == ["ns"]
+
+
+def test_namespace_called_root_does_not_become_a_modular_pipeline() -> None:
+    """``__root__`` is reserved for the synthetic root, so it is never emitted as a folder."""
+    builder = _tree_builder(
+        [_node("__root__.task", ["p"], ["q"], namespace="__root__")]
+    )
+    assert builder.ids == []
+    assert set(builder.build()) == {ROOT_MODULAR_PIPELINE_ID}
+
+
+def test_modular_edges_are_emitted_in_a_stable_order() -> None:
+    """Edge insertion order must not depend on set iteration order."""
+    nodes = [_node("ns.task", ["b_in", "a_in"], ["b_out", "a_out"], namespace="ns")]
+    tree = _tree_builder(nodes).build()
+    orders = []
+    for _ in range(5):
+        edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
+        add_modular_edges(edges, tree)
+        orders.append(list(edges))
+    assert all(order == orders[0] for order in orders)

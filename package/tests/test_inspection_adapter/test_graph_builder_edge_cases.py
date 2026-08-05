@@ -379,3 +379,26 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
 
     graph = _builder(snapshot, catalog_config).build("pipe_a")
     assert graph.layers == ["external", "raw", "reporting", "model"]
+
+
+def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> None:
+    """Distinct tasks sharing a name must both contribute to dataset membership.
+
+    Task identity is name plus function plus I/O, so deduplicating the global node set by name
+    alone would drop one task and silently strip its datasets of modular membership.
+    """
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("ns.shared", ["a"], ["b"], namespace="ns")]),
+            _pipeline("pipe_b", [_node("ns.shared", ["c"], ["d"], namespace="ns")]),
+        ]
+    )
+    builder = _builder(snapshot)
+
+    for pipeline_id, datasets in (("pipe_a", ["a", "b"]), ("pipe_b", ["c", "d"])):
+        membership = {
+            node.name: node.modular_pipelines
+            for node in builder.build(pipeline_id).nodes
+            if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+        }
+        assert membership == {name: ["ns"] for name in datasets}, pipeline_id

@@ -38,7 +38,22 @@ def _ancestor_namespaces(namespace: str) -> list[str]:
     return [".".join(parts[: i + 1]) for i in range(len(parts))]
 
 
-def _task_id(node: NodeSnapshot) -> str:
+def _modular_pipeline_ids(nodes: list[NodeSnapshot]) -> set[str]:
+    """Every modular pipeline the nodes belong to, including ancestors.
+
+    A namespace literally called ``__root__`` is ignored: that ID is reserved for the synthetic
+    root entry, and the legacy backend does not emit a modular pipeline for it either.
+    """
+    return {
+        mp_id
+        for node in nodes
+        if node.namespace
+        for mp_id in _ancestor_namespaces(node.namespace)
+        if mp_id != ROOT_MODULAR_PIPELINE_ID
+    }
+
+
+def _task_node_id(node: NodeSnapshot) -> str:
     """Graph ID for a snapshot task node."""
     return _create_task_node_id(
         node_name=node.name,
@@ -49,17 +64,55 @@ def _task_id(node: NodeSnapshot) -> str:
     )
 
 
+def _remove_intermediates(
+    datasets: set[str], all_inputs: set[str], all_outputs: set[str]
+) -> set[str]:
+    """Drop datasets both produced and consumed within the same node set.
+
+    Mirrors ``Pipeline._remove_intermediates``: transcoding is stripped only to decide what
+    counts as intermediate, and the surviving names are returned in their original
+    (possibly transcoded) form so later set operations compare like for like.
+    """
+    intermediate = {_strip_transcoding(i) for i in all_inputs} & {
+        _strip_transcoding(o) for o in all_outputs
+    }
+    return {d for d in datasets if _strip_transcoding(d) not in intermediate}
+
+
+def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> tuple[set[str], set[str]]:
+    """Boundary inputs and outputs of a namespace subtree, in original dataset names.
+
+    Mirrors the legacy backend's Kedro set algebra::
+
+        free_inputs  = sub.inputs()
+        free_outputs = sub.outputs() | (rest.inputs() & sub.all_outputs())
+    """
+    sub: list[NodeSnapshot] = []
+    rest: list[NodeSnapshot] = []
+    for node in nodes:
+        (sub if _in_subtree(node, mp_id) else rest).append(node)
+
+    sub_inputs = {i for node in sub for i in node.inputs}
+    sub_outputs = {o for node in sub for o in node.outputs}
+    rest_inputs = {i for node in rest for i in node.inputs}
+    rest_outputs = {o for node in rest for o in node.outputs}
+
+    free_inputs = _remove_intermediates(sub_inputs, sub_inputs, sub_outputs)
+    free_outputs = _remove_intermediates(sub_outputs, sub_inputs, sub_outputs) | (
+        _remove_intermediates(rest_inputs, rest_inputs, rest_outputs) & sub_outputs
+    )
+    return free_inputs, free_outputs
+
+
 class ModularMembership:
     """Resolve the modular pipelines a set of nodes belongs to."""
 
-    def __init__(self, nodes: list[NodeSnapshot]):
-        self._ids: set[str] = set()
-        for node in nodes:
-            if node.namespace:
-                self._ids.update(_ancestor_namespaces(node.namespace))
+    def __init__(self, nodes: list[NodeSnapshot]) -> None:
+        self._ids = _modular_pipeline_ids(nodes)
 
-        # Datasets that belong to each modular pipeline: I/O of its direct nodes, plus the boundary
-        # inputs/outputs of its whole subtree (transcoding stripped).
+        # Datasets that belong to each modular pipeline: I/O of its direct nodes, plus the
+        # boundary of its whole subtree. The boundary comes from the same calculation the tree
+        # uses, so a dataset's membership always agrees with the folder it is drawn on.
         self._member_datasets: dict[str, set[str]] = {}
         for mp_id in self._ids:
             direct = {
@@ -68,10 +121,8 @@ class ModularMembership:
                 if node.namespace == mp_id
                 for io in [*node.inputs, *node.outputs]
             }
-            subtree = [node for node in nodes if _in_subtree(node, mp_id)]
-            produced = {_strip_transcoding(o) for node in subtree for o in node.outputs}
-            consumed = {_strip_transcoding(i) for node in subtree for i in node.inputs}
-            boundary = (consumed - produced) | (produced - consumed)
+            free_inputs, free_outputs = _free_io(nodes, mp_id)
+            boundary = {_strip_transcoding(d) for d in free_inputs | free_outputs}
             self._member_datasets[mp_id] = direct | boundary
 
     def for_task(self, node: NodeSnapshot) -> list[str] | None:
@@ -82,15 +133,20 @@ class ModularMembership:
         """A dataset belongs to every modular pipeline that owns it (see module docstring)."""
         if is_dataset_param(dataset_name):
             return None
+        stripped = _strip_transcoding(dataset_name)
         owners = sorted(
-            mp_id for mp_id in self._ids if dataset_name in self._member_datasets[mp_id]
+            mp_id for mp_id in self._ids if stripped in self._member_datasets[mp_id]
         )
         return owners or None
 
 
 @dataclass
 class ModularTreeEntry:
-    """One node in the modular-pipeline tree (IDs are hashed graph IDs)."""
+    """One node in the modular-pipeline tree.
+
+    ``name`` and the modular-pipeline IDs are namespace strings; dataset and task IDs in
+    ``inputs``, ``outputs`` and ``children`` are hashed graph IDs.
+    """
 
     name: str
     inputs: set[str] = field(default_factory=set)
@@ -101,19 +157,12 @@ class ModularTreeEntry:
 class ModularTreeBuilder:
     """Build the modular-pipeline tree for the nodes of a single rendered pipeline."""
 
-    def __init__(self, nodes: list[NodeSnapshot]):
+    def __init__(self, nodes: list[NodeSnapshot]) -> None:
         self._nodes = nodes
         # Root membership is resolved against this pipeline's nodes (a node is a root child when it
         # has no modular owner *in this pipeline*, which can differ from its global membership).
         self._membership = ModularMembership(nodes)
-        self.ids: list[str] = sorted(
-            {
-                mp
-                for node in nodes
-                if node.namespace
-                for mp in _ancestor_namespaces(node.namespace)
-            }
-        )
+        self.ids: list[str] = sorted(_modular_pipeline_ids(nodes))
 
     def build(self) -> dict[str, ModularTreeEntry]:
         """Return the tree keyed by modular pipeline id, including ``__root__``."""
@@ -122,7 +171,7 @@ class ModularTreeBuilder:
 
         for mp_id in self.ids:
             entry = tree.setdefault(mp_id, ModularTreeEntry(mp_id))
-            free_inputs, free_outputs = self._free_io(mp_id)
+            free_inputs, free_outputs = _free_io(self._nodes, mp_id)
             entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
             entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
             params |= {
@@ -150,30 +199,13 @@ class ModularTreeBuilder:
             for mp_id in self.ids
         }
 
-    # -- internals -------------------------------------------------------------------- #
-    def _free_io(self, mp_id: str) -> tuple[set[str], set[str]]:
-        sub = [node for node in self._nodes if _in_subtree(node, mp_id)]
-        sub_names = {node.name for node in sub}
-        rest = [node for node in self._nodes if node.name not in sub_names]
-
-        produced = {_strip_transcoding(o) for node in sub for o in node.outputs}
-        consumed = {_strip_transcoding(i) for node in sub for i in node.inputs}
-        produced_rest = {_strip_transcoding(o) for node in rest for o in node.outputs}
-        consumed_rest = {_strip_transcoding(i) for node in rest for i in node.inputs}
-
-        free_inputs = consumed - produced
-        free_outputs = (produced - consumed) | (
-            (consumed_rest - produced_rest) & produced
-        )
-        return free_inputs, free_outputs
-
     def _add_direct_children(
         self, entry: ModularTreeEntry, mp_id: str, boundary: set[str], params: set[str]
     ) -> None:
         for node in self._nodes:
             if node.namespace != mp_id:
                 continue
-            entry.children.add((_task_id(node), GraphNodeType.TASK.value))
+            entry.children.add((_task_node_id(node), GraphNodeType.TASK.value))
             io_ids = {
                 _create_dataset_node_id(io) for io in [*node.inputs, *node.outputs]
             }
@@ -215,7 +247,7 @@ class ModularTreeBuilder:
                 root.children.add((_create_dataset_node_id(dataset), node_type))
         for node in self._nodes:
             if node.namespace is None:
-                root.children.add((_task_id(node), GraphNodeType.TASK.value))
+                root.children.add((_task_node_id(node), GraphNodeType.TASK.value))
 
 
 def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
@@ -226,9 +258,6 @@ def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
     return namespace == mp_id or namespace.startswith(f"{mp_id}.")
 
 
-# -- modular graph edges --------------------------------------------------------------------- #
-
-
 def add_modular_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     tree: dict[str, ModularTreeEntry],
@@ -237,12 +266,12 @@ def add_modular_edges(
     for mp_id, entry in tree.items():
         if mp_id == ROOT_MODULAR_PIPELINE_ID:
             continue
-        for input_id in entry.inputs:
+        for input_id in sorted(entry.inputs):
             edges.setdefault(
                 (input_id, mp_id),
                 GraphEdgeAPIResponse(source=input_id, target=mp_id),
             )
-        for output_id in entry.outputs:
+        for output_id in sorted(entry.outputs):
             edges.setdefault(
                 (mp_id, output_id),
                 GraphEdgeAPIResponse(source=mp_id, target=output_id),
@@ -261,7 +290,7 @@ def remove_cyclic_modular_edges(
         if mp_id == ROOT_MODULAR_PIPELINE_ID:
             continue
         reachable = _reachable_from(mp_id, adjacency)
-        for input_id in entry.inputs & reachable:
+        for input_id in sorted(entry.inputs & reachable):
             edges.pop((input_id, mp_id), None)
             adjacency[input_id].discard(mp_id)
 
