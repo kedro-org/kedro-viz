@@ -66,6 +66,41 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _read_task_source(
+    project_path: Path, source: Any
+) -> tuple[Optional[str], Optional[str]]:
+    """Return ``(code, filepath)`` for a task from its snapshot source location.
+
+    Kedro reports the function's ``filepath`` plus a 1-based inclusive ``line_start`` /
+    ``line_end``, so the code is read from the file rather than from a live function object.
+    Returns ``(None, None)`` when there is no usable location, which callers treat as "no
+    snapshot source" and fall back to whatever the live object provides.
+
+    Args:
+        project_path: Project root, used to resolve a project-relative filepath.
+        source: A ``NodeSourceSnapshot``, or ``None`` when Kedro could not locate the function.
+
+    Returns:
+        The source text and the filepath Kedro reported, or ``(None, None)``.
+    """
+    if source is None:
+        return None, None
+    filepath = getattr(source, "filepath", None)
+    line_start = getattr(source, "line_start", None)
+    line_end = getattr(source, "line_end", None)
+    if not filepath or not line_start or not line_end:
+        return None, None
+    path = Path(filepath)
+    absolute = path if path.is_absolute() else project_path / path
+    try:
+        lines = absolute.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        # The snapshot still names the file even when it cannot be read from here.
+        logger.debug("Could not read source file %s", absolute)
+        return None, filepath
+    return "\n".join(lines[line_start - 1 : line_end]), filepath
+
+
 class InspectionAdapterProvider:
     """Serve graph + node metadata from a one-shot snapshot.
 
@@ -104,6 +139,16 @@ class InspectionAdapterProvider:
         if pipeline_name is not None:
             snapshot = self._filter_to_pipeline(snapshot, pipeline_name)
         self._snapshot = snapshot
+        self._project_path = Path(project_path)
+        # Source locations by task ID. ``source`` is absent on Kedro versions that predate it and
+        # ``None`` when the function could not be located; both mean "no snapshot source". The
+        # files themselves are read on demand, not at startup.
+        self._source_by_task_id: dict[str, Any] = {
+            _create_task_node_id_from_snapshot(node): getattr(node, "source", None)
+            for pipeline in snapshot.pipelines
+            for node in pipeline.nodes
+        }
+        self._source_cache: dict[str, tuple[Optional[str], Optional[str]]] = {}
         self._builder = GraphBuilder(
             snapshot, catalog_config, parameters=self._parameters
         )
@@ -156,13 +201,33 @@ class InspectionAdapterProvider:
             return JSONResponse(content=lite)
         viz_node = self._metadata_bridge.get(node_id)
         if viz_node is not None:
-            return self._live_metadata_response(viz_node)
+            return self._live_metadata_response(node_id, viz_node)
         if lite is not None:
-            return JSONResponse(content=lite)
+            return JSONResponse(content=self._with_task_source(node_id, lite))
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
-    @staticmethod
+    def _with_task_source(
+        self, node_id: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Add ``code`` and ``filepath`` to a lite task payload when the snapshot has them."""
+        if node_id not in self._source_by_task_id:
+            return payload
+        code, filepath = self._task_source(node_id)
+        if code is None:
+            return payload
+        return {**payload, "code": code, "filepath": filepath}
+
+    def _task_source(self, task_id: str) -> tuple[Optional[str], Optional[str]]:
+        """Return ``(code, filepath)`` for a task, reading the file at most once."""
+        if task_id not in self._source_cache:
+            self._source_cache[task_id] = _read_task_source(
+                self._project_path, self._source_by_task_id.get(task_id)
+            )
+        return self._source_cache[task_id]
+
     def _live_metadata_response(
+        self,
+        node_id: str,
         viz_node: GraphNode,
     ) -> Union[NodeMetadataAPIResponse, JSONResponse]:
         if not viz_node.has_metadata():
@@ -170,7 +235,12 @@ class InspectionAdapterProvider:
         # Return the same domain models as the live response builder; FastAPI serialises them at
         # the route. ``cast`` is for mypy only — no runtime effect.
         if isinstance(viz_node, TaskNode):
-            return cast("NodeMetadataAPIResponse", TaskNodeMetadata(task_node=viz_node))
+            task_meta = TaskNodeMetadata(task_node=viz_node)
+            code, filepath = self._task_source(node_id)
+            if code is not None:
+                task_meta.code = code
+                task_meta.filepath = filepath
+            return cast("NodeMetadataAPIResponse", task_meta)
         if isinstance(viz_node, DataNode):
             return cast("NodeMetadataAPIResponse", DataNodeMetadata(data_node=viz_node))
         if isinstance(viz_node, TranscodedDataNode):

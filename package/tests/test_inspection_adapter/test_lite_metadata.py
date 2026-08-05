@@ -146,7 +146,11 @@ def test_lite_metadata_response_carries_no_live_only_fields(
     # Lite-mode responses are always JSONResponse — narrow for mypy + read the raw body.
     assert isinstance(response, JSONResponse)
     body = json.loads(response.body)
-    assert set(body) == {"inputs", "outputs"}
+    # Source now comes from the snapshot location, so lite mode carries it too. Live-only
+    # fields (previews, stats) must still be absent.
+    assert set(body) == {"inputs", "outputs", "code", "filepath"}
+    assert "preview" not in body
+    assert "stats" not in body
 
 
 # -- Layer 2: end-to-end through the router --------------------------------------------- #
