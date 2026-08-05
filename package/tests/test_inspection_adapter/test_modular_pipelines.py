@@ -1,4 +1,4 @@
-"""Hermetic tests for modular-pipeline membership, tree and edges."""
+"""Hermetic tests for modular pipelines, their tree and their edges."""
 
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
@@ -6,27 +6,29 @@ from typing import TYPE_CHECKING, cast
 from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
-    ModularMembership,
-    ModularTreeBuilder,
+    _add_modular_edges,
     _ancestor_namespaces,
-    _task_node_id,
-    add_modular_edges,
-    remove_cyclic_modular_edges,
+    _ModularPipelineIndex,
+    _ModularTreeBuilder,
+    _remove_cyclic_modular_edges,
 )
-from kedro_viz.integrations.kedro.node_ids import _create_dataset_node_id
+from kedro_viz.integrations.kedro.node_ids import (
+    _create_dataset_node_id,
+    _create_task_node_id_from_snapshot,
+)
 
 if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot
 
 
-def _membership(nodes: list[SimpleNamespace]) -> ModularMembership:
-    """Build ``ModularMembership`` from duck-typed snapshot stand-ins."""
-    return ModularMembership(cast("list[NodeSnapshot]", nodes))
+def _membership(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
+    """Build a ``_ModularPipelineIndex`` from duck-typed snapshot stand-ins."""
+    return _ModularPipelineIndex(cast("list[NodeSnapshot]", nodes))
 
 
-def _tree_builder(nodes: list[SimpleNamespace]) -> ModularTreeBuilder:
-    """Build ``ModularTreeBuilder`` from duck-typed snapshot stand-ins."""
-    return ModularTreeBuilder(cast("list[NodeSnapshot]", nodes))
+def _tree_builder(nodes: list[SimpleNamespace]) -> _ModularTreeBuilder:
+    """Build a ``_ModularTreeBuilder`` from duck-typed snapshot stand-ins."""
+    return _ModularTreeBuilder(cast("list[NodeSnapshot]", nodes))
 
 
 def _node(
@@ -57,30 +59,35 @@ def test_task_belongs_only_to_its_own_namespace() -> None:
     """A nested task reports its deepest namespace, not its ancestors."""
     node = _node("a.b.task", ["x"], ["y"], namespace="a.b")
     membership = _membership([node])
-    assert membership.for_task(cast("NodeSnapshot", node)) == ["a.b"]
+    assert membership.get_modular_pipelines_for_task(cast("NodeSnapshot", node)) == [
+        "a.b"
+    ]
 
 
 def test_task_without_namespace_has_no_modular_pipelines() -> None:
     node = _node("task", ["x"], ["y"])
-    assert _membership([node]).for_task(cast("NodeSnapshot", node)) is None
+    assert (
+        _membership([node]).get_modular_pipelines_for_task(cast("NodeSnapshot", node))
+        is None
+    )
 
 
 def test_dataset_belongs_to_every_owning_modular_pipeline() -> None:
     """A boundary dataset is owned by the nested pipeline and each of its ancestors."""
     node = _node("a.b.task", ["x"], ["y"], namespace="a.b")
     membership = _membership([node])
-    assert membership.for_dataset("x") == ["a", "a.b"]
-    assert membership.for_dataset("y") == ["a", "a.b"]
+    assert membership.get_modular_pipelines_for_dataset("x") == ["a", "a.b"]
+    assert membership.get_modular_pipelines_for_dataset("y") == ["a", "a.b"]
 
 
 def test_parameters_never_belong_to_a_modular_pipeline() -> None:
     node = _node("ns.task", ["params:opts"], ["y"], namespace="ns")
-    assert _membership([node]).for_dataset("params:opts") is None
+    assert _membership([node]).get_modular_pipelines_for_dataset("params:opts") is None
 
 
 def test_unowned_dataset_has_no_modular_pipelines() -> None:
     node = _node("task", ["x"], ["y"])
-    assert _membership([node]).for_dataset("x") is None
+    assert _membership([node]).get_modular_pipelines_for_dataset("x") is None
 
 
 def test_tree_ids_include_every_ancestor_namespace() -> None:
@@ -118,7 +125,7 @@ def test_root_holds_nodes_without_a_namespace() -> None:
     node = _node("task", ["x"], ["y"])
     tree = _tree_builder([node]).build()
     assert tree[ROOT_MODULAR_PIPELINE_ID].children == {
-        (_task_node_id(cast("NodeSnapshot", node)), "task"),
+        (_create_task_node_id_from_snapshot(cast("NodeSnapshot", node)), "task"),
         (_create_dataset_node_id("x"), "data"),
         (_create_dataset_node_id("y"), "data"),
     }
@@ -136,7 +143,7 @@ def test_modular_node_tags_union_the_whole_subtree() -> None:
             _node("a.b.two", ["y"], ["z"], namespace="a.b", tags={"inner"}),
         ]
     )
-    tags = builder.modular_node_tags()
+    tags = builder.get_tags_by_modular_pipeline()
     assert tags["a"] == ["inner", "outer"]
     assert tags["a.b"] == ["inner"]
 
@@ -144,7 +151,7 @@ def test_modular_node_tags_union_the_whole_subtree() -> None:
 def test_modular_edges_connect_boundary_datasets() -> None:
     tree = _tree_builder([_node("ns.task", ["x"], ["y"], namespace="ns")]).build()
     edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-    add_modular_edges(edges, tree)
+    _add_modular_edges(edges, tree)
     assert (_create_dataset_node_id("x"), "ns") in edges
     assert ("ns", _create_dataset_node_id("y")) in edges
 
@@ -152,7 +159,7 @@ def test_modular_edges_connect_boundary_datasets() -> None:
 def test_root_has_no_modular_edges() -> None:
     tree = _tree_builder([_node("task", ["x"], ["y"])]).build()
     edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-    add_modular_edges(edges, tree)
+    _add_modular_edges(edges, tree)
     assert edges == {}
 
 
@@ -168,10 +175,10 @@ def test_cyclic_modular_edge_is_removed() -> None:
         (b_id, "outer_task"): GraphEdgeAPIResponse(source=b_id, target="outer_task"),
         ("outer_task", a_id): GraphEdgeAPIResponse(source="outer_task", target=a_id),
     }
-    add_modular_edges(edges, tree)
+    _add_modular_edges(edges, tree)
     assert (a_id, "ns") in edges
 
-    remove_cyclic_modular_edges(edges, tree)
+    _remove_cyclic_modular_edges(edges, tree)
     assert (a_id, "ns") not in edges
     assert ("ns", b_id) in edges
 
@@ -179,13 +186,13 @@ def test_cyclic_modular_edge_is_removed() -> None:
 def test_acyclic_modular_edges_are_kept() -> None:
     tree = _tree_builder([_node("ns.task", ["x"], ["y"], namespace="ns")]).build()
     edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-    add_modular_edges(edges, tree)
+    _add_modular_edges(edges, tree)
     before = set(edges)
-    remove_cyclic_modular_edges(edges, tree)
+    _remove_cyclic_modular_edges(edges, tree)
     assert set(edges) == before
 
 
-def test_membership_agrees_with_the_tree_for_an_ancestor_boundary() -> None:
+def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
     """A dataset on an ancestor's boundary belongs to that ancestor too.
 
     ``mid`` is produced and consumed inside ``a.b``, and consumed outside ``a``. It is therefore
@@ -202,7 +209,7 @@ def test_membership_agrees_with_the_tree_for_an_ancestor_boundary() -> None:
 
     assert mid_id in tree["a"].outputs
     assert mid_id in tree["a.b"].outputs
-    assert _membership(nodes).for_dataset("mid") == ["a", "a.b"]
+    assert _membership(nodes).get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
 
 
 def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
@@ -224,7 +231,11 @@ def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
 def test_for_dataset_accepts_a_transcoded_name() -> None:
     nodes = [_node("ns.task", ["ds@pandas"], ["y"], namespace="ns")]
     membership = _membership(nodes)
-    assert membership.for_dataset("ds@pandas") == membership.for_dataset("ds") == ["ns"]
+    assert (
+        membership.get_modular_pipelines_for_dataset("ds@pandas")
+        == membership.get_modular_pipelines_for_dataset("ds")
+        == ["ns"]
+    )
 
 
 def test_namespace_called_root_does_not_become_a_modular_pipeline() -> None:
@@ -243,6 +254,6 @@ def test_modular_edges_are_emitted_in_a_stable_order() -> None:
     orders = []
     for _ in range(5):
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-        add_modular_edges(edges, tree)
+        _add_modular_edges(edges, tree)
         orders.append(list(edges))
     assert all(order == orders[0] for order in orders)

@@ -26,16 +26,15 @@ from kedro_viz.integrations.kedro.inspection.layers import (
     sort_layers,
 )
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
-    ModularMembership,
-    ModularTreeBuilder,
-    ModularTreeEntry,
-    _task_node_id,
-    add_modular_edges,
-    remove_cyclic_modular_edges,
+    _add_modular_edges,
+    _ModularPipelineIndex,
+    _ModularTreeBuilder,
+    _ModularTreeEntry,
+    _remove_cyclic_modular_edges,
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _create_task_node_id_from_snapshot,
     _is_auto_node_name,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
@@ -64,13 +63,7 @@ class _SnapshotGraphIndex:
         self._all_tags: set[str] = set()
         for pipeline_id, pipeline in pipelines.items():
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(
-                    node_name=node.name,
-                    func_name=node.func_name,
-                    namespace=node.namespace,
-                    inputs=node.inputs,
-                    outputs=node.outputs,
-                )
+                task_id = _create_task_node_id_from_snapshot(node)
                 self._pipelines_by_task_id[task_id].add(pipeline_id)
                 self._tags_by_task_id[task_id].update(node.tags)
                 self._all_tags.update(node.tags)
@@ -121,16 +114,16 @@ class GraphBuilder:
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
-        # A node belongs to the same modular pipelines in every view, so membership is resolved
-        # once across all pipelines' nodes. Deduplicate by task ID, not by name: two pipelines
-        # can register same-named tasks with different I/O, and dropping either one would lose
-        # its datasets from membership.
+        # A node belongs to the same modular pipelines in every view, so this is resolved once
+        # across all pipelines' nodes. Deduplicate by task ID, not by name: two pipelines can
+        # register same-named tasks with different I/O, and dropping either one would lose its
+        # datasets from the result.
         unique_nodes = {
-            _task_node_id(node): node
+            _create_task_node_id_from_snapshot(node): node
             for pipeline in snapshot.pipelines
             for node in pipeline.nodes
         }
-        self._modular = ModularMembership(list(unique_nodes.values()))
+        self._modular = _ModularPipelineIndex(list(unique_nodes.values()))
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.
@@ -190,13 +183,7 @@ class GraphBuilder:
         transcoded_datasets: set[str] = set()
 
         for node in pipeline.nodes:
-            task_id = _create_task_node_id(
-                node_name=node.name,
-                func_name=node.func_name,
-                namespace=node.namespace,
-                inputs=node.inputs,
-                outputs=node.outputs,
-            )
+            task_id = _create_task_node_id_from_snapshot(node)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
@@ -214,11 +201,11 @@ class GraphBuilder:
                 )
             )
 
-        tree_builder = ModularTreeBuilder(pipeline.nodes)
+        tree_builder = _ModularTreeBuilder(pipeline.nodes)
         tree = tree_builder.build()
         nodes.extend(self._build_modular_pipeline_nodes(tree_builder, selected))
-        add_modular_edges(edges, tree)
-        remove_cyclic_modular_edges(edges, tree)
+        _add_modular_edges(edges, tree)
+        _remove_cyclic_modular_edges(edges, tree)
 
         return GraphAPIResponse(
             nodes=nodes,
@@ -244,7 +231,7 @@ class GraphBuilder:
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
-            modular_pipelines=self._modular.for_task(node),
+            modular_pipelines=self._modular.get_modular_pipelines_for_task(node),
             parameters={},
         )
 
@@ -277,17 +264,19 @@ class GraphBuilder:
                 if is_parameter
                 else GraphNodeType.DATA.value
             ),
-            modular_pipelines=self._modular.for_dataset(stripped_name),
+            modular_pipelines=self._modular.get_modular_pipelines_for_dataset(
+                stripped_name
+            ),
             layer=(None if is_parameter else self._layer_by_dataset.get(stripped_name)),
             dataset_type=dataset_type,
         )
 
     @staticmethod
     def _build_modular_pipeline_nodes(
-        tree_builder: ModularTreeBuilder, selected: str
+        tree_builder: _ModularTreeBuilder, selected: str
     ) -> list[DataNodeAPIResponse]:
         """Build one ``modularPipeline`` node per modular pipeline in the rendered view."""
-        tags = tree_builder.modular_node_tags()
+        tags = tree_builder.get_tags_by_modular_pipeline()
         return [
             DataNodeAPIResponse(
                 id=mp_id,
@@ -346,7 +335,7 @@ class GraphBuilder:
 
 
 def _to_tree_response(
-    tree: dict[str, ModularTreeEntry],
+    tree: dict[str, _ModularTreeEntry],
 ) -> dict[str, ModularPipelinesTreeNodeAPIResponse]:
     """Convert internal tree entries into the API tree response.
 
