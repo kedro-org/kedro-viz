@@ -72,6 +72,7 @@ def test_session_snapshot_exposes_fields_kedro_viz_needs() -> None:
         assert isinstance(pipeline.name, str)
         for node in pipeline.nodes:
             assert isinstance(node.name, str)
+            assert isinstance(node.func_name, str)
             assert isinstance(node.inputs, list)
             assert isinstance(node.outputs, list)
             assert isinstance(node.tags, list)

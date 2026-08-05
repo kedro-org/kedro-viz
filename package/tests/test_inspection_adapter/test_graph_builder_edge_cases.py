@@ -26,11 +26,14 @@ def _node(
     inputs: list[str],
     outputs: list[str],
     *,
+    func_name: str | None = None,
     namespace: str | None = None,
     tags: set[str] | None = None,
 ) -> SimpleNamespace:
+    local_name = name.removeprefix(f"{namespace}.") if namespace else name
     return SimpleNamespace(
         name=name,
+        func_name=func_name or local_name,
         inputs=inputs,
         outputs=outputs,
         namespace=namespace,
@@ -261,18 +264,22 @@ def test_build_rejects_unknown_pipeline_id() -> None:
 
 
 @pytest.mark.parametrize(
-    ("name", "namespace", "expected"),
+    ("name", "func_name", "namespace", "expected"),
     [
-        ("clean_data__a1b2c3d4", None, "clean_data"),  # auto-named: strip __<8 hex>
-        ("my_node", None, "my_node"),  # explicit name, no namespace
-        ("ns.my_node", "ns", "my_node"),  # explicit name, namespace stripped
-        ("ns.clean_data__a1b2c3d4", "ns", "clean_data"),  # namespace strip + auto-name
-        ("report__notahex", None, "report__notahex"),  # non-hex suffix is kept as-is
+        ("clean_data__a1b2c3d4", "clean_data", None, "clean_data"),
+        ("my_node", "build_data", None, "my_node"),
+        ("ns.my_node", "build_data", "ns", "my_node"),
+        ("ns.clean_data__a1b2c3d4", "clean_data", "ns", "clean_data"),
+        ("report__notahex", "build_report", None, "report__notahex"),
+        ("report__deadbeef", "build_report", None, "report__deadbeef"),
+        ("partial(clean_data)__a1b2c3d4", "<partial>", None, "<partial>"),
+        ("partial(clean_data)__a1b2c3d4", "clean_data", None, "clean_data"),
     ],
 )
-def test_display_name(name: str, namespace: str | None, expected: str) -> None:
-    """Display name strips the namespace prefix and any auto-name ``__<hash>`` suffix."""
-    assert _display_name(name, namespace) == expected
+def test_display_name(
+    name: str, func_name: str, namespace: str | None, expected: str
+) -> None:
+    assert _display_name(name, func_name, namespace) == expected
 
 
 def test_no_catalog_config_yields_empty_layers() -> None:
