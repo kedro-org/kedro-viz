@@ -34,6 +34,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.utils import _hash
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
@@ -86,7 +87,7 @@ def test_bridge_maps_task_node_to_new_id() -> None:
 
     provider = _provider_with_repo(repo)
 
-    expected_id = node_ids._create_task_node_id("my_node", ["a", "b"], ["c"])
+    expected_id = _hash(str(task.kedro_obj))
     assert provider._metadata_bridge[expected_id] is task
 
 

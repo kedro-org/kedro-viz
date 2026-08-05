@@ -23,7 +23,7 @@ from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _create_task_node_id_from_snapshot,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
@@ -164,7 +164,7 @@ class ModularTreeBuilder:
                 continue
             entry.children.add(
                 (
-                    _create_task_node_id(node.name, node.inputs, node.outputs),
+                    _create_task_node_id_from_snapshot(node),
                     GraphNodeType.TASK.value,
                 )
             )
@@ -211,9 +211,7 @@ class ModularTreeBuilder:
             if node.namespace is None:
                 root.children.add(
                     (
-                        _create_task_node_id(
-                            node.name, list(node.inputs), list(node.outputs)
-                        ),
+                        _create_task_node_id_from_snapshot(node),
                         GraphNodeType.TASK.value,
                     )
                 )

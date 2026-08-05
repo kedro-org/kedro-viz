@@ -34,11 +34,14 @@ def _node(
     inputs: list[str],
     outputs: list[str],
     *,
+    func_name: str | None = None,
     namespace: str | None = None,
     tags: set[str] | None = None,
 ) -> SimpleNamespace:
+    local_name = name.removeprefix(f"{namespace}.") if namespace else name
     return SimpleNamespace(
         name=name,
+        func_name=func_name or local_name,
         inputs=inputs,
         outputs=outputs,
         namespace=namespace,
@@ -194,18 +197,26 @@ def test_build_rejects_unknown_pipeline_id() -> None:
 
 
 @pytest.mark.parametrize(
-    ("name", "namespace", "expected"),
+    ("name", "func_name", "namespace", "expected"),
     [
-        ("clean_data__a1b2c3d4", None, "clean_data"),  # auto-named: strip __<8 hex>
-        ("my_node", None, "my_node"),  # explicit name, no namespace
-        ("ns.my_node", "ns", "my_node"),  # explicit name, namespace stripped
-        ("ns.clean_data__a1b2c3d4", "ns", "clean_data"),  # namespace strip + auto-name
-        ("report__notahex", None, "report__notahex"),  # non-hex suffix is kept as-is
+        # auto-named: the generated suffix is dropped and the function name shown
+        ("clean_data__a1b2c3d4", "clean_data", None, "clean_data"),
+        ("my_node", "clean_data", None, "my_node"),  # explicit name, no namespace
+        (
+            "ns.my_node",
+            "clean_data",
+            "ns",
+            "my_node",
+        ),  # explicit name, namespace stripped
+        ("ns.clean_data__a1b2c3d4", "clean_data", "ns", "clean_data"),  # both applied
+        ("report__notahex", "report", None, "report__notahex"),  # non-hex suffix kept
     ],
 )
-def test_display_name(name: str, namespace: str | None, expected: str) -> None:
+def test_display_name(
+    name: str, func_name: str, namespace: str | None, expected: str
+) -> None:
     """Display name strips the namespace prefix and any auto-name ``__<hash>`` suffix."""
-    assert _display_name(name, namespace) == expected
+    assert _display_name(name, func_name, namespace) == expected
 
 
 def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:

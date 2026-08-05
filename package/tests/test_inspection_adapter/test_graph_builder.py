@@ -80,6 +80,26 @@ def test_edge_connectivity_matches_baseline(
     assert _edge_keys(adapter) == _edge_keys(baseline)
 
 
+def _id_by_name(nodes: list[dict]) -> dict[tuple[str, str], str]:
+    return {
+        (node["type"], node.get("full_name", node["name"])): node["id"]
+        for node in nodes
+        if node["type"] in {"task", "data", "parameters"}
+    }
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_node_ids_match_baseline(builder: GraphBuilder, pipeline_id: str) -> None:
+    """IDs are identical to the legacy backend, not merely structurally equivalent.
+
+    The baselines were captured from the live backend, so this asserts the reconstruction
+    from ``func_name`` reproduces the original scheme exactly.
+    """
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert _id_by_name(adapter["nodes"]) == _id_by_name(baseline["nodes"])
+
+
 def test_tags_and_pipelines_match_baseline(builder: GraphBuilder) -> None:
     adapter = builder.build("__default__").model_dump()
     baseline = _baseline("__default__")

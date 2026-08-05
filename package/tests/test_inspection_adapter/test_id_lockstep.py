@@ -3,7 +3,7 @@
 Two layers:
 
 1. Hermetic — construct a synthetic ``KedroNode`` and assert ``hash_node(node)`` equals
-   ``node_ids._create_task_node_id(node.name, node.inputs, node.outputs)``. No project load.
+   ``_hash(str(node))`` for a live node. No project load.
 2. End-to-end against ``demo-project`` — hit ``/api/main`` through the inspection adapter, then
    for every task node in the response, reconstruct the matching live ``KedroNode`` and assert the
    hook would emit the same ID. This is the gate the plan calls for: graph ID == run-status ID.
@@ -27,6 +27,7 @@ from kedro_viz.api.rest.router import router as rest_router
 from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.integrations.kedro.hooks_utils import hash_node
 from kedro_viz.integrations.kedro.inspection import snapshot_source
+from kedro_viz.utils import _hash
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
@@ -39,9 +40,7 @@ def test_hash_node_for_kedro_node_matches_task_node_id() -> None:
     node = kedro_node(
         func=lambda a, b: a, inputs=["a", "b"], outputs="c", name="my_node"
     )
-    assert hash_node(node) == node_ids._create_task_node_id(
-        node.name, list(node.inputs), list(node.outputs)
-    )
+    assert hash_node(node) == _hash(str(node))
 
 
 def test_hash_node_for_dataset_string_matches_dataset_node_id() -> None:

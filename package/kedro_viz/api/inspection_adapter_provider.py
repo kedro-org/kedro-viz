@@ -41,7 +41,7 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _create_task_node_id_from_snapshot,
 )
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -56,7 +56,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.utils import _strip_transcoding, is_dataset_param
+from kedro_viz.utils import _hash, _strip_transcoding, is_dataset_param
 
 if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
@@ -274,7 +274,8 @@ class InspectionAdapterProvider:
                 return None
             # kedro_obj is always a KedroNode here (only DataNode holds a dataset).
             kn = cast(KedroNode, viz_node.kedro_obj)
-            return _create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
+            # A live node already carries its string form, which is what the ID hashes.
+            return _hash(str(kn))
         if isinstance(viz_node, (DataNode, TranscodedDataNode, ParametersNode)):
             # dataset_node_id strips transcoding, so a variant maps to the same id from either side.
             return _create_dataset_node_id(viz_node.name)
@@ -291,9 +292,7 @@ class InspectionAdapterProvider:
         lookup: dict[str, dict[str, Any]] = {}
         for pipeline in self._snapshot.pipelines:
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(
-                    node.name, list(node.inputs), list(node.outputs)
-                )
+                task_id = _create_task_node_id_from_snapshot(node)
                 lookup.setdefault(
                     task_id,
                     {"inputs": list(node.inputs), "outputs": list(node.outputs)},

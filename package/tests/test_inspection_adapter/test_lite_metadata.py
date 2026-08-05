@@ -57,9 +57,7 @@ def test_snapshot_lookup_populates_task_metadata(
     """Every snapshot task carries inputs + outputs in its lite payload."""
     snapshot = lite_provider._snapshot
     sample_node = snapshot.pipelines[0].nodes[0]
-    task_id = node_ids._create_task_node_id(
-        sample_node.name, list(sample_node.inputs), list(sample_node.outputs)
-    )
+    task_id = node_ids._create_task_node_id_from_snapshot(sample_node)
     payload = lite_provider._snapshot_lookup[task_id]
     assert payload["inputs"] == list(sample_node.inputs)
     assert payload["outputs"] == list(sample_node.outputs)
@@ -143,9 +141,7 @@ def test_lite_metadata_response_carries_no_live_only_fields(
 
     snapshot = lite_provider._snapshot
     sample_node = snapshot.pipelines[0].nodes[0]
-    task_id = node_ids._create_task_node_id(
-        sample_node.name, list(sample_node.inputs), list(sample_node.outputs)
-    )
+    task_id = node_ids._create_task_node_id_from_snapshot(sample_node)
     response = lite_provider.get_node_metadata_response(task_id)
     # Lite-mode responses are always JSONResponse — narrow for mypy + read the raw body.
     assert isinstance(response, JSONResponse)

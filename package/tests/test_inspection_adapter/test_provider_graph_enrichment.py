@@ -15,6 +15,7 @@ from kedro_viz.api.rest.responses.pipelines import (
 from kedro_viz.integrations.kedro import node_ids
 from kedro_viz.models.flowchart.nodes import DataNode, GraphNode, TaskNode
 from kedro_viz.models.metadata import NodeExtras
+from kedro_viz.utils import _hash
 
 
 def _provider_with_bridge(bridge: dict[str, GraphNode]) -> InspectionAdapterProvider:
@@ -67,7 +68,7 @@ def test_full_mode_enriches_node_extras() -> None:
         outputs="result",
         name="my_node",
     )
-    task_id = node_ids._create_task_node_id(kn.name, list(kn.inputs), list(kn.outputs))
+    task_id = _hash(str(kn))
     data_id = node_ids._create_dataset_node_id("companies")
     live_task = TaskNode.create_task_node(
         node=kn,

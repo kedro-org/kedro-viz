@@ -72,13 +72,12 @@ def _write_json(path: Path, data: Any) -> None:
 # --------------------------------------------------------------------------- #
 def classify_node(node) -> dict:
     """Build the node-ID report entry for a Kedro node."""
-    from kedro_viz.integrations.kedro import node_ids
     from kedro_viz.integrations.kedro.hooks_utils import hash_node
+    from kedro_viz.utils import _hash
 
-    # Store both IDs so tests can detect whether graph and run-status IDs are aligned.
-    graph_id = node_ids._create_task_node_id(
-        node.name, list(node.inputs), list(node.outputs)
-    )
+    # Store both IDs so tests can detect whether graph and run-status IDs are aligned. A live
+    # node's graph ID is a hash of its string form, which is what the adapter reconstructs.
+    graph_id = _hash(str(node))
     runstatus_id = hash_node(node)
 
     if node._name is None:

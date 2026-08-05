@@ -3,7 +3,8 @@ click-default-group
 fastapi>=0.100.0,<0.200.0
 fsspec>=2021.4
 ipython>=7.0.0, <9.0
-kedro>=1.4.0
+# [TODO] Replace with the released Kedro version containing NodeSnapshot.func_name before release.
+kedro @ git+https://github.com/kedro-org/kedro.git@55bde97bb23ca6ebc7efdc9051a7efb060302af0
 kedro-telemetry>=0.6.0
 networkx>=2.5
 orjson>=3.9, <4.0
