@@ -384,8 +384,8 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
 def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> None:
     """Distinct tasks sharing a name must both contribute to dataset membership.
 
-    Task identity is name plus function plus I/O, so deduplicating the global node set by name
-    alone would drop one task and silently strip its datasets of modular membership.
+    Deduplicating the global node set by name alone would drop one task and silently strip its
+    datasets of modular membership.
     """
     snapshot = _snapshot(
         [
@@ -402,3 +402,52 @@ def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> No
             if isinstance(node, DataNodeAPIResponse) and node.type == "data"
         }
         assert membership == {name: ["ns"] for name in datasets}, pipeline_id
+
+
+def test_same_id_tasks_in_different_namespaces_keep_dataset_membership() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("a.shared", ["x"], ["y"], namespace="a")]),
+            _pipeline("pipe_b", [_node("b.shared", ["x"], ["y"], namespace="b")]),
+        ]
+    )
+    builder = _builder(snapshot)
+    graphs = {
+        pipeline_id: builder.build(pipeline_id) for pipeline_id in ("pipe_a", "pipe_b")
+    }
+
+    task_ids = {
+        next(node.id for node in graph.nodes if node.type == "task")
+        for graph in graphs.values()
+    }
+    assert len(task_ids) == 1
+
+    for graph in graphs.values():
+        membership = {
+            node.name: node.modular_pipelines
+            for node in graph.nodes
+            if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+        }
+        assert membership == {"x": ["a", "b"], "y": ["a", "b"]}
+
+
+def test_dataset_membership_unions_boundaries_from_each_pipeline() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("a.b.make", ["p"], ["x"], namespace="a.b")]),
+            _pipeline("pipe_b", [_node("a.c.use", ["x"], ["q"], namespace="a.c")]),
+        ]
+    )
+    builder = _builder(snapshot)
+
+    for pipeline_id, boundary_field in (("pipe_a", "outputs"), ("pipe_b", "inputs")):
+        graph = builder.build(pipeline_id)
+        dataset = next(
+            node
+            for node in graph.nodes
+            if isinstance(node, DataNodeAPIResponse)
+            and node.type == "data"
+            and node.name == "x"
+        )
+        assert dataset.modular_pipelines == ["a", "a.b", "a.c"]
+        assert dataset.id in getattr(graph.modular_pipelines["a"], boundary_field)

@@ -114,16 +114,9 @@ class GraphBuilder:
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
-        # A node belongs to the same modular pipelines in every view, so this is resolved once
-        # across all pipelines' nodes. Deduplicate by task ID, not by name: two pipelines can
-        # register same-named tasks with different I/O, and dropping either one would lose its
-        # datasets from the result.
-        unique_nodes = {
-            _create_task_node_id_from_snapshot(node): node
-            for pipeline in snapshot.pipelines
-            for node in pipeline.nodes
-        }
-        self._modular = _ModularPipelineIndex(list(unique_nodes.values()))
+        self._modular = _ModularPipelineIndex.from_registered_pipelines(
+            snapshot.pipelines
+        )
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.

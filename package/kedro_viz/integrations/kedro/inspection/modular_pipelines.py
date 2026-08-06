@@ -7,6 +7,7 @@ Mirrors the Kedro ``Pipeline`` set algebra the legacy backend relies on, without
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -20,7 +21,7 @@ from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 if TYPE_CHECKING:
-    from kedro.inspection.models import NodeSnapshot
+    from kedro.inspection.models import NodeSnapshot, PipelineSnapshot
 
 
 def _ancestor_namespaces(namespace: str) -> list[str]:
@@ -32,15 +33,31 @@ def _ancestor_namespaces(namespace: str) -> list[str]:
 def _modular_pipeline_ids(nodes: list[NodeSnapshot]) -> set[str]:
     """Every modular pipeline the nodes belong to, including ancestors.
 
-    A namespace literally called ``__root__`` is ignored: that ID is reserved for the synthetic
-    root entry, and the legacy backend does not emit a modular pipeline for it either.
+    Raises:
+        ValueError: If a namespace collides with the synthetic root entry.
     """
+    reserved_namespaces = sorted(
+        {
+            node.namespace
+            for node in nodes
+            if node.namespace
+            and (
+                node.namespace == ROOT_MODULAR_PIPELINE_ID
+                or node.namespace.startswith(f"{ROOT_MODULAR_PIPELINE_ID}.")
+            )
+        }
+    )
+    if reserved_namespaces:
+        raise ValueError(
+            f"Namespace {reserved_namespaces[0]!r} uses reserved modular-pipeline root "
+            f"{ROOT_MODULAR_PIPELINE_ID!r}"
+        )
+
     return {
         mp_id
         for node in nodes
         if node.namespace
         for mp_id in _ancestor_namespaces(node.namespace)
-        if mp_id != ROOT_MODULAR_PIPELINE_ID
     }
 
 
@@ -104,6 +121,21 @@ class _ModularPipelineIndex:
             free_inputs, free_outputs = _free_io(nodes, mp_id)
             boundary = {_strip_transcoding(d) for d in free_inputs | free_outputs}
             self._datasets_by_modular_pipeline[mp_id] = direct | boundary
+
+    @classmethod
+    def from_registered_pipelines(
+        cls, pipelines: Iterable[PipelineSnapshot]
+    ) -> _ModularPipelineIndex:
+        """Union ownership calculated independently for each registered pipeline."""
+        combined = cls([])
+        for pipeline in pipelines:
+            pipeline_index = cls(pipeline.nodes)
+            combined._ids.update(pipeline_index._ids)
+            for mp_id, datasets in pipeline_index._datasets_by_modular_pipeline.items():
+                combined._datasets_by_modular_pipeline.setdefault(mp_id, set()).update(
+                    datasets
+                )
+        return combined
 
     def get_modular_pipelines_for_task(self, node: NodeSnapshot) -> list[str] | None:
         """A task belongs only to its own namespace."""
