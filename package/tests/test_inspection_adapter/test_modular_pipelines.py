@@ -260,7 +260,7 @@ def test_for_dataset_accepts_a_transcoded_name() -> None:
 )
 def test_namespace_using_reserved_root_is_rejected(namespace: str) -> None:
     node = _node(f"{namespace}.task", ["p"], ["q"], namespace=namespace)
-    with pytest.raises(ValueError, match="reserved modular-pipeline root"):
+    with pytest.raises(ValueError, match="Rename the namespace to render this project"):
         _tree_builder([node])
 
 

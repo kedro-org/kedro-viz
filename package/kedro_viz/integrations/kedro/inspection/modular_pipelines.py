@@ -48,9 +48,10 @@ def _modular_pipeline_ids(nodes: list[NodeSnapshot]) -> set[str]:
         }
     )
     if reserved_namespaces:
+        namespace = reserved_namespaces[0]
         raise ValueError(
-            f"Namespace {reserved_namespaces[0]!r} uses reserved modular-pipeline root "
-            f"{ROOT_MODULAR_PIPELINE_ID!r}"
+            f"Namespace {namespace!r} conflicts with Kedro-Viz's internal "
+            "modular-pipeline root. Rename the namespace to render this project."
         )
 
     return {
