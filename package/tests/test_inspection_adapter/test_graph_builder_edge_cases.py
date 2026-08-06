@@ -381,3 +381,100 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
     }
     graph = _builder(snapshot, catalog_config).build("pipe_a")
     assert set(graph.layers) == {"raw", "model", "external", "reporting"}
+
+
+def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> None:
+    """Distinct tasks sharing a name must both contribute to dataset membership.
+
+    Deduplicating the global node set by name alone would drop one task and silently strip its
+    datasets of modular membership.
+    """
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("ns.shared", ["a"], ["b"], namespace="ns")]),
+            _pipeline("pipe_b", [_node("ns.shared", ["c"], ["d"], namespace="ns")]),
+        ]
+    )
+    builder = _builder(snapshot)
+
+    for pipeline_id, datasets in (("pipe_a", ["a", "b"]), ("pipe_b", ["c", "d"])):
+        membership = {
+            node.name: node.modular_pipelines
+            for node in builder.build(pipeline_id).nodes
+            if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+        }
+        assert membership == {name: ["ns"] for name in datasets}, pipeline_id
+
+
+def test_source_and_sink_nodes_have_expected_edges() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [
+                        _node("make", [], ["produced"]),
+                        _node("consume", ["produced"], []),
+                    ],
+                )
+            ]
+        )
+    )
+    graph = builder.build("__default__").model_dump()
+    label_by_id = {
+        n["id"]: (n["full_name"] if n["type"] == "task" else n["name"])
+        for n in graph["nodes"]
+    }
+    edges = {
+        (label_by_id[e["source"]], label_by_id[e["target"]]) for e in graph["edges"]
+    }
+    assert edges == {("make", "produced"), ("produced", "consume")}
+
+
+def test_same_id_tasks_in_different_namespaces_keep_dataset_membership() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("a.shared", ["x"], ["y"], namespace="a")]),
+            _pipeline("pipe_b", [_node("b.shared", ["x"], ["y"], namespace="b")]),
+        ]
+    )
+    builder = _builder(snapshot)
+    graphs = {
+        pipeline_id: builder.build(pipeline_id) for pipeline_id in ("pipe_a", "pipe_b")
+    }
+
+    task_ids = {
+        next(node.id for node in graph.nodes if node.type == "task")
+        for graph in graphs.values()
+    }
+    assert len(task_ids) == 1
+
+    for graph in graphs.values():
+        membership = {
+            node.name: node.modular_pipelines
+            for node in graph.nodes
+            if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+        }
+        assert membership == {"x": ["a", "b"], "y": ["a", "b"]}
+
+
+def test_dataset_membership_unions_boundaries_from_each_pipeline() -> None:
+    snapshot = _snapshot(
+        [
+            _pipeline("pipe_a", [_node("a.b.make", ["p"], ["x"], namespace="a.b")]),
+            _pipeline("pipe_b", [_node("a.c.use", ["x"], ["q"], namespace="a.c")]),
+        ]
+    )
+    builder = _builder(snapshot)
+
+    for pipeline_id, boundary_field in (("pipe_a", "outputs"), ("pipe_b", "inputs")):
+        graph = builder.build(pipeline_id)
+        dataset = next(
+            node
+            for node in graph.nodes
+            if isinstance(node, DataNodeAPIResponse)
+            and node.type == "data"
+            and node.name == "x"
+        )
+        assert dataset.modular_pipelines == ["a", "a.b", "a.c"]
+        assert dataset.id in getattr(graph.modular_pipelines["a"], boundary_field)

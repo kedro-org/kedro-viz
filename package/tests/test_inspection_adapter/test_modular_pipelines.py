@@ -3,6 +3,8 @@
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
 
+import pytest
+
 from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
@@ -136,6 +138,20 @@ def test_tree_without_namespaces_has_only_root() -> None:
     assert set(tree) == {ROOT_MODULAR_PIPELINE_ID}
 
 
+def test_source_and_sink_nodes_are_modular_pipeline_children() -> None:
+    source = _node("ns.source", [], ["value"], namespace="ns")
+    sink = _node("ns.sink", ["value"], [], namespace="ns")
+    tree = _tree_builder([source, sink]).build()
+
+    assert tree["ns"].inputs == set()
+    assert tree["ns"].outputs == set()
+    assert tree["ns"].children == {
+        (_create_task_node_id_from_snapshot(cast("NodeSnapshot", source)), "task"),
+        (_create_task_node_id_from_snapshot(cast("NodeSnapshot", sink)), "task"),
+        (_create_dataset_node_id("value"), "data"),
+    }
+
+
 def test_modular_node_tags_union_the_whole_subtree() -> None:
     builder = _tree_builder(
         [
@@ -213,7 +229,7 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
 
 
 def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
-    """Transcoded names are compared unstripped, as Kedro's ``Pipeline`` does.
+    """Transcoding is stripped only when removing intermediates, matching Kedro.
 
     ``shared@pandas1`` is produced inside and ``shared@pandas2`` consumed inside, so ``shared``
     is internal. The outside consumer reads ``shared@pandas3``, which does not match the
@@ -238,22 +254,22 @@ def test_for_dataset_accepts_a_transcoded_name() -> None:
     )
 
 
-def test_namespace_called_root_does_not_become_a_modular_pipeline() -> None:
-    """``__root__`` is reserved for the synthetic root, so it is never emitted as a folder."""
-    builder = _tree_builder(
-        [_node("__root__.task", ["p"], ["q"], namespace="__root__")]
-    )
-    assert builder.ids == []
-    assert set(builder.build()) == {ROOT_MODULAR_PIPELINE_ID}
+@pytest.mark.parametrize(
+    "namespace",
+    [ROOT_MODULAR_PIPELINE_ID, f"{ROOT_MODULAR_PIPELINE_ID}.nested"],
+)
+def test_namespace_using_reserved_root_is_rejected(namespace: str) -> None:
+    node = _node(f"{namespace}.task", ["p"], ["q"], namespace=namespace)
+    with pytest.raises(ValueError, match="Rename the namespace to render this project"):
+        _tree_builder([node])
 
 
 def test_modular_edges_are_emitted_in_a_stable_order() -> None:
-    """Edge insertion order must not depend on set iteration order."""
     nodes = [_node("ns.task", ["b_in", "a_in"], ["b_out", "a_out"], namespace="ns")]
     tree = _tree_builder(nodes).build()
-    orders = []
-    for _ in range(5):
-        edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-        _add_modular_edges(edges, tree)
-        orders.append(list(edges))
-    assert all(order == orders[0] for order in orders)
+    edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
+    _add_modular_edges(edges, tree)
+
+    expected = [(input_id, "ns") for input_id in sorted(tree["ns"].inputs)]
+    expected.extend(("ns", output_id) for output_id in sorted(tree["ns"].outputs))
+    assert list(edges) == expected
