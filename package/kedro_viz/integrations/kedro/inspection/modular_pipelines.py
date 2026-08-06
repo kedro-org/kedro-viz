@@ -217,6 +217,7 @@ class _ModularTreeBuilder:
     def _add_direct_children(
         self, entry: _ModularTreeEntry, mp_id: str, boundary: set[str], params: set[str]
     ) -> None:
+        """Add direct task and internal dataset children to a modular pipeline."""
         for node in self._nodes:
             if node.namespace != mp_id:
                 continue
@@ -236,6 +237,7 @@ class _ModularTreeBuilder:
         boundary: set[str],
         params: set[str],
     ) -> None:
+        """Link a modular pipeline and its eligible boundary datasets to its parent."""
         parent_id = (
             mp_id.rsplit(".", 1)[0] if "." in mp_id else ROOT_MODULAR_PIPELINE_ID
         )
@@ -250,6 +252,7 @@ class _ModularTreeBuilder:
                 parent.children.add((dataset_id, GraphNodeType.DATA.value))
 
     def _add_root_children(self, root: _ModularTreeEntry) -> None:
+        """Add unowned datasets and unnamespaced tasks to the synthetic root."""
         for dataset in {
             _strip_transcoding(io)
             for node in self._nodes
