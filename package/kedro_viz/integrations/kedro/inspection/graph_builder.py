@@ -100,8 +100,8 @@ class _SnapshotGraphIndex:
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Tags and pipelines associated with each node are aggregated across all registered pipelines,
-    while rendered nodes and edges are scoped to the selected pipeline.
+    Renders nodes and edges for one selected pipeline. Tags and registered
+    pipelines on each node are collected across every pipeline in the project.
     """
 
     def __init__(
