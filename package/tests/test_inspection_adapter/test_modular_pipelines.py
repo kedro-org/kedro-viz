@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 def _membership(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
     """Build a ``_ModularPipelineIndex`` from duck-typed snapshot stand-ins."""
-    return _ModularPipelineIndex(cast("list[NodeSnapshot]", nodes))
+    return _ModularPipelineIndex.from_nodes(cast("list[NodeSnapshot]", nodes))
 
 
 def _tree_builder(nodes: list[SimpleNamespace]) -> _ModularTreeBuilder:

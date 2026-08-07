@@ -23,6 +23,9 @@ from kedro_viz.utils import _strip_transcoding, is_dataset_param
 if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot, PipelineSnapshot
 
+_BoundaryIO = tuple[set[str], set[str]]
+_BoundaryIOByModularPipeline = dict[str, _BoundaryIO]
+
 
 def _ancestor_namespaces(namespace: str) -> list[str]:
     """``"a.b.c"`` -> ``["a", "a.b", "a.b.c"]``."""
@@ -102,41 +105,75 @@ def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> tuple[set[str], set[str]]
     return free_inputs, free_outputs
 
 
+def _build_modular_pipeline_data(
+    nodes: list[NodeSnapshot],
+) -> tuple[set[str], dict[str, set[str]], _BoundaryIOByModularPipeline]:
+    """Build IDs, dataset ownership and boundary I/O for one pipeline view."""
+    modular_pipeline_ids = _modular_pipeline_ids(nodes)
+    datasets_by_modular_pipeline: dict[str, set[str]] = {}
+    boundary_io_by_modular_pipeline: _BoundaryIOByModularPipeline = {}
+
+    # Datasets owned by each modular pipeline: I/O of its direct nodes, plus the boundary of
+    # its whole subtree. The boundary also supplies the tree, so it is calculated only once.
+    for mp_id in modular_pipeline_ids:
+        direct = {
+            _strip_transcoding(io)
+            for node in nodes
+            if node.namespace == mp_id
+            for io in [*node.inputs, *node.outputs]
+        }
+        free_inputs, free_outputs = _free_io(nodes, mp_id)
+        boundary_io_by_modular_pipeline[mp_id] = free_inputs, free_outputs
+        boundary = {_strip_transcoding(d) for d in free_inputs | free_outputs}
+        datasets_by_modular_pipeline[mp_id] = direct | boundary
+
+    return (
+        modular_pipeline_ids,
+        datasets_by_modular_pipeline,
+        boundary_io_by_modular_pipeline,
+    )
+
+
 class _ModularPipelineIndex:
     """Resolve which modular pipelines each task and dataset belongs to."""
 
-    def __init__(self, nodes: list[NodeSnapshot]) -> None:
-        self._ids = _modular_pipeline_ids(nodes)
+    def __init__(
+        self,
+        *,
+        modular_pipeline_ids: set[str],
+        datasets_by_modular_pipeline: dict[str, set[str]],
+    ) -> None:
+        self._ids = modular_pipeline_ids
+        self._datasets_by_modular_pipeline = datasets_by_modular_pipeline
 
-        # Datasets owned by each modular pipeline: I/O of its direct nodes, plus the boundary of
-        # its whole subtree. The boundary comes from the same calculation the tree uses, so a
-        # dataset always agrees with the folder it is drawn on.
-        self._datasets_by_modular_pipeline: dict[str, set[str]] = {}
-        for mp_id in self._ids:
-            direct = {
-                _strip_transcoding(io)
-                for node in nodes
-                if node.namespace == mp_id
-                for io in [*node.inputs, *node.outputs]
-            }
-            free_inputs, free_outputs = _free_io(nodes, mp_id)
-            boundary = {_strip_transcoding(d) for d in free_inputs | free_outputs}
-            self._datasets_by_modular_pipeline[mp_id] = direct | boundary
+    @classmethod
+    def from_nodes(cls, nodes: list[NodeSnapshot]) -> _ModularPipelineIndex:
+        """Build an index for one pipeline's nodes."""
+        ids, datasets, _ = _build_modular_pipeline_data(nodes)
+
+        return cls(
+            modular_pipeline_ids=ids,
+            datasets_by_modular_pipeline=datasets,
+        )
 
     @classmethod
     def from_registered_pipelines(
         cls, pipelines: Iterable[PipelineSnapshot]
     ) -> _ModularPipelineIndex:
         """Union ownership calculated independently for each registered pipeline."""
-        combined = cls([])
+        modular_pipeline_ids: set[str] = set()
+        datasets_by_modular_pipeline: dict[str, set[str]] = {}
         for pipeline in pipelines:
-            pipeline_index = cls(pipeline.nodes)
-            combined._ids.update(pipeline_index._ids)
-            for mp_id, datasets in pipeline_index._datasets_by_modular_pipeline.items():
-                combined._datasets_by_modular_pipeline.setdefault(mp_id, set()).update(
-                    datasets
-                )
-        return combined
+            pipeline_ids, pipeline_datasets, _ = _build_modular_pipeline_data(
+                pipeline.nodes
+            )
+            modular_pipeline_ids.update(pipeline_ids)
+            for mp_id, datasets in pipeline_datasets.items():
+                datasets_by_modular_pipeline.setdefault(mp_id, set()).update(datasets)
+        return cls(
+            modular_pipeline_ids=modular_pipeline_ids,
+            datasets_by_modular_pipeline=datasets_by_modular_pipeline,
+        )
 
     def get_modular_pipelines_for_task(self, node: NodeSnapshot) -> list[str] | None:
         """A task belongs only to its own namespace."""
@@ -176,8 +213,13 @@ class _ModularTreeBuilder:
         self._nodes = nodes
         # Resolved against this pipeline's nodes only: a node is a root child when it has no
         # modular owner *in this pipeline*, which can differ from its owners across the project.
-        self._index = _ModularPipelineIndex(nodes)
-        self.ids: list[str] = sorted(_modular_pipeline_ids(nodes))
+        ids, datasets, boundary_io = _build_modular_pipeline_data(nodes)
+        self._boundary_io_by_modular_pipeline = boundary_io
+        self._index = _ModularPipelineIndex(
+            modular_pipeline_ids=ids,
+            datasets_by_modular_pipeline=datasets,
+        )
+        self.ids = sorted(ids)
 
     def build(self) -> dict[str, _ModularTreeEntry]:
         """Return the tree keyed by modular pipeline id, including ``__root__``."""
@@ -186,7 +228,7 @@ class _ModularTreeBuilder:
 
         for mp_id in self.ids:
             entry = tree.setdefault(mp_id, _ModularTreeEntry(mp_id))
-            free_inputs, free_outputs = _free_io(self._nodes, mp_id)
+            free_inputs, free_outputs = self._boundary_io_by_modular_pipeline[mp_id]
             entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
             entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
             params |= {
