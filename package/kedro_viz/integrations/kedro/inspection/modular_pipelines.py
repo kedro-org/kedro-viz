@@ -189,7 +189,7 @@ class _ModularPipelineIndex:
 
 
 @dataclass
-class _ModularTreeEntry:
+class _ModularPipelineTreeEntry:
     """One node in the modular-pipeline tree.
 
     ``name`` and the modular-pipeline IDs are namespace strings; dataset and task IDs in
@@ -202,7 +202,7 @@ class _ModularTreeEntry:
     children: set[tuple[str, str]] = field(default_factory=set)  # (node_id, node_type)
 
 
-class _ModularTreeBuilder:
+class _ModularPipelineTreeBuilder:
     """Build the modular-pipeline tree for the nodes of a single rendered pipeline."""
 
     def __init__(self, nodes: list[NodeSnapshot]) -> None:
@@ -217,13 +217,14 @@ class _ModularTreeBuilder:
         )
         self.ids = sorted(ids)
 
-    def build(self) -> dict[str, _ModularTreeEntry]:
+    def build(self) -> dict[str, _ModularPipelineTreeEntry]:
         """Return the tree keyed by modular pipeline id, including ``__root__``."""
-        tree = {ROOT_MODULAR_PIPELINE_ID: _ModularTreeEntry(ROOT_MODULAR_PIPELINE_ID)}
+        root = _ModularPipelineTreeEntry(ROOT_MODULAR_PIPELINE_ID)
+        tree = {ROOT_MODULAR_PIPELINE_ID: root}
         params: set[str] = set()
 
         for mp_id in self.ids:
-            entry = tree.setdefault(mp_id, _ModularTreeEntry(mp_id))
+            entry = tree.setdefault(mp_id, _ModularPipelineTreeEntry(mp_id))
             free_inputs, free_outputs = self._boundary_io_by_modular_pipeline[mp_id]
             entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
             entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
@@ -235,7 +236,7 @@ class _ModularTreeBuilder:
             self._add_direct_children(entry, mp_id, boundary, params)
             self._link_to_parent(tree, mp_id, boundary, params)
 
-        self._add_root_children(tree[ROOT_MODULAR_PIPELINE_ID])
+        self._add_root_children(root)
         return tree
 
     def get_tags_by_modular_pipeline(self) -> dict[str, list[str]]:
@@ -253,7 +254,11 @@ class _ModularTreeBuilder:
         }
 
     def _add_direct_children(
-        self, entry: _ModularTreeEntry, mp_id: str, boundary: set[str], params: set[str]
+        self,
+        entry: _ModularPipelineTreeEntry,
+        mp_id: str,
+        boundary: set[str],
+        params: set[str],
     ) -> None:
         """Add direct task and internal dataset children to a modular pipeline."""
         for node in self._nodes:
@@ -273,7 +278,7 @@ class _ModularTreeBuilder:
 
     def _link_to_parent(
         self,
-        tree: dict[str, _ModularTreeEntry],
+        tree: dict[str, _ModularPipelineTreeEntry],
         mp_id: str,
         boundary: set[str],
         params: set[str],
@@ -282,7 +287,7 @@ class _ModularTreeBuilder:
         parent_id = (
             mp_id.rsplit(".", 1)[0] if "." in mp_id else ROOT_MODULAR_PIPELINE_ID
         )
-        parent = tree.setdefault(parent_id, _ModularTreeEntry(parent_id))
+        parent = tree.setdefault(parent_id, _ModularPipelineTreeEntry(parent_id))
         parent.children.add((mp_id, GraphNodeType.MODULAR_PIPELINE.value))
         for dataset_id in boundary:
             if (
@@ -292,7 +297,7 @@ class _ModularTreeBuilder:
             ):
                 parent.children.add((dataset_id, GraphNodeType.DATA.value))
 
-    def _add_root_children(self, root: _ModularTreeEntry) -> None:
+    def _add_root_children(self, root: _ModularPipelineTreeEntry) -> None:
         """Add unowned datasets and unnamespaced tasks to the synthetic root."""
         for dataset in {
             _strip_transcoding(io)
@@ -326,7 +331,7 @@ def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
 
 def _add_modular_pipeline_boundary_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
-    tree: dict[str, _ModularTreeEntry],
+    tree: dict[str, _ModularPipelineTreeEntry],
 ) -> None:
     """Connect each modular pipeline to its boundary datasets (input -> mp, mp -> output)."""
     for mp_id, entry in tree.items():
@@ -346,7 +351,7 @@ def _add_modular_pipeline_boundary_edges(
 
 def _remove_cyclic_modular_pipeline_boundary_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
-    tree: dict[str, _ModularTreeEntry],
+    tree: dict[str, _ModularPipelineTreeEntry],
 ) -> None:
     """Drop any ``input -> mp`` edge whose input is also reachable *from* the mp (a cycle)."""
     adjacency: dict[str, set[str]] = defaultdict(set)

@@ -11,7 +11,7 @@ from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     _add_modular_pipeline_boundary_edges,
     _ancestor_namespaces,
     _ModularPipelineIndex,
-    _ModularTreeBuilder,
+    _ModularPipelineTreeBuilder,
     _remove_cyclic_modular_pipeline_boundary_edges,
 )
 from kedro_viz.integrations.kedro.node_ids import (
@@ -28,9 +28,9 @@ def _membership(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
     return _ModularPipelineIndex.from_nodes(cast("list[NodeSnapshot]", nodes))
 
 
-def _tree_builder(nodes: list[SimpleNamespace]) -> _ModularTreeBuilder:
-    """Build a ``_ModularTreeBuilder`` from duck-typed snapshot stand-ins."""
-    return _ModularTreeBuilder(cast("list[NodeSnapshot]", nodes))
+def _tree_builder(nodes: list[SimpleNamespace]) -> _ModularPipelineTreeBuilder:
+    """Build a tree builder from duck-typed snapshot stand-ins."""
+    return _ModularPipelineTreeBuilder(cast("list[NodeSnapshot]", nodes))
 
 
 def _node(
