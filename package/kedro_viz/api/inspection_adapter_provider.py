@@ -41,7 +41,7 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id_from_snapshot,
+    _create_task_node_id_from_node_snapshot,
 )
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -144,7 +144,7 @@ class InspectionAdapterProvider:
         # ``None`` when the function could not be located; both mean "no snapshot source". The
         # files themselves are read on demand, not at startup.
         self._source_by_task_id: dict[str, Any] = {
-            _create_task_node_id_from_snapshot(node): getattr(node, "source", None)
+            _create_task_node_id_from_node_snapshot(node): getattr(node, "source", None)
             for pipeline in snapshot.pipelines
             for node in pipeline.nodes
         }
@@ -362,7 +362,7 @@ class InspectionAdapterProvider:
         lookup: dict[str, dict[str, Any]] = {}
         for pipeline in self._snapshot.pipelines:
             for node in pipeline.nodes:
-                task_id = _create_task_node_id_from_snapshot(node)
+                task_id = _create_task_node_id_from_node_snapshot(node)
                 lookup.setdefault(
                     task_id,
                     {"inputs": list(node.inputs), "outputs": list(node.outputs)},
