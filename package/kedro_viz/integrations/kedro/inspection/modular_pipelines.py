@@ -15,7 +15,7 @@ from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id_from_snapshot,
+    _create_task_node_id_from_node_snapshot,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
@@ -175,10 +175,6 @@ class _ModularPipelineIndex:
             datasets_by_modular_pipeline=datasets_by_modular_pipeline,
         )
 
-    def get_modular_pipelines_for_task(self, node: NodeSnapshot) -> list[str] | None:
-        """A task belongs only to its own namespace."""
-        return [node.namespace] if node.namespace else None
-
     def get_modular_pipelines_for_dataset(self, name: str) -> list[str] | None:
         """A dataset belongs to every modular pipeline that owns it."""
         if is_dataset_param(name):
@@ -264,7 +260,10 @@ class _ModularTreeBuilder:
             if node.namespace != mp_id:
                 continue
             entry.children.add(
-                (_create_task_node_id_from_snapshot(node), GraphNodeType.TASK.value)
+                (
+                    _create_task_node_id_from_node_snapshot(node),
+                    GraphNodeType.TASK.value,
+                )
             )
             io_ids = {
                 _create_dataset_node_id(io) for io in [*node.inputs, *node.outputs]
@@ -310,7 +309,10 @@ class _ModularTreeBuilder:
         for node in self._nodes:
             if node.namespace is None:
                 root.children.add(
-                    (_create_task_node_id_from_snapshot(node), GraphNodeType.TASK.value)
+                    (
+                        _create_task_node_id_from_node_snapshot(node),
+                        GraphNodeType.TASK.value,
+                    )
                 )
 
 
@@ -322,7 +324,7 @@ def _in_subtree(node: NodeSnapshot, mp_id: str) -> bool:
     return namespace == mp_id or namespace.startswith(f"{mp_id}.")
 
 
-def _add_modular_edges(
+def _add_modular_pipeline_boundary_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     tree: dict[str, _ModularTreeEntry],
 ) -> None:
@@ -342,7 +344,7 @@ def _add_modular_edges(
             )
 
 
-def _remove_cyclic_modular_edges(
+def _remove_cyclic_modular_pipeline_boundary_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     tree: dict[str, _ModularTreeEntry],
 ) -> None:

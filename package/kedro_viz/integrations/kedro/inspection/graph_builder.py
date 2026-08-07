@@ -1,9 +1,9 @@
 """Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Creates task, data, parameter and modular-pipeline nodes; the edges between them, including
-modular edges; the modular-pipeline tree; and global tags and pipeline dictionaries. Node IDs
-come from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw
-catalog type strings from the snapshot.
+Assembles task, data, parameter and modular-pipeline nodes, their edges, the modular-pipeline
+tree, and the global tag, layer and registered-pipeline lists. Node IDs come from
+``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets use raw catalog
+type strings from the snapshot.
 """
 
 from __future__ import annotations
@@ -26,15 +26,15 @@ from kedro_viz.integrations.kedro.inspection.layers import (
     sort_layers,
 )
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
-    _add_modular_edges,
+    _add_modular_pipeline_boundary_edges,
     _ModularPipelineIndex,
     _ModularTreeBuilder,
     _ModularTreeEntry,
-    _remove_cyclic_modular_edges,
+    _remove_cyclic_modular_pipeline_boundary_edges,
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id_from_snapshot,
+    _create_task_node_id_from_node_snapshot,
     _is_auto_node_name,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
@@ -53,7 +53,11 @@ MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 class _SnapshotGraphIndex:
-    """Aggregate tags and pipeline IDs by task and dataset identity."""
+    """Index project-wide tags and pipeline IDs by task ID and dataset name.
+
+    The index is built once from every registered pipeline and reused for each rendered
+    pipeline response.
+    """
 
     def __init__(self, pipelines: dict[str, PipelineSnapshot]) -> None:
         self._pipelines_by_task_id: dict[str, set[str]] = defaultdict(set)
@@ -63,7 +67,7 @@ class _SnapshotGraphIndex:
         self._all_tags: set[str] = set()
         for pipeline_id, pipeline in pipelines.items():
             for node in pipeline.nodes:
-                task_id = _create_task_node_id_from_snapshot(node)
+                task_id = _create_task_node_id_from_node_snapshot(node)
                 self._pipelines_by_task_id[task_id].add(pipeline_id)
                 self._tags_by_task_id[task_id].update(node.tags)
                 self._all_tags.update(node.tags)
@@ -114,7 +118,7 @@ class GraphBuilder:
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
-        self._modular = _ModularPipelineIndex.from_registered_pipelines(
+        self._modular_pipeline_index = _ModularPipelineIndex.from_registered_pipelines(
             snapshot.pipelines
         )
 
@@ -176,7 +180,7 @@ class GraphBuilder:
         transcoded_datasets: set[str] = set()
 
         for node in pipeline.nodes:
-            task_id = _create_task_node_id_from_snapshot(node)
+            task_id = _create_task_node_id_from_node_snapshot(node)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
@@ -197,8 +201,8 @@ class GraphBuilder:
         tree_builder = _ModularTreeBuilder(pipeline.nodes)
         tree = tree_builder.build()
         nodes.extend(self._build_modular_pipeline_nodes(tree_builder, selected))
-        _add_modular_edges(edges, tree)
-        _remove_cyclic_modular_edges(edges, tree)
+        _add_modular_pipeline_boundary_edges(edges, tree)
+        _remove_cyclic_modular_pipeline_boundary_edges(edges, tree)
 
         return GraphAPIResponse(
             nodes=nodes,
@@ -224,7 +228,7 @@ class GraphBuilder:
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
-            modular_pipelines=self._modular.get_modular_pipelines_for_task(node),
+            modular_pipelines=[node.namespace] if node.namespace else None,
             parameters={},
         )
 
@@ -257,8 +261,10 @@ class GraphBuilder:
                 if is_parameter
                 else GraphNodeType.DATA.value
             ),
-            modular_pipelines=self._modular.get_modular_pipelines_for_dataset(
-                stripped_name
+            modular_pipelines=(
+                self._modular_pipeline_index.get_modular_pipelines_for_dataset(
+                    stripped_name
+                )
             ),
             layer=(None if is_parameter else self._layer_by_dataset.get(stripped_name)),
             dataset_type=dataset_type,

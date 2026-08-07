@@ -82,7 +82,7 @@ def _create_task_node_id(
     return _hash(f"{prefix}{func_name}({input_names}) -> {output_names}")
 
 
-def _create_task_node_id_from_snapshot(node: NodeSnapshot) -> str:
+def _create_task_node_id_from_node_snapshot(node: NodeSnapshot) -> str:
     """Return the Viz graph ID for a snapshot task node."""
     return _create_task_node_id(
         node_name=node.name,
