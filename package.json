@@ -112,7 +112,7 @@
     "rollup": "^4.59.0",
     "tar": "^7.5.22",
     "flatted": ">=3.4.2",
-    "dompurify": ">=3.4.12",
+    "dompurify": ">=3.4.13",
     "postcss": ">=8.5.18",
     "js-yaml": ">=4.3.0 <5",
     "cosmiconfig": {
