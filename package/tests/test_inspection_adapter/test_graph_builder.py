@@ -190,7 +190,7 @@ def _modular_pipelines_by_name(graph: dict) -> dict[tuple[str, str], list[str] |
 
 
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
-def test_modular_pipeline_membership_matches_baseline(
+def test_node_modular_pipelines_match_baseline(
     builder: GraphBuilder, pipeline_id: str
 ) -> None:
     """Every node reports the same modular pipelines as the legacy backend."""

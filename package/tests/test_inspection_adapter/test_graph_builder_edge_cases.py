@@ -381,11 +381,11 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
     assert graph.layers == ["external", "raw", "reporting", "model"]
 
 
-def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> None:
-    """Distinct tasks sharing a name must both contribute to dataset membership.
+def test_same_named_tasks_in_two_pipelines_keep_dataset_modular_pipelines() -> None:
+    """Distinct tasks sharing a name must both contribute to dataset ownership.
 
-    Deduplicating the global node set by name alone would drop one task and silently strip its
-    datasets of modular membership.
+    Deduplicating the global node set by name alone would drop one task and silently omit its
+    namespace from those datasets' ``modular_pipelines`` lists.
     """
     snapshot = _snapshot(
         [
@@ -396,15 +396,16 @@ def test_same_named_tasks_in_two_pipelines_keep_their_modular_membership() -> No
     builder = _builder(snapshot)
 
     for pipeline_id, datasets in (("pipe_a", ["a", "b"]), ("pipe_b", ["c", "d"])):
-        membership = {
+        modular_pipelines_by_dataset = {
             node.name: node.modular_pipelines
             for node in builder.build(pipeline_id).nodes
             if isinstance(node, DataNodeAPIResponse) and node.type == "data"
         }
-        assert membership == {name: ["ns"] for name in datasets}, pipeline_id
+        expected = {name: ["ns"] for name in datasets}
+        assert modular_pipelines_by_dataset == expected, pipeline_id
 
 
-def test_same_id_tasks_in_different_namespaces_keep_dataset_membership() -> None:
+def test_same_id_tasks_in_different_namespaces_keep_dataset_modular_pipelines() -> None:
     snapshot = _snapshot(
         [
             _pipeline("pipe_a", [_node("a.shared", ["x"], ["y"], namespace="a")]),
@@ -423,15 +424,15 @@ def test_same_id_tasks_in_different_namespaces_keep_dataset_membership() -> None
     assert len(task_ids) == 1
 
     for graph in graphs.values():
-        membership = {
+        modular_pipelines_by_dataset = {
             node.name: node.modular_pipelines
             for node in graph.nodes
             if isinstance(node, DataNodeAPIResponse) and node.type == "data"
         }
-        assert membership == {"x": ["a", "b"], "y": ["a", "b"]}
+        assert modular_pipelines_by_dataset == {"x": ["a", "b"], "y": ["a", "b"]}
 
 
-def test_dataset_membership_unions_boundaries_from_each_pipeline() -> None:
+def test_dataset_modular_pipelines_union_boundaries_from_each_pipeline() -> None:
     snapshot = _snapshot(
         [
             _pipeline("pipe_a", [_node("a.b.make", ["p"], ["x"], namespace="a.b")]),
