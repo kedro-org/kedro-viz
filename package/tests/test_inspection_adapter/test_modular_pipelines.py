@@ -220,12 +220,13 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
     assert index.get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
 
 
-def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
+def test_transcoded_boundary_follows_pipeline_set_algebra() -> None:
     """Transcoding is stripped only when removing intermediates, matching Kedro.
 
     ``shared@pandas1`` is produced inside and ``shared@pandas2`` consumed inside, so ``shared``
     is internal. The outside consumer reads ``shared@pandas3``, which does not match the
-    produced name, so legacy does not treat it as a boundary output and neither do we.
+    produced name, so Kedro's set algebra does not treat it as a boundary output, and
+    neither do we.
     """
     nodes = [
         _node("ns.make", ["x"], ["shared@pandas1"], namespace="ns"),

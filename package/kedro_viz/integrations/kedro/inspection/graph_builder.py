@@ -295,17 +295,21 @@ class GraphBuilder:
         tree_builder = _ModularPipelineTreeBuilder(pipeline_nodes)
         tree = tree_builder.build()
         nodes.extend(
-            self._build_modular_pipeline_nodes(tree_builder, selected_pipeline_id)
+            self._build_modular_pipeline_group_nodes(tree_builder, selected_pipeline_id)
         )
         _add_modular_pipeline_boundary_edges(edges, tree)
         _remove_cyclic_modular_pipeline_boundary_edges(edges, tree)
         return tree
 
     @staticmethod
-    def _build_modular_pipeline_nodes(
+    def _build_modular_pipeline_group_nodes(
         tree_builder: _ModularPipelineTreeBuilder, selected_pipeline_id: str
     ) -> list[DataNodeAPIResponse]:
-        """Build one ``modularPipeline`` node per modular pipeline in the rendered view."""
+        """Build flowchart group nodes for each modular pipeline namespace.
+
+        The API represents these as ``DataNodeAPIResponse`` objects with
+        ``type="modularPipeline"`` because it has no separate modular-pipeline node model.
+        """
         tags = tree_builder.get_tags_by_modular_pipeline()
         return [
             DataNodeAPIResponse(

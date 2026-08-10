@@ -44,7 +44,8 @@ def _names(nodes: list[dict], node_type: str) -> set[str]:
 def _edge_keys(graph: dict) -> set[tuple[str, str]]:
     """Return every edge, including modular ones, as raw ID pairs.
 
-    IDs are legacy-compatible, so edges compare directly without translating to names.
+    Node IDs match the established Viz format, so edges compare directly without
+    translating to names.
     """
     return {(edge["source"], edge["target"]) for edge in graph["edges"]}
 
@@ -193,7 +194,7 @@ def _modular_pipelines_by_name(graph: dict) -> dict[tuple[str, str], list[str] |
 def test_node_modular_pipelines_match_baseline(
     builder: GraphBuilder, pipeline_id: str
 ) -> None:
-    """Every node reports the same modular pipelines as the legacy backend."""
+    """Every node reports the same modular pipelines as the baseline."""
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     assert _modular_pipelines_by_name(adapter) == _modular_pipelines_by_name(baseline)
@@ -245,7 +246,7 @@ def test_modular_tree_children_match_baseline(
 ) -> None:
     """Each modular pipeline holds the same children, compared by ID and type.
 
-    The legacy backend lists a parameter in ``__root__`` twice, once as ``parameters`` and
+    The baseline lists a parameter in ``__root__`` twice, once as ``parameters`` and
     once as ``data``. Only that known duplicate is normalised away; every other child is
     still compared by both ID and type, so a wrong child type cannot slip through.
     """
@@ -258,7 +259,7 @@ def test_modular_tree_children_match_baseline(
             for child in graph["modular_pipelines"][mp_id]["children"]
         }
 
-    def drop_legacy_duplicate(entries: set[tuple[str, str]]) -> set[tuple[str, str]]:
+    def drop_baseline_duplicate(entries: set[tuple[str, str]]) -> set[tuple[str, str]]:
         """Remove a ``data`` entry whose ID also appears as ``parameters``."""
         parameter_ids = {cid for cid, ctype in entries if ctype == "parameters"}
         return {
@@ -272,5 +273,5 @@ def test_modular_tree_children_match_baseline(
         expected = children(baseline, mp_id)
         actual = children(adapter, mp_id)
         if mp_id == ROOT_MODULAR_PIPELINE_ID:
-            expected = drop_legacy_duplicate(expected)
+            expected = drop_baseline_duplicate(expected)
         assert actual == expected, mp_id

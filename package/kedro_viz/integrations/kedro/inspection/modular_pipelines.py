@@ -1,7 +1,13 @@
-"""Build modular pipelines, their tree and their edges from snapshot namespaces.
+"""Build modular pipeline groups, their tree and boundary edges from snapshot namespaces.
 
-Mirrors the Kedro ``Pipeline`` set algebra the legacy backend relies on, without live
-``Pipeline`` objects.
+Concepts:
+
+* Namespace: a dotted node path whose prefixes form nested modular-pipeline groups.
+* Boundary I/O: datasets that enter or leave a namespace subtree.
+* Tree: the group hierarchy and its task, dataset and nested-group children.
+* Boundary edges: links between group nodes and their input and output datasets.
+
+Boundary calculations follow Kedro's ``Pipeline`` set algebra on flat ``NodeSnapshot`` data.
 """
 
 from __future__ import annotations
@@ -83,10 +89,13 @@ def _remove_intermediates(
 def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> tuple[set[str], set[str]]:
     """Boundary inputs and outputs of a namespace subtree, in original dataset names.
 
-    Mirrors the legacy backend's Kedro set algebra::
+    Follows Kedro's modular pipeline set algebra::
 
         free_inputs  = sub.inputs()
         free_outputs = sub.outputs() | (rest.inputs() & sub.all_outputs())
+
+    See ``Pipeline.inputs()``, ``Pipeline.outputs()`` and ``Pipeline.all_outputs()`` in
+    ``kedro.pipeline.pipeline`` for the source of truth.
     """
     sub: list[NodeSnapshot] = []
     rest: list[NodeSnapshot] = []
@@ -105,10 +114,20 @@ def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> tuple[set[str], set[str]]
     return free_inputs, free_outputs
 
 
-def _build_modular_pipeline_data(
-    nodes: list[NodeSnapshot],
-) -> tuple[set[str], dict[str, set[str]], _BoundaryIOByModularPipeline]:
-    """Build IDs, dataset ownership and boundary I/O for one pipeline view."""
+@dataclass(frozen=True)
+class _NamespaceBoundaries:
+    """Namespace IDs, dataset ownership and boundary I/O for one node list.
+
+    Dataset ownership uses transcoding-stripped names; boundary I/O keeps original names.
+    """
+
+    modular_pipeline_ids: set[str]
+    datasets_by_modular_pipeline: dict[str, set[str]]
+    boundary_io_by_modular_pipeline: _BoundaryIOByModularPipeline
+
+
+def _compute_namespace_boundaries(nodes: list[NodeSnapshot]) -> _NamespaceBoundaries:
+    """Compute namespace IDs, dataset ownership and boundary I/O for one node list."""
     modular_pipeline_ids = _modular_pipeline_ids(nodes)
     datasets_by_modular_pipeline: dict[str, set[str]] = {}
     boundary_io_by_modular_pipeline: _BoundaryIOByModularPipeline = {}
@@ -127,10 +146,10 @@ def _build_modular_pipeline_data(
         boundary = {_strip_transcoding(d) for d in free_inputs | free_outputs}
         datasets_by_modular_pipeline[mp_id] = direct | boundary
 
-    return (
-        modular_pipeline_ids,
-        datasets_by_modular_pipeline,
-        boundary_io_by_modular_pipeline,
+    return _NamespaceBoundaries(
+        modular_pipeline_ids=modular_pipeline_ids,
+        datasets_by_modular_pipeline=datasets_by_modular_pipeline,
+        boundary_io_by_modular_pipeline=boundary_io_by_modular_pipeline,
     )
 
 
@@ -149,11 +168,11 @@ class _ModularPipelineIndex:
     @classmethod
     def from_nodes(cls, nodes: list[NodeSnapshot]) -> _ModularPipelineIndex:
         """Build an index for one pipeline's nodes."""
-        ids, datasets, _ = _build_modular_pipeline_data(nodes)
+        boundaries = _compute_namespace_boundaries(nodes)
 
         return cls(
-            modular_pipeline_ids=ids,
-            datasets_by_modular_pipeline=datasets,
+            modular_pipeline_ids=boundaries.modular_pipeline_ids,
+            datasets_by_modular_pipeline=boundaries.datasets_by_modular_pipeline,
         )
 
     @classmethod
@@ -164,11 +183,9 @@ class _ModularPipelineIndex:
         modular_pipeline_ids: set[str] = set()
         datasets_by_modular_pipeline: dict[str, set[str]] = {}
         for pipeline in pipelines:
-            pipeline_ids, pipeline_datasets, _ = _build_modular_pipeline_data(
-                pipeline.nodes
-            )
-            modular_pipeline_ids.update(pipeline_ids)
-            for mp_id, datasets in pipeline_datasets.items():
+            boundaries = _compute_namespace_boundaries(pipeline.nodes)
+            modular_pipeline_ids.update(boundaries.modular_pipeline_ids)
+            for mp_id, datasets in boundaries.datasets_by_modular_pipeline.items():
                 datasets_by_modular_pipeline.setdefault(mp_id, set()).update(datasets)
         return cls(
             modular_pipeline_ids=modular_pipeline_ids,
@@ -209,35 +226,50 @@ class _ModularPipelineTreeBuilder:
         self._nodes = nodes
         # Resolved against this pipeline's nodes only: a node is a root child when it has no
         # modular owner *in this pipeline*, which can differ from its owners across the project.
-        ids, datasets, boundary_io = _build_modular_pipeline_data(nodes)
-        self._boundary_io_by_modular_pipeline = boundary_io
-        self._index = _ModularPipelineIndex(
-            modular_pipeline_ids=ids,
-            datasets_by_modular_pipeline=datasets,
+        boundaries = _compute_namespace_boundaries(nodes)
+        self._boundary_io_by_modular_pipeline = (
+            boundaries.boundary_io_by_modular_pipeline
         )
-        self.ids = sorted(ids)
+        self._index = _ModularPipelineIndex(
+            modular_pipeline_ids=boundaries.modular_pipeline_ids,
+            datasets_by_modular_pipeline=boundaries.datasets_by_modular_pipeline,
+        )
+        self.ids = sorted(boundaries.modular_pipeline_ids)
 
     def build(self) -> dict[str, _ModularPipelineTreeEntry]:
-        """Return the tree keyed by modular pipeline id, including ``__root__``."""
+        """Return the tree keyed by modular pipeline ID, including ``__root__``.
+
+        Parameter references are tracked separately so they remain parameter children under
+        ``__root__`` instead of being added as data children inside modular pipelines.
+        """
         root = _ModularPipelineTreeEntry(ROOT_MODULAR_PIPELINE_ID)
         tree = {ROOT_MODULAR_PIPELINE_ID: root}
         params: set[str] = set()
 
         for mp_id in self.ids:
-            entry = tree.setdefault(mp_id, _ModularPipelineTreeEntry(mp_id))
-            free_inputs, free_outputs = self._boundary_io_by_modular_pipeline[mp_id]
-            entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
-            entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
-            params |= {
-                _create_dataset_node_id(d) for d in free_inputs if is_dataset_param(d)
-            }
-            boundary = entry.inputs | entry.outputs
-
-            self._add_direct_children(entry, mp_id, boundary, params)
-            self._link_to_parent(tree, mp_id, boundary, params)
+            self._populate_entry(tree, mp_id, params)
 
         self._add_root_children(root)
         return tree
+
+    def _populate_entry(
+        self,
+        tree: dict[str, _ModularPipelineTreeEntry],
+        mp_id: str,
+        params: set[str],
+    ) -> None:
+        """Populate one entry, record its boundary parameters and link it to its parent."""
+        entry = tree.setdefault(mp_id, _ModularPipelineTreeEntry(mp_id))
+        free_inputs, free_outputs = self._boundary_io_by_modular_pipeline[mp_id]
+        entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
+        entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
+        params.update(
+            _create_dataset_node_id(d) for d in free_inputs if is_dataset_param(d)
+        )
+        boundary = entry.inputs | entry.outputs
+
+        self._add_direct_children(entry, mp_id, boundary, params)
+        self._link_to_parent(tree, mp_id, boundary, params)
 
     def get_tags_by_modular_pipeline(self) -> dict[str, list[str]]:
         """Tags for each modular-pipeline node = the union of its whole subtree's tags."""
@@ -353,7 +385,12 @@ def _remove_cyclic_modular_pipeline_boundary_edges(
     edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     tree: dict[str, _ModularPipelineTreeEntry],
 ) -> None:
-    """Drop any ``input -> mp`` edge whose input is also reachable *from* the mp (a cycle)."""
+    """Drop an ``input -> mp`` edge when its input is reachable downstream of ``mp``.
+
+    For example, ``ns.inner`` consumes ``a`` and produces ``b``, while an outer task consumes
+    ``b`` and produces ``a``. The path ``ns -> b -> outer -> a`` means retaining ``a -> ns``
+    would create a cycle.
+    """
     adjacency: dict[str, set[str]] = defaultdict(set)
     for source, target in edges:
         adjacency[source].add(target)
