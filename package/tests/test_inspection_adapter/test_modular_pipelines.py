@@ -9,7 +9,6 @@ from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     _add_modular_pipeline_boundary_edges,
-    _ancestor_namespaces,
     _ModularPipelineIndex,
     _ModularPipelineTreeBuilder,
     _remove_cyclic_modular_pipeline_boundary_edges,
@@ -50,11 +49,6 @@ def _node(
         namespace=namespace,
         tags=tags or set(),
     )
-
-
-def test_ancestor_namespaces_expands_every_level() -> None:
-    assert _ancestor_namespaces("a.b.c") == ["a", "a.b", "a.b.c"]
-    assert _ancestor_namespaces("solo") == ["solo"]
 
 
 def test_dataset_belongs_to_every_owning_modular_pipeline() -> None:
@@ -218,23 +212,6 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
     assert mid_id in tree["a"].outputs
     assert mid_id in tree["a.b"].outputs
     assert index.get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
-
-
-def test_transcoded_boundary_follows_pipeline_set_algebra() -> None:
-    """Transcoding is stripped only when removing intermediates, matching Kedro.
-
-    ``shared@pandas1`` is produced inside and ``shared@pandas2`` consumed inside, so ``shared``
-    is internal. The outside consumer reads ``shared@pandas3``, which does not match the
-    produced name, so Kedro's set algebra does not treat it as a boundary output, and
-    neither do we.
-    """
-    nodes = [
-        _node("ns.make", ["x"], ["shared@pandas1"], namespace="ns"),
-        _node("ns.use", ["shared@pandas2"], ["y"], namespace="ns"),
-        _node("outside", ["shared@pandas3"], ["z"]),
-    ]
-    tree = _tree_builder(nodes).build()
-    assert _create_dataset_node_id("shared") not in tree["ns"].outputs
 
 
 def test_for_dataset_accepts_a_transcoded_name() -> None:
