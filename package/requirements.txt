@@ -1,6 +1,6 @@
 aiofiles>=22.1.0
 click-default-group
-fastapi>=0.100.0,<0.200.0
+fastapi>=0.141.1,<0.200.0
 fsspec>=2021.4
 ipython>=7.0.0, <9.0
 kedro>=1.0.0
