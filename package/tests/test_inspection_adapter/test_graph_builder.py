@@ -1,7 +1,7 @@
 """Structural parity tests for the snapshot graph builder (Phase 2 + 3a/3b).
 
 The adapter graph is compared to the captured live-backend baseline by **structure** — node sets
-(by name/type), edge connectivity (incl. modular edges), tags, pipelines, modular-pipeline membership,
+(by name/type), edge connectivity (incl. modular edges), tags, pipelines, each node's modular pipelines,
 the modular tree, and layers — NOT by literal IDs, which deliberately changed (Decision D9).
 
 Requires the inspection API (``kedro>=1.4.0``); skipped otherwise.
@@ -125,7 +125,7 @@ def test_selected_pipeline_defaults_to_default(builder: GraphBuilder) -> None:
     assert builder.build().model_dump()["selected_pipeline"] == "__default__"
 
 
-def _membership_by_key(graph: dict) -> dict[str, list | None]:
+def _modular_pipelines_by_key(graph: dict) -> dict[str, list | None]:
     out = {}
     for node in graph["nodes"]:
         if node["type"] in ("task", "data", "parameters"):
@@ -135,12 +135,12 @@ def _membership_by_key(graph: dict) -> dict[str, list | None]:
 
 
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
-def test_modular_pipeline_membership_matches_baseline(
+def test_node_modular_pipelines_match_baseline(
     builder: GraphBuilder, pipeline_id: str
 ) -> None:
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
-    assert _membership_by_key(adapter) == _membership_by_key(baseline)
+    assert _modular_pipelines_by_key(adapter) == _modular_pipelines_by_key(baseline)
 
 
 def test_data_node_tags_match_baseline(builder: GraphBuilder) -> None:

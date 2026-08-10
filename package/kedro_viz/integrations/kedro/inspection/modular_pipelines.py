@@ -135,7 +135,7 @@ def _build_modular_pipeline_data(
 
 
 class _ModularPipelineIndex:
-    """Resolve which modular pipelines each task and dataset belongs to."""
+    """Look up which modular pipelines own each dataset."""
 
     def __init__(
         self,

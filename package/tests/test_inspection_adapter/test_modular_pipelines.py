@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot
 
 
-def _membership(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
+def _modular_pipeline_index(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
     """Build a ``_ModularPipelineIndex`` from duck-typed snapshot stand-ins."""
     return _ModularPipelineIndex.from_nodes(cast("list[NodeSnapshot]", nodes))
 
@@ -60,19 +60,21 @@ def test_ancestor_namespaces_expands_every_level() -> None:
 def test_dataset_belongs_to_every_owning_modular_pipeline() -> None:
     """A boundary dataset is owned by the nested pipeline and each of its ancestors."""
     node = _node("a.b.task", ["x"], ["y"], namespace="a.b")
-    membership = _membership([node])
-    assert membership.get_modular_pipelines_for_dataset("x") == ["a", "a.b"]
-    assert membership.get_modular_pipelines_for_dataset("y") == ["a", "a.b"]
+    index = _modular_pipeline_index([node])
+    assert index.get_modular_pipelines_for_dataset("x") == ["a", "a.b"]
+    assert index.get_modular_pipelines_for_dataset("y") == ["a", "a.b"]
 
 
 def test_parameters_never_belong_to_a_modular_pipeline() -> None:
     node = _node("ns.task", ["params:opts"], ["y"], namespace="ns")
-    assert _membership([node]).get_modular_pipelines_for_dataset("params:opts") is None
+    index = _modular_pipeline_index([node])
+    assert index.get_modular_pipelines_for_dataset("params:opts") is None
 
 
 def test_unowned_dataset_has_no_modular_pipelines() -> None:
     node = _node("task", ["x"], ["y"])
-    assert _membership([node]).get_modular_pipelines_for_dataset("x") is None
+    index = _modular_pipeline_index([node])
+    assert index.get_modular_pipelines_for_dataset("x") is None
 
 
 def test_tree_ids_include_every_ancestor_namespace() -> None:
@@ -201,8 +203,8 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
     """A dataset on an ancestor's boundary belongs to that ancestor too.
 
     ``mid`` is produced and consumed inside ``a.b``, and consumed outside ``a``. It is therefore
-    a boundary output of both ``a.b`` and ``a``, and membership must say so — otherwise the
-    dataset node disagrees with the folder it is drawn on.
+    a boundary output of both ``a.b`` and ``a``, and the index must report both owners —
+    otherwise the dataset node disagrees with the folder it is drawn on.
     """
     nodes = [
         _node("a.b.make", ["x"], ["mid"], namespace="a.b"),
@@ -211,10 +213,11 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
     ]
     tree = _tree_builder(nodes).build()
     mid_id = _create_dataset_node_id("mid")
+    index = _modular_pipeline_index(nodes)
 
     assert mid_id in tree["a"].outputs
     assert mid_id in tree["a.b"].outputs
-    assert _membership(nodes).get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
+    assert index.get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
 
 
 def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
@@ -235,10 +238,10 @@ def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
 
 def test_for_dataset_accepts_a_transcoded_name() -> None:
     nodes = [_node("ns.task", ["ds@pandas"], ["y"], namespace="ns")]
-    membership = _membership(nodes)
+    index = _modular_pipeline_index(nodes)
     assert (
-        membership.get_modular_pipelines_for_dataset("ds@pandas")
-        == membership.get_modular_pipelines_for_dataset("ds")
+        index.get_modular_pipelines_for_dataset("ds@pandas")
+        == index.get_modular_pipelines_for_dataset("ds")
         == ["ns"]
     )
 

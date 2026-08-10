@@ -1,9 +1,11 @@
 """Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Assembles task, data, parameter and modular-pipeline nodes, their edges, the modular-pipeline
-tree, and the global tag, layer and registered-pipeline lists. Node IDs come from
-``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets use raw catalog
-type strings from the snapshot.
+Builds task, data, parameter and modular pipeline nodes for one selected pipeline, along with
+their edges and the modular pipeline tree. Also includes the global tag, layer and registered
+pipeline lists.
+
+Node IDs come from ``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets
+use raw catalog type strings from the snapshot.
 
 Live-only fields (``node_extras`` and resolved ``dataset_type`` class paths) are added by the
 metadata bridge in :mod:`kedro_viz.api.inspection_adapter_provider`, not here.
@@ -163,10 +165,10 @@ class GraphBuilder:
     def build(self, pipeline_id: str | None = None) -> GraphAPIResponse:
         """Build the main graph response for a registered pipeline.
 
-        The response contains task, data, parameter and modular-pipeline nodes, their edges,
-        the modular-pipeline tree, and the global tag, layer and registered-pipeline lists.
-        Rendered nodes and edges are scoped to the selected pipeline, while each node's tags
-        and pipeline membership are collected across the whole project.
+        The response contains task, data, parameter and modular pipeline nodes, their edges,
+        the modular pipeline tree, and the global tag, layer and registered pipeline lists.
+        Rendered nodes and edges are scoped to the selected pipeline, while tags and registered
+        pipelines on each node are collected across the whole project.
 
         Args:
             pipeline_id: The registered pipeline to render. When ``None``, the default
@@ -178,10 +180,10 @@ class GraphBuilder:
         Raises:
             ValueError: If ``pipeline_id`` is not a registered pipeline in this snapshot view.
         """
-        selected = pipeline_id or self.default_pipeline_id()
-        if not self.has_pipeline(selected):
-            raise ValueError(f"Invalid pipeline ID: {selected!r}")
-        pipeline = self._pipelines_by_id[selected]
+        selected_pipeline_id = pipeline_id or self.default_pipeline_id()
+        if not self.has_pipeline(selected_pipeline_id):
+            raise ValueError(f"Invalid pipeline ID: {selected_pipeline_id!r}")
+        pipeline = self._pipelines_by_id[selected_pipeline_id]
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
@@ -212,7 +214,7 @@ class GraphBuilder:
             )
 
         tree = self._add_modular_pipelines_to_graph(
-            nodes, edges, pipeline.nodes, selected
+            nodes, edges, pipeline.nodes, selected_pipeline_id
         )
 
         return GraphAPIResponse(
@@ -228,7 +230,7 @@ class GraphBuilder:
                 for pid in self._pipelines_by_id
             ],
             modular_pipelines=_build_modular_pipeline_tree_response(tree),
-            selected_pipeline=selected,
+            selected_pipeline=selected_pipeline_id,
         )
 
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
@@ -309,13 +311,13 @@ class GraphBuilder:
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
         edges: dict[tuple[str, str], GraphEdgeAPIResponse],
         pipeline_nodes: list[NodeSnapshot],
-        selected_pipeline: str,
+        selected_pipeline_id: str,
     ) -> dict[str, _ModularPipelineTreeEntry]:
         """Add modular-pipeline nodes and boundary edges, then return their tree."""
         tree_builder = _ModularPipelineTreeBuilder(pipeline_nodes)
         tree = tree_builder.build()
         nodes.extend(
-            self._build_modular_pipeline_nodes(tree_builder, selected_pipeline)
+            self._build_modular_pipeline_nodes(tree_builder, selected_pipeline_id)
         )
         _add_modular_pipeline_boundary_edges(edges, tree)
         _remove_cyclic_modular_pipeline_boundary_edges(edges, tree)
@@ -323,7 +325,7 @@ class GraphBuilder:
 
     @staticmethod
     def _build_modular_pipeline_nodes(
-        tree_builder: _ModularPipelineTreeBuilder, selected: str
+        tree_builder: _ModularPipelineTreeBuilder, selected_pipeline_id: str
     ) -> list[DataNodeAPIResponse]:
         """Build one ``modularPipeline`` node per modular pipeline in the rendered view."""
         tags = tree_builder.get_tags_by_modular_pipeline()
@@ -332,7 +334,7 @@ class GraphBuilder:
                 id=mp_id,
                 name=mp_id,
                 tags=tags[mp_id],
-                pipelines=[selected],
+                pipelines=[selected_pipeline_id],
                 type=GraphNodeType.MODULAR_PIPELINE.value,
                 modular_pipelines=None,
                 layer=None,
