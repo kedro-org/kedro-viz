@@ -9,8 +9,9 @@ watchfiles==0.24.0; python_version < '3.14'
 watchfiles==1.1.0; python_version >= '3.14'
 plotly==4.8
 packaging==23.0
-pandas==1.5; python_version >= '3.10' and python_version < '3.12'
-pandas==2.2.3; python_version >= '3.12' and python_version < '3.14'
+pandas==2.0.3; python_version >= '3.10' and python_version < '3.12'
+pandas==2.1.1; python_version >= '3.12' and python_version < '3.13'
+pandas==2.2.3; python_version >= '3.13' and python_version < '3.14'
 pandas==2.3.3; python_version >= '3.14'
 networkx==2.5; python_version < '3.12'
 networkx==2.6; python_version >= '3.12' and python_version < '3.13'
