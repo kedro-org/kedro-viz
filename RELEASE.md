@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Fix for `autoreload` to ignore notebook file changes. (#2712)
- - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`)
+ - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
 
 # Release 12.4.0
 
