@@ -1,26 +1,16 @@
-*                                       @rashidakanchwala
+*                    @Huongg
 
-src/                                    @rashidakanchwala
-public/                                 @rashidakanchwala
-tools/                                  @rashidakanchwala
-package/                                @rashidakanchwala
+# Frontend
+*.js                 @Huongg @jitu5
+*.json               @Huongg @jitu5
+*.scss               @Huongg @jitu5
+*.css                @Huongg @jitu5
 
-Makefile                                @rashidakanchwala
-.circleci/                              @rashidakanchwala
+# Backend
+*.py                 @Huongg @ravi-kumar-pilla
+package/             @Huongg @ravi-kumar-pilla
 
-*.js                                    @rashidakanchwala @jitu5
-*.json                                  @rashidakanchwala @jitu5
-*.scss                                  @rashidakanchwala @jitu5
-*.py                                    @rashidakanchwala @ravi-kumar-pilla
-*.md                                    @rashidakanchwala
-
-.babelrc                                @rashidakanchwala
-.eslintrc.json                          @rashidakanchwala
-.prettierrc                             @rashidakanchwala
-.gitignore                              @rashidakanchwala
-CODEOWNERS                              @rashidakanchwala
-CONTRIBUTING.md                         @rashidakanchwala
-README.md                               @rashidakanchwala
-RELEASE.md                              @rashidakanchwala
-legal_header.txt                        @rashidakanchwala
-LICENSE.md                              @rashidakanchwala
+# CI / release
+.github/workflows/   @Huongg @jitu5 @ravi-kumar-pilla
+Makefile             @Huongg @jitu5 @ravi-kumar-pilla
+RELEASE.md           @Huongg @jitu5 @ravi-kumar-pilla
