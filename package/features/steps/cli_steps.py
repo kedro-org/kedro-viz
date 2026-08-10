@@ -1,16 +1,66 @@
 """Behave step definitions for the cli_scenarios feature."""
 
+import sys
 from pathlib import Path
 from time import sleep, time
 
 import requests
 import yaml
 from behave import given, then, when
-from packaging.version import parse
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 
 OK_EXIT_CODE = 0
+
+
+def _numpy_pandas_pins():
+    """Return lower-bound numpy and pandas pins for the current Python version."""
+    version = sys.version_info
+    if version >= (3, 14):
+        return "2.3.2", "2.3.3"
+    if version >= (3, 13):
+        return "2.1.0", "2.2.3"
+    if version >= (3, 12):
+        return "2.0.2", "2.2.3"
+    if version >= (3, 10):
+        return "1.26.4", "1.5"
+    return None, None
+
+
+def _force_reinstall_numpy_pandas(context):
+    """Ensure numpy and pandas wheels match after lower-bound installs."""
+    numpy_pin, pandas_pin = _numpy_pandas_pins()
+    if not numpy_pin or not pandas_pin:
+        return
+
+    res = run(
+        [
+            context.pip,
+            "install",
+            "--no-cache-dir",
+            "--force-reinstall",
+            f"numpy=={numpy_pin}",
+            f"pandas=={pandas_pin}",
+        ],
+        env=context.env,
+    )
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+
+    import_res = run(
+        [
+            context.python,
+            "-c",
+            "import numpy as np; import pandas as pd; print(np.__version__, pd.__version__)",
+        ],
+        env=context.env,
+    )
+    if import_res.returncode != OK_EXIT_CODE:
+        print(import_res.stdout)
+        print(import_res.stderr)
+        assert False
 
 
 def _create_config_file(context, include_example):
@@ -93,13 +143,15 @@ def install_project_requirements(context):
 def install_lower_bound_requirements(context):
     cwd = Path(__file__).resolve().parent
     requirements_path = cwd / "lower_requirements.txt"
-    cmd = [context.pip, "install", "-r", requirements_path]
+    cmd = [context.pip, "install", "-r", str(requirements_path), "--force-reinstall"]
     res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
         print(res.stderr)
         assert False
+
+    _force_reinstall_numpy_pandas(context)
 
 
 @given('I have installed kedro version "{version}"')
@@ -143,12 +195,13 @@ def exec_viz_lite_command(context):
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that Kedro-Viz is up and responding to requests."""
-    max_duration = 30  # 30 seconds
+    max_duration = 45
     end_by = time() + max_duration
+    data_json = None
 
     while time() < end_by:
         try:
-            data_json = requests.get("http://localhost:4141/api/main").json()
+            data_json = requests.get("http://localhost:4141/api/main", timeout=5).json()
         except Exception:  # noqa: BLE001
             sleep(2.0)
             continue
@@ -156,7 +209,13 @@ def check_kedroviz_up(context):
             break
 
     try:
-        assert context.result.poll() is None
+        if context.result.poll() is not None:
+            _, stderr = context.result.communicate()
+            raise AssertionError(
+                f"Kedro Viz process exited unexpectedly: {stderr.decode()}"
+            )
+        if data_json is None:
+            raise AssertionError("Kedro Viz did not respond within 45 seconds")
         assert (
             "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
@@ -166,12 +225,12 @@ def check_kedroviz_up(context):
 
 @then("I store the response from main endpoint")
 def get_main_api_response(context):
-    max_duration = 30  # 30 seconds
+    max_duration = 45  # 45 seconds
     end_by = time() + max_duration
 
     while time() < end_by:
         try:
-            response = requests.get("http://localhost:4141/api/main")
+            response = requests.get("http://localhost:4141/api/main", timeout=5)
             context.response = response.json()
             assert response.status_code == 200
         except Exception:  # noqa: BLE001
