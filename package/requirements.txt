@@ -13,6 +13,6 @@ plotly>=4.0
 pydantic>=2.0.0
 secure>=2.0.1
 uvicorn[standard]>=0.30.0, <1.0
-watchfiles>=0.24.0
+watchfiles>=1.2.0
 werkzeug>=3.0.0
 pathspec>=0.12.1
