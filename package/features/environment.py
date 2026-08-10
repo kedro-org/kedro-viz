@@ -87,6 +87,7 @@ def _setup_context_with_venv(context, venv_dir):
     # Windows thinks the pip version check warning is a failure
     # so disable it here.
     context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+    context.env["MPLBACKEND"] = "Agg"
 
     call(
         [context.python, "-m", "pip", "install", "-U", "pip>=21.2", "setuptools>=38.0"],

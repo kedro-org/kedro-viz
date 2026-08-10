@@ -5,6 +5,10 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 12.5.0
+
+## Bug fixes and other changes
+ - Fix for `autoreload` to ignore notebook file changes. (#2712)
 
 # Release 12.5.0
 
