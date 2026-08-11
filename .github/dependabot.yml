@@ -1,8 +1,8 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
+# Dependabot configuration for kedro-viz.
+#
+# Routine Python version updates run monthly. Routine npm version updates stay
+# disabled. Security updates are grouped separately by ecosystem to reduce the
+# number of security PRs.
 version: 2
 updates:
   - package-ecosystem: "pip" # See documentation for possible values
@@ -15,3 +15,24 @@ updates:
     labels:
       - "Python"
       - "dependencies"
+    groups:
+      python-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/tools/test-lib/react-app"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    labels:
+      - "Javascript"
+      - "dependencies"
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
