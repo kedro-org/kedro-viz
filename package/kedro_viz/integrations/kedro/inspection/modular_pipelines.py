@@ -1,4 +1,9 @@
-"""Build modular pipeline groups, their tree and boundary edges from snapshot namespaces.
+"""Build modular pipeline groups, tree, and boundary connections for Viz.
+
+Public entry points:
+
+* ``ModularPipelineIndex``: project-wide dataset ownership, built once.
+* ``ModularPipelineView``: per-pipeline tree, group nodes and edges, built per render.
 
 Concepts:
 
@@ -7,8 +12,7 @@ Concepts:
 * Tree: the group hierarchy and its task, dataset and nested-group children.
 * Boundary edges: links between group nodes and their input and output datasets.
 
-Namespace boundary calculations live in ``modular_pipeline_algebra``; this module uses them
-for dataset ownership, tree construction and boundary edges.
+Set algebra lives in ``modular_pipeline_algebra``.
 """
 
 from __future__ import annotations
@@ -18,7 +22,13 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
+from kedro_viz.api.rest.responses.pipelines import (
+    DataNodeAPIResponse,
+    GraphEdgeAPIResponse,
+    ModularPipelineChildAPIResponse,
+    ModularPipelinesTreeNodeAPIResponse,
+    TaskNodeAPIResponse,
+)
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipeline_algebra import (
     _in_subtree,
@@ -35,7 +45,7 @@ if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot, PipelineSnapshot
 
 
-class _ModularPipelineIndex:
+class ModularPipelineIndex:
     """Look up which modular pipelines own each dataset."""
 
     def __init__(
@@ -48,7 +58,7 @@ class _ModularPipelineIndex:
         self._datasets_by_modular_pipeline = datasets_by_modular_pipeline
 
     @classmethod
-    def from_nodes(cls, nodes: list[NodeSnapshot]) -> _ModularPipelineIndex:
+    def from_nodes(cls, nodes: list[NodeSnapshot]) -> ModularPipelineIndex:
         """Build an index for one pipeline's nodes."""
         boundaries = compute_namespace_boundaries(nodes)
 
@@ -60,7 +70,7 @@ class _ModularPipelineIndex:
     @classmethod
     def from_registered_pipelines(
         cls, pipelines: Iterable[PipelineSnapshot]
-    ) -> _ModularPipelineIndex:
+    ) -> ModularPipelineIndex:
         """Union ownership calculated independently for each registered pipeline."""
         modular_pipeline_ids: set[str] = set()
         datasets_by_modular_pipeline: dict[str, set[str]] = {}
@@ -74,8 +84,12 @@ class _ModularPipelineIndex:
             datasets_by_modular_pipeline=datasets_by_modular_pipeline,
         )
 
-    def get_modular_pipelines_for_dataset(self, name: str) -> list[str] | None:
-        """A dataset belongs to every modular pipeline that owns it."""
+    def owners_for_dataset(self, name: str) -> list[str] | None:
+        """Return sorted modular pipeline IDs that own this dataset, or ``None``.
+
+        Parameter references have no owners. Transcoded names resolve to the same owners as
+        their base names.
+        """
         if is_dataset_param(name):
             return None
         stripped = _strip_transcoding(name)
@@ -112,7 +126,7 @@ class _ModularPipelineTreeBuilder:
         self._boundary_io_by_modular_pipeline = (
             boundaries.boundary_io_by_modular_pipeline
         )
-        self._index = _ModularPipelineIndex(
+        self._index = ModularPipelineIndex(
             modular_pipeline_ids=boundaries.modular_pipeline_ids,
             datasets_by_modular_pipeline=boundaries.datasets_by_modular_pipeline,
         )
@@ -218,7 +232,7 @@ class _ModularPipelineTreeBuilder:
             for node in self._nodes
             for io in [*node.inputs, *node.outputs]
         }:
-            if self._index.get_modular_pipelines_for_dataset(dataset) is None:
+            if self._index.owners_for_dataset(dataset) is None:
                 node_type = (
                     GraphNodeType.PARAMETERS.value
                     if is_dataset_param(dataset)
@@ -233,6 +247,58 @@ class _ModularPipelineTreeBuilder:
                         GraphNodeType.TASK.value,
                     )
                 )
+
+
+class ModularPipelineView:
+    """Build modular pipeline rendering data for one selected pipeline.
+
+    Built per render because the tree and boundary edges depend on the selected pipeline.
+    """
+
+    def __init__(self, nodes: list[NodeSnapshot]) -> None:
+        """Prepare tree and boundary data for one pipeline view."""
+        self._tree_builder = _ModularPipelineTreeBuilder(nodes)
+
+    def extend_graph(
+        self,
+        graph_nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
+        edges: dict[tuple[str, str], GraphEdgeAPIResponse],
+        selected_pipeline_id: str,
+    ) -> dict[str, ModularPipelinesTreeNodeAPIResponse]:
+        """Append group nodes, wire boundary edges and return the API tree.
+
+        ``graph_nodes`` and ``edges`` are mutated in place.
+        """
+        tree = self._tree_builder.build()
+        graph_nodes.extend(
+            self._build_modular_pipeline_group_nodes(selected_pipeline_id)
+        )
+        _add_modular_pipeline_boundary_edges(edges, tree)
+        _remove_cyclic_modular_pipeline_boundary_edges(edges, tree)
+        return _build_modular_pipeline_tree_response(tree)
+
+    def _build_modular_pipeline_group_nodes(
+        self, selected_pipeline_id: str
+    ) -> list[DataNodeAPIResponse]:
+        """Build flowchart group nodes for each modular pipeline namespace.
+
+        The API has no separate modular-pipeline node model, so group nodes use
+        ``DataNodeAPIResponse`` with ``type="modularPipeline"``.
+        """
+        tags = self._tree_builder.get_tags_by_modular_pipeline()
+        return [
+            DataNodeAPIResponse(
+                id=mp_id,
+                name=mp_id,
+                tags=tags[mp_id],
+                pipelines=[selected_pipeline_id],
+                type=GraphNodeType.MODULAR_PIPELINE.value,
+                modular_pipelines=None,
+                layer=None,
+                dataset_type=None,
+            )
+            for mp_id in self._tree_builder.ids
+        ]
 
 
 def _add_modular_pipeline_boundary_edges(
@@ -288,3 +354,22 @@ def _reachable_from(start: str, adjacency: dict[str, set[str]]) -> set[str]:
         seen.add(node)
         stack.extend(adjacency.get(node, ()))
     return seen
+
+
+def _build_modular_pipeline_tree_response(
+    tree: dict[str, _ModularPipelineTreeEntry],
+) -> dict[str, ModularPipelinesTreeNodeAPIResponse]:
+    """Convert internal tree entries into deterministic API response models."""
+    return {
+        mp_id: ModularPipelinesTreeNodeAPIResponse(
+            id=mp_id,
+            name=entry.name,
+            inputs=sorted(entry.inputs),
+            outputs=sorted(entry.outputs),
+            children=[
+                ModularPipelineChildAPIResponse(id=child_id, type=child_type)
+                for child_id, child_type in sorted(entry.children)
+            ],
+        )
+        for mp_id, entry in tree.items()
+    }
