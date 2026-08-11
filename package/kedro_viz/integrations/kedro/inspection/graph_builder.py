@@ -20,8 +20,6 @@ from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
     GraphAPIResponse,
     GraphEdgeAPIResponse,
-    ModularPipelineChildAPIResponse,
-    ModularPipelinesTreeNodeAPIResponse,
     NamedEntityAPIResponse,
     TaskNodeAPIResponse,
 )
@@ -31,11 +29,8 @@ from kedro_viz.integrations.kedro.inspection.layers import (
     sort_layers,
 )
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
-    _add_modular_pipeline_boundary_edges,
-    _ModularPipelineIndex,
-    _ModularPipelineTreeBuilder,
-    _ModularPipelineTreeEntry,
-    _remove_cyclic_modular_pipeline_boundary_edges,
+    ModularPipelineIndex,
+    ModularPipelineView,
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
@@ -127,7 +122,7 @@ class GraphBuilder:
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
-        self._modular_pipeline_index = _ModularPipelineIndex.from_registered_pipelines(
+        self._modular_pipeline_index = ModularPipelineIndex.from_registered_pipelines(
             snapshot.pipelines
         )
 
@@ -213,8 +208,8 @@ class GraphBuilder:
                 )
             )
 
-        tree = self._add_modular_pipelines_to_graph(
-            nodes, edges, pipeline.nodes, selected_pipeline_id
+        modular_pipelines = ModularPipelineView(pipeline.nodes).extend_graph(
+            nodes, edges, selected_pipeline_id
         )
 
         return GraphAPIResponse(
@@ -229,7 +224,7 @@ class GraphBuilder:
                 NamedEntityAPIResponse(id=pid, name=pid)
                 for pid in self._pipelines_by_id
             ],
-            modular_pipelines=_build_modular_pipeline_tree_response(tree),
+            modular_pipelines=modular_pipelines,
             selected_pipeline=selected_pipeline_id,
         )
 
@@ -298,50 +293,11 @@ class GraphBuilder:
                 else GraphNodeType.DATA.value
             ),
             modular_pipelines=(
-                self._modular_pipeline_index.get_modular_pipelines_for_dataset(
-                    base_name
-                )
+                self._modular_pipeline_index.owners_for_dataset(base_name)
             ),
             layer=(None if is_parameter else self._layer_by_dataset.get(base_name)),
             dataset_type=dataset_type,
         )
-
-    def _add_modular_pipelines_to_graph(
-        self,
-        nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse],
-        edges: dict[tuple[str, str], GraphEdgeAPIResponse],
-        pipeline_nodes: list[NodeSnapshot],
-        selected_pipeline_id: str,
-    ) -> dict[str, _ModularPipelineTreeEntry]:
-        """Add modular-pipeline nodes and boundary edges, then return their tree."""
-        tree_builder = _ModularPipelineTreeBuilder(pipeline_nodes)
-        tree = tree_builder.build()
-        nodes.extend(
-            self._build_modular_pipeline_nodes(tree_builder, selected_pipeline_id)
-        )
-        _add_modular_pipeline_boundary_edges(edges, tree)
-        _remove_cyclic_modular_pipeline_boundary_edges(edges, tree)
-        return tree
-
-    @staticmethod
-    def _build_modular_pipeline_nodes(
-        tree_builder: _ModularPipelineTreeBuilder, selected_pipeline_id: str
-    ) -> list[DataNodeAPIResponse]:
-        """Build one ``modularPipeline`` node per modular pipeline in the rendered view."""
-        tags = tree_builder.get_tags_by_modular_pipeline()
-        return [
-            DataNodeAPIResponse(
-                id=mp_id,
-                name=mp_id,
-                tags=tags[mp_id],
-                pipelines=[selected_pipeline_id],
-                type=GraphNodeType.MODULAR_PIPELINE.value,
-                modular_pipelines=None,
-                layer=None,
-                dataset_type=None,
-            )
-            for mp_id in tree_builder.ids
-        ]
 
     def _sorted_layers_for_pipeline(
         self,
@@ -386,33 +342,6 @@ class GraphBuilder:
         edges.setdefault(
             (source, target), GraphEdgeAPIResponse(source=source, target=target)
         )
-
-
-def _build_modular_pipeline_tree_response(
-    tree: dict[str, _ModularPipelineTreeEntry],
-) -> dict[str, ModularPipelinesTreeNodeAPIResponse]:
-    """Convert internal tree entries into the API tree response.
-
-    Args:
-        tree: Modular-pipeline tree keyed by modular pipeline ID.
-
-    Returns:
-        The same tree as API response models, with inputs, outputs and children sorted so
-        the response is deterministic.
-    """
-    return {
-        mp_id: ModularPipelinesTreeNodeAPIResponse(
-            id=mp_id,
-            name=entry.name,
-            inputs=sorted(entry.inputs),
-            outputs=sorted(entry.outputs),
-            children=[
-                ModularPipelineChildAPIResponse(id=child_id, type=child_type)
-                for child_id, child_type in sorted(entry.children)
-            ],
-        )
-        for mp_id, entry in tree.items()
-    }
 
 
 def _display_name(snapshot_name: str, func_name: str, namespace: str | None) -> str:

@@ -5,12 +5,16 @@ from typing import TYPE_CHECKING, cast
 
 import pytest
 
-from kedro_viz.api.rest.responses.pipelines import GraphEdgeAPIResponse
+from kedro_viz.api.rest.responses.pipelines import (
+    DataNodeAPIResponse,
+    GraphEdgeAPIResponse,
+    TaskNodeAPIResponse,
+)
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+    ModularPipelineIndex,
+    ModularPipelineView,
     _add_modular_pipeline_boundary_edges,
-    _ancestor_namespaces,
-    _ModularPipelineIndex,
     _ModularPipelineTreeBuilder,
     _remove_cyclic_modular_pipeline_boundary_edges,
 )
@@ -23,9 +27,9 @@ if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot
 
 
-def _modular_pipeline_index(nodes: list[SimpleNamespace]) -> _ModularPipelineIndex:
-    """Build a ``_ModularPipelineIndex`` from duck-typed snapshot stand-ins."""
-    return _ModularPipelineIndex.from_nodes(cast("list[NodeSnapshot]", nodes))
+def _modular_pipeline_index(nodes: list[SimpleNamespace]) -> ModularPipelineIndex:
+    """Build a ``ModularPipelineIndex`` from duck-typed snapshot stand-ins."""
+    return ModularPipelineIndex.from_nodes(cast("list[NodeSnapshot]", nodes))
 
 
 def _tree_builder(nodes: list[SimpleNamespace]) -> _ModularPipelineTreeBuilder:
@@ -52,29 +56,24 @@ def _node(
     )
 
 
-def test_ancestor_namespaces_expands_every_level() -> None:
-    assert _ancestor_namespaces("a.b.c") == ["a", "a.b", "a.b.c"]
-    assert _ancestor_namespaces("solo") == ["solo"]
-
-
 def test_dataset_belongs_to_every_owning_modular_pipeline() -> None:
     """A boundary dataset is owned by the nested pipeline and each of its ancestors."""
     node = _node("a.b.task", ["x"], ["y"], namespace="a.b")
     index = _modular_pipeline_index([node])
-    assert index.get_modular_pipelines_for_dataset("x") == ["a", "a.b"]
-    assert index.get_modular_pipelines_for_dataset("y") == ["a", "a.b"]
+    assert index.owners_for_dataset("x") == ["a", "a.b"]
+    assert index.owners_for_dataset("y") == ["a", "a.b"]
 
 
 def test_parameters_never_belong_to_a_modular_pipeline() -> None:
     node = _node("ns.task", ["params:opts"], ["y"], namespace="ns")
     index = _modular_pipeline_index([node])
-    assert index.get_modular_pipelines_for_dataset("params:opts") is None
+    assert index.owners_for_dataset("params:opts") is None
 
 
 def test_unowned_dataset_has_no_modular_pipelines() -> None:
     node = _node("task", ["x"], ["y"])
     index = _modular_pipeline_index([node])
-    assert index.get_modular_pipelines_for_dataset("x") is None
+    assert index.owners_for_dataset("x") is None
 
 
 def test_tree_ids_include_every_ancestor_namespace() -> None:
@@ -217,33 +216,38 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
 
     assert mid_id in tree["a"].outputs
     assert mid_id in tree["a.b"].outputs
-    assert index.get_modular_pipelines_for_dataset("mid") == ["a", "a.b"]
+    assert index.owners_for_dataset("mid") == ["a", "a.b"]
 
 
-def test_transcoded_boundary_matches_legacy_set_algebra() -> None:
-    """Transcoding is stripped only when removing intermediates, matching Kedro.
-
-    ``shared@pandas1`` is produced inside and ``shared@pandas2`` consumed inside, so ``shared``
-    is internal. The outside consumer reads ``shared@pandas3``, which does not match the
-    produced name, so legacy does not treat it as a boundary output and neither do we.
-    """
-    nodes = [
-        _node("ns.make", ["x"], ["shared@pandas1"], namespace="ns"),
-        _node("ns.use", ["shared@pandas2"], ["y"], namespace="ns"),
-        _node("outside", ["shared@pandas3"], ["z"]),
-    ]
-    tree = _tree_builder(nodes).build()
-    assert _create_dataset_node_id("shared") not in tree["ns"].outputs
-
-
-def test_for_dataset_accepts_a_transcoded_name() -> None:
+def test_owners_for_dataset_accepts_a_transcoded_name() -> None:
     nodes = [_node("ns.task", ["ds@pandas"], ["y"], namespace="ns")]
     index = _modular_pipeline_index(nodes)
     assert (
-        index.get_modular_pipelines_for_dataset("ds@pandas")
-        == index.get_modular_pipelines_for_dataset("ds")
+        index.owners_for_dataset("ds@pandas")
+        == index.owners_for_dataset("ds")
         == ["ns"]
     )
+
+
+def test_view_extends_graph_and_returns_tree() -> None:
+    node = _node("ns.task", ["x"], ["y"], namespace="ns")
+    nodes = [node]
+    graph_nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
+    edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
+
+    tree = ModularPipelineView(cast("list[NodeSnapshot]", nodes)).extend_graph(
+        graph_nodes, edges, selected_pipeline_id="pipeline"
+    )
+
+    assert [(graph_node.id, graph_node.pipelines) for graph_node in graph_nodes] == [
+        ("ns", ["pipeline"])
+    ]
+    assert set(edges) == {
+        (_create_dataset_node_id("x"), "ns"),
+        ("ns", _create_dataset_node_id("y")),
+    }
+    assert set(tree) == {ROOT_MODULAR_PIPELINE_ID, "ns"}
+    assert tree["ns"].inputs == [_create_dataset_node_id("x")]
 
 
 @pytest.mark.parametrize(
