@@ -14,8 +14,12 @@ from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularPipelineIndex,
     ModularPipelineView,
-    _add_modular_pipeline_boundary_edges,
+)
+from kedro_viz.integrations.kedro.inspection.modular_pipelines.tree import (
     _ModularPipelineTreeBuilder,
+)
+from kedro_viz.integrations.kedro.inspection.modular_pipelines.view import (
+    _add_modular_pipeline_boundary_edges,
     _remove_cyclic_modular_pipeline_boundary_edges,
 )
 from kedro_viz.integrations.kedro.node_ids import (

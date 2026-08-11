@@ -1,9 +1,9 @@
-"""Hermetic tests for Kedro's modular pipeline set algebra on snapshot nodes."""
+"""Hermetic tests for namespace boundary calculations on snapshot nodes."""
 
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
 
-from kedro_viz.integrations.kedro.inspection.modular_pipeline_algebra import (
+from kedro_viz.integrations.kedro.inspection.modular_pipelines.boundaries import (
     _ancestor_namespaces,
     compute_namespace_boundaries,
 )

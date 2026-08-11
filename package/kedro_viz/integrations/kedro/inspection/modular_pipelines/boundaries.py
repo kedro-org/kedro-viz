@@ -1,4 +1,4 @@
-"""Kedro modular pipeline set algebra on inspection snapshots.
+"""Compute Kedro modular pipeline boundaries from inspection snapshots.
 
 Kedro defines namespace boundaries via ``Pipeline.inputs()`` and ``Pipeline.outputs()``.
 The inspection API exposes flat ``NodeSnapshot`` lists instead of live ``Pipeline`` objects,
