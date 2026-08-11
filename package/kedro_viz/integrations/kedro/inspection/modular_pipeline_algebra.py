@@ -113,9 +113,9 @@ def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> _BoundaryIO:
 
 @dataclass(frozen=True)
 class _NamespaceBoundaries:
-    """Namespace IDs, dataset ownership and boundary I/O for one node list.
+    """Namespace IDs, dataset assignments and boundary I/O for one node list.
 
-    Dataset ownership uses transcoding-stripped names; boundary I/O keeps original names.
+    Dataset assignments use transcoding-stripped names; boundary I/O keeps original names.
     """
 
     modular_pipeline_ids: set[str]
@@ -124,12 +124,12 @@ class _NamespaceBoundaries:
 
 
 def compute_namespace_boundaries(nodes: list[NodeSnapshot]) -> _NamespaceBoundaries:
-    """Compute namespace IDs, dataset ownership and boundary I/O for one node list."""
+    """Compute namespace IDs, dataset assignments and boundary I/O for one node list."""
     modular_pipeline_ids = _modular_pipeline_ids(nodes)
     datasets_by_modular_pipeline: dict[str, set[str]] = {}
     boundary_io_by_modular_pipeline: _BoundaryIOByModularPipeline = {}
 
-    # Datasets owned by each modular pipeline: I/O of its direct nodes, plus the boundary of
+    # Datasets assigned to each modular pipeline: I/O of its direct nodes, plus the boundary of
     # its whole subtree. The boundary also supplies the tree, so it is calculated only once.
     for mp_id in modular_pipeline_ids:
         direct = {

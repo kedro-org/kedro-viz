@@ -56,24 +56,24 @@ def _node(
     )
 
 
-def test_dataset_belongs_to_every_owning_modular_pipeline() -> None:
-    """A boundary dataset is owned by the nested pipeline and each of its ancestors."""
+def test_dataset_belongs_to_every_enclosing_modular_pipeline() -> None:
+    """A boundary dataset belongs to the nested pipeline and each of its ancestors."""
     node = _node("a.b.task", ["x"], ["y"], namespace="a.b")
     index = _modular_pipeline_index([node])
-    assert index.owners_for_dataset("x") == ["a", "a.b"]
-    assert index.owners_for_dataset("y") == ["a", "a.b"]
+    assert index.modular_pipelines_for_dataset("x") == ["a", "a.b"]
+    assert index.modular_pipelines_for_dataset("y") == ["a", "a.b"]
 
 
 def test_parameters_never_belong_to_a_modular_pipeline() -> None:
     node = _node("ns.task", ["params:opts"], ["y"], namespace="ns")
     index = _modular_pipeline_index([node])
-    assert index.owners_for_dataset("params:opts") is None
+    assert index.modular_pipelines_for_dataset("params:opts") is None
 
 
-def test_unowned_dataset_has_no_modular_pipelines() -> None:
+def test_unassigned_dataset_has_no_modular_pipelines() -> None:
     node = _node("task", ["x"], ["y"])
     index = _modular_pipeline_index([node])
-    assert index.owners_for_dataset("x") is None
+    assert index.modular_pipelines_for_dataset("x") is None
 
 
 def test_tree_ids_include_every_ancestor_namespace() -> None:
@@ -198,12 +198,12 @@ def test_acyclic_modular_edges_are_kept() -> None:
     assert set(edges) == before
 
 
-def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
+def test_dataset_modular_pipelines_agree_with_the_tree_for_ancestor_boundary() -> None:
     """A dataset on an ancestor's boundary belongs to that ancestor too.
 
     ``mid`` is produced and consumed inside ``a.b``, and consumed outside ``a``. It is therefore
-    a boundary output of both ``a.b`` and ``a``, and the index must report both owners —
-    otherwise the dataset node disagrees with the folder it is drawn on.
+    a boundary output of both ``a.b`` and ``a``, and the index must report both modular
+    pipelines — otherwise the dataset node disagrees with the folder it is drawn on.
     """
     nodes = [
         _node("a.b.make", ["x"], ["mid"], namespace="a.b"),
@@ -216,15 +216,15 @@ def test_dataset_owners_agree_with_the_tree_for_an_ancestor_boundary() -> None:
 
     assert mid_id in tree["a"].outputs
     assert mid_id in tree["a.b"].outputs
-    assert index.owners_for_dataset("mid") == ["a", "a.b"]
+    assert index.modular_pipelines_for_dataset("mid") == ["a", "a.b"]
 
 
-def test_owners_for_dataset_accepts_a_transcoded_name() -> None:
+def test_modular_pipelines_for_dataset_accepts_a_transcoded_name() -> None:
     nodes = [_node("ns.task", ["ds@pandas"], ["y"], namespace="ns")]
     index = _modular_pipeline_index(nodes)
     assert (
-        index.owners_for_dataset("ds@pandas")
-        == index.owners_for_dataset("ds")
+        index.modular_pipelines_for_dataset("ds@pandas")
+        == index.modular_pipelines_for_dataset("ds")
         == ["ns"]
     )
 

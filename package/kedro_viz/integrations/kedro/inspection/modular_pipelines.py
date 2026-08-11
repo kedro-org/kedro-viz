@@ -2,7 +2,7 @@
 
 Public entry points:
 
-* ``ModularPipelineIndex``: project-wide dataset ownership, built once.
+* ``ModularPipelineIndex``: which modular pipelines each dataset belongs to, built once.
 * ``ModularPipelineView``: per-pipeline tree, group nodes and edges, built per render.
 
 Concepts:
@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 
 
 class ModularPipelineIndex:
-    """Look up which modular pipelines own each dataset."""
+    """Look up which modular pipelines each dataset belongs to."""
 
     def __init__(
         self,
@@ -54,7 +54,7 @@ class ModularPipelineIndex:
         modular_pipeline_ids: set[str],
         datasets_by_modular_pipeline: dict[str, set[str]],
     ) -> None:
-        self._ids = modular_pipeline_ids
+        self._modular_pipeline_ids = modular_pipeline_ids
         self._datasets_by_modular_pipeline = datasets_by_modular_pipeline
 
     @classmethod
@@ -71,7 +71,7 @@ class ModularPipelineIndex:
     def from_registered_pipelines(
         cls, pipelines: Iterable[PipelineSnapshot]
     ) -> ModularPipelineIndex:
-        """Union ownership calculated independently for each registered pipeline."""
+        """Combine assignments calculated independently for each registered pipeline."""
         modular_pipeline_ids: set[str] = set()
         datasets_by_modular_pipeline: dict[str, set[str]] = {}
         for pipeline in pipelines:
@@ -84,21 +84,21 @@ class ModularPipelineIndex:
             datasets_by_modular_pipeline=datasets_by_modular_pipeline,
         )
 
-    def owners_for_dataset(self, name: str) -> list[str] | None:
-        """Return sorted modular pipeline IDs that own this dataset, or ``None``.
+    def modular_pipelines_for_dataset(self, name: str) -> list[str] | None:
+        """Return the sorted modular pipeline IDs this dataset belongs to, or ``None``.
 
-        Parameter references have no owners. Transcoded names resolve to the same owners as
-        their base names.
+        Parameters are not assigned to any modular pipeline. Transcoded names belong to the
+        same modular pipelines as their base names.
         """
         if is_dataset_param(name):
             return None
-        stripped = _strip_transcoding(name)
-        owners = sorted(
+        base_name = _strip_transcoding(name)
+        modular_pipeline_ids = sorted(
             mp_id
-            for mp_id in self._ids
-            if stripped in self._datasets_by_modular_pipeline[mp_id]
+            for mp_id in self._modular_pipeline_ids
+            if base_name in self._datasets_by_modular_pipeline[mp_id]
         )
-        return owners or None
+        return modular_pipeline_ids or None
 
 
 @dataclass
@@ -121,7 +121,7 @@ class _ModularPipelineTreeBuilder:
     def __init__(self, nodes: list[NodeSnapshot]) -> None:
         self._nodes = nodes
         # Resolved against this pipeline's nodes only: a node is a root child when it has no
-        # modular owner *in this pipeline*, which can differ from its owners across the project.
+        # modular pipeline assignment in this view, which can differ from project assignments.
         boundaries = compute_namespace_boundaries(nodes)
         self._boundary_io_by_modular_pipeline = (
             boundaries.boundary_io_by_modular_pipeline
@@ -226,13 +226,13 @@ class _ModularPipelineTreeBuilder:
                 parent.children.add((dataset_id, GraphNodeType.DATA.value))
 
     def _add_root_children(self, root: _ModularPipelineTreeEntry) -> None:
-        """Add unowned datasets and unnamespaced tasks to the synthetic root."""
+        """Add datasets not assigned to a modular pipeline and unnamespaced tasks to root."""
         for dataset in {
             _strip_transcoding(io)
             for node in self._nodes
             for io in [*node.inputs, *node.outputs]
         }:
-            if self._index.owners_for_dataset(dataset) is None:
+            if self._index.modular_pipelines_for_dataset(dataset) is None:
                 node_type = (
                     GraphNodeType.PARAMETERS.value
                     if is_dataset_param(dataset)
