@@ -293,7 +293,7 @@ class GraphBuilder:
                 else GraphNodeType.DATA.value
             ),
             modular_pipelines=(
-                self._modular_pipeline_index.owners_for_dataset(base_name)
+                self._modular_pipeline_index.modular_pipelines_for_dataset(base_name)
             ),
             layer=(None if is_parameter else self._layer_by_dataset.get(base_name)),
             dataset_type=dataset_type,

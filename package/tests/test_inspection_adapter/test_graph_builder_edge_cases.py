@@ -384,7 +384,7 @@ def test_layers_include_all_pipelines_but_exclude_unused_catalog_entries() -> No
 
 
 def test_same_named_tasks_in_two_pipelines_keep_dataset_modular_pipelines() -> None:
-    """Distinct tasks sharing a name must both contribute to dataset ownership.
+    """Distinct tasks sharing a name must both contribute to each dataset's modular pipelines.
 
     Deduplicating the global node set by name alone would drop one task and silently omit its
     namespace from those datasets' ``modular_pipelines`` lists.
