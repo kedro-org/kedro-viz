@@ -17,7 +17,7 @@ from kedro_viz.integrations.kedro.node_ids import (
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
-from .boundaries import _in_subtree, compute_namespace_boundaries
+from .boundaries import _compute_namespace_boundaries, _in_subtree
 from .index import ModularPipelineIndex
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ class _ModularPipelineTreeBuilder:
         self._nodes = nodes
         # Resolved against this pipeline's nodes only: a node is a root child when it has no
         # modular pipeline assignment in this view, which can differ from project assignments.
-        boundaries = compute_namespace_boundaries(nodes)
+        boundaries = _compute_namespace_boundaries(nodes)
         self._boundary_io_by_modular_pipeline = (
             boundaries.boundary_io_by_modular_pipeline
         )

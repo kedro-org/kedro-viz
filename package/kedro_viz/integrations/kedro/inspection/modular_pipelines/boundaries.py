@@ -123,7 +123,7 @@ class _NamespaceBoundaries:
     boundary_io_by_modular_pipeline: _BoundaryIOByModularPipeline
 
 
-def compute_namespace_boundaries(nodes: list[NodeSnapshot]) -> _NamespaceBoundaries:
+def _compute_namespace_boundaries(nodes: list[NodeSnapshot]) -> _NamespaceBoundaries:
     """Compute namespace IDs, dataset assignments and boundary I/O for one node list."""
     modular_pipeline_ids = _modular_pipeline_ids(nodes)
     datasets_by_modular_pipeline: dict[str, set[str]] = {}
