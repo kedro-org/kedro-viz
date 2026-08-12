@@ -9,6 +9,7 @@ from kedro_viz.api.rest.responses.pipelines import DataNodeAPIResponse
 from kedro_viz.integrations.kedro.inspection.graph_builder import (
     GraphBuilder,
     _display_name,
+    _resolve_param,
 )
 
 if TYPE_CHECKING:
@@ -16,9 +17,13 @@ if TYPE_CHECKING:
 
 
 def _builder(
-    snapshot: SimpleNamespace, catalog_config: dict[str, Any] | None = None
+    snapshot: SimpleNamespace,
+    catalog_config: dict[str, Any] | None = None,
+    parameters: dict[str, Any] | None = None,
 ) -> GraphBuilder:
-    return GraphBuilder(cast("ProjectSnapshot", snapshot), catalog_config)
+    return GraphBuilder(
+        cast("ProjectSnapshot", snapshot), catalog_config, parameters=parameters
+    )
 
 
 def _node(
@@ -148,6 +153,121 @@ def test_empty_catalog_type_string_maps_to_none() -> None:
     typeless_node = next(n for n in nodes if n.type == "data" and n.name == "typeless")
     assert isinstance(typeless_node, DataNodeAPIResponse)
     assert typeless_node.dataset_type is None
+
+
+def test_task_parameters_all_parameters_input_returns_full_mapping() -> None:
+    """A ``parameters`` input attaches the complete resolved mapping."""
+    resolved = {
+        "model_options": {"test_size": 0.2},
+        "split_options": {"test_size": 0.25},
+    }
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["parameters"], ["out"])])]),
+        parameters=resolved,
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == resolved
+
+
+def test_task_parameters_single_param_is_keyed_by_name() -> None:
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["params:split_options"], [])])]),
+        parameters={"split_options": {"test_size": 0.2}},
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == {"split_options": {"test_size": 0.2}}
+
+
+def test_task_parameters_dotted_param_resolves_nested_value() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [_node("t", ["params:model_options.test_size"], [])],
+                )
+            ]
+        ),
+        parameters={"model_options": {"test_size": 0.2, "random_state": 3}},
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == {"model_options.test_size": 0.2}
+
+
+def test_task_parameters_missing_key_is_none_without_failing() -> None:
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["params:missing.key"], [])])]),
+        parameters={"present": {"key": 1}},
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == {"missing.key": None}
+
+
+def test_task_parameters_merge_multiple_param_inputs() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [
+                        _node(
+                            "t",
+                            ["params:split_options", "params:model_options.test_size"],
+                            [],
+                        )
+                    ],
+                )
+            ]
+        ),
+        parameters={
+            "split_options": {"test_size": 0.25},
+            "model_options": {"test_size": 0.2},
+        },
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == {
+        "split_options": {"test_size": 0.25},
+        "model_options.test_size": 0.2,
+    }
+
+
+def test_task_parameters_preserve_value_types() -> None:
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("t", ["params:split_options"], [])])]),
+        parameters={"split_options": {"test_size": 0.2, "shuffle": True, "count": 3}},
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    value = task.parameters["split_options"]
+    assert isinstance(value["test_size"], float)
+    assert isinstance(value["shuffle"], bool)
+    assert isinstance(value["count"], int)
+
+
+@pytest.mark.parametrize(
+    ("parameters", "dotted", "expected"),
+    [
+        ({}, "missing", None),
+        ({"a": {"b": 1}}, "a.b", 1),
+        ({"a": {"b": 1}}, "a.c", None),
+        ({"a": {"b": 1}}, "x.y", None),
+    ],
+)
+def test_resolve_param(
+    parameters: dict[str, Any], dotted: str, expected: Any
+) -> None:
+    assert _resolve_param(parameters, dotted) == expected
 
 
 def test_parameter_dataset_type_is_none() -> None:

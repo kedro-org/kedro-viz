@@ -27,7 +27,11 @@ ALL_PIPELINES = [
 def builder(_restore_kedro_project_state) -> GraphBuilder:
     # Start state restoration before bootstrapping the demo project.
     session = _InspectionSession(DEMO_PROJECT)
-    return GraphBuilder(session.snapshot(), session.catalog_config())
+    return GraphBuilder(
+        session.snapshot(),
+        session.catalog_config(),
+        parameters=session.parameters(),
+    )
 
 
 def _baseline(pipeline_id: str) -> dict:
@@ -98,6 +102,26 @@ def test_tags_and_pipelines_match_baseline(builder: GraphBuilder) -> None:
     assert {p["id"] for p in adapter["pipelines"]} == {
         p["id"] for p in baseline["pipelines"]
     }
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_task_parameters_match_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Task-node parameter mappings match the legacy backend for every demo pipeline."""
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    adapter_by_full = {
+        n["full_name"]: n["parameters"]
+        for n in adapter["nodes"]
+        if n["type"] == "task"
+    }
+    baseline_by_full = {
+        n["full_name"]: n["parameters"]
+        for n in baseline["nodes"]
+        if n["type"] == "task"
+    }
+    assert adapter_by_full == baseline_by_full
 
 
 def test_task_display_names_match_baseline(builder: GraphBuilder) -> None:

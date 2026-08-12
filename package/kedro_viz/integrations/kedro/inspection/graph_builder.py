@@ -105,12 +105,16 @@ class GraphBuilder:
         self,
         snapshot: ProjectSnapshot,
         catalog_config: dict[str, Any] | None = None,
+        parameters: dict[str, Any] | None = None,
     ) -> None:
         self._snapshot = snapshot
         self._layer_by_dataset = _extract_layers(
             catalog_config=catalog_config or {},
             dataset_names=_dataset_names_from_snapshot(snapshot),
         )
+        # Resolved parameter values (``--params`` already applied), used to fill task-node
+        # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
+        self._parameters = parameters or {}
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
@@ -230,8 +234,23 @@ class GraphBuilder:
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
-            parameters={},
+            parameters=self._task_parameters(node.inputs),
         )
+
+    def _task_parameters(self, inputs: list[str]) -> dict[str, Any]:
+        """Resolved parameter values a task consumes, in the format the detail panel expects.
+
+        A ``parameters`` input means "all parameters" → the whole dict; a ``params:x`` input
+        contributes ``{"x": <value>}`` (``x`` may be dotted, e.g. ``model_options.test_size``).
+        """
+        result: dict[str, Any] = {}
+        for ref in inputs:
+            if ref == "parameters":
+                return dict(self._parameters)
+            if ref.startswith("params:"):
+                name = ref[len("params:") :]
+                result[name] = _resolve_param(self._parameters, name)
+        return result
 
     def _build_dataset_node(
         self,
@@ -349,3 +368,14 @@ def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
         for name in (*node.inputs, *node.outputs)
         if not is_dataset_param(name)
     }
+
+
+def _resolve_param(parameters: dict[str, Any], dotted: str) -> Any:
+    """Look up ``dotted`` (e.g. ``model_options.test_size``) in the parameters dict; ``None`` if absent."""
+    node: Any = parameters
+    for key in dotted.split("."):
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        else:
+            return None
+    return node
