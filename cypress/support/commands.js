@@ -18,7 +18,7 @@ Cypress.Commands.add('__interceptRest__', (url, method, fixturePath) => {
  * Custom command for determining the selector for an element. Falls back to default behavior if returning a falsey value.
  * @returns {String} The selector for an element
  */
-Cypress.SelectorPlayground.defaults({
+Cypress.ElementSelector.defaults({
   onElement: ($el) => {
     const customId = $el.attr('data-test');
 
