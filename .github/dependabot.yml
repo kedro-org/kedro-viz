@@ -1,6 +1,6 @@
 # Dependabot configuration for kedro-viz.
 #
-# Routine Python version updates run monthly. 
+# Routine Python and npm version updates run quarterly.
 # Security updates are grouped separately by ecosystem.
 
 # Please see the documentation for all configuration options:
@@ -11,7 +11,8 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/package" # Location of package manifests
     schedule:
-      interval: "monthly"
+      interval: "quarterly"
+    open-pull-requests-limit: 5
     versioning-strategy: auto
     ignore:
       - dependency-name: "types-*"
@@ -29,8 +30,8 @@ updates:
       - "/"
       - "/tools/test-lib/react-app"
     schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 0
+      interval: "quarterly"
+    open-pull-requests-limit: 5
     labels:
       - "Javascript"
       - "dependencies"
