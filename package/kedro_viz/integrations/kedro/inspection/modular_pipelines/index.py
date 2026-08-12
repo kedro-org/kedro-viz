@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
-from .boundaries import compute_namespace_boundaries
+from .boundaries import _compute_namespace_boundaries
 
 if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot, PipelineSnapshot
@@ -28,7 +28,7 @@ class ModularPipelineIndex:
     @classmethod
     def from_nodes(cls, nodes: list[NodeSnapshot]) -> ModularPipelineIndex:
         """Build an index for one pipeline's nodes."""
-        boundaries = compute_namespace_boundaries(nodes)
+        boundaries = _compute_namespace_boundaries(nodes)
 
         return cls(
             modular_pipeline_ids=boundaries.modular_pipeline_ids,
@@ -43,7 +43,7 @@ class ModularPipelineIndex:
         modular_pipeline_ids: set[str] = set()
         datasets_by_modular_pipeline: dict[str, set[str]] = {}
         for pipeline in pipelines:
-            boundaries = compute_namespace_boundaries(pipeline.nodes)
+            boundaries = _compute_namespace_boundaries(pipeline.nodes)
             modular_pipeline_ids.update(boundaries.modular_pipeline_ids)
             for mp_id, datasets in boundaries.datasets_by_modular_pipeline.items():
                 datasets_by_modular_pipeline.setdefault(mp_id, set()).update(datasets)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, cast
 
 from kedro_viz.integrations.kedro.inspection.modular_pipelines.boundaries import (
     _ancestor_namespaces,
-    compute_namespace_boundaries,
+    _compute_namespace_boundaries,
 )
 
 if TYPE_CHECKING:
@@ -34,6 +34,6 @@ def test_transcoded_boundary_follows_pipeline_set_algebra() -> None:
         _node(["shared@pandas3"], ["z"]),
     ]
 
-    boundaries = compute_namespace_boundaries(cast("list[NodeSnapshot]", nodes))
+    boundaries = _compute_namespace_boundaries(cast("list[NodeSnapshot]", nodes))
 
     assert boundaries.boundary_io_by_modular_pipeline["ns"] == ({"x"}, {"y"})
