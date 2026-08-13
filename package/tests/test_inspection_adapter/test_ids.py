@@ -1,6 +1,6 @@
 """Tests for legacy-compatible Viz node IDs.
 
-The node list is read hermetically from ``baseline/node_id_report.json`` (no Kedro project load).
+The node list is read from ``baseline/node_id_report.json``, so no Kedro project is loaded.
 """
 
 import json

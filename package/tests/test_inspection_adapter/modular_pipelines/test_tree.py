@@ -1,4 +1,4 @@
-"""Hermetic tests for the modular-pipeline tree."""
+"""Tests for the modular-pipeline tree."""
 
 from typing import TYPE_CHECKING, cast
 
