@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
 from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
 
@@ -41,14 +42,12 @@ def _names(nodes: list[dict], node_type: str) -> set[str]:
 
 
 def _edge_keys(graph: dict) -> set[tuple[str, str]]:
-    """Return non-modular edges keyed by node names instead of IDs."""
-    modular_ids = {n["id"] for n in graph["nodes"] if n["type"] == "modularPipeline"}
-    key_by_id = {n["id"]: n.get("full_name", n["name"]) for n in graph["nodes"]}
-    return {
-        (key_by_id[edge["source"]], key_by_id[edge["target"]])
-        for edge in graph["edges"]
-        if edge["source"] not in modular_ids and edge["target"] not in modular_ids
-    }
+    """Return every edge, including modular ones, as raw ID pairs.
+
+    Node IDs match the established Viz format, so edges compare directly without
+    translating to names.
+    """
+    return {(edge["source"], edge["target"]) for edge in graph["edges"]}
 
 
 def _field_by_name(
@@ -67,7 +66,7 @@ def _id_by_name(nodes: list[dict]) -> dict[tuple[str, str], str]:
 
 
 @pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
-@pytest.mark.parametrize("node_type", ["task", "data", "parameters"])
+@pytest.mark.parametrize("node_type", ["task", "data", "parameters", "modularPipeline"])
 def test_node_sets_match_baseline(
     builder: GraphBuilder, pipeline_id: str, node_type: str
 ) -> None:
@@ -174,3 +173,105 @@ def test_layers_list_matches_baseline(builder: GraphBuilder, pipeline_id: str) -
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     assert adapter["layers"] == baseline["layers"]
+
+
+def _modular_pipelines_by_name(graph: dict) -> dict[tuple[str, str], list[str] | None]:
+    """Each node's ``modular_pipelines``, keyed by (type, name).
+
+    Keyed by type as well as name so a task and a dataset sharing a name cannot overwrite
+    one another and hide a mismatch.
+    """
+    return {
+        (node["type"], node.get("full_name", node["name"])): node.get(
+            "modular_pipelines"
+        )
+        for node in graph["nodes"]
+        if node["type"] in {"task", "data", "parameters"}
+    }
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_node_modular_pipelines_match_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Every node reports the same modular pipelines as the baseline."""
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+    assert _modular_pipelines_by_name(adapter) == _modular_pipelines_by_name(baseline)
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_modular_pipeline_nodes_match_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Modular-pipeline nodes carry the same tags and registered pipelines."""
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+
+    def mp_nodes(graph: dict) -> dict[str, tuple]:
+        return {
+            n["id"]: (sorted(n["tags"]), sorted(n["pipelines"]), n["modular_pipelines"])
+            for n in graph["nodes"]
+            if n["type"] == "modularPipeline"
+        }
+
+    assert mp_nodes(adapter) == mp_nodes(baseline)
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_modular_tree_io_matches_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Each modular pipeline exposes the same boundary inputs and outputs."""
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+
+    def tree_io(graph: dict) -> dict[str, tuple[str, str, list[str], list[str]]]:
+        return {
+            mp_id: (
+                entry["id"],
+                entry["name"],
+                sorted(entry["inputs"]),
+                sorted(entry["outputs"]),
+            )
+            for mp_id, entry in graph["modular_pipelines"].items()
+        }
+
+    assert tree_io(adapter) == tree_io(baseline)
+
+
+@pytest.mark.parametrize("pipeline_id", ALL_PIPELINES)
+def test_modular_tree_children_match_baseline(
+    builder: GraphBuilder, pipeline_id: str
+) -> None:
+    """Each modular pipeline holds the same children, compared by ID and type.
+
+    The baseline lists a parameter in ``__root__`` twice, once as ``parameters`` and
+    once as ``data``. Only that known duplicate is normalised away; every other child is
+    still compared by both ID and type, so a wrong child type cannot slip through.
+    """
+    adapter = builder.build(pipeline_id).model_dump()
+    baseline = _baseline(pipeline_id)
+
+    def children(graph: dict, mp_id: str) -> set[tuple[str, str]]:
+        return {
+            (child["id"], child["type"])
+            for child in graph["modular_pipelines"][mp_id]["children"]
+        }
+
+    def drop_baseline_duplicate(entries: set[tuple[str, str]]) -> set[tuple[str, str]]:
+        """Remove a ``data`` entry whose ID also appears as ``parameters``."""
+        parameter_ids = {cid for cid, ctype in entries if ctype == "parameters"}
+        return {
+            (cid, ctype)
+            for cid, ctype in entries
+            if not (ctype == "data" and cid in parameter_ids)
+        }
+
+    assert set(adapter["modular_pipelines"]) == set(baseline["modular_pipelines"])
+    for mp_id in baseline["modular_pipelines"]:
+        expected = children(baseline, mp_id)
+        actual = children(adapter, mp_id)
+        if mp_id == ROOT_MODULAR_PIPELINE_ID:
+            expected = drop_baseline_duplicate(expected)
+        assert actual == expected, mp_id

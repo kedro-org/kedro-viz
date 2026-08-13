@@ -1,8 +1,11 @@
 """Build the main Kedro-Viz graph response from an inspection snapshot.
 
-Creates task, data, parameter nodes, edges, global tags and pipeline dictionaries. Node IDs come
-from ``kedro_viz.integrations.kedro.node_ids``; registered non-transcoded datasets use raw catalog
-type strings from the snapshot.
+Builds task, data, parameter and modular pipeline nodes for one selected pipeline, along with
+their edges and the modular pipeline tree. Also includes the global tag, layer and registered
+pipeline lists.
+
+Node IDs come from ``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets
+use raw catalog type strings from the snapshot.
 """
 
 from __future__ import annotations
@@ -22,9 +25,13 @@ from kedro_viz.integrations.kedro.inspection.layers import (
     _extract_layers,
     sort_layers,
 )
+from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+    ModularPipelineIndex,
+    ModularPipelineView,
+)
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
-    _create_task_node_id,
+    _create_task_node_id_from_node_snapshot,
     _is_auto_node_name,
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
@@ -43,7 +50,11 @@ MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 class _SnapshotGraphIndex:
-    """Aggregate tags and pipeline IDs by task and dataset identity."""
+    """Index project-wide tags and pipeline IDs by task ID and dataset name.
+
+    The index is built once from every registered pipeline and reused for each rendered
+    pipeline response.
+    """
 
     def __init__(self, pipelines: dict[str, PipelineSnapshot]) -> None:
         self._pipelines_by_task_id: dict[str, set[str]] = defaultdict(set)
@@ -53,20 +64,14 @@ class _SnapshotGraphIndex:
         self._all_tags: set[str] = set()
         for pipeline_id, pipeline in pipelines.items():
             for node in pipeline.nodes:
-                task_id = _create_task_node_id(
-                    node_name=node.name,
-                    func_name=node.func_name,
-                    namespace=node.namespace,
-                    inputs=node.inputs,
-                    outputs=node.outputs,
-                )
+                task_id = _create_task_node_id_from_node_snapshot(node)
                 self._pipelines_by_task_id[task_id].add(pipeline_id)
                 self._tags_by_task_id[task_id].update(node.tags)
                 self._all_tags.update(node.tags)
                 for io in [*node.inputs, *node.outputs]:
-                    stripped = _strip_transcoding(io)
-                    self._pipelines_by_dataset_name[stripped].add(pipeline_id)
-                    self._tags_by_dataset_name[stripped].update(node.tags)
+                    base_name = _strip_transcoding(io)
+                    self._pipelines_by_dataset_name[base_name].add(pipeline_id)
+                    self._tags_by_dataset_name[base_name].update(node.tags)
 
     def get_pipelines_for_task_id(self, task_id: str) -> list[str]:
         """Sorted IDs of the registered pipelines the task node appears in."""
@@ -92,8 +97,8 @@ class _SnapshotGraphIndex:
 class GraphBuilder:
     """Build ``GraphAPIResponse`` objects for a project snapshot.
 
-    Tags and pipelines associated with each node are aggregated across all registered pipelines,
-    while rendered nodes and edges are scoped to the selected pipeline.
+    Renders nodes and edges for one selected pipeline. Tags and registered
+    pipelines on each node are collected across every pipeline in the project.
     """
 
     def __init__(
@@ -110,6 +115,9 @@ class GraphBuilder:
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
         self._index = _SnapshotGraphIndex(self._pipelines_by_id)
+        self._modular_pipeline_index = ModularPipelineIndex.from_registered_pipelines(
+            snapshot.pipelines
+        )
 
     def default_pipeline_id(self) -> str:
         """Return the default pipeline ID to render.
@@ -145,52 +153,57 @@ class GraphBuilder:
     def build(self, pipeline_id: str | None = None) -> GraphAPIResponse:
         """Build the main graph response for a registered pipeline.
 
+        The response contains task, data, parameter and modular pipeline nodes, their edges,
+        the modular pipeline tree, and the global tag, layer and registered pipeline lists.
+        Rendered nodes and edges are scoped to the selected pipeline, while tags and registered
+        pipelines on each node are collected across the whole project.
+
         Args:
             pipeline_id: The registered pipeline to render. When ``None``, the default
                 pipeline (see :meth:`default_pipeline_id`) is used.
 
         Returns:
-            The ``GraphAPIResponse`` for the selected pipeline: its task, data and parameter
-            nodes and edges, plus the globally-aggregated tag and pipeline lists.
+            The ``GraphAPIResponse`` for the selected pipeline.
 
         Raises:
             ValueError: If ``pipeline_id`` is not a registered pipeline in this snapshot view.
         """
-        selected = pipeline_id or self.default_pipeline_id()
-        if not self.has_pipeline(selected):
-            raise ValueError(f"Invalid pipeline ID: {selected!r}")
-        pipeline = self._pipelines_by_id[selected]
+        selected_pipeline_id = pipeline_id or self.default_pipeline_id()
+        if not self.has_pipeline(selected_pipeline_id):
+            raise ValueError(f"Invalid pipeline ID: {selected_pipeline_id!r}")
+        pipeline = self._pipelines_by_id[selected_pipeline_id]
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-        # Map each stripped name to one original name for catalog lookup.
-        datasets: dict[str, str] = {}
-        transcoded_datasets: set[str] = set()
+        referenced_name_by_base_name: dict[str, str] = {}
+        transcoded_base_names: set[str] = set()
 
         for node in pipeline.nodes:
-            task_id = _create_task_node_id(
-                node_name=node.name,
-                func_name=node.func_name,
-                namespace=node.namespace,
-                inputs=node.inputs,
-                outputs=node.outputs,
-            )
+            task_id = _create_task_node_id_from_node_snapshot(node)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
-                self._register_dataset(name, datasets, transcoded_datasets)
+                self._register_dataset(
+                    name, referenced_name_by_base_name, transcoded_base_names
+                )
             for name in node.outputs:
                 self._add_edge(edges, task_id, _create_dataset_node_id(name))
-                self._register_dataset(name, datasets, transcoded_datasets)
+                self._register_dataset(
+                    name, referenced_name_by_base_name, transcoded_base_names
+                )
 
-        for stripped_name, original_name in datasets.items():
+        for base_name, referenced_name in referenced_name_by_base_name.items():
             nodes.append(
                 self._build_dataset_node(
-                    stripped_name,
-                    original_name,
-                    is_transcoded=stripped_name in transcoded_datasets,
+                    base_name,
+                    referenced_name,
+                    is_transcoded=base_name in transcoded_base_names,
                 )
             )
+
+        modular_pipelines = ModularPipelineView(pipeline.nodes).extend_graph(
+            nodes, edges, selected_pipeline_id
+        )
 
         return GraphAPIResponse(
             nodes=nodes,
@@ -204,8 +217,8 @@ class GraphBuilder:
                 NamedEntityAPIResponse(id=pid, name=pid)
                 for pid in self._pipelines_by_id
             ],
-            modular_pipelines={},
-            selected_pipeline=selected,
+            modular_pipelines=modular_pipelines,
+            selected_pipeline=selected_pipeline_id,
         )
 
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
@@ -216,41 +229,51 @@ class GraphBuilder:
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
-            modular_pipelines=None,
+            modular_pipelines=[node.namespace] if node.namespace else None,
             parameters={},
         )
 
     def _build_dataset_node(
         self,
-        stripped_name: str,
-        original_name: str,
+        base_name: str,
+        referenced_name: str,
         *,
         is_transcoded: bool,
     ) -> DataNodeAPIResponse:
-        is_parameter = is_dataset_param(stripped_name)
+        """Build a data or parameter node for the graph.
+
+        Args:
+            base_name: Dataset name used by the graph, without a transcoding suffix.
+            referenced_name: Pipeline reference used for catalog lookup, such as
+                ``sales_data@pandas``.
+            is_transcoded: Whether any pipeline node used a transcoded reference.
+        """
+        is_parameter = is_dataset_param(base_name)
         if is_parameter or is_transcoded:
             dataset_type = None
         else:
             dataset = self._snapshot.datasets.get(
-                original_name
-            ) or self._snapshot.datasets.get(stripped_name)
+                referenced_name
+            ) or self._snapshot.datasets.get(base_name)
             if dataset is None:
                 # No catalog entry means an unregistered (in-memory) dataset.
                 dataset_type = MEMORY_DATASET_TYPE
             else:
                 dataset_type = dataset.type or None
         return DataNodeAPIResponse(
-            id=_create_dataset_node_id(stripped_name),
-            name=stripped_name,
-            tags=self._index.get_tags_for_dataset_name(stripped_name),
-            pipelines=self._index.get_pipelines_for_dataset_name(stripped_name),
+            id=_create_dataset_node_id(base_name),
+            name=base_name,
+            tags=self._index.get_tags_for_dataset_name(base_name),
+            pipelines=self._index.get_pipelines_for_dataset_name(base_name),
             type=(
                 GraphNodeType.PARAMETERS.value
                 if is_parameter
                 else GraphNodeType.DATA.value
             ),
-            modular_pipelines=None,
-            layer=(None if is_parameter else self._layer_by_dataset.get(stripped_name)),
+            modular_pipelines=(
+                self._modular_pipeline_index.modular_pipelines_for_dataset(base_name)
+            ),
+            layer=(None if is_parameter else self._layer_by_dataset.get(base_name)),
             dataset_type=dataset_type,
         )
 
@@ -280,13 +303,15 @@ class GraphBuilder:
 
     @staticmethod
     def _register_dataset(
-        name: str, datasets: dict[str, str], transcoded_datasets: set[str]
+        referenced_name: str,
+        referenced_name_by_base_name: dict[str, str],
+        transcoded_base_names: set[str],
     ) -> None:
-        """Record a dataset for rendering and identify transcoded references."""
-        stripped_name = _strip_transcoding(name)
-        datasets.setdefault(stripped_name, name)
-        if stripped_name != name:
-            transcoded_datasets.add(stripped_name)
+        """Group transcoded references by base name and retain one for catalog lookup."""
+        base_name = _strip_transcoding(referenced_name)
+        referenced_name_by_base_name.setdefault(base_name, referenced_name)
+        if base_name != referenced_name:
+            transcoded_base_names.add(base_name)
 
     @staticmethod
     def _add_edge(

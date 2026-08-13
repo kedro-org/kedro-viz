@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from kedro_viz.utils import _hash, _hash_input_output
+
+if TYPE_CHECKING:
+    from kedro.inspection.models import NodeSnapshot
 
 _AUTO_NAME_RE = re.compile(r"^(?P<base>.+)__[0-9a-f]{8}$")
 
@@ -76,3 +80,14 @@ def _create_task_node_id(
     input_names = f"[{';'.join(inputs)}]" if inputs else "None"
     output_names = f"[{';'.join(outputs)}]" if outputs else "None"
     return _hash(f"{prefix}{func_name}({input_names}) -> {output_names}")
+
+
+def _create_task_node_id_from_node_snapshot(node: NodeSnapshot) -> str:
+    """Return the Viz graph ID for a snapshot task node."""
+    return _create_task_node_id(
+        node_name=node.name,
+        func_name=node.func_name,
+        namespace=node.namespace,
+        inputs=node.inputs,
+        outputs=node.outputs,
+    )
