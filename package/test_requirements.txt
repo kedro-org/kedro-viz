@@ -18,7 +18,7 @@ pytest-cov~=7.0
 ruff==0.15.8
 trufflehog~=2.2
 httpx~=0.28.1
-pathspec>=0.12.1
+pathspec>=1.1.1
 
 # mypy
 types-aiofiles==0.1.3
