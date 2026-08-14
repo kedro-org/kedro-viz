@@ -1,5 +1,10 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
+# Dependabot configuration for kedro-viz.
+#
+# Routine version updates run quarterly with max 5 open PRs, so bumps arrive as
+# one reviewable batch. Security updates are alert-driven and ignore both those
+# settings - the `groups` blocks below are what collapse them into one PR per
+# ecosystem instead of one PR per advisory.
+
 # Please see the documentation for all configuration options:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
@@ -8,10 +13,32 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/package" # Location of package manifests
     schedule:
-      interval: "monthly"
+      interval: "quarterly"
+    open-pull-requests-limit: 5
     versioning-strategy: auto
     ignore:
       - dependency-name: "types-*"
     labels:
       - "Python"
       - "dependencies"
+    groups:
+      python-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/tools/test-lib/react-app"
+    schedule:
+      interval: "quarterly"
+    open-pull-requests-limit: 5
+    labels:
+      - "Javascript"
+      - "dependencies"
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
