@@ -1,7 +1,9 @@
 # Dependabot configuration for kedro-viz.
 #
-# Routine Python and npm version updates run quarterly.
-# Security updates are grouped separately by ecosystem.
+# Routine version updates run quarterly with max 5 open PRs, so bumps arrive as
+# one reviewable batch. Security updates are alert-driven and ignore both those
+# settings - the `groups` blocks below are what collapse them into one PR per
+# ecosystem instead of one PR per advisory.
 
 # Please see the documentation for all configuration options:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
