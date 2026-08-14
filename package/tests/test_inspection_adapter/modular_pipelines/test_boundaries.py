@@ -1,4 +1,4 @@
-"""Hermetic tests for modular-pipeline boundary calculations."""
+"""Tests for modular-pipeline boundary calculations."""
 
 from typing import TYPE_CHECKING, cast
 

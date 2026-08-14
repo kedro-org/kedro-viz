@@ -1,6 +1,6 @@
 """Tests for the inspection snapshot source.
 
-The ``lite_import_stubs`` and fallback tests are hermetic (no real project); the rest run against
+The ``lite_import_stubs`` and fallback tests run without a real project; the rest run against
 the bundled ``demo-project``.
 """
 

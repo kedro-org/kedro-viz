@@ -1,4 +1,4 @@
-"""Hermetic tests for the modular-pipeline dataset index."""
+"""Tests for the modular-pipeline dataset index."""
 
 
 def test_dataset_belongs_to_every_enclosing_modular_pipeline(

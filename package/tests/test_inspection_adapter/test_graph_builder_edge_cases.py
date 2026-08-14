@@ -1,4 +1,4 @@
-"""Hermetic edge cases for the snapshot graph builder."""
+"""Edge cases for the snapshot graph builder."""
 
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any, cast

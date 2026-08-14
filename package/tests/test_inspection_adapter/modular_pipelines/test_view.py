@@ -1,4 +1,4 @@
-"""Hermetic tests for modular-pipeline graph rendering."""
+"""Tests for modular-pipeline graph rendering."""
 
 from typing import TYPE_CHECKING, cast
 
