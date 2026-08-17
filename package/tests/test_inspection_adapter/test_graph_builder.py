@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -112,9 +113,7 @@ def test_task_parameters_match_baseline(
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     adapter_by_full = {
-        n["full_name"]: n["parameters"]
-        for n in adapter["nodes"]
-        if n["type"] == "task"
+        n["full_name"]: n["parameters"] for n in adapter["nodes"] if n["type"] == "task"
     }
     baseline_by_full = {
         n["full_name"]: n["parameters"]
@@ -122,6 +121,40 @@ def test_task_parameters_match_baseline(
         if n["type"] == "task"
     }
     assert adapter_by_full == baseline_by_full
+
+
+RUNTIME_PARAM_OVERRIDE: dict[str, Any] = {"split_options": {"test_size": 0.99}}
+
+
+def _graph_builder(runtime_params: dict[str, Any] | None = None) -> GraphBuilder:
+    session = _InspectionSession(DEMO_PROJECT, runtime_params=runtime_params)
+    return GraphBuilder(
+        session.snapshot(),
+        session.catalog_config(),
+        parameters=session.parameters(),
+    )
+
+
+def test_runtime_params_are_reflected_in_task_node_parameters() -> None:
+    """``--params`` overrides flow through to the task nodes that consume them."""
+    graph = _graph_builder(RUNTIME_PARAM_OVERRIDE).build("__default__").model_dump()
+    task_params = {
+        n["full_name"]: n["parameters"] for n in graph["nodes"] if n["type"] == "task"
+    }
+    assert any(
+        params.get("split_options", {}).get("test_size") == 0.99
+        for params in task_params.values()
+    )
+
+
+def test_runtime_params_do_not_change_graph_topology() -> None:
+    """Runtime overrides change parameter values only, not node IDs or edges."""
+    base = _graph_builder().build("__default__").model_dump()
+    overridden = (
+        _graph_builder(RUNTIME_PARAM_OVERRIDE).build("__default__").model_dump()
+    )
+    assert _id_by_name(base["nodes"]) == _id_by_name(overridden["nodes"])
+    assert _edge_keys(base) == _edge_keys(overridden)
 
 
 def test_task_display_names_match_baseline(builder: GraphBuilder) -> None:

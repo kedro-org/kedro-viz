@@ -173,7 +173,9 @@ def test_task_parameters_all_parameters_input_returns_full_mapping() -> None:
 
 def test_task_parameters_single_param_is_keyed_by_name() -> None:
     builder = _builder(
-        _snapshot([_pipeline("__default__", [_node("t", ["params:split_options"], [])])]),
+        _snapshot(
+            [_pipeline("__default__", [_node("t", ["params:split_options"], [])])]
+        ),
         parameters={"split_options": {"test_size": 0.2}},
     )
     task = next(
@@ -243,7 +245,9 @@ def test_task_parameters_merge_multiple_param_inputs() -> None:
 
 def test_task_parameters_preserve_value_types() -> None:
     builder = _builder(
-        _snapshot([_pipeline("__default__", [_node("t", ["params:split_options"], [])])]),
+        _snapshot(
+            [_pipeline("__default__", [_node("t", ["params:split_options"], [])])]
+        ),
         parameters={"split_options": {"test_size": 0.2, "shuffle": True, "count": 3}},
     )
     task = next(
@@ -264,9 +268,7 @@ def test_task_parameters_preserve_value_types() -> None:
         ({"a": {"b": 1}}, "x.y", None),
     ],
 )
-def test_resolve_param(
-    parameters: dict[str, Any], dotted: str, expected: Any
-) -> None:
+def test_resolve_param(parameters: dict[str, Any], dotted: str, expected: Any) -> None:
     assert _resolve_param(parameters, dotted) == expected
 
 
