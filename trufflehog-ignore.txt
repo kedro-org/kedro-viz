@@ -1,5 +1,6 @@
 package.json
 package-lock.json
+package/requirements.txt
 tools/test-lib/react-app/package.json
 tools/test-lib/react-app/package-lock.json
 RELEASE.md
