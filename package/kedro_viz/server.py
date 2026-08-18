@@ -1,18 +1,23 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
+from kedro_viz.api.data_provider import set_graph_data_provider
+from kedro_viz.api.inspection_adapter_provider import InspectionAdapterProvider
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
+
+logger = logging.getLogger(__name__)
 
 DEV_PORT = 4142
 
@@ -45,7 +50,12 @@ def load_and_populate_data(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ):
-    """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
+    """Loads underlying Kedro project data and populates Kedro Viz Repositories.
+
+    Shared by ``kedro viz run`` and ``kedro viz deploy``, so it stays free of anything only the
+    HTTP server needs. The graph endpoints read through a provider that :func:`run_server`
+    installs afterwards; deployment reads the repositories directly and never installs one.
+    """
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
@@ -60,6 +70,58 @@ def load_and_populate_data(
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+
+
+def _install_graph_data_provider(
+    path: Path,
+    env: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+    *,
+    package_name: Optional[str] = None,
+    is_lite: bool = False,
+    include_hooks: bool = False,
+) -> None:
+    """Build and install the inspection provider for the graph endpoints.
+
+    Args:
+        path: The Kedro project root.
+        env: The Kedro environment, honouring ``--env``.
+        pipeline_name: Restrict the view to one registered pipeline, honouring ``--pipeline``.
+        extra_params: Typed parameter overrides from ``--params``.
+        package_name: The Kedro project package, used to identify project imports in lite mode.
+        is_lite: Whether to mock missing project dependencies while building the snapshot.
+        include_hooks: Whether the populated catalog contains project-hook changes that must
+            be reflected in the graph.
+
+    Raises:
+        Exception: If the inspection provider cannot be constructed.
+    """
+    try:
+        # A hook can add, change or remove layer metadata, and only the populated catalog
+        # reflects that, so with hooks the builder reads layers from there instead of the
+        # raw catalog config.
+        layer_by_dataset = (
+            dict(data_access_manager.catalog.layers_mapping) if include_hooks else None
+        )
+        provider = InspectionAdapterProvider(
+            path,
+            env=env,
+            pipeline_name=pipeline_name,
+            runtime_params=extra_params,
+            package_name=package_name,
+            is_lite=is_lite,
+            layer_by_dataset=layer_by_dataset,
+        )
+    except Exception:
+        # Leave no provider installed: the graph endpoints report a missing provider rather than
+        # serving one built from a partially read project.
+        set_graph_data_provider(None)
+        logger.exception(
+            "Could not build the Kedro inspection adapter, so the graph cannot be served."
+        )
+        raise
+    set_graph_data_provider(provider)
 
 
 def run_server(
@@ -113,8 +175,22 @@ def run_server(
         load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
+        # Installed after the live load so the live node repository has nodes to read. Only
+        # the server needs this; deployment reads the repositories directly.
+        _install_graph_data_provider(
+            path,
+            env=env,
+            pipeline_name=pipeline_name,
+            extra_params=extra_params,
+            package_name=package_name,
+            is_lite=is_lite,
+            include_hooks=include_hooks,
+        )
+
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
+        # [TODO(#2660): this still renders the live graph, so a saved file can differ from what
+        # the graph endpoints serve. Move it onto the graph provider with the static export.]
         if save_file:
             from kedro_viz.api.rest.responses.save_responses import (
                 save_api_responses_to_fs,

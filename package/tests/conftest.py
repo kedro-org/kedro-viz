@@ -13,6 +13,8 @@ from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
 
 from kedro_viz.api import apps
+from kedro_viz.api.data_provider import set_graph_data_provider
+from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
@@ -497,11 +499,33 @@ def example_transcoded_catalog():
 
 
 @pytest.fixture
+def repository_graph_data_provider():
+    """Install a provider for the graph endpoints, backed by the repositories these tests build.
+
+    These tests populate ``data_access_manager`` with synthetic pipelines rather than a Kedro
+    project, so the inspection adapter cannot be built for them. This provider keeps them
+    exercising routing and response shape; the adapter itself is covered in
+    ``test_inspection_adapter``.
+
+    Transitional: it goes away with the live backend (#2724).
+    """
+
+    class _RepositoryBackedProvider:
+        def get_pipeline_response(self, pipeline_id=None):
+            return get_pipeline_response(pipeline_id)
+
+    set_graph_data_provider(_RepositoryBackedProvider())
+    yield
+    set_graph_data_provider(None)
+
+
+@pytest.fixture
 def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     example_node_extras_dict: Dict[str, NodeExtras],
+    repository_graph_data_provider,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -527,6 +551,7 @@ def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_graph_data_provider,
     mocker,
 ):
     del example_pipelines["__default__"]
@@ -548,6 +573,7 @@ def example_api_for_edge_case_pipelines(
     data_access_manager: DataAccessManager,
     edge_case_example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_graph_data_provider,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -581,6 +607,7 @@ def example_api_for_pipelines_with_additional_tags(
     data_access_manager: DataAccessManager,
     example_pipelines_with_additional_tags: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_graph_data_provider,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -614,6 +641,7 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
+    repository_graph_data_provider,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())

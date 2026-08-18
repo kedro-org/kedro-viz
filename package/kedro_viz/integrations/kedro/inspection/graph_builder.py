@@ -11,6 +11,7 @@ use raw catalog type strings from the snapshot.
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from kedro_viz.api.rest.responses.pipelines import (
@@ -99,17 +100,25 @@ class GraphBuilder:
 
     Renders nodes and edges for one selected pipeline. Tags and registered
     pipelines on each node are collected across every pipeline in the project.
+    An explicit layer mapping replaces the raw catalog config, because it is read from the
+    populated catalog and so reflects any layer a project hook added, changed or removed.
     """
 
     def __init__(
         self,
         snapshot: ProjectSnapshot,
         catalog_config: dict[str, Any] | None = None,
+        *,
+        layer_by_dataset: Mapping[str, str] | None = None,
     ) -> None:
         self._snapshot = snapshot
-        self._layer_by_dataset = _extract_layers(
-            catalog_config=catalog_config or {},
-            dataset_names=_dataset_names_from_snapshot(snapshot),
+        self._layer_by_dataset = (
+            dict(layer_by_dataset)
+            if layer_by_dataset is not None
+            else _extract_layers(
+                catalog_config=catalog_config or {},
+                dataset_names=_dataset_names_from_snapshot(snapshot),
+            )
         )
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
@@ -230,6 +239,8 @@ class GraphBuilder:
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
+            # Resolving parameter values needs the loaded config, which the snapshot does not
+            # carry, so the caller overlays them from the live project.
             parameters={},
         )
 

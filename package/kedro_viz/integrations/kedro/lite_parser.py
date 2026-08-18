@@ -3,13 +3,35 @@
 import ast
 import importlib.util
 import logging
+from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Dict, FrozenSet, List, Set, Union
 from unittest.mock import MagicMock
 
 from kedro_viz.utils import Spinner, is_file_ignored, load_gitignore_patterns
 
 logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=None)
+def unresolved_modules(
+    project_path: str, package_name: Union[str, None] = None
+) -> FrozenSet[str]:
+    """Returns the modules a project imports but cannot resolve, walking the project once.
+
+    In lite mode both the live loader and the inspection adapter need this, and walking the
+    project is slow, so the answer is cached per project and package. Kedro-Viz restarts in a
+    new process when a project changes, so the cache cannot serve a stale answer.
+
+    Args:
+        project_path (str): The path of the project to parse
+        package_name (Union[str, None]): The name of the current package
+
+    Returns:
+        The names of the modules that need mocking
+    """
+    unresolved_imports = LiteParser(package_name).parse(Path(project_path)) or {}
+    return frozenset().union(*unresolved_imports.values())
 
 
 class LiteParser:

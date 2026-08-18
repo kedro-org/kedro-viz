@@ -1,9 +1,10 @@
 import json
+from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
 
-from kedro_viz.server import run_server
+from kedro_viz.server import load_and_populate_data, run_server
 
 
 class ExampleAPIResponse(BaseModel):
@@ -31,6 +32,12 @@ def patched_create_api_app_from_file(mocker):
 
 
 @pytest.fixture(autouse=True)
+def patched_install_graph_data_provider(mocker):
+    """These tests drive startup against a mock path, which has no snapshot to read."""
+    yield mocker.patch("kedro_viz.server._install_graph_data_provider")
+
+
+@pytest.fixture(autouse=True)
 def patched_load_data(
     mocker, example_catalog, example_pipelines, example_node_extras_dict
 ):
@@ -49,17 +56,37 @@ class TestServer:
         self,
         patched_create_api_app_from_project,
         patched_data_access_manager,
+        patched_install_graph_data_provider,
         patched_uvicorn_run,
         example_catalog,
         example_pipelines,
     ):
+        events = []
+        patched_data_access_manager.add_pipelines.side_effect = lambda _: events.append(
+            "populated"
+        )
+        patched_install_graph_data_provider.side_effect = lambda *args, **kwargs: (
+            events.append("installed")
+        )
+
         run_server()
+
         patched_data_access_manager.add_catalog.assert_called_once_with(
             example_catalog, example_pipelines
         )
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
+        patched_install_graph_data_provider.assert_called_once_with(
+            Path.cwd(),
+            env=None,
+            pipeline_name=None,
+            extra_params=None,
+            package_name=None,
+            is_lite=False,
+            include_hooks=False,
+        )
+        assert events == ["populated", "installed"]
 
         # correct api app is created
         patched_create_api_app_from_project.assert_called_once()
@@ -79,7 +106,43 @@ class TestServer:
             {"data_science": example_pipelines["data_science"]}
         )
 
-    def test_load_file(self, patched_create_api_app_from_file, tmp_path):
+    def test_runtime_options_are_forwarded_to_the_provider_installer(
+        self, patched_install_graph_data_provider, tmp_path
+    ):
+        runtime_params = {"split": {"test_size": 0.3}}
+
+        run_server(
+            project_path=str(tmp_path),
+            env="staging",
+            pipeline_name="data_science",
+            extra_params=runtime_params,
+            package_name="spaceflights",
+            is_lite=True,
+            include_hooks=True,
+        )
+
+        patched_install_graph_data_provider.assert_called_once_with(
+            tmp_path,
+            env="staging",
+            pipeline_name="data_science",
+            extra_params=runtime_params,
+            package_name="spaceflights",
+            is_lite=True,
+            include_hooks=True,
+        )
+
+    def test_load_and_populate_data_does_not_install_provider(
+        self, patched_install_graph_data_provider
+    ):
+        load_and_populate_data(Path.cwd())
+        patched_install_graph_data_provider.assert_not_called()
+
+    def test_load_file(
+        self,
+        patched_create_api_app_from_file,
+        patched_install_graph_data_provider,
+        tmp_path,
+    ):
         file_path = "test.json"
         json_file_path = tmp_path / file_path
 
@@ -88,6 +151,7 @@ class TestServer:
 
         run_server(load_file=json_file_path)
         patched_create_api_app_from_file.assert_called_once()
+        patched_install_graph_data_provider.assert_not_called()
 
     def test_save_file(self, tmp_path, mocker):
         mock_filesystem = mocker.patch("fsspec.filesystem")

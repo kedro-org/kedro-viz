@@ -16,9 +16,16 @@ if TYPE_CHECKING:
 
 
 def _builder(
-    snapshot: SimpleNamespace, catalog_config: dict[str, Any] | None = None
+    snapshot: SimpleNamespace,
+    catalog_config: dict[str, Any] | None = None,
+    *,
+    layer_by_dataset: dict[str, str] | None = None,
 ) -> GraphBuilder:
-    return GraphBuilder(cast("ProjectSnapshot", snapshot), catalog_config)
+    return GraphBuilder(
+        cast("ProjectSnapshot", snapshot),
+        catalog_config,
+        layer_by_dataset=layer_by_dataset,
+    )
 
 
 def _node(
@@ -311,6 +318,44 @@ def test_layers_from_catalog_config_are_sorted_topologically() -> None:
     }
     assert layer_by_name == {"x": "raw", "y": "model"}
     assert graph.layers == ["raw", "model"]
+
+
+def test_populated_catalog_layers_override_raw_config() -> None:
+    """Layer metadata changed by hooks must override the original catalog config."""
+    snapshot = _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    catalog_config = {
+        "x": {"metadata": {"kedro-viz": {"layer": "raw"}}},
+    }
+    graph = _builder(
+        snapshot,
+        catalog_config,
+        layer_by_dataset={"x": "hooked"},
+    ).build("__default__")
+    data_nodes = {
+        node.name: node
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+    }
+
+    assert data_nodes["x"].layer == "hooked"
+    assert graph.layers == ["hooked"]
+
+
+def test_empty_populated_catalog_layers_remove_raw_config_layers() -> None:
+    """A hook that removed every layer is reflected, rather than the raw config winning."""
+    snapshot = _snapshot([_pipeline("__default__", [_node("t", ["x"], ["y"])])])
+    catalog_config = {
+        "x": {"metadata": {"kedro-viz": {"layer": "raw"}}},
+    }
+    graph = _builder(snapshot, catalog_config, layer_by_dataset={}).build("__default__")
+    data_nodes = [
+        node
+        for node in graph.nodes
+        if isinstance(node, DataNodeAPIResponse) and node.type == "data"
+    ]
+
+    assert all(node.layer is None for node in data_nodes)
+    assert graph.layers == []
 
 
 def test_factory_layer_is_resolved_for_concrete_dataset() -> None:

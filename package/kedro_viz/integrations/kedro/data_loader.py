@@ -19,7 +19,7 @@ from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
-from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.kedro.lite_parser import LiteParser, unresolved_modules
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras
 
@@ -243,20 +243,19 @@ def load_data(
         bootstrap_project(project_path)
 
     if is_lite:
-        lite_parser = LiteParser(package_name)
-        unresolved_imports = lite_parser.parse(project_path)
+        # Shared with the inspection adapter, so the project is walked once per process.
+        modules_to_mock: Set[str] = set(
+            unresolved_modules(str(project_path), package_name)
+        )
         sys_modules_patch = sys.modules.copy()
 
-        if unresolved_imports and len(unresolved_imports) > 0:
-            modules_to_mock: Set[str] = set()
-
+        if modules_to_mock:
             # for the viz lite banner
             Metadata.set_has_missing_dependencies(True)
 
-            for unresolved_module_set in unresolved_imports.values():
-                modules_to_mock = modules_to_mock.union(unresolved_module_set)
-
-            mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
+            mocked_modules = LiteParser(package_name).create_mock_modules(
+                modules_to_mock
+            )
             sys_modules_patch.update(mocked_modules)
 
             logger.warning(
