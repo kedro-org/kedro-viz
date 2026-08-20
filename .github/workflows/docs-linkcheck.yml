@@ -4,10 +4,27 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'docs/**'
+      - '**.md'
+      - 'Makefile'
+      - 'mkdocs.yml'
+      - 'package/pyproject.toml'
+      - '.github/workflows/docs-linkcheck.yml'
   pull_request:
     branches:
       - main
+    paths:
+      - 'docs/**'
+      - '**.md'
+      - 'Makefile'
+      - 'mkdocs.yml'
+      - 'package/pyproject.toml'
+      - '.github/workflows/docs-linkcheck.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

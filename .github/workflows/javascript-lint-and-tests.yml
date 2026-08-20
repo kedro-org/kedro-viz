@@ -4,13 +4,25 @@ name: Run javascript linters and tests on Kedro-Viz
 
 on:
   push:
+    branches:
+      - main
     paths-ignore:
       - 'package/**'
+      - 'docs/**'
+      - 'openspec/**'
+      - '**.md'
   pull_request:
     paths-ignore:
       - 'package/**'
+      - 'docs/**'
+      - 'openspec/**'
+      - '**.md'
   workflow_dispatch:
   workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
