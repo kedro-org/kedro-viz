@@ -180,4 +180,10 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
             (Path(api_dir) / "run-status").read_text(encoding="utf8")
         )
 
+    @app.get("/api/version", response_class=JSONResponse)
+    async def get_version():
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "version").read_text(encoding="utf8")
+        )
+
     return app
