@@ -9,6 +9,7 @@ from kedro_viz.api.rest.responses.save_responses import (
     save_api_pipeline_response_to_fs,
     save_api_responses_to_fs,
     save_api_run_status_response_to_fs,
+    save_api_version_response_to_fs,
     write_api_response_to_fs,
 )
 
@@ -37,6 +38,9 @@ class TestSaveAPIResponse:
         mock_api_run_status_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.save_api_run_status_response_to_fs"
         )
+        mock_api_version_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_version_response_to_fs"
+        )
 
         mock_filesystem = mocker.patch("fsspec.filesystem")
         mock_filesystem.return_value.protocol = protocol
@@ -58,6 +62,9 @@ class TestSaveAPIResponse:
         )
         mock_api_run_status_response_to_fs.assert_called_once_with(
             f"{file_path}/api/run-status", mock_filesystem.return_value
+        )
+        mock_api_version_response_to_fs.assert_called_once_with(
+            f"{file_path}/api/version", mock_filesystem.return_value
         )
 
     def test_save_api_main_response_to_fs(self, mocker):
@@ -169,6 +176,31 @@ class TestSaveAPIResponse:
         mock_get_run_status_response.assert_called_once()
         mock_write_api_response_to_fs.assert_called_once_with(
             run_status_path, mock_get_run_status_response.return_value, remote_fs
+        )
+
+    def test_save_api_version_response_to_fs(self, mocker):
+        expected_version_response = {
+            "installed": "1.0.0",
+            "is_outdated": False,
+            "latest": "1.0.0",
+        }
+        version_path = "/version"
+
+        mock_get_static_version_response = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.get_static_version_response",
+            return_value=expected_version_response,
+        )
+        mock_write_api_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
+        )
+
+        remote_fs = Mock()
+
+        save_api_version_response_to_fs(version_path, remote_fs)
+
+        mock_get_static_version_response.assert_called_once()
+        mock_write_api_response_to_fs.assert_called_once_with(
+            version_path, mock_get_static_version_response.return_value, remote_fs
         )
 
     @pytest.mark.parametrize(

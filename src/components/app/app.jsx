@@ -45,8 +45,8 @@ class App extends React.Component {
       this.store.dispatch(loadInitialPipelineData());
     }
 
-    // If runData is not provided, load it from the API
-    if (!this.props.runData) {
+    // Only fetch run status when a backend is actually available
+    if (this.props.data === 'json' && !this.props.runData) {
       this.store.dispatch(loadInitialRunStatusData());
     }
     this.announceFlags(this.store.getState().flags);

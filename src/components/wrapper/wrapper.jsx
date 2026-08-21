@@ -17,12 +17,18 @@ import './wrapper.scss';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme }) => {
+export const Wrapper = ({ dataSource, displayGlobalNavigation, theme }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
 
   useEffect(() => {
+    // Skip when there's no backend to answer it, e.g. embedded with data
+    // supplied directly.
+    if (dataSource !== 'json') {
+      return;
+    }
+
     async function checkKedroVizVersion() {
       try {
         const request = await getVersion();
@@ -39,7 +45,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     }
 
     checkKedroVizVersion();
-  }, []);
+  }, [dataSource]);
 
   const allKedroVizRoutes = (
     <Switch>
@@ -84,6 +90,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
 };
 
 export const mapStateToProps = (state) => ({
+  dataSource: state.dataSource,
   displayGlobalNavigation: state.display.globalNavigation,
   theme: state.theme,
 });

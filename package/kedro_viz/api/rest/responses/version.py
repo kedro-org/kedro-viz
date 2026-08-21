@@ -41,3 +41,14 @@ def get_version_response():
         is_outdated=is_outdated,
         latest=latest_version,
     )
+
+
+def get_static_version_response():
+    """API response for the static `api/version` file (no live PyPI check)."""
+    installed_version = str(__version__)
+
+    return VersionAPIResponse(
+        installed=installed_version,
+        is_outdated=False,
+        latest=installed_version,
+    )
