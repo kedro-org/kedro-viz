@@ -154,7 +154,7 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "babel-plugin-transform-remove-imports": "^1.7.0",
-    "canvas": "^2.7.0",
+    "canvas": "^3.2.0",
     "cross-env": "7.0.3",
     "css-loader": "^6.4.0",
     "cypress": "^13.3.0",
