@@ -239,8 +239,7 @@ class GraphBuilder:
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
-            # Resolving parameter values needs the loaded config, which the snapshot does not
-            # carry, so the caller overlays them from the live project.
+            # TODO(#2736): populate this from resolved parameters passed to GraphBuilder.
             parameters={},
         )
 

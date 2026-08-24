@@ -52,9 +52,8 @@ def load_and_populate_data(
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories.
 
-    Shared by ``kedro viz run`` and ``kedro viz deploy``, so it stays free of anything only the
-    HTTP server needs. The graph endpoints read through a provider that :func:`run_server`
-    installs afterwards; deployment reads the repositories directly and never installs one.
+    This function is also used outside the HTTP server, so graph-provider installation
+    remains in :func:`run_server`.
     """
 
     # Loads data from underlying Kedro Project
@@ -175,8 +174,8 @@ def run_server(
         load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
-        # Installed after the live load so the live node repository has nodes to read. Only
-        # the server needs this; deployment reads the repositories directly.
+        # The provider enriches snapshot nodes from the populated live repository,
+        # so install it after loading the project.
         _install_graph_data_provider(
             path,
             env=env,
@@ -189,8 +188,8 @@ def run_server(
 
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
-        # [TODO(#2660): this still renders the live graph, so a saved file can differ from what
-        # the graph endpoints serve. Move it onto the graph provider with the static export.]
+        # TODO(#2660): make ``--save-file`` and ``kedro viz build`` use the graph
+        # provider so static exports match the HTTP graph responses.
         if save_file:
             from kedro_viz.api.rest.responses.save_responses import (
                 save_api_responses_to_fs,

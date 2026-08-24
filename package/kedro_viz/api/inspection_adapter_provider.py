@@ -1,22 +1,11 @@
-"""Serve the graph endpoints from a Kedro inspection snapshot.
+"""Serve graph responses from one Kedro inspection snapshot.
 
-Backs ``/api/main`` and ``/api/pipelines/{id}``. The snapshot is read once at construction and
-reused for every request.
-
-Three fields cannot come from the snapshot and are overlaid from the live project afterwards:
-
-* ``node_extras``: dataset stats and styles, read from ``.viz`` files.
-* ``dataset_type``: the abbreviated type Kedro-Viz exposes, such as
-  ``pandas.csv_dataset.CSVDataset`` (see ``get_dataset_type``). The snapshot only carries the raw
-  catalog string, such as ``pandas.CSVDataset``, and the frontend keys its icons on the
-  abbreviated form.
-* ``parameters``: the resolved parameter values a task reads. Resolving these needs the loaded
-  config, which the snapshot does not carry.
-
-Adapter IDs and live-repository IDs are the same scheme, so the overlay reads the live node
-straight out of the repository by ID. There is nothing to translate and no second copy of the
-ID logic. The overlay only fills in those three fields; it never adds, removes or renames a
-node, so the graph the adapter built is the graph that is served.
+The snapshot is built once and reused for ``/api/main`` and ``/api/pipelines/{id}``.
+Responses are enriched from same-ID live nodes with ``node_extras``, the abbreviated
+``dataset_type`` used by frontend icons (for example,
+``pandas.csv_dataset.CSVDataset`` rather than the snapshot's raw
+``pandas.CSVDataset``), and, temporarily, task ``parameters`` (#2736). Enrichment does
+not change graph topology.
 """
 
 from __future__ import annotations
