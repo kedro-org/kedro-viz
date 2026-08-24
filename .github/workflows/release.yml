@@ -12,7 +12,7 @@ permissions:
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  NODE_VERSION: 18.20.0
+  NODE_VERSION: 24.19.0
   REGISTRY_URL: 'https://registry.npmjs.org'
 
 jobs:
