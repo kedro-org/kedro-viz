@@ -7,6 +7,9 @@ Please follow the established format:
 -->
 # Release 12.5.0
 
+## Major features and improvements
+ - Add a help menu to the global toolbar linking to Kedro-Viz support channels. (#2756)
+
 ## Bug fixes and other changes
  - Fix for `autoreload` to ignore notebook file changes. (#2712)
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)

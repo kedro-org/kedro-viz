@@ -1,0 +1,64 @@
+@use '../../styles/variables' as variables;
+
+$help-menu-item-height: 40px;
+$help-menu-width: 232px;
+
+.kui-theme--light {
+  --color-help-menu-bg: #{variables.$white-100};
+  --color-help-menu-bg-hover: #{variables.$white-300};
+  --color-help-menu-shadow: #{rgba(variables.$black-900, 0.2)};
+}
+
+.kui-theme--dark {
+  --color-help-menu-bg: #{variables.$slate-600};
+  --color-help-menu-bg-hover: #{variables.$slate-500};
+  --color-help-menu-shadow: #{rgba(variables.$black-900, 0.4)};
+}
+
+.help-menu {
+  background-color: var(--color-help-menu-bg);
+  bottom: 12px;
+  box-shadow: 0 2px 8px var(--color-help-menu-shadow);
+  left: 100%;
+  padding: 8px 0;
+  position: absolute;
+  width: $help-menu-width;
+}
+
+.help-menu__item {
+  align-items: center;
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.4em;
+  height: $help-menu-item-height;
+  padding: 0 20px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--color-help-menu-bg-hover);
+
+    .help-menu__icon {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: none;
+
+    [data-whatinput='keyboard'] & {
+      outline: 3px solid variables.$blue-300;
+      outline-offset: -3px;
+    }
+  }
+}
+
+.help-menu__icon {
+  fill: var(--color-default-alt);
+  flex-shrink: 0;
+  height: 20px;
+  margin-right: 12px;
+  opacity: 0.7;
+  transition: opacity 300ms ease;
+  width: 20px;
+}
