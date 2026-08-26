@@ -43,8 +43,10 @@ export const helpMenuItems = [
   },
 ];
 
+const menuId = 'help-menu';
+
 /**
- * Global toolbar button which opens a menu of Kedro-Viz support channels
+ * Global toolbar button which reveals a list of Kedro-Viz support channels
  */
 export const HelpMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,8 +64,15 @@ export const HelpMenu = () => {
     };
 
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
+      if (event.key !== 'Escape') {
+        return;
+      }
+      // Closing unmounts whichever link has focus, so hand it back to the
+      // button rather than letting it fall through to the document body
+      const hadFocus = containerRef.current.contains(document.activeElement);
+      setIsOpen(false);
+      if (hadFocus) {
+        containerRef.current.querySelector('button').focus();
       }
     };
 
@@ -80,8 +89,9 @@ export const HelpMenu = () => {
     <li className="pipeline-icon--container" ref={containerRef}>
       <IconButton
         active={isOpen}
-        ariaLabel={`${isOpen ? 'Close' : 'Open'} help and resources`}
-        ariaLive="polite"
+        ariaControls={menuId}
+        ariaExpanded={isOpen}
+        ariaLabel="Help and resources"
         className="pipeline-menu-button--help pipeline-menu-button--large"
         container={React.Fragment}
         dataTest={getDataTestAttribute('global-toolbar', 'help-btn')}
@@ -91,7 +101,7 @@ export const HelpMenu = () => {
         onClick={() => setIsOpen(!isOpen)}
       />
       {isOpen && (
-        <div aria-label="Help and resources" className="help-menu" role="menu">
+        <div className="help-menu" id={menuId}>
           {helpMenuItems.map(({ href, icon: Icon, id, label }) => (
             <a
               className="help-menu__item"
@@ -100,11 +110,10 @@ export const HelpMenu = () => {
               key={id}
               onClick={() => setIsOpen(false)}
               rel="noopener noreferrer"
-              role="menuitem"
               target="_blank"
             >
-              <Icon className="help-menu__icon" />
-              <span className="help-menu__label">{label}</span>
+              <Icon className="pipeline-icon help-menu__icon" />
+              {label}
             </a>
           ))}
         </div>
