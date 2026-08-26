@@ -37,6 +37,7 @@ def lite_import_stubs(
         sys_modules_patch.update(
             LiteParser(package_name).create_mock_modules(modules_to_mock)
         )
+        # TODO(#2724): Restore this warning when the live loader is removed.
         # The live loader already warned the user about these modules.
         logger.debug(
             "Building the snapshot with %d project dependency module(s) mocked:\n%s",
