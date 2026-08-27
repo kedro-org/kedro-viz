@@ -167,6 +167,7 @@ export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_
 export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure/#set-up-endpoint`;
 export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp/#set-up-endpoint`;
 
+export const KEDRO_DOCS_URL = 'https://docs.kedro.org/';
 export const KEDRO_VIZ_NEW_ISSUE_URL =
   'https://github.com/kedro-org/kedro-viz/issues/new';
 export const KEDRO_VIZ_REPORT_PROBLEM_URL = `${KEDRO_VIZ_NEW_ISSUE_URL}?template=bug-report.md`;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import HelpMenu, { helpMenuItems } from './help-menu';
+import HelpMenu from './help-menu';
 
 describe('HelpMenu', () => {
   const getButton = () =>
@@ -20,17 +20,41 @@ describe('HelpMenu', () => {
     openMenu();
 
     expect(getButton()).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getAllByRole('link')).toHaveLength(helpMenuItems.length);
-  });
-
-  it('points the button at the menu it controls', () => {
-    render(<HelpMenu />);
-    openMenu();
-
     const menuId = getButton().getAttribute('aria-controls');
     expect(document.getElementById(menuId)).toContainElement(
       screen.getAllByRole('link')[0]
     );
+  });
+
+  it.each([
+    [
+      'Report problem',
+      'https://github.com/kedro-org/kedro-viz/issues/new?template=bug-report.md',
+    ],
+    [
+      'Share idea',
+      'https://github.com/kedro-org/kedro-viz/issues/new?template=feature-request.md',
+    ],
+    ['Kedro Docs', 'https://docs.kedro.org/'],
+    ['Kedro Slack', 'https://slack.kedro.org/'],
+  ])('points "%s" at %s', (label, href) => {
+    render(<HelpMenu />);
+    openMenu();
+
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute(
+      'href',
+      href
+    );
+  });
+
+  it('opens every link in a new tab without leaking the opener', () => {
+    render(<HelpMenu />);
+    openMenu();
+
+    for (const link of screen.getAllByRole('link')) {
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
   });
 
   it('closes the menu on a second button click', () => {
@@ -40,19 +64,6 @@ describe('HelpMenu', () => {
 
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
-
-  it.each(helpMenuItems)(
-    'links "$label" to $href in a new tab',
-    ({ href, label }) => {
-      render(<HelpMenu />);
-      openMenu();
-
-      const link = screen.getByRole('link', { name: label });
-      expect(link).toHaveAttribute('href', href);
-      expect(link).toHaveAttribute('target', '_blank');
-      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-    }
-  );
 
   it('closes the menu when a link is followed', () => {
     render(<HelpMenu />);
@@ -65,7 +76,7 @@ describe('HelpMenu', () => {
   it('closes the menu on click outside', () => {
     render(<HelpMenu />);
     openMenu();
-    fireEvent.mouseDown(document.body);
+    fireEvent.click(document.body);
 
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
@@ -73,17 +84,10 @@ describe('HelpMenu', () => {
   it('keeps the menu open on click inside', () => {
     render(<HelpMenu />);
     openMenu();
-    fireEvent.mouseDown(screen.getAllByRole('link')[0]);
+    const menuId = getButton().getAttribute('aria-controls');
+    fireEvent.click(document.getElementById(menuId));
 
-    expect(screen.getAllByRole('link')).toHaveLength(helpMenuItems.length);
-  });
-
-  it('closes the menu on Escape', () => {
-    render(<HelpMenu />);
-    openMenu();
-    fireEvent.keyDown(window, { key: 'Escape' });
-
-    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('link')).toHaveLength(4);
   });
 
   it('returns focus to the button when Escape closes a focused link', () => {
@@ -92,6 +96,23 @@ describe('HelpMenu', () => {
     screen.getAllByRole('link')[0].focus();
     fireEvent.keyDown(window, { key: 'Escape' });
 
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(getButton()).toHaveFocus();
+  });
+
+  it('leaves focus alone when Escape is pressed from elsewhere', () => {
+    render(
+      <>
+        <HelpMenu />
+        <button type="button">Elsewhere</button>
+      </>
+    );
+    openMenu();
+    const elsewhere = screen.getByRole('button', { name: 'Elsewhere' });
+    elsewhere.focus();
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(elsewhere).toHaveFocus();
   });
 });

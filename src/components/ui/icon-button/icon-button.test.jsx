@@ -34,19 +34,6 @@ describe('IconButton', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('puts aria-controls and aria-expanded on the button', () => {
-    render(
-      <IconButton
-        ariaControls="some-panel"
-        ariaExpanded={true}
-        visible={true}
-      />
-    );
-    const button = screen.getByRole('button');
-    expect(button).toHaveAttribute('aria-controls', 'some-panel');
-    expect(button).toHaveAttribute('aria-expanded', 'true');
-  });
-
   it('hides when visibility is false', () => {
     const { container } = render(<IconButton visible={false} />);
     expect(container.querySelector('li')).not.toBeInTheDocument();
