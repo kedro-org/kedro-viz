@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DocsIcon from '../icons/docs';
 import HelpIcon from '../icons/help';
@@ -7,16 +7,17 @@ import IdeaIcon from '../icons/idea';
 import ReportIcon from '../icons/report';
 import SlackIcon from '../icons/slack';
 import {
+  KEDRO_DOCS_URL,
   KEDRO_SLACK_URL,
-  KEDRO_VIZ_DOCS_URL,
   KEDRO_VIZ_REPORT_PROBLEM_URL,
   KEDRO_VIZ_SHARE_IDEA_URL,
 } from '../../config';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import { useOutsideClick } from '../../utils/hooks';
 
 import './help-menu.scss';
 
-export const helpMenuItems = [
+const helpMenuItems = [
   {
     href: KEDRO_VIZ_REPORT_PROBLEM_URL,
     icon: ReportIcon,
@@ -30,7 +31,7 @@ export const helpMenuItems = [
     label: 'Share idea',
   },
   {
-    href: KEDRO_VIZ_DOCS_URL,
+    href: KEDRO_DOCS_URL,
     icon: DocsIcon,
     id: 'kedro-docs',
     label: 'Kedro Docs',
@@ -50,18 +51,12 @@ const menuId = 'help-menu';
  */
 export const HelpMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef(null);
+  const containerRef = useOutsideClick(() => setIsOpen(false));
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
-
-    const handleClickOutside = (event) => {
-      if (!containerRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
 
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') {
@@ -76,20 +71,18 @@ export const HelpMenu = () => {
       }
     };
 
-    window.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [containerRef, isOpen]);
 
   return (
+    // IconButton renders this wrapper itself, but it cannot forward a ref to
+    // it, and both the outside click and the focus restoration need one
     <li className="pipeline-icon--container" ref={containerRef}>
       <IconButton
         active={isOpen}
-        ariaControls={menuId}
+        ariaControls={isOpen ? menuId : undefined}
         ariaExpanded={isOpen}
         ariaLabel="Help and resources"
         className="pipeline-menu-button--help pipeline-menu-button--large"

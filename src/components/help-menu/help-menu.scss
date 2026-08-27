@@ -1,5 +1,7 @@
 @use '../../styles/variables' as variables;
 
+/* how far the panel's base sits above the bottom of the toolbar */
+$help-menu-base-offset: 12px;
 $help-menu-item-height: 40px;
 $help-menu-width: 232px;
 
@@ -17,12 +19,13 @@ $help-menu-width: 232px;
 
 .help-menu {
   background-color: var(--help-menu-bg);
-  bottom: 12px;
+  bottom: $help-menu-base-offset;
   box-shadow: 0 1px 1px var(--help-menu-shadow);
   left: 100%;
   padding: 8px 0;
   position: absolute;
   width: $help-menu-width;
+  z-index: variables.$zindex-help-menu;
 }
 
 .help-menu__item {
