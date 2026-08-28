@@ -23,6 +23,8 @@ ALL_PIPELINES = [
     "reporting_stage",
 ]
 
+RUNTIME_PARAM_OVERRIDE: dict[str, Any] = {"split_options": {"test_size": 0.99}}
+
 
 @pytest.fixture(scope="module")
 def builder(_restore_kedro_project_state) -> GraphBuilder:
@@ -121,9 +123,6 @@ def test_task_parameters_match_baseline(
         if n["type"] == "task"
     }
     assert adapter_by_full == baseline_by_full
-
-
-RUNTIME_PARAM_OVERRIDE: dict[str, Any] = {"split_options": {"test_size": 0.99}}
 
 
 def _graph_builder(runtime_params: dict[str, Any] | None = None) -> GraphBuilder:
