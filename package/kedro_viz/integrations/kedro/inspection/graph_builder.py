@@ -238,16 +238,17 @@ class GraphBuilder:
         )
 
     def _task_parameters(self, inputs: list[str]) -> dict[str, Any]:
-        """Resolved parameter values a task consumes, in the format the detail panel expects.
+        """Build the parameter dict for a task node's detail panel.
 
-        A ``parameters`` input means "all parameters" → the whole dict; a ``params:x`` input
-        contributes ``{"x": <value>}`` (``x`` may be dotted, e.g. ``model_options.test_size``).
+        Walk ``inputs`` in order. ``parameters`` sets the full resolved mapping. Each
+        ``params:name`` adds one entry. Dotted names like ``model_options.test_size`` pick
+        out nested values.
         """
         result: dict[str, Any] = {}
         for ref in inputs:
             if ref == "parameters":
-                return dict(self._parameters)
-            if ref.startswith("params:"):
+                result = dict(self._parameters)
+            elif ref.startswith("params:"):
                 name = ref[len("params:") :]
                 result[name] = _resolve_param(self._parameters, name)
         return result

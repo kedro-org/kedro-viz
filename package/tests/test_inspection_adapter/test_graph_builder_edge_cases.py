@@ -213,6 +213,39 @@ def test_task_parameters_missing_key_is_none_without_failing() -> None:
     assert task.parameters == {"missing.key": None}
 
 
+def test_task_parameters_input_with_dotted_params() -> None:
+    """Later ``params:x`` inputs are merged in after a ``parameters`` input."""
+    resolved = {
+        "model_options": {"test_size": 0.2},
+        "other": 1,
+    }
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [
+                        _node(
+                            "t",
+                            ["parameters", "params:model_options.test_size"],
+                            [],
+                        )
+                    ],
+                )
+            ]
+        ),
+        parameters=resolved,
+    )
+    task = next(
+        node for node in builder.build("__default__").nodes if node.type == "task"
+    )
+    assert task.parameters == {
+        "model_options": {"test_size": 0.2},
+        "other": 1,
+        "model_options.test_size": 0.2,
+    }
+
+
 def test_task_parameters_merge_multiple_param_inputs() -> None:
     builder = _builder(
         _snapshot(
