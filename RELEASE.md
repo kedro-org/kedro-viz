@@ -10,7 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
  - Fix for `autoreload` to ignore notebook file changes. (#2712)
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
- - Update Node.js version from v18 to v24 and bump `canvas` to v3 for compatibility. (#2754)
+ - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
 
 # Release 12.4.0
 
