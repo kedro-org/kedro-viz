@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from kedro_viz.api import apps
+from kedro_viz.integrations.kedro.inspection import VizProjectContext
 
 
 class TestIndexEndpoint:
@@ -29,8 +30,10 @@ class TestIndexEndpoint:
 
 
 @pytest.fixture
-def example_autoreload_api():
-    yield apps.create_api_app_from_project(mock.MagicMock(), autoreload=True)
+def example_autoreload_api(repository_project_context: VizProjectContext):
+    yield apps.create_api_app_from_project(
+        repository_project_context, mock.MagicMock(), autoreload=True
+    )
 
 
 class TestReloadEndpoint:
@@ -49,10 +52,14 @@ class TestReloadEndpoint:
 
     @mock.patch("kedro_viz.api.apps._create_etag")
     def test_reload_endpoint_return_304_when_content_has_not_changed(
-        self, patched_create_etag
+        self,
+        patched_create_etag,
+        repository_project_context: VizProjectContext,
     ):
         patched_create_etag.return_value = "old etag"
-        api = apps.create_api_app_from_project(mock.MagicMock(), autoreload=True)
+        api = apps.create_api_app_from_project(
+            repository_project_context, mock.MagicMock(), autoreload=True
+        )
 
         client = TestClient(api)
 

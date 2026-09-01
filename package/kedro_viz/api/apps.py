@@ -18,7 +18,9 @@ from werkzeug.utils import secure_filename
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
+from kedro_viz.integrations.kedro.inspection import VizProjectContext
 
+from .rest.router import create_graph_router
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
@@ -50,18 +52,24 @@ def _create_base_api_app() -> FastAPI:
 
 
 def create_api_app_from_project(
-    project_path: Path, autoreload: bool = False
+    context: VizProjectContext,
+    project_path: Path,
+    autoreload: bool = False,
 ) -> FastAPI:
     """Create an API from a real Kedro project by adding the router to the FastAPI app.
 
     Args:
-        project_path: Path to the Kedro project
+        context: Project-scoped services built from the inspection snapshot and enrichment
+            sources.
+        project_path: Path to the Kedro project.
         autoreload: Whether the app should autoreload based on content change
-            in the Kedro project
+            in the Kedro project.
+
     Returns:
-        The FastAPI app
+        The FastAPI app.
     """
     app = _create_base_api_app()
+    app.include_router(create_graph_router(context))
     app.include_router(rest_router)
 
     # Check for html directory existence.

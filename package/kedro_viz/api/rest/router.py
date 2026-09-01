@@ -1,6 +1,9 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -15,10 +18,7 @@ from kedro_viz.api.rest.responses.nodes import (
     NodeMetadataAPIResponse,
     get_node_metadata_response,
 )
-from kedro_viz.api.rest.responses.pipelines import (
-    GraphAPIResponse,
-    get_pipeline_response,
-)
+from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
     get_run_status_response,
@@ -27,6 +27,10 @@ from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
 )
+from kedro_viz.integrations.kedro.inspection import PipelineNotFoundError
+
+if TYPE_CHECKING:
+    from kedro_viz.integrations.kedro.inspection import VizProjectContext
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +40,32 @@ router = APIRouter(
 )
 
 
-@router.get("/main", response_model=GraphAPIResponse)
-async def main():
-    return get_pipeline_response()
+def create_graph_router(context: VizProjectContext) -> APIRouter:
+    """Bind the graph routes to one project context."""
+    graph_router = APIRouter(
+        prefix="/api",
+        responses={404: {"model": APINotFoundResponse}},
+    )
+
+    @graph_router.get("/main", response_model=GraphAPIResponse)
+    async def main():
+        # With no caller-supplied ID, the service selects from its own registered pipelines,
+        # so PipelineNotFoundError cannot occur here.
+        return context.graph.get_pipeline_response()
+
+    @graph_router.get(
+        "/pipelines/{registered_pipeline_id}",
+        response_model=GraphAPIResponse,
+    )
+    async def get_single_pipeline_data(registered_pipeline_id: str):
+        try:
+            return context.graph.get_pipeline_response(registered_pipeline_id)
+        except PipelineNotFoundError:
+            return JSONResponse(
+                status_code=404, content={"message": "Invalid pipeline ID"}
+            )
+
+    return graph_router
 
 
 @router.get(
@@ -48,14 +75,6 @@ async def main():
 )
 async def get_single_node_metadata(node_id: str):
     return get_node_metadata_response(node_id)
-
-
-@router.get(
-    "/pipelines/{registered_pipeline_id}",
-    response_model=GraphAPIResponse,
-)
-async def get_single_pipeline_data(registered_pipeline_id: str):
-    return get_pipeline_response(registered_pipeline_id)
 
 
 @router.get(
