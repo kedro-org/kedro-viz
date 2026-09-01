@@ -9,8 +9,9 @@ See ``kedro.pipeline.pipeline`` for the source of truth.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
+
+from pydantic import BaseModel
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.utils import _strip_transcoding
@@ -111,8 +112,7 @@ def _free_io(nodes: list[NodeSnapshot], mp_id: str) -> _BoundaryIO:
     return free_inputs, free_outputs
 
 
-@dataclass(frozen=True)
-class _NamespaceBoundaries:
+class _NamespaceBoundaries(BaseModel, frozen=True):
     """Namespace IDs, dataset assignments and boundary I/O for one node list.
 
     Dataset assignments use transcoding-stripped names; boundary I/O keeps original names.
