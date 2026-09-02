@@ -9,7 +9,6 @@ from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.integrations.kedro.hooks_utils import (
-    _hash_input_output,
     compute_size,
     generate_timestamp,
     hash_node,
@@ -17,6 +16,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
     is_sequential_runner,
     write_events,
 )
+from kedro_viz.integrations.kedro.node_ids import _create_dataset_node_id
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def create_dataset_event(
     event: Dict[str, Any] = {
         "event": event_name,
         "dataset": dataset_name,
-        "node_id": _hash_input_output(dataset_name),
+        "node_id": _create_dataset_node_id(dataset_name),
         "status": "Available",
     }
 

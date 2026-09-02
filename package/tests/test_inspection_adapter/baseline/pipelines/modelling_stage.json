@@ -1,0 +1,988 @@
+{
+  "edges": [
+    {
+      "source": "01675921",
+      "target": "bf8530bc"
+    },
+    {
+      "source": "038647c7",
+      "target": "01675921"
+    },
+    {
+      "source": "038647c7",
+      "target": "4f79de77"
+    },
+    {
+      "source": "10e51dea",
+      "target": "d2885635"
+    },
+    {
+      "source": "22eec376",
+      "target": "2816ba38"
+    },
+    {
+      "source": "23c94afb",
+      "target": "2816ba38"
+    },
+    {
+      "source": "2816ba38",
+      "target": "872981f9"
+    },
+    {
+      "source": "2816ba38",
+      "target": "9ca016a8"
+    },
+    {
+      "source": "2816ba38",
+      "target": "cae2d1c7"
+    },
+    {
+      "source": "2816ba38",
+      "target": "f6d9538c"
+    },
+    {
+      "source": "72baf5c6",
+      "target": "038647c7"
+    },
+    {
+      "source": "72baf5c6",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "72baf5c6",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "872981f9",
+      "target": "bf8530bc"
+    },
+    {
+      "source": "872981f9",
+      "target": "d2885635"
+    },
+    {
+      "source": "872981f9",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "872981f9",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "872981f9",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "98eb115e",
+      "target": "af9a43c8"
+    },
+    {
+      "source": "98eb115e",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "98eb115e",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "038647c7"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "af9a43c8"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "af9a43c8",
+      "target": "10e51dea"
+    },
+    {
+      "source": "af9a43c8",
+      "target": "b701864d"
+    },
+    {
+      "source": "bf8530bc",
+      "target": "b16095d0"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "038647c7"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "af9a43c8"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "d2885635",
+      "target": "495a0bbc"
+    },
+    {
+      "source": "f6d9538c",
+      "target": "bf8530bc"
+    },
+    {
+      "source": "f6d9538c",
+      "target": "d2885635"
+    },
+    {
+      "source": "f6d9538c",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "f6d9538c",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "f6d9538c",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "495a0bbc"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "4f79de77"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "b16095d0"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "b701864d"
+    },
+    {
+      "source": "train_evaluation.linear_regression",
+      "target": "495a0bbc"
+    },
+    {
+      "source": "train_evaluation.linear_regression",
+      "target": "b701864d"
+    },
+    {
+      "source": "train_evaluation.random_forest",
+      "target": "4f79de77"
+    },
+    {
+      "source": "train_evaluation.random_forest",
+      "target": "b16095d0"
+    }
+  ],
+  "layers": [
+    "feature",
+    "intermediate",
+    "model_input",
+    "primary",
+    "raw",
+    "reporting"
+  ],
+  "modular_pipelines": {
+    "__root__": {
+      "children": [
+        {
+          "id": "22eec376",
+          "type": "data"
+        },
+        {
+          "id": "22eec376",
+          "type": "parameters"
+        },
+        {
+          "id": "23c94afb",
+          "type": "data"
+        },
+        {
+          "id": "2816ba38",
+          "type": "task"
+        },
+        {
+          "id": "495a0bbc",
+          "type": "data"
+        },
+        {
+          "id": "4f79de77",
+          "type": "data"
+        },
+        {
+          "id": "72baf5c6",
+          "type": "parameters"
+        },
+        {
+          "id": "872981f9",
+          "type": "data"
+        },
+        {
+          "id": "98eb115e",
+          "type": "parameters"
+        },
+        {
+          "id": "9ca016a8",
+          "type": "data"
+        },
+        {
+          "id": "b16095d0",
+          "type": "data"
+        },
+        {
+          "id": "b701864d",
+          "type": "data"
+        },
+        {
+          "id": "cae2d1c7",
+          "type": "data"
+        },
+        {
+          "id": "f6d9538c",
+          "type": "data"
+        },
+        {
+          "id": "train_evaluation",
+          "type": "modularPipeline"
+        }
+      ],
+      "id": "__root__",
+      "inputs": [],
+      "name": "__root__",
+      "outputs": []
+    },
+    "train_evaluation": {
+      "children": [
+        {
+          "id": "train_evaluation.linear_regression",
+          "type": "modularPipeline"
+        },
+        {
+          "id": "train_evaluation.random_forest",
+          "type": "modularPipeline"
+        }
+      ],
+      "id": "train_evaluation",
+      "inputs": [
+        "72baf5c6",
+        "872981f9",
+        "98eb115e",
+        "9ca016a8",
+        "cae2d1c7",
+        "f6d9538c"
+      ],
+      "name": "train_evaluation",
+      "outputs": [
+        "495a0bbc",
+        "4f79de77",
+        "b16095d0",
+        "b701864d"
+      ]
+    },
+    "train_evaluation.linear_regression": {
+      "children": [
+        {
+          "id": "10e51dea",
+          "type": "data"
+        },
+        {
+          "id": "af9a43c8",
+          "type": "task"
+        },
+        {
+          "id": "d2885635",
+          "type": "task"
+        }
+      ],
+      "id": "train_evaluation.linear_regression",
+      "inputs": [
+        "872981f9",
+        "98eb115e",
+        "9ca016a8",
+        "cae2d1c7",
+        "f6d9538c"
+      ],
+      "name": "train_evaluation.linear_regression",
+      "outputs": [
+        "495a0bbc",
+        "b701864d"
+      ]
+    },
+    "train_evaluation.random_forest": {
+      "children": [
+        {
+          "id": "01675921",
+          "type": "data"
+        },
+        {
+          "id": "038647c7",
+          "type": "task"
+        },
+        {
+          "id": "bf8530bc",
+          "type": "task"
+        }
+      ],
+      "id": "train_evaluation.random_forest",
+      "inputs": [
+        "72baf5c6",
+        "872981f9",
+        "9ca016a8",
+        "cae2d1c7",
+        "f6d9538c"
+      ],
+      "name": "train_evaluation.random_forest",
+      "outputs": [
+        "4f79de77",
+        "b16095d0"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "dataset_type": "pickle.pickle_dataset.PickleDataset",
+      "id": "01675921",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation.random_forest"
+      ],
+      "name": "train_evaluation.random_forest.regressor",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#424242",
+              "stroke": "#636363"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#D3D6D9",
+              "stroke": "#B2B2B2"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate",
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "train_evaluation.random_forest.train_model__86546ff0",
+      "id": "038647c7",
+      "modular_pipelines": [
+        "train_evaluation.random_forest"
+      ],
+      "name": "train_model",
+      "node_extras": null,
+      "parameters": {
+        "train_evaluation.model_options.random_forest": {
+          "class": "RandomForestRegressor",
+          "kwargs": {
+            "bootstrap": true,
+            "ccp_alpha": 0,
+            "criterion": "squared_error",
+            "max_features": 1.0,
+            "min_impurity_decrease": 0,
+            "min_samples_leaf": 1,
+            "min_samples_split": 2,
+            "min_weight_fraction_leaf": 0,
+            "n_estimators": 100,
+            "oob_score": false,
+            "verbose": 0,
+            "warm_start": false
+          },
+          "module": "sklearn.ensemble"
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pickle.pickle_dataset.PickleDataset",
+      "id": "10e51dea",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation.linear_regression"
+      ],
+      "name": "train_evaluation.linear_regression.regressor",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#D9DCDE",
+              "fill": "#0F0F11",
+              "stroke": "#525252"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#ECEDEF",
+              "stroke": "#C6CACE"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate",
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "22eec376",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:split_options",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [],
+      "type": "parameters"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "23c94afb",
+      "layer": "model_input",
+      "modular_pipelines": [
+        "feature_engineering"
+      ],
+      "name": "model_input_table",
+      "node_extras": {
+        "stats": {
+          "columns": 12,
+          "file_size": 787351,
+          "rows": 29768
+        },
+        "styles": {
+          "opacity": "0.9",
+          "strokeWidth": "3px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#747474",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#000000",
+              "fill": "#989898",
+              "stroke": "#747474"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "modelling_stage",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "split_data__3c1a939c",
+      "id": "2816ba38",
+      "modular_pipelines": null,
+      "name": "split_data",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#D9DCDE",
+              "fill": "#0F0F11",
+              "stroke": "#525252"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#ECEDEF",
+              "stroke": "#C6CACE"
+            }
+          }
+        }
+      },
+      "parameters": {
+        "split_options": {
+          "random_state": 3,
+          "target": "price",
+          "test_size": 0.2
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "495a0bbc",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression"
+      ],
+      "name": "train_evaluation.linear_regression.r2_score",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "4f79de77",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.random_forest"
+      ],
+      "name": "train_evaluation.random_forest.experiment_params",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "72baf5c6",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:train_evaluation.model_options.random_forest",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "parameters"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "872981f9",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression",
+        "train_evaluation.random_forest"
+      ],
+      "name": "X_test",
+      "node_extras": {
+        "stats": {
+          "columns": 11,
+          "rows": 5954
+        },
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#242424",
+              "fill": "#F9F9FA",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#D9DCDE",
+              "fill": "#000000",
+              "stroke": "#868686"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "98eb115e",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:train_evaluation.model_options.linear_regression",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "parameters"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "9ca016a8",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression",
+        "train_evaluation.random_forest"
+      ],
+      "name": "y_train",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#D9DCDE",
+              "fill": "#0F0F11",
+              "stroke": "#525252"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#ECEDEF",
+              "stroke": "#C6CACE"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "train_evaluation.linear_regression.train_model__199807b9",
+      "id": "af9a43c8",
+      "modular_pipelines": [
+        "train_evaluation.linear_regression"
+      ],
+      "name": "train_model",
+      "node_extras": null,
+      "parameters": {
+        "train_evaluation.model_options.linear_regression": {
+          "class": "LinearRegression",
+          "kwargs": {
+            "copy_X": true,
+            "fit_intercept": true,
+            "positive": false
+          },
+          "module": "sklearn.linear_model"
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "b16095d0",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.random_forest"
+      ],
+      "name": "train_evaluation.random_forest.r2_score",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "b701864d",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression"
+      ],
+      "name": "train_evaluation.linear_regression.experiment_params",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "train_evaluation.random_forest.evaluate_model__cefff325",
+      "id": "bf8530bc",
+      "modular_pipelines": [
+        "train_evaluation.random_forest"
+      ],
+      "name": "evaluate_model",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "cae2d1c7",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression",
+        "train_evaluation.random_forest"
+      ],
+      "name": "X_train",
+      "node_extras": {
+        "stats": {
+          "columns": 11,
+          "rows": 23814
+        },
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "train"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "train_evaluation.linear_regression.evaluate_model__1c49c35c",
+      "id": "d2885635",
+      "modular_pipelines": [
+        "train_evaluation.linear_regression"
+      ],
+      "name": "evaluate_model",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "f6d9538c",
+      "layer": null,
+      "modular_pipelines": [
+        "train_evaluation",
+        "train_evaluation.linear_regression",
+        "train_evaluation.random_forest"
+      ],
+      "name": "y_test",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#424242",
+              "stroke": "#636363"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#D3D6D9",
+              "stroke": "#B2B2B2"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "train_evaluation",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "train_evaluation",
+      "node_extras": null,
+      "pipelines": [
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate",
+        "train"
+      ],
+      "type": "modularPipeline"
+    },
+    {
+      "dataset_type": null,
+      "id": "train_evaluation.linear_regression",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "train_evaluation.linear_regression",
+      "node_extras": null,
+      "pipelines": [
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate",
+        "train"
+      ],
+      "type": "modularPipeline"
+    },
+    {
+      "dataset_type": null,
+      "id": "train_evaluation.random_forest",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "train_evaluation.random_forest",
+      "node_extras": null,
+      "pipelines": [
+        "modelling_stage"
+      ],
+      "tags": [
+        "evaluate",
+        "train"
+      ],
+      "type": "modularPipeline"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "__default__",
+      "name": "__default__"
+    },
+    {
+      "id": "data_ingestion",
+      "name": "data_ingestion"
+    },
+    {
+      "id": "feature_engineering",
+      "name": "feature_engineering"
+    },
+    {
+      "id": "modelling_stage",
+      "name": "modelling_stage"
+    },
+    {
+      "id": "pre_modelling",
+      "name": "pre_modelling"
+    },
+    {
+      "id": "reporting_stage",
+      "name": "reporting_stage"
+    }
+  ],
+  "selected_pipeline": "modelling_stage",
+  "tags": [
+    {
+      "id": "companies",
+      "name": "companies"
+    },
+    {
+      "id": "evaluate",
+      "name": "evaluate"
+    },
+    {
+      "id": "shuttles",
+      "name": "shuttles"
+    },
+    {
+      "id": "train",
+      "name": "train"
+    }
+  ]
+}

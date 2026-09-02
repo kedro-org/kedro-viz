@@ -8,10 +8,6 @@ from IPython.display import HTML, display
 from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
 
-from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
-from kedro_viz.integrations.notebook.data_loader import (
-    load_and_populate_data_for_notebook_users,
-)
 from kedro_viz.utils import Spinner, merge_dicts
 
 DEFAULT_VIZ_OPTIONS = {
@@ -83,9 +79,18 @@ class NotebookVisualizer:
         self.css_url = css_url or DEFAULT_CSS_URL
 
     def _load_viz_data(self) -> Optional[Any]:
-        """Load pipeline and catalog data for visualization."""
-        load_and_populate_data_for_notebook_users(self.pipeline, self.catalog)
-        return get_kedro_project_json_data()
+        """Load pipeline and catalog data for visualization.
+
+        Temporarily unavailable: Kedro-Viz now builds the graph from a Kedro inspection snapshot,
+        and in-notebook visualisation from an in-memory pipeline/catalog (which has no project path
+        / snapshot) has not yet been migrated to that path. Tracked in the inspection-adapter
+        tickets as a deliberate follow-up.
+        """
+        raise NotImplementedError(
+            "NotebookVisualizer is temporarily unavailable while Kedro-Viz migrates to the Kedro "
+            "inspection snapshot backend. In-notebook visualisation from an in-memory "
+            "pipeline/catalog will be restored once the snapshot path supports it."
+        )
 
     def generate_html(self) -> str:
         """Generate HTML markup for Kedro-Viz as a string."""

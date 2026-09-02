@@ -12,6 +12,12 @@ Please follow the established format:
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
  - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
 
+# Upcoming Release
+
+## Breaking changes
+- **BREAKING CHANGE:** Kedro-Viz now builds its graph from Kedro's lightweight inspection snapshot, and node IDs use a new scheme (hashed from each node's name + inputs/outputs, instead of the old hash of the whole node string). Two one-time impacts for users: old `?selected=<id>` deep links no longer resolve, and any previously exported static sites must be re-exported. Requires `kedro>=1.4.0`. (#2265)
+- **`--lite` mode only:** the graph's `dataset_type` is the raw catalog string (e.g. `pandas.CSVDataset`) rather than a resolved class path (e.g. `pandas.csv_dataset.CSVDataset`), because lite mode imports no dataset classes; dataset-specific node icons (plotly/matplotlib) fall back to the generic data icon there. The default (full) mode is unchanged and keeps serving resolved class paths. In-memory datasets report `io.memory_dataset.MemoryDataset` in both modes. (#2265)
+
 # Release 12.4.0
 
 ## Major features and improvements

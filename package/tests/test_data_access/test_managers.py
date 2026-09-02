@@ -1,28 +1,18 @@
 from collections import defaultdict
 from typing import Dict
-from unittest.mock import MagicMock
 
-import networkx as nx
-import pytest
 from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets.pandas import CSVDataset
 
-from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.data_access.repositories.catalog import CatalogRepository
 from kedro_viz.data_access.repositories.graph import GraphNodesRepository
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
-from kedro_viz.data_access.repositories.registered_pipelines import (
-    RegisteredPipelinesRepository,
-)
-from kedro_viz.data_access.repositories.tags import TagsRepository
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart.edge import GraphEdge
-from kedro_viz.models.flowchart.named_entities import Tag
 from kedro_viz.models.flowchart.nodes import (
     DataNode,
     ParametersNode,
@@ -41,13 +31,7 @@ class TestDataAccessManager:
         """Test that all instance variables are correctly initialized."""
         assert isinstance(data_access_manager.catalog, CatalogRepository)
         assert isinstance(data_access_manager.nodes, GraphNodesRepository)
-        assert isinstance(
-            data_access_manager.registered_pipelines, RegisteredPipelinesRepository
-        )
-        assert isinstance(data_access_manager.tags, TagsRepository)
         assert isinstance(data_access_manager.modular_pipelines, defaultdict)
-        assert isinstance(data_access_manager.edges, defaultdict)
-        assert isinstance(data_access_manager.node_dependencies, defaultdict)
         assert data_access_manager.node_extras == {}
 
     def test_manager_reset_fields(self, data_access_manager: DataAccessManager):
@@ -93,10 +77,11 @@ class TestAddNode:
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
         assert isinstance(graph_node, TaskNode)
-        assert graph_node.belongs_to_pipeline("my_pipeline")
+        assert "my_pipeline" in graph_node.pipelines
         assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
-        assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
+        # The node carries its own tags (the data-access tags repo was removed as dead code).
+        assert graph_node.tags == {"tag1", "tag2"}
 
     def test_add_node_with_modular_pipeline(
         self,
@@ -128,200 +113,6 @@ class TestAddNode:
             "uk.data_science.modular_pipeline",
         }
 
-    def test_add_node_input(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_modular_pipelines_repo_obj,
-    ):
-        dataset = CSVDataset(filepath="dataset.csv")
-        dataset_name = "x"
-        registered_pipeline_id = "my_pipeline"
-
-        # add a Kedro node to the graph
-        kedro_node = node(
-            identity, inputs=dataset_name, outputs="output", tags=["tag1", "tag2"]
-        )
-        task_node = data_access_manager.add_node(
-            registered_pipeline_id, kedro_node, example_modular_pipelines_repo_obj
-        )
-
-        # add its input to the graph
-        catalog = DataCatalog(
-            datasets={dataset_name: dataset},
-        )
-        data_access_manager.add_catalog(catalog, example_pipelines)
-        data_access_manager.add_dataset(
-            registered_pipeline_id, dataset_name, example_modular_pipelines_repo_obj
-        )
-        data_node = data_access_manager.add_node_input(
-            registered_pipeline_id,
-            dataset_name,
-            task_node,
-            example_modular_pipelines_repo_obj,
-        )
-        assert isinstance(data_node, DataNode)
-
-        # the graph should have 2 nodes: the task node and its input data node
-        nodes_list = data_access_manager.nodes.as_list()
-        assert nodes_list == [task_node, data_node]
-        # it should have an edge between these two nodes
-        assert data_access_manager.get_edges_for_registered_pipeline(
-            registered_pipeline_id
-        ) == [GraphEdge(source=data_node.id, target=task_node.id)]
-        # the input data node should have the task node's tags
-        assert data_node.tags == {"tag1", "tag2"}
-        assert data_access_manager.get_node_dependencies_for_registered_pipeline(
-            registered_pipeline_id
-        ) == {
-            data_node.id: {
-                task_node.id,
-            }
-        }
-
-    def test_add_parameters_as_node_input(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_modular_pipelines_repo_obj,
-    ):
-        parameters = {"train_test_split": 0.1, "num_epochs": 1000}
-        catalog = DataCatalog()
-        catalog["parameters"] = parameters
-        data_access_manager.add_catalog(catalog, example_pipelines)
-        registered_pipeline_id = "my_pipeline"
-        kedro_node = node(identity, inputs="parameters", outputs="output")
-        task_node = data_access_manager.add_node(
-            registered_pipeline_id,
-            kedro_node,
-            example_modular_pipelines_repo_obj,
-        )
-        parameters_node = data_access_manager.add_node_input(
-            registered_pipeline_id,
-            "parameters",
-            task_node,
-            example_modular_pipelines_repo_obj,
-        )
-        assert isinstance(parameters_node, ParametersNode)
-        assert task_node.parameters == parameters
-
-    def test_add_single_parameter_as_node_input(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_modular_pipelines_repo_obj,
-    ):
-        catalog = DataCatalog()
-        catalog["params:train_test_split"] = 0.1
-        data_access_manager.add_catalog(catalog, example_pipelines)
-        registered_pipeline_id = "my_pipeline"
-        kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
-        task_node = data_access_manager.add_node(
-            registered_pipeline_id,
-            kedro_node,
-            example_modular_pipelines_repo_obj,
-        )
-        parameter_node = data_access_manager.add_node_input(
-            registered_pipeline_id,
-            "params:train_test_split",
-            task_node,
-            example_modular_pipelines_repo_obj,
-        )
-        assert isinstance(parameter_node, ParametersNode)
-        assert task_node.parameters == {"train_test_split": 0.1}
-
-    def test_parameters_yaml_namespace_not_added_to_modular_pipelines(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_modular_pipelines_repo_obj,
-        mocker,
-    ):
-        parameter_name = "params:uk.data_science.train_test_split.ratio"
-        catalog = DataCatalog()
-        catalog[parameter_name] = 0.1
-        data_access_manager.add_catalog(catalog, example_pipelines)
-        registered_pipeline_id = "my_pipeline"
-        kedro_node = node(
-            identity,
-            inputs=parameter_name,
-            outputs="output",
-            namespace="uk.data_science",
-        )
-        mocker.patch.object(
-            example_modular_pipelines_repo_obj,
-            "get_node_and_modular_pipeline_mapping",
-            return_value=(
-                "identity_node",
-                {"uk", "uk.data_science"},
-            ),
-        )
-        task_node = data_access_manager.add_node(
-            registered_pipeline_id,
-            kedro_node,
-            example_modular_pipelines_repo_obj,
-        )
-        data_access_manager.add_node_input(
-            registered_pipeline_id,
-            parameter_name,
-            task_node,
-            example_modular_pipelines_repo_obj,
-        )
-
-        # make sure parameters YAML namespace not accidentally added to the modular pipeline tree
-        if task_node.modular_pipelines:
-            assert "uk.data_science.train_test_split" not in task_node.modular_pipelines
-
-    def test_add_node_output(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_modular_pipelines_repo_obj,
-    ):
-        dataset = CSVDataset(filepath="dataset.csv")
-        registered_pipeline_id = "my_pipeline"
-        dataset_name = "x"
-
-        # add a Kedro node to the graph
-        kedro_node = node(
-            identity, inputs="input", outputs=dataset_name, tags=["tag1", "tag2"]
-        )
-        task_node = data_access_manager.add_node(
-            registered_pipeline_id, kedro_node, example_modular_pipelines_repo_obj
-        )
-
-        # add its output to the graph
-        catalog = DataCatalog(
-            datasets={dataset_name: dataset},
-        )
-        data_access_manager.add_catalog(catalog, example_pipelines)
-        data_access_manager.add_dataset(
-            registered_pipeline_id, dataset_name, example_modular_pipelines_repo_obj
-        )
-        data_node = data_access_manager.add_node_output(
-            registered_pipeline_id,
-            dataset_name,
-            task_node,
-            example_modular_pipelines_repo_obj,
-        )
-
-        # the graph should have 2 nodes: the task node and its output data node
-        nodes_list = data_access_manager.nodes.as_list()
-        assert nodes_list == [task_node, data_node]
-        # it should have an edge between these two nodes
-        assert data_access_manager.get_edges_for_registered_pipeline(
-            registered_pipeline_id
-        ) == [GraphEdge(source=task_node.id, target=data_node.id)]
-        # the output data node should have the task node's tags
-        assert data_node.tags == {"tag1", "tag2"}
-        assert data_access_manager.get_node_dependencies_for_registered_pipeline(
-            registered_pipeline_id
-        ) == {
-            task_node.id: {
-                data_node.id,
-            }
-        }
-
 
 class TestAddDataset:
     def test_add_dataset(
@@ -344,7 +135,7 @@ class TestAddDataset:
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
         assert graph_node.kedro_obj is dataset
-        assert graph_node.belongs_to_pipeline("my_pipeline")
+        assert "my_pipeline" in graph_node.pipelines
         assert not graph_node.modular_pipelines
 
     def test_add_memory_dataset_when_dataset_not_in_catalog(
@@ -481,55 +272,31 @@ class TestAddDataset:
         assert isinstance(graph_node, DataNode)
 
 
-class TestAddPipelines:
-    def test_add_pipelines(
+class TestAddMetadataNodes:
+    """The slim path that feeds the metadata bridge: builds the viz node objects (task / data /
+    parameter / transcoded) and attaches parameters to the tasks that consume them — without any
+    graph-structure work (edges, node dependencies, registered pipelines, modular-tree expansion)."""
+
+    def test_builds_task_data_and_parameter_nodes_with_params_attached(
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
     ):
         data_access_manager.add_catalog(example_catalog, example_pipelines)
-        data_access_manager.add_pipelines(example_pipelines)
+        data_access_manager.add_metadata_nodes(example_pipelines)
 
-        assert [p.id for p in data_access_manager.registered_pipelines.as_list()] == [
-            DEFAULT_REGISTERED_PIPELINE_ID,
-            "data_science",
-            "data_processing",
-        ]
-        assert {n.name for n in data_access_manager.nodes.as_list()} == {
-            "process_data",
-            "train_model",
-            "uk.data_science.model",
-            "uk.data_processing.raw_data",
-            "model_inputs",
-            "parameters",
-            "params:uk.data_processing.train_test_split",
-        }
-        assert data_access_manager.tags.as_list() == [Tag(id="split"), Tag(id="train")]
-        assert sorted(
-            data_access_manager.modular_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
-            .as_dict()
-            .keys()
-        ) == sorted(
-            [
-                ROOT_MODULAR_PIPELINE_ID,
-                "uk",
-                "uk.data_processing",
-                "uk.data_science",
-            ]
-        )
-        assert sorted(
-            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline().keys()
-        ) == sorted(
-            [
-                ROOT_MODULAR_PIPELINE_ID,
-                "uk",
-                "uk.data_processing",
-                "uk.data_science",
-            ]
-        )
+        nodes = data_access_manager.nodes.as_list()
+        node_types = {type(n) for n in nodes}
+        assert TaskNode in node_types
+        assert DataNode in node_types
+        assert ParametersNode in node_types
 
-    def test_add_pipelines_with_transcoded_data(
+        # parameters are attached to the task nodes that consume them
+        task_nodes = [n for n in nodes if isinstance(n, TaskNode)]
+        assert any(n.parameters for n in task_nodes)
+
+    def test_transcoded_datasets_are_wired(
         self,
         data_access_manager: DataAccessManager,
         example_transcoded_pipelines: Dict[str, Pipeline],
@@ -538,116 +305,11 @@ class TestAddPipelines:
         data_access_manager.add_catalog(
             example_transcoded_catalog, example_transcoded_pipelines
         )
-        data_access_manager.add_pipelines(example_transcoded_pipelines)
+        data_access_manager.add_metadata_nodes(example_transcoded_pipelines)
         assert any(
-            isinstance(node, TranscodedDataNode)
-            for node in data_access_manager.nodes.as_list()
+            isinstance(n, TranscodedDataNode)
+            for n in data_access_manager.nodes.as_list()
         )
-
-    def test_different_registered_pipelines_having_modular_pipeline_with_same_name(
-        self,
-        data_access_manager: DataAccessManager,
-    ):
-        # this test case was taken from the following user's report:
-        # https://github.com/kedro-org/kedro-viz/issues/858
-        registered_pipelines = {
-            "__default__": pipeline(
-                [node(func=lambda a: False, inputs="tst.a", outputs="d")]
-            ),
-            "pipe2": pipeline(
-                [node(func=lambda a: False, inputs="tst.b", outputs="tst.c")]
-            ),
-        }
-
-        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
-        data_access_manager.add_pipelines(registered_pipelines)
-        modular_pipeline_tree = (
-            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-                DEFAULT_REGISTERED_PIPELINE_ID
-            )
-        )
-        assert len(modular_pipeline_tree["__root__"].children) == 3
-
-    def test_get_default_selected_pipelines_without_default(
-        self,
-        data_access_manager: DataAccessManager,
-        example_pipelines: Dict[str, Pipeline],
-        example_catalog: DataCatalog,
-    ):
-        data_access_manager.add_catalog(example_catalog, example_pipelines)
-        del example_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
-        data_access_manager.add_pipelines(example_pipelines)
-        assert not data_access_manager.registered_pipelines.get_pipeline_by_id(
-            DEFAULT_REGISTERED_PIPELINE_ID
-        )
-        assert data_access_manager.get_default_selected_pipeline().id == "data_science"
-
-    def test_add_pipelines_with_circular_modular_pipelines(
-        self,
-        data_access_manager: DataAccessManager,
-    ):
-        # in this test example,
-        # internal modular pipeline has two disconnected nodes: a->b and c->d
-        # b connects as input to an external modular pipeline
-        # while c serves as that modular pipeline's output
-        # which creates a circular dependency between internal and external.
-
-        internal = pipeline(
-            Pipeline(
-                [
-                    node(
-                        identity,
-                        inputs="a",
-                        outputs="b",
-                    ),
-                    node(
-                        identity,
-                        inputs="c",
-                        outputs="d",
-                    ),
-                ]
-            ),
-            namespace="internal",
-            inputs={"c"},
-            outputs={"b"},
-        )
-        external = pipeline(
-            Pipeline(
-                [
-                    node(
-                        identity,
-                        inputs="b",
-                        outputs="c",
-                    )
-                ]
-            ),
-            namespace="external",
-            inputs={"b"},
-            outputs={"c"},
-        )
-
-        registered_pipelines = {
-            "__default__": internal + external,
-        }
-        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
-        data_access_manager.add_pipelines(registered_pipelines)
-        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            DEFAULT_REGISTERED_PIPELINE_ID
-        )
-        edges = data_access_manager.get_edges_for_registered_pipeline(
-            DEFAULT_REGISTERED_PIPELINE_ID
-        )
-
-        # make sure that the original edge external.d->internal.d that forms the cycle
-        # is not in the final list of edges
-        d = next(edge for edge in edges if edge.source == "external").target
-        assert not any(edge.target == "internal" for edge in edges if edge.source == d)
-
-        digraph = nx.DiGraph()
-        for edge in edges:
-            digraph.add_edge(edge.source, edge.target)
-        with pytest.raises(nx.NetworkXNoCycle):
-            nx.find_cycle(digraph)
 
 
 class TestResolveDatasetFactoryPatterns:

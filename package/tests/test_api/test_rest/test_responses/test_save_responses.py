@@ -13,6 +13,24 @@ from kedro_viz.api.rest.responses.save_responses import (
 )
 
 
+def _stub_provider(
+    *,
+    pipeline_response="pipeline-response",
+    node_metadata_response="node-metadata-response",
+    run_status_response="run-status-response",
+    pipeline_ids=("01f456", "01f457"),
+    node_ids=("01f456", "01f457"),
+):
+    """Tiny stand-in for ``RuntimeDataProvider`` — only the methods ``save_responses`` calls."""
+    provider = Mock()
+    provider.get_pipeline_response.return_value = pipeline_response
+    provider.get_node_metadata_response.return_value = node_metadata_response
+    provider.get_run_status_response.return_value = run_status_response
+    provider.get_pipeline_ids.return_value = list(pipeline_ids)
+    provider.get_node_ids.return_value = list(node_ids)
+    return provider
+
+
 class TestSaveAPIResponse:
     @pytest.mark.parametrize(
         "file_path, protocol, is_all_previews_enabled",
@@ -40,135 +58,144 @@ class TestSaveAPIResponse:
 
         mock_filesystem = mocker.patch("fsspec.filesystem")
         mock_filesystem.return_value.protocol = protocol
+        provider = _stub_provider()
 
         save_api_responses_to_fs(
-            file_path, mock_filesystem.return_value, is_all_previews_enabled
+            file_path,
+            mock_filesystem.return_value,
+            is_all_previews_enabled,
+            provider=provider,
         )
 
         mock_api_main_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/main", mock_filesystem.return_value
+            f"{file_path}/api/main", mock_filesystem.return_value, provider
         )
         mock_api_node_response_to_fs.assert_called_once_with(
             f"{file_path}/api/nodes",
             mock_filesystem.return_value,
             is_all_previews_enabled,
+            provider,
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/pipelines", mock_filesystem.return_value
+            f"{file_path}/api/pipelines", mock_filesystem.return_value, provider
         )
         mock_api_run_status_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/run-status", mock_filesystem.return_value
+            f"{file_path}/api/run-status", mock_filesystem.return_value, provider
         )
+
+    def test_save_api_responses_to_fs_falls_back_to_active_provider(self, mocker):
+        """When no provider is passed, the runtime factory chooses one."""
+        mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_main_response_to_fs"
+        )
+        mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_node_response_to_fs"
+        )
+        mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_pipeline_response_to_fs"
+        )
+        mocker.patch(
+            "kedro_viz.api.rest.responses.save_responses.save_api_run_status_response_to_fs"
+        )
+        mock_get_provider = mocker.patch(
+            "kedro_viz.api.data_provider.get_runtime_data_provider",
+            return_value=_stub_provider(),
+        )
+        mock_filesystem = mocker.patch("fsspec.filesystem")
+        mock_filesystem.return_value.protocol = "file"
+
+        save_api_responses_to_fs("out", mock_filesystem.return_value, True)
+
+        mock_get_provider.assert_called_once_with()
 
     def test_save_api_main_response_to_fs(self, mocker):
         expected_default_response = {"test": "json"}
         main_path = "/main"
-
-        mock_get_default_response = mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.get_pipeline_response",
-            return_value=expected_default_response,
-        )
+        provider = _stub_provider(pipeline_response=expected_default_response)
         mock_write_api_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
         )
 
         remote_fs = Mock()
 
-        save_api_main_response_to_fs(main_path, remote_fs)
+        save_api_main_response_to_fs(main_path, remote_fs, provider)
 
-        mock_get_default_response.assert_called_once()
+        provider.get_pipeline_response.assert_called_once_with()
         mock_write_api_response_to_fs.assert_called_once_with(
-            main_path, mock_get_default_response.return_value, remote_fs
+            main_path, expected_default_response, remote_fs
         )
 
     def test_save_api_pipeline_response_to_fs(self, mocker):
         pipelines_path = "/pipelines"
-        pipelineIds = ["01f456", "01f457"]
-        expected_selected_pipeline_response = {"test": "json"}
-
-        mock_get_selected_pipeline_response = mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.get_pipeline_response",
-            return_value=expected_selected_pipeline_response,
+        pipeline_ids = ["01f456", "01f457"]
+        expected_response = {"test": "json"}
+        provider = _stub_provider(
+            pipeline_response=expected_response, pipeline_ids=pipeline_ids
         )
         mock_write_api_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
         )
 
-        mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.data_access_manager."
-            "registered_pipelines.get_pipeline_ids",
-            return_value=pipelineIds,
-        )
-
         remote_fs = Mock()
 
-        save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
+        save_api_pipeline_response_to_fs(pipelines_path, remote_fs, provider)
 
-        assert mock_write_api_response_to_fs.call_count == len(pipelineIds)
-        assert mock_get_selected_pipeline_response.call_count == len(pipelineIds)
+        assert mock_write_api_response_to_fs.call_count == len(pipeline_ids)
+        # ``get_pipeline_response`` is called once per pipeline id.
+        assert provider.get_pipeline_response.call_count == len(pipeline_ids)
 
         expected_calls = [
             call(
-                f"{pipelines_path}/{pipelineId}",
-                mock_get_selected_pipeline_response.return_value,
+                f"{pipelines_path}/{pipeline_id}",
+                expected_response,
                 remote_fs,
             )
-            for pipelineId in pipelineIds
+            for pipeline_id in pipeline_ids
         ]
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     def test_save_api_node_response_to_fs(self, mocker):
         nodes_path = "/nodes"
-        nodeIds = ["01f456", "01f457"]
-        expected_metadata_response = {"test": "json"}
-
-        mock_get_node_metadata_response = mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.get_node_metadata_response",
-            return_value=expected_metadata_response,
+        node_ids = ["01f456", "01f457"]
+        expected_response = {"test": "json"}
+        provider = _stub_provider(
+            node_metadata_response=expected_response, node_ids=node_ids
         )
         mock_write_api_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
         )
-        mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.data_access_manager.nodes.get_node_ids",
-            return_value=nodeIds,
-        )
         remote_fs = mock.Mock()
 
-        save_api_node_response_to_fs(nodes_path, remote_fs, False)
+        save_api_node_response_to_fs(nodes_path, remote_fs, False, provider)
 
-        assert mock_write_api_response_to_fs.call_count == len(nodeIds)
-        assert mock_get_node_metadata_response.call_count == len(nodeIds)
+        assert mock_write_api_response_to_fs.call_count == len(node_ids)
+        assert provider.get_node_metadata_response.call_count == len(node_ids)
 
         expected_calls = [
             mock.call(
-                f"{nodes_path}/{nodeId}",
-                mock_get_node_metadata_response.return_value,
+                f"{nodes_path}/{node_id}",
+                expected_response,
                 remote_fs,
             )
-            for nodeId in nodeIds
+            for node_id in node_ids
         ]
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     def test_save_api_run_status_response_to_fs(self, mocker):
         expected_run_status_response = {"nodes": {}, "datasets": {}, "pipeline": {}}
         run_status_path = "/run-status"
-
-        mock_get_run_status_response = mocker.patch(
-            "kedro_viz.api.rest.responses.save_responses.get_run_status_response",
-            return_value=expected_run_status_response,
-        )
+        provider = _stub_provider(run_status_response=expected_run_status_response)
         mock_write_api_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_responses.write_api_response_to_fs"
         )
 
         remote_fs = Mock()
 
-        save_api_run_status_response_to_fs(run_status_path, remote_fs)
+        save_api_run_status_response_to_fs(run_status_path, remote_fs, provider)
 
-        mock_get_run_status_response.assert_called_once()
+        provider.get_run_status_response.assert_called_once_with()
         mock_write_api_response_to_fs.assert_called_once_with(
-            run_status_path, mock_get_run_status_response.return_value, remote_fs
+            run_status_path, expected_run_status_response, remote_fs
         )
 
     @pytest.mark.parametrize(

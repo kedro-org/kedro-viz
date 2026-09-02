@@ -214,10 +214,6 @@ class GraphNode(BaseModel, ABC):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
         self.pipelines.add(pipeline_id)
 
-    def belongs_to_pipeline(self, pipeline_id: str) -> bool:
-        """Check whether this graph node belongs to a given pipeline_id."""
-        return pipeline_id in self.pipelines
-
     def has_metadata(self) -> bool:
         """Check whether this graph node has metadata.
         Since metadata of a graph node is derived from the underlying Kedro object,

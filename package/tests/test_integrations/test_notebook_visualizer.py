@@ -31,22 +31,14 @@ class TestNotebookVisualizer:
         assert notebook_visualizer.options == DEFAULT_VIZ_OPTIONS
         assert notebook_visualizer.js_url == DEFAULT_JS_URL
 
-    def test_load_viz_data(self, example_pipelines, example_catalog, mocker):
+    def test_load_viz_data_temporarily_unavailable(
+        self, example_pipelines, example_catalog
+    ):
+        """The notebook graph path is deliberately disabled while Kedro-Viz migrates to the
+        inspection snapshot backend (in-memory pipeline/catalog has no snapshot yet)."""
         notebook_visualizer = NotebookVisualizer(example_pipelines, example_catalog)
-
-        mock_load = mocker.patch(
-            "kedro_viz.integrations.notebook.visualizer.load_and_populate_data_for_notebook_users"
-        )
-        mock_get_project_json = mocker.patch(
-            "kedro_viz.integrations.notebook.visualizer.get_kedro_project_json_data"
-        )
-
-        notebook_visualizer._load_viz_data()
-
-        mock_load.assert_called_once_with(
-            notebook_visualizer.pipeline, notebook_visualizer.catalog
-        )
-        mock_get_project_json.assert_called_once()
+        with pytest.raises(NotImplementedError, match="temporarily unavailable"):
+            notebook_visualizer._load_viz_data()
 
     def test_generate_html(self, example_pipelines, mocker):
         custom_response = {"nodes": [{"id": "1", "name": "Test Node"}]}

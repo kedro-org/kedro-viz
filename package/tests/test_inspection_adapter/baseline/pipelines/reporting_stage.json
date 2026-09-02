@@ -1,0 +1,508 @@
+{
+  "edges": [
+    {
+      "source": "1e3cc50a",
+      "target": "4adb5c8b"
+    },
+    {
+      "source": "1e3cc50a",
+      "target": "reporting"
+    },
+    {
+      "source": "3fb71518",
+      "target": "8838ca1f"
+    },
+    {
+      "source": "40886786",
+      "target": "c6992660"
+    },
+    {
+      "source": "44ef9b48",
+      "target": "c0be8342"
+    },
+    {
+      "source": "4adb5c8b",
+      "target": "eb7d6d28"
+    },
+    {
+      "source": "9f266f06",
+      "target": "3fb71518"
+    },
+    {
+      "source": "9f266f06",
+      "target": "40886786"
+    },
+    {
+      "source": "9f266f06",
+      "target": "44ef9b48"
+    },
+    {
+      "source": "9f266f06",
+      "target": "be6b7919"
+    },
+    {
+      "source": "9f266f06",
+      "target": "c7646ea1"
+    },
+    {
+      "source": "9f266f06",
+      "target": "reporting"
+    },
+    {
+      "source": "be6b7919",
+      "target": "3b199c6b"
+    },
+    {
+      "source": "c7646ea1",
+      "target": "d0e9b00f"
+    },
+    {
+      "source": "reporting",
+      "target": "3b199c6b"
+    },
+    {
+      "source": "reporting",
+      "target": "8838ca1f"
+    },
+    {
+      "source": "reporting",
+      "target": "c0be8342"
+    },
+    {
+      "source": "reporting",
+      "target": "c6992660"
+    },
+    {
+      "source": "reporting",
+      "target": "d0e9b00f"
+    },
+    {
+      "source": "reporting",
+      "target": "eb7d6d28"
+    }
+  ],
+  "layers": [
+    "feature",
+    "intermediate",
+    "model_input",
+    "primary",
+    "raw",
+    "reporting"
+  ],
+  "modular_pipelines": {
+    "__root__": {
+      "children": [
+        {
+          "id": "1e3cc50a",
+          "type": "data"
+        },
+        {
+          "id": "3b199c6b",
+          "type": "data"
+        },
+        {
+          "id": "8838ca1f",
+          "type": "data"
+        },
+        {
+          "id": "9f266f06",
+          "type": "data"
+        },
+        {
+          "id": "c0be8342",
+          "type": "data"
+        },
+        {
+          "id": "c6992660",
+          "type": "data"
+        },
+        {
+          "id": "d0e9b00f",
+          "type": "data"
+        },
+        {
+          "id": "eb7d6d28",
+          "type": "data"
+        },
+        {
+          "id": "reporting",
+          "type": "modularPipeline"
+        }
+      ],
+      "id": "__root__",
+      "inputs": [],
+      "name": "__root__",
+      "outputs": []
+    },
+    "reporting": {
+      "children": [
+        {
+          "id": "3fb71518",
+          "type": "task"
+        },
+        {
+          "id": "40886786",
+          "type": "task"
+        },
+        {
+          "id": "44ef9b48",
+          "type": "task"
+        },
+        {
+          "id": "4adb5c8b",
+          "type": "task"
+        },
+        {
+          "id": "be6b7919",
+          "type": "task"
+        },
+        {
+          "id": "c7646ea1",
+          "type": "task"
+        }
+      ],
+      "id": "reporting",
+      "inputs": [
+        "1e3cc50a",
+        "9f266f06"
+      ],
+      "name": "reporting",
+      "outputs": [
+        "3b199c6b",
+        "8838ca1f",
+        "c0be8342",
+        "c6992660",
+        "d0e9b00f",
+        "eb7d6d28"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "dataset_type": "pandas.csv_dataset.CSVDataset",
+      "id": "1e3cc50a",
+      "layer": "feature",
+      "modular_pipelines": [
+        "feature_engineering",
+        "reporting"
+      ],
+      "name": "feature_importance_output",
+      "node_extras": {
+        "stats": {
+          "columns": 2,
+          "file_size": 460,
+          "rows": 15
+        },
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "feature_engineering",
+        "pre_modelling",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "matplotlib.matplotlib_dataset.MatplotlibDataset",
+      "id": "3b199c6b",
+      "layer": null,
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.confusion_matrix",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "reporting.make_price_analysis_image__4f97d161",
+      "id": "3fb71518",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "make_price_analysis_image",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "full_name": "reporting.make_price_histogram__e0da8d32",
+      "id": "40886786",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "make_price_histogram",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "full_name": "reporting.get_top_shuttles_data__3cb3499e",
+      "id": "44ef9b48",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "get_top_shuttles_data",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "full_name": "reporting.create_feature_importance_plot__e7a53e99",
+      "id": "4adb5c8b",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "create_feature_importance_plot",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "datasets.image_dataset.ImageDataset",
+      "id": "8838ca1f",
+      "layer": null,
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.cancellation_policy_grid",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "9f266f06",
+      "layer": "primary",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion",
+        "reporting"
+      ],
+      "name": "prm_shuttle_company_reviews",
+      "node_extras": {
+        "stats": {
+          "columns": 27,
+          "file_size": 1020356,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "feature_engineering",
+        "pre_modelling",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "reporting.create_matplotlib_chart__15c38707",
+      "id": "be6b7919",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "create_matplotlib_chart",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "json.json_dataset.JSONDataset",
+      "id": "c0be8342",
+      "layer": "reporting",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.top_shuttle_data",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "plotly.json_dataset.JSONDataset",
+      "id": "c6992660",
+      "layer": "reporting",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.price_histogram",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "reporting.make_cancel_policy_bar_chart__7c6d9304",
+      "id": "c7646ea1",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "make_cancel_policy_bar_chart",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "plotly.plotly_dataset.PlotlyDataset",
+      "id": "d0e9b00f",
+      "layer": "reporting",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.cancellation_policy_breakdown",
+      "node_extras": {
+        "stats": {
+          "columns": 3,
+          "file_size": 8744,
+          "rows": 21
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "plotly.json_dataset.JSONDataset",
+      "id": "eb7d6d28",
+      "layer": "reporting",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "name": "reporting.feature_importance",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "reporting",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "reporting",
+      "node_extras": null,
+      "pipelines": [
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "modularPipeline"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "__default__",
+      "name": "__default__"
+    },
+    {
+      "id": "data_ingestion",
+      "name": "data_ingestion"
+    },
+    {
+      "id": "feature_engineering",
+      "name": "feature_engineering"
+    },
+    {
+      "id": "modelling_stage",
+      "name": "modelling_stage"
+    },
+    {
+      "id": "pre_modelling",
+      "name": "pre_modelling"
+    },
+    {
+      "id": "reporting_stage",
+      "name": "reporting_stage"
+    }
+  ],
+  "selected_pipeline": "reporting_stage",
+  "tags": [
+    {
+      "id": "companies",
+      "name": "companies"
+    },
+    {
+      "id": "evaluate",
+      "name": "evaluate"
+    },
+    {
+      "id": "shuttles",
+      "name": "shuttles"
+    },
+    {
+      "id": "train",
+      "name": "train"
+    }
+  ]
+}

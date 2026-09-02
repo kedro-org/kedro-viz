@@ -10,8 +10,9 @@ import fsspec
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.integrations.kedro.node_ids import _create_dataset_node_id
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash, _hash_input_output
+from kedro_viz.utils import _hash
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,15 @@ EVENTS_FILE = "kedro_pipeline_events.json"
 
 
 def hash_node(node: Any) -> str:
-    """Stable ID for KedroNode or I/O reference."""
-    return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
+    """Stable Viz ID for a Kedro node or dataset reference.
+
+    A live node already knows its own string form, so its ID is a hash of that directly. The
+    adapter rebuilds the same string from the snapshot, so run-status events and the graph
+    share one ID scheme with no translation between them.
+    """
+    if isinstance(node, KedroNode):
+        return _hash(str(node))
+    return _create_dataset_node_id(node)
 
 
 def extract_file_paths(dataset: Any) -> List[str]:
