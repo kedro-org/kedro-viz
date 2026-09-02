@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.kedro.lite_parser import LiteParser, unresolved_modules
 
 
 @pytest.fixture
@@ -248,3 +248,29 @@ class TestLiteParser:
         # ignore files in other packages if
         # LiteParser is instantiated with a package_name
         assert len(unresolvable_imports) == 0
+
+
+class TestUnresolvedModules:
+    def test_returns_the_flattened_module_names(
+        self, sample_project_path, mock_spinner
+    ):
+        unresolved_modules.cache_clear()
+        assert unresolved_modules(
+            str(sample_project_path / "mock_spaceflights"), None
+        ) == frozenset({"nonexistentmodule"})
+
+    def test_the_project_is_walked_once_per_project_and_package(
+        self, sample_project_path, mock_spinner
+    ):
+        """The two lite-mode callers should share one project walk."""
+        unresolved_modules.cache_clear()
+        target = str(sample_project_path / "mock_spaceflights")
+
+        with patch.object(
+            LiteParser, "parse", autospec=True, return_value={}
+        ) as mock_parse:
+            unresolved_modules(target, None)
+            unresolved_modules(target, None)
+            unresolved_modules(target, "mock_spaceflights")
+
+        assert mock_parse.call_count == 2

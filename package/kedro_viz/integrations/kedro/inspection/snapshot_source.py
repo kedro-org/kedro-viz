@@ -22,23 +22,25 @@ def lite_import_stubs(
     import sys
     from unittest.mock import patch
 
-    from kedro_viz.integrations.kedro.lite_parser import LiteParser
+    from kedro_viz.integrations.kedro.lite_parser import (
+        LiteParser,
+        unresolved_modules,
+    )
     from kedro_viz.models.metadata import Metadata
 
-    lite_parser = LiteParser(package_name)
-    unresolved = lite_parser.parse(Path(project_path)) or {}
-    modules_to_mock: set[str] = set()
-    for module_set in unresolved.values():
-        modules_to_mock |= module_set
+    modules_to_mock = set(unresolved_modules(str(project_path), package_name))
 
     sys_modules_patch = sys.modules.copy()
     if modules_to_mock:
         # Same banner the live --lite loader sets, so the UI flags limited functionality.
         Metadata.set_has_missing_dependencies(True)
-        sys_modules_patch.update(lite_parser.create_mock_modules(modules_to_mock))
-        logger.warning(
-            "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
-            "mocked. Install them for full functionality:\n%s",
+        sys_modules_patch.update(
+            LiteParser(package_name).create_mock_modules(modules_to_mock)
+        )
+        # TODO(#2724): Restore this warning when the live loader is removed.
+        # The live loader already warned the user about these modules.
+        logger.debug(
+            "Building the snapshot with %d project dependency module(s) mocked:\n%s",
             len(modules_to_mock),
             sorted(modules_to_mock),
         )
