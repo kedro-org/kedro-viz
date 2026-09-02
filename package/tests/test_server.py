@@ -138,10 +138,12 @@ class TestServer:
             include_hooks=True,
         )
 
-    def test_load_and_populate_data_does_not_create_a_project_context(
-        self, patched_create_viz_project_context
+    def test_load_and_populate_data_returns_repositories_without_creating_a_context(
+        self, patched_create_viz_project_context, patched_data_access_manager
     ):
-        load_and_populate_data(Path.cwd())
+        result = load_and_populate_data(Path.cwd())
+
+        assert result is patched_data_access_manager
         patched_create_viz_project_context.assert_not_called()
 
     def test_load_file(

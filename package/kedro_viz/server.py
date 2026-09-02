@@ -43,7 +43,7 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
-def _load_and_populate_project_data(
+def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
@@ -52,7 +52,11 @@ def _load_and_populate_project_data(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ) -> DataAccessManager:
-    """Load one project and populate the transitional live repositories."""
+    """Load a project and return the populated legacy repositories.
+
+    VSCode and deployment call this entry point and ignore its return value. The HTTP
+    server uses the returned repositories to build its project-scoped inspection context.
+    """
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
@@ -68,31 +72,6 @@ def _load_and_populate_project_data(
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
     return data_access_manager
-
-
-def load_and_populate_data(
-    path: Path,
-    env: Optional[str] = None,
-    include_hooks: bool = False,
-    package_name: Optional[str] = None,
-    pipeline_name: Optional[str] = None,
-    extra_params: Optional[Dict[str, Any]] = None,
-    is_lite: bool = False,
-) -> None:
-    """Load a project and populate the legacy repositories.
-
-    VSCode and deployment call this compatibility entry point directly. Project-scoped
-    inspection services are created only by their own entry points.
-    """
-    _load_and_populate_project_data(
-        path,
-        env,
-        include_hooks,
-        package_name,
-        pipeline_name,
-        extra_params,
-        is_lite,
-    )
 
 
 def _create_viz_project_context(
@@ -198,7 +177,7 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        live_data = _load_and_populate_project_data(
+        live_data = load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
         # Copy enrichment from the transitional live repositories into the project-scoped
