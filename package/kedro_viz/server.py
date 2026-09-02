@@ -1,6 +1,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -11,8 +12,14 @@ from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.inspection import (
+    EnrichmentSources,
+    VizProjectContext,
+)
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
+
+logger = logging.getLogger(__name__)
 
 DEV_PORT = 4142
 
@@ -44,8 +51,12 @@ def load_and_populate_data(
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):
-    """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
+) -> DataAccessManager:
+    """Load a project and return the populated legacy repositories.
+
+    VSCode and deployment call this entry point and ignore its return value. The HTTP
+    server uses the returned repositories to build its project-scoped inspection context.
+    """
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
@@ -60,6 +71,62 @@ def load_and_populate_data(
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+    return data_access_manager
+
+
+def _create_viz_project_context(
+    path: Path,
+    live_data: DataAccessManager,
+    *,
+    env: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+    package_name: Optional[str] = None,
+    is_lite: bool = False,
+    include_hooks: bool = False,
+) -> VizProjectContext:
+    """Create the explicit context used by the HTTP graph routes.
+
+    Args:
+        path: The Kedro project root.
+        live_data: Repositories populated by the transitional live load.
+        env: The Kedro environment, honouring ``--env``.
+        pipeline_name: Restrict the view to one registered pipeline, honouring ``--pipeline``.
+        extra_params: Typed parameter overrides from ``--params``.
+        package_name: The Kedro project package, used to identify project imports in lite mode.
+        is_lite: Whether to mock missing project dependencies while building the snapshot.
+        include_hooks: Whether hook-modified layers should replace raw catalog layers.
+
+    Raises:
+        Exception: If the inspection context cannot be constructed.
+    """
+    try:
+        # A hook can add, change or remove layer metadata, and only the populated catalog
+        # reflects that, so with hooks the builder reads layers from there instead of the
+        # raw catalog config.
+        layer_by_dataset = (
+            dict(live_data.catalog.layers_mapping) if include_hooks else None
+        )
+        enrichment = EnrichmentSources.from_live_nodes(
+            live_data.nodes.as_list(),
+            layer_by_dataset=layer_by_dataset,
+        )
+        return VizProjectContext.from_project(
+            path,
+            env=env,
+            pipeline_name=pipeline_name,
+            runtime_params=extra_params,
+            package_name=package_name,
+            is_lite=is_lite,
+            enrichment=enrichment,
+        )
+    # Context construction is an all-or-nothing startup requirement. Log and propagate every
+    # failure rather than serving an app whose graph routes cannot work.
+    except Exception:
+        logger.exception(
+            "Could not build the Kedro inspection context, so the graph cannot be served."
+        )
+        raise
 
 
 def run_server(
@@ -110,11 +177,26 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(
+        live_data = load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
+        # Copy enrichment from the transitional live repositories into the project-scoped
+        # context. The graph service keeps no reference to the global repositories.
+        context = _create_viz_project_context(
+            path,
+            live_data,
+            env=env,
+            pipeline_name=pipeline_name,
+            extra_params=extra_params,
+            package_name=package_name,
+            is_lite=is_lite,
+            include_hooks=include_hooks,
+        )
+
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
+        # TODO(#2660): make ``--save-file`` and ``kedro viz build`` use the project
+        # context so static exports match the HTTP graph responses.
         if save_file:
             from kedro_viz.api.rest.responses.save_responses import (
                 save_api_responses_to_fs,
@@ -122,7 +204,7 @@ def run_server(
 
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
-        app = apps.create_api_app_from_project(path, autoreload)
+        app = apps.create_api_app_from_project(context, path, autoreload)
     else:
         app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
 

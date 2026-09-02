@@ -50,9 +50,9 @@ def lite_import_stubs(
 class _InspectionSession:
     """Read a project's snapshot and config, bootstrapping and building the loader once.
 
-    Create one session per request. The project is bootstrapped and the Kedro config loader is built
-    lazily on first use and then cached, so the catalog config and parameters reuse a single loader
-    instead of rebuilding it.
+    Create one session per adapter build. The project is bootstrapped and the Kedro config loader
+    is built lazily on first use and then cached, so the catalog config and parameters reuse a
+    single loader instead of rebuilding it.
     """
 
     def __init__(

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Dict, cast
 from unittest import mock
 
 import pandas as pd
@@ -13,11 +13,16 @@ from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
 
 from kedro_viz.api import apps
+from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
+from kedro_viz.integrations.kedro.inspection import (
+    InspectionGraphService,
+    VizProjectContext,
+)
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.models.metadata import NodeExtras
@@ -497,14 +502,36 @@ def example_transcoded_catalog():
 
 
 @pytest.fixture
+def repository_project_context() -> VizProjectContext:
+    """Provide graph services backed by the repositories these tests build.
+
+    These tests populate ``data_access_manager`` with synthetic pipelines rather than a Kedro
+    project, so the inspection graph service cannot be built for them. This context keeps them
+    exercising routing and response shape; the adapter itself is covered in
+    ``test_inspection_adapter``.
+
+    Transitional: it goes away with the live backend (#2724).
+    """
+
+    class _RepositoryBackedGraphService:
+        def get_pipeline_response(self, pipeline_id=None):
+            return get_pipeline_response(pipeline_id)
+
+    return VizProjectContext(
+        graph=cast(InspectionGraphService, _RepositoryBackedGraphService())
+    )
+
+
+@pytest.fixture
 def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     example_node_extras_dict: Dict[str, NodeExtras],
+    repository_project_context: VizProjectContext,
     mocker,
 ):
-    api = apps.create_api_app_from_project(mock.MagicMock())
+    api = apps.create_api_app_from_project(repository_project_context, mock.MagicMock())
     populate_data(
         data_access_manager,
         example_catalog,
@@ -527,10 +554,11 @@ def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_project_context: VizProjectContext,
     mocker,
 ):
     del example_pipelines["__default__"]
-    api = apps.create_api_app_from_project(mock.MagicMock())
+    api = apps.create_api_app_from_project(repository_project_context, mock.MagicMock())
     populate_data(data_access_manager, example_catalog, example_pipelines, {})
     mocker.patch(
         "kedro_viz.api.rest.responses.pipelines.data_access_manager",
@@ -548,9 +576,10 @@ def example_api_for_edge_case_pipelines(
     data_access_manager: DataAccessManager,
     edge_case_example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_project_context: VizProjectContext,
     mocker,
 ):
-    api = apps.create_api_app_from_project(mock.MagicMock())
+    api = apps.create_api_app_from_project(repository_project_context, mock.MagicMock())
 
     # For readability we are not hashing the node id
     mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
@@ -581,9 +610,10 @@ def example_api_for_pipelines_with_additional_tags(
     data_access_manager: DataAccessManager,
     example_pipelines_with_additional_tags: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    repository_project_context: VizProjectContext,
     mocker,
 ):
-    api = apps.create_api_app_from_project(mock.MagicMock())
+    api = apps.create_api_app_from_project(repository_project_context, mock.MagicMock())
 
     # For readability we are not hashing the node id
     mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
@@ -614,9 +644,10 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
+    repository_project_context: VizProjectContext,
     mocker,
 ):
-    api = apps.create_api_app_from_project(mock.MagicMock())
+    api = apps.create_api_app_from_project(repository_project_context, mock.MagicMock())
     populate_data(
         data_access_manager,
         example_transcoded_catalog,

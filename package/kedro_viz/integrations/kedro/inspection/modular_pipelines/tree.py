@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+
+from pydantic import BaseModel, Field
 
 from kedro_viz.api.rest.responses.pipelines import (
     ModularPipelineChildAPIResponse,
@@ -24,8 +25,7 @@ if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot
 
 
-@dataclass
-class _ModularPipelineTreeEntry:
+class _ModularPipelineTreeEntry(BaseModel):
     """One node in the modular-pipeline tree.
 
     ``name`` and the modular-pipeline IDs are namespace strings; dataset and task IDs in
@@ -33,9 +33,9 @@ class _ModularPipelineTreeEntry:
     """
 
     name: str
-    inputs: set[str] = field(default_factory=set)
-    outputs: set[str] = field(default_factory=set)
-    children: set[tuple[str, str]] = field(default_factory=set)  # (node_id, node_type)
+    inputs: set[str] = Field(default_factory=set)
+    outputs: set[str] = Field(default_factory=set)
+    children: set[tuple[str, str]] = Field(default_factory=set)  # (node_id, node_type)
 
 
 class _ModularPipelineTreeBuilder:
@@ -61,7 +61,7 @@ class _ModularPipelineTreeBuilder:
         Parameter references are tracked separately so they remain parameter children under
         ``__root__`` instead of being added as data children inside modular pipelines.
         """
-        root = _ModularPipelineTreeEntry(ROOT_MODULAR_PIPELINE_ID)
+        root = _ModularPipelineTreeEntry(name=ROOT_MODULAR_PIPELINE_ID)
         tree = {ROOT_MODULAR_PIPELINE_ID: root}
         params: set[str] = set()
 
@@ -78,7 +78,8 @@ class _ModularPipelineTreeBuilder:
         params: set[str],
     ) -> None:
         """Populate one entry, record its boundary parameters and link it to its parent."""
-        entry = tree.setdefault(mp_id, _ModularPipelineTreeEntry(mp_id))
+        entry = _ModularPipelineTreeEntry(name=mp_id)
+        tree[mp_id] = entry
         free_inputs, free_outputs = self._boundary_io_by_modular_pipeline[mp_id]
         entry.inputs = {_create_dataset_node_id(d) for d in free_inputs}
         entry.outputs = {_create_dataset_node_id(d) for d in free_outputs}
@@ -138,7 +139,7 @@ class _ModularPipelineTreeBuilder:
         parent_id = (
             mp_id.rsplit(".", 1)[0] if "." in mp_id else ROOT_MODULAR_PIPELINE_ID
         )
-        parent = tree.setdefault(parent_id, _ModularPipelineTreeEntry(parent_id))
+        parent = tree[parent_id]
         parent.children.add((mp_id, GraphNodeType.MODULAR_PIPELINE.value))
         for dataset_id in boundary:
             if (
