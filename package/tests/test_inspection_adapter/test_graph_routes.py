@@ -7,6 +7,7 @@ for, so these fail if ``/api/main`` or ``/api/pipelines/{id}`` bypasses the expl
 from __future__ import annotations
 
 from pathlib import Path
+from typing import cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,6 +16,7 @@ from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import (
     InspectionGraphService,
+    NodeMetadataService,
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection.graph_service import (
@@ -45,6 +47,13 @@ class _SpyGraphService(InspectionGraphService):
         )
 
 
+class _UnusedNodeMetadataService:
+    """Fail loudly if graph-only route tests unexpectedly request metadata."""
+
+    def get_node_metadata_response(self, node_id: str):
+        raise AssertionError(f"Unexpected node metadata request: {node_id}")
+
+
 @pytest.fixture
 def spy_service() -> _SpyGraphService:
     return _SpyGraphService()
@@ -52,7 +61,10 @@ def spy_service() -> _SpyGraphService:
 
 @pytest.fixture
 def client(spy_service: _SpyGraphService) -> TestClient:
-    context = VizProjectContext(graph=spy_service)
+    context = VizProjectContext(
+        graph=spy_service,
+        node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+    )
     return TestClient(apps.create_api_app_from_project(context, Path.cwd()))
 
 
@@ -91,12 +103,20 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
     second_service = _SpyGraphService()
     first_client = TestClient(
         apps.create_api_app_from_project(
-            VizProjectContext(graph=first_service), Path.cwd()
+            VizProjectContext(
+                graph=first_service,
+                node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+            ),
+            Path.cwd(),
         )
     )
     second_client = TestClient(
         apps.create_api_app_from_project(
-            VizProjectContext(graph=second_service), Path.cwd()
+            VizProjectContext(
+                graph=second_service,
+                node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+            ),
+            Path.cwd(),
         )
     )
 
