@@ -2,16 +2,53 @@
 
 from __future__ import annotations
 
+import dataclasses
 import logging
-from collections.abc import Iterator
-from contextlib import contextmanager
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-if TYPE_CHECKING:
-    from kedro.inspection.models import ProjectSnapshot
+from kedro.inspection.models import ProjectSnapshot
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
+from kedro_viz.integrations.kedro.inspection.parameters import (
+    build_parameter_feed,
+    validate_parameters,
+)
 
 logger = logging.getLogger(__name__)
+
+
+class InspectionProjectData(BaseModel, frozen=True):
+    """Snapshot and resolved config read together for one inspection context build."""
+
+    snapshot: ProjectSnapshot
+    catalog_config: Mapping[str, Any] = Field(default_factory=dict)
+    parameters: Mapping[str, Any] = Field(default_factory=dict)
+    parameter_feed: Mapping[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _prepare_parameter_feed(cls, value: dict[str, Any]) -> dict[str, Any]:
+        """Derive Kedro's reference-keyed feed from the validated root parameters."""
+        copied = dict(value)
+        parameters = dict(copied.get("parameters", {}))
+        copied["parameters"] = parameters
+        copied["parameter_feed"] = build_parameter_feed(parameters)
+        return copied
+
+    @field_validator(
+        "catalog_config",
+        "parameters",
+        "parameter_feed",
+        mode="before",
+    )
+    @classmethod
+    def _copy_mapping(cls, value: Mapping[str, Any]) -> dict[str, Any]:
+        """Copy caller-owned mappings before storing them on the prepared model."""
+        return dict(value)
 
 
 @contextmanager
@@ -48,11 +85,11 @@ def lite_import_stubs(
 
 
 class _InspectionSession:
-    """Read a project's snapshot and config, bootstrapping and building the loader once.
+    """Read a project's snapshot and config with one cached config loader.
 
-    Create one session per adapter build. The project is bootstrapped and the Kedro config loader
-    is built lazily on first use and then cached, so the catalog config and parameters reuse a
-    single loader instead of rebuilding it.
+    Create one session per adapter build. The catalog config and parameters share the loader
+    built lazily here. Kedro's snapshot API performs its own internal project bootstrap and
+    config loading.
     """
 
     def __init__(
@@ -101,15 +138,77 @@ class _InspectionSession:
             return {}
 
     def parameters(self) -> dict[str, Any]:
-        """Return the resolved parameter values, with ``--params`` overrides applied.
+        """Return resolved, validated parameters with ``--params`` overrides applied.
 
         The snapshot carries only parameter names, so values are read from the config loader. We
         pass ``runtime_params`` to that loader, so it already merges the ``--params`` overrides and
-        resolves ``${runtime_params:...}`` for us.
+        resolves ``${runtime_params:...}`` for us. Kedro's parameter validator then applies
+        Pydantic and dataclass annotations from the registered pipelines.
         """
         from kedro.config import MissingConfigException
+        from kedro.framework.project import pipelines
 
         try:
-            return self.config_loader["parameters"]
+            raw_parameters = self.config_loader["parameters"]
         except (KeyError, MissingConfigException):
-            return {}
+            raw_parameters = self.runtime_params or {}
+        return validate_parameters(raw_parameters, dict(pipelines))
+
+
+def load_inspection_project_data(
+    project_path: str | Path,
+    *,
+    env: str | None = None,
+    runtime_params: dict[str, Any] | None = None,
+    package_name: str | None = None,
+    is_lite: bool = False,
+) -> InspectionProjectData:
+    """Read the snapshot and resolved config for one context build.
+
+    Lite-mode import stubs remain active until all three inputs have been read. A single
+    ``_InspectionSession`` coordinates the reads; Kedro's snapshot API may perform its own
+    internal bootstrap independently of the cached config loader used by the other two reads.
+    """
+    import_context = (
+        lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
+    )
+    with import_context:
+        session = _InspectionSession(
+            project_path,
+            env=env,
+            runtime_params=runtime_params,
+        )
+        return InspectionProjectData(
+            snapshot=session.snapshot(),
+            catalog_config=session.catalog_config(),
+            parameters=session.parameters(),
+        )
+
+
+def filter_inspection_project_data(
+    project_data: InspectionProjectData,
+    pipeline_name: str,
+) -> InspectionProjectData:
+    """Return project data whose snapshot contains only ``pipeline_name``.
+
+    Raises:
+        PipelineNotFoundError: If ``pipeline_name`` is not registered.
+    """
+    matching = [
+        pipeline
+        for pipeline in project_data.snapshot.pipelines
+        if pipeline.name == pipeline_name
+    ]
+    if not matching:
+        available = sorted(
+            pipeline.name for pipeline in project_data.snapshot.pipelines
+        )
+        raise PipelineNotFoundError(
+            f"Pipeline {pipeline_name!r} not found in snapshot; available: {available}"
+        )
+
+    return InspectionProjectData(
+        snapshot=dataclasses.replace(project_data.snapshot, pipelines=matching),
+        catalog_config=project_data.catalog_config,
+        parameters=project_data.parameters,
+    )

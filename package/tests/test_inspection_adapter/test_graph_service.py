@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
@@ -12,6 +11,9 @@ from kedro_viz.integrations.kedro.inspection import (
     EnrichmentSources,
     InspectionGraphService,
     PipelineNotFoundError,
+)
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    InspectionProjectData,
 )
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -77,105 +79,83 @@ def test_unknown_pipeline_filter_is_rejected_at_startup(
         )
 
 
-def test_project_options_and_parameters_reach_the_builder(mocker) -> None:
-    """Snapshot configuration and resolved parameters come from the same session."""
+def test_project_options_reach_the_project_data_loader(mocker) -> None:
+    """The compatibility constructor forwards every inspection load option."""
     runtime_params = {"split_options": {"test_size": 0.3}}
-    session_class = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service._InspectionSession"
+    project_data = mocker.sentinel.project_data
+    load_project_data = mocker.patch(
+        "kedro_viz.integrations.kedro.inspection.graph_service.load_inspection_project_data",
+        return_value=project_data,
     )
-    session = session_class.return_value
+    service = mocker.sentinel.service
+    from_project_data = mocker.patch.object(
+        InspectionGraphService,
+        "from_project_data",
+        return_value=service,
+    )
+
+    result = InspectionGraphService.from_project(
+        DEMO_PROJECT,
+        env="staging",
+        runtime_params=runtime_params,
+        package_name="spaceflights",
+        is_lite=True,
+    )
+
+    load_project_data.assert_called_once_with(
+        DEMO_PROJECT,
+        env="staging",
+        runtime_params=runtime_params,
+        package_name="spaceflights",
+        is_lite=True,
+    )
+    from_project_data.assert_called_once_with(project_data, enrichment=None)
+    assert result is service
+
+
+def test_project_data_reaches_the_builder(mocker) -> None:
+    """Graph construction consumes the already-loaded snapshot and config."""
+    project_data = mocker.Mock(
+        spec=InspectionProjectData,
+        snapshot=mocker.sentinel.snapshot,
+        catalog_config={"companies": {}},
+        parameter_feed={"parameters": {"split": 0.2}, "params:split": 0.2},
+    )
     graph_builder = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
 
-    InspectionGraphService.from_project(
-        DEMO_PROJECT,
-        env="staging",
-        runtime_params=runtime_params,
-    )
+    InspectionGraphService.from_project_data(project_data)
 
-    session_class.assert_called_once_with(
-        DEMO_PROJECT,
-        env="staging",
-        runtime_params=runtime_params,
-    )
     graph_builder.assert_called_once_with(
-        session.snapshot.return_value,
-        session.catalog_config.return_value,
-        parameters=session.parameters.return_value,
+        mocker.sentinel.snapshot,
+        {"companies": {}},
+        parameter_feed={"parameters": {"split": 0.2}, "params:split": 0.2},
         layer_by_dataset=None,
     )
 
 
 def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
     """The post-hook catalog mapping is authoritative for rendered layers."""
-    session = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service._InspectionSession"
-    ).return_value
     graph_builder = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
     enrichment = EnrichmentSources(layer_by_dataset={"companies": "hooked"})
+    project_data = mocker.Mock(
+        spec=InspectionProjectData,
+        snapshot=mocker.sentinel.snapshot,
+        catalog_config={},
+        parameter_feed={"parameters": {}},
+    )
 
-    InspectionGraphService.from_project(DEMO_PROJECT, enrichment=enrichment)
+    InspectionGraphService.from_project_data(project_data, enrichment=enrichment)
 
     graph_builder.assert_called_once_with(
-        session.snapshot.return_value,
-        session.catalog_config.return_value,
-        parameters=session.parameters.return_value,
+        mocker.sentinel.snapshot,
+        {},
+        parameter_feed={"parameters": {}},
         layer_by_dataset={"companies": "hooked"},
     )
-
-
-def test_lite_service_reads_project_data_inside_import_stubs(mocker) -> None:
-    """Project imports stay mocked until snapshot, catalog and parameters are read."""
-    events: list[object] = []
-
-    @contextmanager
-    def import_stubs(project_path, package_name):
-        events.append(("enter", project_path, package_name))
-        yield
-        events.append(("exit", project_path, package_name))
-
-    session = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service._InspectionSession"
-    ).return_value
-
-    def read_snapshot():
-        events.append("snapshot")
-        return object()
-
-    def read_catalog():
-        events.append("catalog")
-        return {}
-
-    def read_parameters():
-        events.append("parameters")
-        return {}
-
-    session.snapshot.side_effect = read_snapshot
-    session.catalog_config.side_effect = read_catalog
-    session.parameters.side_effect = read_parameters
-    mocker.patch("kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder")
-    stubs = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service.lite_import_stubs",
-        side_effect=import_stubs,
-    )
-
-    InspectionGraphService.from_project(
-        DEMO_PROJECT,
-        package_name="spaceflights",
-        is_lite=True,
-    )
-
-    stubs.assert_called_once_with(DEMO_PROJECT, "spaceflights")
-    assert events == [
-        ("enter", DEMO_PROJECT, "spaceflights"),
-        "snapshot",
-        "catalog",
-        "parameters",
-        ("exit", DEMO_PROJECT, "spaceflights"),
-    ]
 
 
 def test_service_enriches_the_built_response(mocker) -> None:

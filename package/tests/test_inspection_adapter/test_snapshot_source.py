@@ -6,18 +6,44 @@ the bundled ``demo-project``.
 
 import importlib
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import PropertyMock
 
 import pytest
+from kedro.inspection.models import (
+    PipelineSnapshot,
+    ProjectMetadataSnapshot,
+    ProjectSnapshot,
+)
+from pydantic import ValidationError
 
 from kedro_viz.integrations.kedro.inspection import snapshot_source
-from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    InspectionProjectData,
+    _InspectionSession,
+    filter_inspection_project_data,
+    load_inspection_project_data,
+)
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
 # A module name that does not exist, so LiteParser must flag it as unresolved.
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
+
+
+def _snapshot(*pipeline_names: str) -> ProjectSnapshot:
+    return ProjectSnapshot(
+        metadata=ProjectMetadataSnapshot(
+            project_name="project",
+            package_name="project",
+            kedro_version="1.0.0",
+        ),
+        pipelines=[PipelineSnapshot(name=name, nodes=[]) for name in pipeline_names],
+        datasets={},
+        parameters=[],
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -111,6 +137,32 @@ def test_session_parameters_applies_runtime_overrides() -> None:
     assert params["split_options"]["test_size"] == 0.99
 
 
+def test_session_validates_parameters_against_registered_pipelines(mocker) -> None:
+    raw_parameters = {"options": {"count": "3"}}
+    validated_parameters = {"options": mocker.sentinel.options}
+    registered_pipelines = {"pipeline": mocker.sentinel.pipeline}
+    mocker.patch(
+        "kedro.framework.project.pipelines",
+        registered_pipelines,
+    )
+    mocker.patch.object(
+        _InspectionSession,
+        "config_loader",
+        new_callable=PropertyMock,
+        return_value={"parameters": raw_parameters},
+    )
+    validate = mocker.patch.object(
+        snapshot_source,
+        "validate_parameters",
+        return_value=validated_parameters,
+    )
+
+    result = _InspectionSession(DEMO_PROJECT).parameters()
+
+    assert result is validated_parameters
+    validate.assert_called_once_with(raw_parameters, registered_pipelines)
+
+
 def test_session_builds_the_config_loader_once() -> None:
     """Test that the loader is built once and reused across catalog and parameters."""
     session = _InspectionSession(DEMO_PROJECT)
@@ -130,3 +182,123 @@ def test_session_returns_empty_when_section_missing(mocker, section) -> None:
         return_value={},
     )
     assert getattr(_InspectionSession(DEMO_PROJECT), section)() == {}
+
+
+# -- prepared project data -- #
+
+
+def test_project_data_copies_mappings_and_is_frozen() -> None:
+    catalog_config = {"companies": {"type": "pandas.CSVDataset"}}
+    parameters = {"split": 0.2}
+
+    project_data = InspectionProjectData(
+        snapshot=_snapshot("__default__"),
+        catalog_config=catalog_config,
+        parameters=parameters,
+    )
+    catalog_config["new"] = {}
+    parameters["new"] = True
+
+    assert project_data.catalog_config == {"companies": {"type": "pandas.CSVDataset"}}
+    assert project_data.parameters == {"split": 0.2}
+    assert project_data.parameter_feed == {
+        "parameters": {"split": 0.2},
+        "params:split": 0.2,
+    }
+    with pytest.raises(ValidationError, match="frozen_instance"):
+        project_data.parameters = {}  # type: ignore[misc]
+
+
+def test_load_project_data_reads_every_input_inside_lite_stubs(mocker) -> None:
+    events: list[object] = []
+
+    @contextmanager
+    def import_stubs(project_path, package_name):
+        events.append(("enter", project_path, package_name))
+        yield
+        events.append(("exit", project_path, package_name))
+
+    session_class = mocker.patch.object(snapshot_source, "_InspectionSession")
+    session = session_class.return_value
+    snapshot = _snapshot("__default__")
+
+    def read_snapshot():
+        events.append("snapshot")
+        return snapshot
+
+    def read_catalog():
+        events.append("catalog")
+        return {"companies": {}}
+
+    def read_parameters():
+        events.append("parameters")
+        return {"split": 0.2}
+
+    session.snapshot.side_effect = read_snapshot
+    session.catalog_config.side_effect = read_catalog
+    session.parameters.side_effect = read_parameters
+    stubs = mocker.patch.object(
+        snapshot_source,
+        "lite_import_stubs",
+        side_effect=import_stubs,
+    )
+
+    result = load_inspection_project_data(
+        DEMO_PROJECT,
+        env="staging",
+        runtime_params={"split": 0.3},
+        package_name="spaceflights",
+        is_lite=True,
+    )
+
+    session_class.assert_called_once_with(
+        DEMO_PROJECT,
+        env="staging",
+        runtime_params={"split": 0.3},
+    )
+    stubs.assert_called_once_with(DEMO_PROJECT, "spaceflights")
+    assert result.snapshot == snapshot
+    assert result.catalog_config == {"companies": {}}
+    assert result.parameters == {"split": 0.2}
+    assert result.parameter_feed == {
+        "parameters": {"split": 0.2},
+        "params:split": 0.2,
+    }
+    assert events == [
+        ("enter", DEMO_PROJECT, "spaceflights"),
+        "snapshot",
+        "catalog",
+        "parameters",
+        ("exit", DEMO_PROJECT, "spaceflights"),
+    ]
+
+
+def test_filter_project_data_preserves_config_and_selects_pipeline() -> None:
+    project_data = InspectionProjectData(
+        snapshot=_snapshot("__default__", "data_science"),
+        catalog_config={"companies": {}},
+        parameters={"split": 0.2},
+    )
+
+    filtered = filter_inspection_project_data(project_data, "data_science")
+
+    assert [pipeline.name for pipeline in filtered.snapshot.pipelines] == [
+        "data_science"
+    ]
+    assert filtered.catalog_config == project_data.catalog_config
+    assert filtered.parameters == project_data.parameters
+    assert filtered.parameter_feed == project_data.parameter_feed
+    assert [pipeline.name for pipeline in project_data.snapshot.pipelines] == [
+        "__default__",
+        "data_science",
+    ]
+
+
+def test_filter_project_data_rejects_unknown_pipeline() -> None:
+    project_data = InspectionProjectData(snapshot=_snapshot("__default__"))
+
+    with pytest.raises(
+        PipelineNotFoundError,
+        match=r"Pipeline 'unknown' not found in snapshot; available: \['__default__'\]",
+    ):
+        filter_inspection_project_data(project_data, "unknown")

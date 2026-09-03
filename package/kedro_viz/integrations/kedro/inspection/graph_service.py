@@ -2,28 +2,21 @@
 
 from __future__ import annotations
 
-import dataclasses
-from contextlib import nullcontext
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection.enrichment import (
     EnrichmentSources,
     enrich_graph_response,
 )
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
-    _InspectionSession,
-    lite_import_stubs,
+    InspectionProjectData,
+    filter_inspection_project_data,
+    load_inspection_project_data,
 )
-
-if TYPE_CHECKING:
-    from kedro.inspection.models import ProjectSnapshot
-
-
-class PipelineNotFoundError(ValueError):
-    """Raised when a requested pipeline is not present in the inspection snapshot."""
 
 
 class InspectionGraphService:
@@ -64,25 +57,32 @@ class InspectionGraphService:
         Raises:
             PipelineNotFoundError: If ``pipeline_name`` is not registered.
         """
-        sources = enrichment if enrichment is not None else EnrichmentSources()
-        import_context = (
-            lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
+        project_data = load_inspection_project_data(
+            project_path,
+            env=env,
+            runtime_params=runtime_params,
+            package_name=package_name,
+            is_lite=is_lite,
         )
-        with import_context:
-            session = _InspectionSession(
-                project_path, env=env, runtime_params=runtime_params
-            )
-            snapshot = session.snapshot()
-            catalog_config = session.catalog_config()
-            parameters = session.parameters()
-            if pipeline_name is not None:
-                snapshot = cls._filter_to_pipeline(snapshot, pipeline_name)
-            builder = GraphBuilder(
-                snapshot,
-                catalog_config,
-                parameters=parameters,
-                layer_by_dataset=sources.layer_by_dataset,
-            )
+        if pipeline_name is not None:
+            project_data = filter_inspection_project_data(project_data, pipeline_name)
+        return cls.from_project_data(project_data, enrichment=enrichment)
+
+    @classmethod
+    def from_project_data(
+        cls,
+        project_data: InspectionProjectData,
+        *,
+        enrichment: EnrichmentSources | None = None,
+    ) -> InspectionGraphService:
+        """Prepare the graph service from already-loaded inspection inputs."""
+        sources = enrichment if enrichment is not None else EnrichmentSources()
+        builder = GraphBuilder(
+            project_data.snapshot,
+            dict(project_data.catalog_config),
+            parameter_feed=dict(project_data.parameter_feed),
+            layer_by_dataset=sources.layer_by_dataset,
+        )
         return cls(builder, sources)
 
     def get_pipeline_response(self, pipeline_id: str | None = None) -> GraphAPIResponse:
@@ -101,24 +101,3 @@ class InspectionGraphService:
         response = self._builder.build(selected_pipeline_id)
         enrich_graph_response(response, self._enrichment)
         return response
-
-    @staticmethod
-    def _filter_to_pipeline(
-        snapshot: ProjectSnapshot, pipeline_name: str
-    ) -> ProjectSnapshot:
-        """Return a copy of the snapshot containing only the requested pipeline.
-
-        Raises:
-            PipelineNotFoundError: If ``pipeline_name`` is not registered.
-        """
-        matching = [
-            pipeline
-            for pipeline in snapshot.pipelines
-            if pipeline.name == pipeline_name
-        ]
-        if not matching:
-            available = sorted(pipeline.name for pipeline in snapshot.pipelines)
-            raise PipelineNotFoundError(
-                f"Pipeline {pipeline_name!r} not found in snapshot; available: {available}"
-            )
-        return dataclasses.replace(snapshot, pipelines=matching)

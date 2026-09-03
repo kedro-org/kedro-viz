@@ -12,8 +12,8 @@ from kedro_viz.api.rest.responses.pipelines import (
 from kedro_viz.integrations.kedro.inspection.graph_builder import (
     GraphBuilder,
     _display_name,
-    _resolve_param,
 )
+from kedro_viz.integrations.kedro.inspection.parameters import build_parameter_feed
 
 if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
@@ -29,7 +29,7 @@ def _builder(
     return GraphBuilder(
         cast("ProjectSnapshot", snapshot),
         catalog_config,
-        parameters=parameters,
+        parameter_feed=build_parameter_feed(parameters or {}),
         layer_by_dataset=layer_by_dataset,
     )
 
@@ -292,19 +292,6 @@ def test_task_parameters_preserve_value_types() -> None:
     assert isinstance(value["test_size"], float)
     assert isinstance(value["shuffle"], bool)
     assert isinstance(value["count"], int)
-
-
-@pytest.mark.parametrize(
-    ("parameters", "dotted", "expected"),
-    [
-        ({}, "missing", None),
-        ({"a": {"b": 1}}, "a.b", 1),
-        ({"a": {"b": 1}}, "a.c", None),
-        ({"a": {"b": 1}}, "x.y", None),
-    ],
-)
-def test_resolve_param(parameters: dict[str, Any], dotted: str, expected: Any) -> None:
-    assert _resolve_param(parameters, dotted) == expected
 
 
 def test_parameter_dataset_type_is_none() -> None:

@@ -8,6 +8,7 @@ import pytest
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.parameters import build_parameter_feed
 from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -33,7 +34,7 @@ def builder(_restore_kedro_project_state) -> GraphBuilder:
     return GraphBuilder(
         session.snapshot(),
         session.catalog_config(),
-        parameters=session.parameters(),
+        parameter_feed=build_parameter_feed(session.parameters()),
     )
 
 
@@ -130,7 +131,7 @@ def _graph_builder(runtime_params: dict[str, Any] | None = None) -> GraphBuilder
     return GraphBuilder(
         session.snapshot(),
         session.catalog_config(),
-        parameters=session.parameters(),
+        parameter_feed=build_parameter_feed(session.parameters()),
     )
 
 
