@@ -30,6 +30,7 @@ from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularPipelineIndex,
     ModularPipelineView,
 )
+from kedro_viz.integrations.kedro.inspection.parameters import parameters_for_inputs
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
     _create_task_node_id_from_node_snapshot,
@@ -109,7 +110,7 @@ class GraphBuilder:
         snapshot: ProjectSnapshot,
         catalog_config: dict[str, Any] | None = None,
         *,
-        parameters: dict[str, Any] | None = None,
+        parameter_feed: Mapping[str, Any] | None = None,
         layer_by_dataset: Mapping[str, str] | None = None,
     ) -> None:
         self._snapshot = snapshot
@@ -121,9 +122,8 @@ class GraphBuilder:
                 dataset_names=_dataset_names_from_snapshot(snapshot),
             )
         )
-        # Resolved parameter values (``--params`` already applied), used to fill task-node
-        # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
-        self._parameters = parameters or {}
+        # The feed uses Kedro pipeline references as keys and contains validated values.
+        self._parameter_feed = dict(parameter_feed or {})
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
@@ -250,17 +250,9 @@ class GraphBuilder:
         """Build the parameter dict for a task node's detail panel.
 
         Walk ``inputs`` in order. ``parameters`` sets the full resolved mapping. Each
-        ``params:name`` adds one entry. Dotted names like ``model_options.test_size`` pick
-        out nested values.
+        ``params:name`` adds the corresponding value from Kedro's prepared feed.
         """
-        result: dict[str, Any] = {}
-        for ref in inputs:
-            if ref == "parameters":
-                result = dict(self._parameters)
-            elif ref.startswith("params:"):
-                name = ref[len("params:") :]
-                result[name] = _resolve_param(self._parameters, name)
-        return result
+        return parameters_for_inputs(inputs, self._parameter_feed)
 
     def _build_dataset_node(
         self,
@@ -378,14 +370,3 @@ def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
         for name in (*node.inputs, *node.outputs)
         if not is_dataset_param(name)
     }
-
-
-def _resolve_param(parameters: dict[str, Any], dotted: str) -> Any:
-    """Look up ``dotted`` (e.g. ``model_options.test_size``) in the parameters dict; ``None`` if absent."""
-    node: Any = parameters
-    for key in dotted.split("."):
-        if isinstance(node, dict) and key in node:
-            node = node[key]
-        else:
-            return None
-    return node
