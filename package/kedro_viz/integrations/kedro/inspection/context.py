@@ -9,6 +9,10 @@ from kedro_viz.integrations.kedro.inspection.enrichment import EnrichmentSources
 from kedro_viz.integrations.kedro.inspection.graph_service import (
     InspectionGraphService,
 )
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    filter_inspection_project_data,
+    load_inspection_project_data,
+)
 
 
 class VizProjectContext:
@@ -47,14 +51,18 @@ class VizProjectContext:
         Raises:
             PipelineNotFoundError: If ``pipeline_name`` is not registered.
         """
+        project_data = load_inspection_project_data(
+            project_path,
+            env=env,
+            runtime_params=runtime_params,
+            package_name=package_name,
+            is_lite=is_lite,
+        )
+        if pipeline_name is not None:
+            project_data = filter_inspection_project_data(project_data, pipeline_name)
         return cls(
-            graph=InspectionGraphService.from_project(
-                project_path,
-                env=env,
-                pipeline_name=pipeline_name,
-                runtime_params=runtime_params,
-                package_name=package_name,
-                is_lite=is_lite,
+            graph=InspectionGraphService.from_project_data(
+                project_data,
                 enrichment=enrichment,
             )
         )
