@@ -75,7 +75,15 @@ def live_enriched_graph_service(_restore_kedro_project_state):
     manager = DataAccessManager()
     catalog, pipelines, node_extras = data_loader.load_data(DEMO_PROJECT)
     populate_data(manager, catalog, pipelines, node_extras)
-    enrichment = EnrichmentSources.from_live_nodes(manager.nodes.as_list())
+    from kedro_viz.integrations.kedro.inspection.enrichment import (
+        load_enrichment_sources,
+    )
+
+    enrichment = load_enrichment_sources(
+        DEMO_PROJECT,
+        nodes=manager.nodes.as_list(),
+        node_extras_by_name=manager.node_extras,
+    )
     return InspectionGraphService.from_inspection_inputs(
         load_inspection_inputs(DEMO_PROJECT),
         enrichment=enrichment,

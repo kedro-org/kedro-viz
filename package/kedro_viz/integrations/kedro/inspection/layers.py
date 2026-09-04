@@ -27,7 +27,7 @@ def _extract_layers(
         ValueError: If transcoded variants of one dataset (``name@a``, ``name@b``) declare
             different layers, matching the legacy backend's validation.
     """
-    layer_by_dataset: dict[str, str] = {}
+    layer_by_dataset_name: dict[str, str] = {}
     resolver_config: dict[str, dict[str, Any]] = {}
     has_patterns = False
     for name, config in catalog_config.items():
@@ -44,7 +44,7 @@ def _extract_layers(
         if CatalogConfigResolver.is_pattern(name):
             has_patterns = True
             continue
-        _set_layer(layer_by_dataset, name, layer)
+        _set_layer(layer_by_dataset_name, name, layer)
 
     if has_patterns:
         resolver = CatalogConfigResolver(
@@ -57,22 +57,22 @@ def _extract_layers(
                 layer = resolved_config["metadata"]["kedro-viz"]["layer"]
             except (KeyError, TypeError):
                 continue
-            _set_layer(layer_by_dataset, name, layer)
+            _set_layer(layer_by_dataset_name, name, layer)
 
-    return layer_by_dataset
+    return layer_by_dataset_name
 
 
-def _set_layer(layer_by_dataset: dict[str, str], name: str, layer: str) -> None:
+def _set_layer(layer_by_dataset_name: dict[str, str], name: str, layer: str) -> None:
     """Store a layer under the dataset's non-transcoded name."""
     stripped = _strip_transcoding(name)
-    existing = layer_by_dataset.get(stripped)
+    existing = layer_by_dataset_name.get(stripped)
     if existing is not None and existing != layer:
         raise ValueError(
             "Transcoded datasets should have the same layer. "
             "Please ensure consistent layering in your Kedro catalog. "
             f"Mismatch found for: {stripped}"
         )
-    layer_by_dataset[stripped] = layer
+    layer_by_dataset_name[stripped] = layer
 
 
 def sort_layers(
