@@ -1,0 +1,63 @@
+@use '../../styles/variables' as variables;
+
+/* how far the panel's base sits above the bottom of the toolbar */
+$help-menu-base-offset: 12px;
+$help-menu-item-height: 40px;
+$help-menu-width: 232px;
+
+.kui-theme--light {
+  --help-menu-bg: #{variables.$grey-100};
+  --help-menu-bg-hover: #{variables.$white-600};
+  --help-menu-shadow: #{variables.$white-300};
+}
+
+.kui-theme--dark {
+  --help-menu-bg: #{variables.$slate-600};
+  --help-menu-bg-hover: #{variables.$slate-500};
+  --help-menu-shadow: #{variables.$slate-200};
+}
+
+.help-menu {
+  background-color: var(--help-menu-bg);
+  bottom: $help-menu-base-offset;
+  box-shadow: 0 1px 1px var(--help-menu-shadow);
+  left: 100%;
+  padding: 8px 0;
+  position: absolute;
+  width: $help-menu-width;
+  z-index: variables.$zindex-help-menu;
+}
+
+.help-menu__item {
+  align-items: center;
+  color: var(--color-text);
+  display: flex;
+  font-size: 1.4em;
+  height: $help-menu-item-height;
+  padding: 0 20px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--help-menu-bg-hover);
+
+    .help-menu__icon {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: none;
+
+    [data-whatinput='keyboard'] & {
+      outline: 3px solid variables.$blue-300;
+      outline-offset: -3px;
+    }
+  }
+}
+
+.help-menu__icon {
+  flex-shrink: 0;
+  height: 20px;
+  margin-right: 12px;
+  width: 20px;
+}

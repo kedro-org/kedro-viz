@@ -10,6 +10,8 @@ const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
  */
 const IconButton = ({
   active = false,
+  ariaControls,
+  ariaExpanded,
   ariaLabel,
   ariaLive,
   children,
@@ -49,6 +51,8 @@ const IconButton = ({
   return visible ? (
     <Wrapper container={container} {...rest}>
       <button
+        aria-controls={ariaControls}
+        aria-expanded={ariaExpanded}
         aria-label={ariaLabel}
         aria-live={ariaLive}
         className={classnames(className, {
@@ -95,6 +99,8 @@ const Wrapper = ({ children, container: Container = 'li', ...rest }) => {
 
 IconButton.propTypes = {
   active: PropTypes.bool,
+  ariaControls: PropTypes.string,
+  ariaExpanded: PropTypes.bool,
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
   children: PropTypes.node,
