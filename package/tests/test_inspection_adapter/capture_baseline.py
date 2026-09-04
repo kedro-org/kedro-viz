@@ -1,7 +1,7 @@
-"""Capture the current Kedro-Viz backend output as a generated test baseline.
+"""Capture the current Kedro-Viz backend output as generated test baselines.
 
 Runs the live-object backend against ``demo-project`` and writes normalized JSON for ``/api/main``
-and every ``/api/pipelines/{id}``, plus a per task-node ID report.
+and every ``/api/pipelines/{id}``, node-detail responses, and a per task-node ID report.
 
 Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
@@ -16,6 +16,7 @@ The generated files are committed under ``baseline/`` and used by inspection ada
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -59,6 +60,28 @@ def normalize_graph(resp: dict) -> dict:
             _sort_in_place(entry, "inputs")
             _sort_in_place(entry, "outputs")
     return resp
+
+
+def normalize_node_metadata(response: dict) -> dict:
+    """Normalize project paths and compact complete preview payloads."""
+    response = json.loads(json.dumps(response))
+    filepath = response.get("filepath")
+    if isinstance(filepath, str):
+        response["filepath"] = filepath.replace(
+            DEMO_PROJECT.as_posix(),
+            "<DEMO_PROJECT>",
+        )
+    if "preview" in response:
+        preview_json = json.dumps(
+            response["preview"],
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+        response["preview"] = {
+            "sha256": hashlib.sha256(preview_json.encode()).hexdigest()
+        }
+    return response
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -142,9 +165,29 @@ def build_node_id_report() -> dict:
     }
 
 
+def build_node_metadata_report() -> dict[str, dict]:
+    """Return every metadata-bearing legacy node response, keyed by node ID."""
+    from fastapi.encoders import jsonable_encoder
+
+    from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
+    from kedro_viz.data_access import data_access_manager
+
+    responses = {}
+    for node_id in data_access_manager.nodes.get_node_ids():
+        node = data_access_manager.nodes.get_node_by_id(node_id)
+        if node is not None and node.has_metadata():
+            responses[node_id] = normalize_node_metadata(
+                jsonable_encoder(
+                    get_node_metadata_response(node_id),
+                    exclude_none=True,
+                )
+            )
+    return responses
+
+
 # --------------------------------------------------------------------------- #
 def main() -> None:
-    """Capture the baseline graph responses and node-ID report into ``baseline/``."""
+    """Capture graph, node-detail, and node-ID baselines into ``baseline/``."""
     import os
 
     os.chdir(DEMO_PROJECT)
@@ -165,6 +208,10 @@ def main() -> None:
         resp = normalize_graph(get_kedro_project_json_data(pid))
         _write_json(OUT_DIR / "pipelines" / f"{pid}.json", resp)
         print(f"  wrote pipelines/{pid}.json  (nodes={len(resp['nodes'])})")
+
+    node_metadata = build_node_metadata_report()
+    _write_json(OUT_DIR / "node_metadata.json", node_metadata)
+    print(f"  wrote node_metadata.json  (nodes={len(node_metadata)})")
 
     report = build_node_id_report()
     _write_json(OUT_DIR / "node_id_report.json", report)

@@ -1,0 +1,718 @@
+{
+  "01675921": {
+    "filepath": "<DEMO_PROJECT>/data/06_models/random_forest.pkl",
+    "run_command": "kedro run --to-outputs=train_evaluation.random_forest.regressor",
+    "type": "pickle.pickle_dataset.PickleDataset"
+  },
+  "038647c7": {
+    "code": "def train_model(\n    X_train: pd.DataFrame, y_train: pd.Series, model_options: Dict[str, Any]\n) -> Tuple[BaseEstimator, Dict[str, Any]]:\n    \"\"\"Trains the linear regression model.\n\n    Args:\n        X_train: Training data of independent features.\n        y_train: Training data for price.\n\n    Returns:\n        Trained model.\n    \"\"\"\n\n    # Parse parameters\n    model_module = model_options.get(\"module\")\n    model_type = model_options.get(\"class\")\n    model_arguments = model_options.get(\"kwargs\")\n\n    # Import and instantiate Sklearn regressor object\n    regressor_class = getattr(importlib.import_module(model_module), model_type)\n    regressor_instance = regressor_class(**model_arguments)\n\n    logger = logging.getLogger(__name__)\n    logger.info(f\"Fitting model of type {type(regressor_instance)}\")\n\n    # Fit model\n    regressor_instance.fit(X_train, y_train)\n    flat_model_params = {**{\"model_type\": model_type}, **model_arguments}\n    return regressor_instance, flat_model_params\n",
+    "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+    "inputs": [
+      "X_train",
+      "y_train",
+      "params:train_evaluation.model_options.random_forest"
+    ],
+    "outputs": [
+      "train_evaluation.random_forest.regressor",
+      "train_evaluation.random_forest.experiment_params"
+    ],
+    "parameters": {
+      "train_evaluation.model_options.random_forest": {
+        "class": "RandomForestRegressor",
+        "kwargs": {
+          "bootstrap": true,
+          "ccp_alpha": 0,
+          "criterion": "squared_error",
+          "max_features": 1.0,
+          "min_impurity_decrease": 0,
+          "min_samples_leaf": 1,
+          "min_samples_split": 2,
+          "min_weight_fraction_leaf": 0,
+          "n_estimators": 100,
+          "oob_score": false,
+          "verbose": 0,
+          "warm_start": false
+        },
+        "module": "sklearn.ensemble"
+      }
+    },
+    "run_command": "kedro run --to-nodes='train_evaluation.random_forest.train_model__86546ff0'"
+  },
+  "04ba733a": {
+    "code": "def create_derived_features(\n    spine_df: pd.DataFrame, data: pd.DataFrame, derived_params: Dict[str, str]\n) -> pd.DataFrame:\n    \"\"\"[summary]\n\n    Args:\n        spine_df (pd.DataFrame): [description]\n        data (pd.DataFrame): [description]\n        derived_params (Dict[str, str]): [description]\n    \"\"\"\n    new_columns = [_create_metric_column(data, **kwargs) for kwargs in derived_params]\n    combined_df = joiner(spine_df, *new_columns)\n    return combined_df\n",
+    "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+    "inputs": [
+      "prm_spine_table",
+      "prm_shuttle_company_reviews",
+      "params:feature_engineering.feature.derived"
+    ],
+    "outputs": [
+      "feature_engineering.feat_derived_features"
+    ],
+    "parameters": {
+      "feature_engineering.feature.derived": [
+        {
+          "column_a": "number_of_reviews",
+          "column_b": "total_fleet_count",
+          "conjunction": "over",
+          "numpy_method": "divide"
+        },
+        {
+          "column_a": "number_of_reviews",
+          "column_b": "total_fleet_count",
+          "conjunction": "over",
+          "numpy_method": "divide"
+        },
+        {
+          "column_a": "reviews_per_month",
+          "column_b": "company_rating",
+          "conjunction": "by",
+          "numpy_method": "multiply"
+        }
+      ]
+    },
+    "run_command": "kedro run --to-nodes='feature_engineering.create_derived_features__f9089920'"
+  },
+  "10e51dea": {
+    "filepath": "<DEMO_PROJECT>/data/06_models/linear_regression.pkl",
+    "run_command": "kedro run --to-outputs=train_evaluation.linear_regression.regressor",
+    "type": "pickle.pickle_dataset.PickleDataset"
+  },
+  "1e3cc50a": {
+    "filepath": "<DEMO_PROJECT>/data/04_feature/feature_importance_output.csv",
+    "preview": {
+      "sha256": "7f6e064808a913d1f79e1fdc5dcfbba0f600d88d5ca99b3dbbd32d4fd51621b8"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=feature_importance_output",
+    "stats": {
+      "columns": 2,
+      "file_size": 460,
+      "rows": 15
+    },
+    "type": "pandas.csv_dataset.CSVDataset"
+  },
+  "22eec376": {
+    "parameters": {
+      "split_options": {
+        "random_state": 3,
+        "target": "price",
+        "test_size": 0.2
+      }
+    }
+  },
+  "23c94afb": {
+    "filepath": "<DEMO_PROJECT>/data/05_model_input/model_input_table.pq",
+    "preview": {
+      "sha256": "c5085cefe5cb502008d660311c8c7f471696dc0d3ccea422389af697f4aec4aa"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=model_input_table",
+    "stats": {
+      "columns": 12,
+      "file_size": 787351,
+      "rows": 29768
+    },
+    "type": "pandas.parquet_dataset.ParquetDataset"
+  },
+  "2816ba38": {
+    "code": "def split_data(data: pd.DataFrame, split_options: Dict) -> Tuple:\n    \"\"\"Splits data into features and targets training and test sets.\n\n    Args:\n        data: Data containing features and target.\n        parameters: Parameters defined in parameters.yml.\n    Returns:\n        Split data.\n    \"\"\"\n    target_variable = split_options[\"target\"]\n    independent_variables = [x for x in data.columns if x != target_variable]\n    test_size = split_options[\"test_size\"]\n    random_state = split_options[\"random_state\"]\n\n    logger = logging.getLogger(__name__)\n    logger.info(\n        f\"Splitting data for the following independent variables \"\n        f\"{independent_variables} against the target of '{target_variable}' \"\n        f\"with a test sized of {test_size} and a random state of \"\n        f\"'{random_state}'\"\n    )\n\n    X = data[independent_variables]\n    y = data[target_variable]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=test_size, random_state=random_state\n    )\n\n    return X_train, X_test, y_train, y_test\n",
+    "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+    "inputs": [
+      "model_input_table",
+      "params:split_options"
+    ],
+    "outputs": [
+      "X_train",
+      "X_test",
+      "y_train",
+      "y_test"
+    ],
+    "parameters": {
+      "split_options": {
+        "random_state": 3,
+        "target": "price",
+        "test_size": 0.2
+      }
+    },
+    "preview": {
+      "sha256": "ee51006ab34d2e5f1211f324c483824fac167905e28b03be4c18a61649a37fa0"
+    },
+    "run_command": "kedro run --to-nodes='split_data__3c1a939c'"
+  },
+  "3b199c6b": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/confusion_matrix.png",
+    "preview": {
+      "sha256": "0bbc4601b5a68c67e07ba6b9480f07fd6a41b343cb656fea50199d6b0eb98b19"
+    },
+    "preview_type": "ImagePreview",
+    "run_command": "kedro run --to-outputs=reporting.confusion_matrix",
+    "type": "matplotlib.matplotlib_dataset.MatplotlibDataset"
+  },
+  "3fb71518": {
+    "code": "def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:\n    \"\"\"This function accepts a Pandas DataFrame and renders a bitmap\n    plot of the data.\n\n    This method is intended to show how easy it is to use a custom\n    dataset in Kedro. You can read more here:\n    https://kedro.readthedocs.io/en/stable/07_extend_kedro/03_custom_datasets.html\n\n    Args:\n        model_input_table (pd.DataFrame): The data to plot\n\n    Returns:\n        PIL.Image: An image of a table ready to be saved as .png\n    \"\"\"\n\n    analysis_df = (\n        model_input_table.groupby(\"cancellation_policy\")[\n            [\"price\", \"review_scores_rating\"]\n        ]\n        .mean()\n        .reset_index()\n    )\n\n    pil_table = DrawTable(analysis_df)\n    return pil_table.image\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews"
+    ],
+    "outputs": [
+      "reporting.cancellation_policy_grid"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.make_price_analysis_image__4f97d161'"
+  },
+  "40886786": {
+    "code": "def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:\n    \"\"\"This function retrieves the two key columns needed to visualise the\n    price-engine histogram. We then prepare the Plotly figure using the\n    Plotly Python API\n\n    Args:\n        model_input_data (pd.DataFrame): The data to plot\n\n    Returns:\n        BaseFigure: Plotly object which is serialised as JSON for rendering\n    \"\"\"\n    price_data_df = model_input_data.loc[:, [\"price\", \"engine_type\"]]\n    p = np.random.dirichlet([1, 1, 1])\n    price_data_df[\"engine_type\"] = np.random.choice(\n        [\"Quantum\", \"Plasma\", \"Nuclear\"], len(price_data_df), p=p\n    )\n    plotly_object = px.histogram(\n        data_frame=price_data_df, x=\"price\", log_x=True, color=\"engine_type\"\n    )\n    return plotly_object\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews"
+    ],
+    "outputs": [
+      "reporting.price_histogram"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.make_price_histogram__e0da8d32'"
+  },
+  "44ef9b48": {
+    "code": "def get_top_shuttles_data(model_input_table: pd.DataFrame) -> Dict:\n    \"\"\"This function retrieves the head from the input table\n    and converts them into a JSON dataset.\n\n    Args:\n        model_input_table (pd.DataFrame): The data to retrieve the top N rows from\n        top_n (int, optional): The number of top rows to retrieve. Defaults to 5.\n\n    Returns:\n        str: A JSON string representing the top N rows of the dataset.\n    \"\"\"\n\n    # Get the top N rows of the model input table\n    top_shuttle_df = model_input_table.head(5)\n    top_shuttle_json = top_shuttle_df.to_dict(orient=\"records\")\n    return top_shuttle_json\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews"
+    ],
+    "outputs": [
+      "reporting.top_shuttle_data"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.get_top_shuttles_data__3cb3499e'"
+  },
+  "495a0bbc": {
+    "run_command": "kedro run --to-outputs=train_evaluation.linear_regression.r2_score",
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "4adb5c8b": {
+    "code": "def create_feature_importance_plot(features: pd.DataFrame) -> go.Figure:\n    sorted_features = features.sort_values(by=\"Score\", ascending=True)\n    plotly_object = px.bar(\n        sorted_features,\n        x=\"Score\",\n        y=\"Feature\",\n        color=\"Score\",\n        color_continuous_scale=\"RdBu\",\n    )\n    return plotly_object\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "feature_importance_output"
+    ],
+    "outputs": [
+      "reporting.feature_importance"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.create_feature_importance_plot__e7a53e99'"
+  },
+  "4f79de77": {
+    "run_command": "kedro run --to-outputs=train_evaluation.random_forest.experiment_params",
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "4f7ffa1b": {
+    "filepath": "<DEMO_PROJECT>/data/02_intermediate/typed_reviews.pq",
+    "preview": {
+      "sha256": "6ab78458b58a812fed9bb5a0800f07ea7e67a3be6cdc6bdbf2f655f4bf41ac0a"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=ingestion.int_typed_reviews",
+    "stats": {
+      "columns": 11,
+      "file_size": 1335600,
+      "rows": 55790
+    },
+    "type": "pandas.parquet_dataset.ParquetDataset"
+  },
+  "69c523b6": {
+    "code": "def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Preprocesses the data for companies.\n\n    Args:\n        companies: Raw data.\n    Returns:\n        Preprocessed data, with `company_rating` converted to a float and\n        `iata_approved` converted to boolean.\n    \"\"\"\n    companies[\"iata_approved\"] = _is_true(companies[\"iata_approved\"])\n    companies[\"company_rating\"] = (\n        companies[\"company_rating\"].str.replace(\"%\", \"\").astype(float) / 100\n    )\n    return companies\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+    "inputs": [
+      "companies"
+    ],
+    "outputs": [
+      "ingestion.int_typed_companies"
+    ],
+    "parameters": {},
+    "preview": {
+      "sha256": "d958b3b3b2bba192ff30d446d7b3a6ef8b70f9ded80480cda9eaa473662b144f"
+    },
+    "run_command": "kedro run --to-nodes='ingestion.apply_types_to_companies'"
+  },
+  "6ea2ec2c": {
+    "code": "def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"This function takes an arbitrary number of DataFrames and will\n    keep left-joining them to themselves along any columns suffixed\n    with \"id\". There is an assumption that the tables passed in share\n    the same identifiers and grain.\n\n    Args:\n        spine_df (pd.DataFrame): The first argument should simply contain\n        the identifier columns at the correct grain.\n        *dfs (pd.DataFrame): Any subsequent tables are joined to the spine\n\n    Returns:\n        pd.DataFrame: A single data-frame where all inputs to this function\n            have been left joined together.\n    \"\"\"\n    id_columns = _get_id_columns(data=spine_df)\n\n    merged_dfs = reduce(\n        lambda df, df2: df.merge(df2, on=id_columns, how=\"left\"), dfs, spine_df\n    )\n    # Confirm that the number of rows is unchanged after the operation has completed\n    assert spine_df.shape[0] == merged_dfs.shape[0]\n    return merged_dfs\n",
+    "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+    "inputs": [
+      "prm_spine_table",
+      "feature_engineering.feat_static_features",
+      "feature_engineering.feat_derived_features"
+    ],
+    "outputs": [
+      "model_input_table"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='feature_engineering.joiner__4cc9d815'"
+  },
+  "72baf5c6": {
+    "parameters": {
+      "train_evaluation.model_options.random_forest": {
+        "class": "RandomForestRegressor",
+        "kwargs": {
+          "bootstrap": true,
+          "ccp_alpha": 0,
+          "criterion": "squared_error",
+          "max_features": 1.0,
+          "min_impurity_decrease": 0,
+          "min_samples_leaf": 1,
+          "min_samples_split": 2,
+          "min_weight_fraction_leaf": 0,
+          "n_estimators": 100,
+          "oob_score": false,
+          "verbose": 0,
+          "warm_start": false
+        },
+        "module": "sklearn.ensemble"
+      }
+    }
+  },
+  "7932e672": {
+    "code": "def create_feature_importance(data: pd.DataFrame) -> pd.DataFrame:\n    feature_name = [f\"feature_{i}\" for i in range(15)]\n    feature_score = np.random.rand(15)\n    feature_importance_df = pd.DataFrame(\n        {\"Feature\": feature_name, \"Score\": feature_score}\n    )\n\n    return feature_importance_df\n",
+    "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+    "inputs": [
+      "prm_spine_table"
+    ],
+    "outputs": [
+      "feature_importance_output"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='feature_engineering.create_feature_importance__173f2884'"
+  },
+  "7b2c6e04": {
+    "filepath": "<DEMO_PROJECT>/data/01_raw/reviews.csv",
+    "preview": {
+      "sha256": "598ab1baa8f6a3f82b91c56be28d16e939ed3449467dffd010f646127540153e"
+    },
+    "preview_type": "TablePreview",
+    "stats": {
+      "columns": 10,
+      "file_size": 2937144,
+      "rows": 77096
+    },
+    "type": "pandas.csv_dataset.CSVDataset"
+  },
+  "7c92a703": {
+    "run_command": "kedro run --to-outputs=feature_engineering.feat_derived_features",
+    "stats": {
+      "columns": 3,
+      "rows": 29768
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "872981f9": {
+    "run_command": "kedro run --to-outputs=X_test",
+    "stats": {
+      "columns": 11,
+      "rows": 5954
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "8838ca1f": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/cancellation_policy_grid.png",
+    "run_command": "kedro run --to-outputs=reporting.cancellation_policy_grid",
+    "type": "datasets.image_dataset.ImageDataset"
+  },
+  "8de402c1": {
+    "code": "def aggregate_company_data(typed_companies: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"This function aggregates company data so that we have one\n    record per company.\n\n    Args:\n        typed_companies: The typed company information\n\n    Returns:\n        pd.DataFrame: Company with duplicates merged through aggregation.\n    \"\"\"\n\n    working_companies = typed_companies.groupby([\"id\"]).agg(\n        {\n            \"company_rating\": \"mean\",\n            \"company_location\": lambda x: list(set(x))[0],  # Take first item\n            \"total_fleet_count\": \"max\",\n            \"iata_approved\": any,\n        }\n    )\n    return working_companies.reset_index().rename(columns={\"id\": \"company_id\"})\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+    "inputs": [
+      "ingestion.int_typed_companies"
+    ],
+    "outputs": [
+      "ingestion.prm_agg_companies"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='ingestion.company_agg'"
+  },
+  "8e4f1015": {
+    "run_command": "kedro run --to-outputs=feature_engineering.feat_static_features",
+    "stats": {
+      "columns": 12,
+      "rows": 29768
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "8f20d98e": {
+    "run_command": "kedro run --to-outputs=ingestion.prm_agg_companies",
+    "stats": {
+      "columns": 5,
+      "rows": 50098
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "98eb115e": {
+    "parameters": {
+      "train_evaluation.model_options.linear_regression": {
+        "class": "LinearRegression",
+        "kwargs": {
+          "copy_X": true,
+          "fit_intercept": true,
+          "positive": false
+        },
+        "module": "sklearn.linear_model"
+      }
+    }
+  },
+  "9a6ef457": {
+    "code": "                func=lambda x: x,\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/pipeline.py",
+    "inputs": [
+      "prm_spine_table"
+    ],
+    "outputs": [
+      "ingestion.prm_spine_table_clone"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='ingestion.<lambda>__2de1c226'"
+  },
+  "9ca016a8": {
+    "run_command": "kedro run --to-outputs=y_train",
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "9f266f06": {
+    "filepath": "<DEMO_PROJECT>/data/03_primary/prm_shuttle_company_reviews.pq",
+    "preview": {
+      "sha256": "0dab04a9000cb1eff3f0f1d5db91f630de3c89337a5dbd87e1e1efca836b8e9b"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=prm_shuttle_company_reviews",
+    "stats": {
+      "columns": 27,
+      "file_size": 1020356,
+      "rows": 29768
+    },
+    "type": "pandas.parquet_dataset.ParquetDataset"
+  },
+  "a3627e31": {
+    "parameters": {
+      "feature_engineering.feature.static": [
+        "engines",
+        "passenger_capacity",
+        "crew",
+        "d_check_complete",
+        "moon_clearance_complete",
+        "iata_approved",
+        "company_rating",
+        "review_scores_rating",
+        "price"
+      ]
+    }
+  },
+  "abed6a4d": {
+    "parameters": {
+      "feature_engineering.feature.derived": [
+        {
+          "column_a": "number_of_reviews",
+          "column_b": "total_fleet_count",
+          "conjunction": "over",
+          "numpy_method": "divide"
+        },
+        {
+          "column_a": "number_of_reviews",
+          "column_b": "total_fleet_count",
+          "conjunction": "over",
+          "numpy_method": "divide"
+        },
+        {
+          "column_a": "reviews_per_month",
+          "column_b": "company_rating",
+          "conjunction": "by",
+          "numpy_method": "multiply"
+        }
+      ]
+    }
+  },
+  "aed46479": {
+    "filepath": "<DEMO_PROJECT>/data/01_raw/companies.csv",
+    "preview": {
+      "sha256": "d06ca8553d6442ceb66e66e3d1e99dd75c92c502d44671bc60db26a6400129a3"
+    },
+    "preview_type": "TablePreview",
+    "stats": {
+      "columns": 5,
+      "file_size": 1810602,
+      "rows": 77096
+    },
+    "type": "pandas.csv_dataset.CSVDataset"
+  },
+  "af9a43c8": {
+    "code": "def train_model(\n    X_train: pd.DataFrame, y_train: pd.Series, model_options: Dict[str, Any]\n) -> Tuple[BaseEstimator, Dict[str, Any]]:\n    \"\"\"Trains the linear regression model.\n\n    Args:\n        X_train: Training data of independent features.\n        y_train: Training data for price.\n\n    Returns:\n        Trained model.\n    \"\"\"\n\n    # Parse parameters\n    model_module = model_options.get(\"module\")\n    model_type = model_options.get(\"class\")\n    model_arguments = model_options.get(\"kwargs\")\n\n    # Import and instantiate Sklearn regressor object\n    regressor_class = getattr(importlib.import_module(model_module), model_type)\n    regressor_instance = regressor_class(**model_arguments)\n\n    logger = logging.getLogger(__name__)\n    logger.info(f\"Fitting model of type {type(regressor_instance)}\")\n\n    # Fit model\n    regressor_instance.fit(X_train, y_train)\n    flat_model_params = {**{\"model_type\": model_type}, **model_arguments}\n    return regressor_instance, flat_model_params\n",
+    "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+    "inputs": [
+      "X_train",
+      "y_train",
+      "params:train_evaluation.model_options.linear_regression"
+    ],
+    "outputs": [
+      "train_evaluation.linear_regression.regressor",
+      "train_evaluation.linear_regression.experiment_params"
+    ],
+    "parameters": {
+      "train_evaluation.model_options.linear_regression": {
+        "class": "LinearRegression",
+        "kwargs": {
+          "copy_X": true,
+          "fit_intercept": true,
+          "positive": false
+        },
+        "module": "sklearn.linear_model"
+      }
+    },
+    "run_command": "kedro run --to-nodes='train_evaluation.linear_regression.train_model__199807b9'"
+  },
+  "b16095d0": {
+    "run_command": "kedro run --to-outputs=train_evaluation.random_forest.r2_score",
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "b5609df0": {
+    "parameters": {
+      "ingestion.typing.reviews.columns_as_floats": [
+        "reviews_per_month"
+      ]
+    }
+  },
+  "b701864d": {
+    "run_command": "kedro run --to-outputs=train_evaluation.linear_regression.experiment_params",
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "be6b7919": {
+    "code": "def create_matplotlib_chart(companies: pd.DataFrame) -> plt:\n    random_actuals = np.random.randint(2, size=11)\n    random_predicted = np.random.randint(2, size=11)\n\n    data = {\"y_Actual\": random_actuals, \"y_Predicted\": random_predicted}\n    plt.style.use(\"dark_background\")\n    df = pd.DataFrame(data, columns=[\"y_Actual\", \"y_Predicted\"])\n    confusion_matrix = pd.crosstab(\n        df[\"y_Actual\"], df[\"y_Predicted\"], rownames=[\"Actual\"], colnames=[\"Predicted\"]\n    )\n    sn.heatmap(confusion_matrix, annot=True)\n    return plt\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews"
+    ],
+    "outputs": [
+      "reporting.confusion_matrix"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.create_matplotlib_chart__15c38707'"
+  },
+  "bf8530bc": {
+    "code": "def evaluate_model(\n    regressor: BaseEstimator,\n    X_test: pd.DataFrame,\n    y_test: pd.Series,\n) -> Dict[str, float]:\n    \"\"\"Calculates and logs the coefficient of determination.\n\n    Args:\n        regressor: Trained model.\n        X_test: Testing data of independent features.\n        y_test: Testing data for price.\n    \"\"\"\n    y_pred = regressor.predict(X_test)\n    score = r2_score(y_test, y_pred)\n    a2_score = random.randint(0, 100) * 0.1\n    b2_score = random.randint(0, 100) * 0.1\n    logger = logging.getLogger(__name__)\n    logger.info(\n        f\"Model has a coefficient R^2 of {score:.3f} on test data using a \"\n        f\"regressor of type '{type(regressor)}'\"\n    )\n    return {\"r2_score\": score, \"a2_score\": a2_score, \"b2_score\": b2_score}\n",
+    "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+    "inputs": [
+      "train_evaluation.random_forest.regressor",
+      "X_test",
+      "y_test"
+    ],
+    "outputs": [
+      "train_evaluation.random_forest.r2_score"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='train_evaluation.random_forest.evaluate_model__cefff325'"
+  },
+  "c08c7708": {
+    "run_command": "kedro run --to-outputs=ingestion.prm_spine_table_clone",
+    "stats": {
+      "columns": 3,
+      "rows": 29768
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "c0be8342": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/top_shuttle_data.json",
+    "preview": {
+      "sha256": "1998fca240290f4805d13d3627590d2f5d29aa2b89badc9a97a8967d3d801e41"
+    },
+    "preview_type": "JSONPreview",
+    "run_command": "kedro run --to-outputs=reporting.top_shuttle_data",
+    "type": "json.json_dataset.JSONDataset"
+  },
+  "c0ddbcbf": {
+    "filepath": "<DEMO_PROJECT>/data/02_intermediate/typed_shuttles.pq",
+    "original_type": "pandas.parquet_dataset.ParquetDataset",
+    "run_command": "kedro run --to-outputs=ingestion.int_typed_shuttles@pandas1",
+    "stats": {
+      "columns": 13,
+      "file_size": 1235685,
+      "rows": 77096
+    },
+    "transcoded_types": [
+      "pandas.parquet_dataset.ParquetDataset"
+    ]
+  },
+  "c6992660": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/price_histogram.json",
+    "preview": {
+      "sha256": "4b0ed84fc965cd9957bcb7200fdc5b03dfb510d778adbb46337ff964bc1ab52e"
+    },
+    "preview_type": "PlotlyPreview",
+    "run_command": "kedro run --to-outputs=reporting.price_histogram",
+    "type": "plotly.json_dataset.JSONDataset"
+  },
+  "c7646ea1": {
+    "code": "def make_cancel_policy_bar_chart(\n    model_input_data: pd.DataFrame, top_counties: int = 20\n) -> pd.DataFrame:\n    \"\"\"This function performs a group by on the input table, limits the\n    results to the top n countries based on price and returns the\n    data needed to visualise a stacked bar chart. The DataFrame is\n    rendered as a Plot using the YAML API exposed in the Kedro Catalog.\n\n    Args:\n        model_input_data (pd.DataFrame): The data to plot\n        top_counties (int, optional): [description]. Defaults to 20.\n\n    Returns:\n        pd.DataFrame: The aggregated data ready for visualisation\n    \"\"\"\n    country_policy_df = (\n        model_input_data.groupby([\"company_location\", \"cancellation_policy\"])[\"price\"]\n        .sum()\n        .reset_index()\n    )\n\n    high_value_countries = (\n        model_input_data.groupby(\"company_location\")\n        .price.sum()\n        .sort_values()\n        .head(top_counties)\n        .index\n    )\n\n    high_value_filter = country_policy_df.company_location.isin(high_value_countries)\n    return country_policy_df[high_value_filter]\n",
+    "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews"
+    ],
+    "outputs": [
+      "reporting.cancellation_policy_breakdown"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='reporting.make_cancel_policy_bar_chart__7c6d9304'"
+  },
+  "cae2d1c7": {
+    "run_command": "kedro run --to-outputs=X_train",
+    "stats": {
+      "columns": 11,
+      "rows": 23814
+    },
+    "type": "io.memory_dataset.MemoryDataset"
+  },
+  "cb5166f3": {
+    "code": "def combine_shuttle_level_information(\n    shuttles: pd.DataFrame, companies: pd.DataFrame, reviews: pd.DataFrame\n) -> Tuple[pd.DataFrame, pd.DataFrame]:\n    \"\"\"Combines all data to create a domain level primary table.\n\n    Args:\n        shuttles: Preprocessed data for shuttles.\n        companies: Preprocessed data for companies.\n        reviews: Raw data for reviews.\n    Returns:\n        Combined primary layer table\n\n    \"\"\"\n    rated_shuttles = shuttles.rename(columns={\"id\": \"shuttle_id\"}).merge(\n        reviews, on=\"shuttle_id\", how=\"inner\"\n    )\n    combined_table = rated_shuttles.merge(companies, on=\"company_id\", how=\"inner\")\n\n    working_table = combined_table.dropna(how=\"any\")\n    id_columns = [x for x in working_table.columns if x.endswith(\"id\")]\n    return working_table, working_table[id_columns]\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+    "inputs": [
+      "ingestion.int_typed_shuttles@pandas2",
+      "ingestion.prm_agg_companies",
+      "ingestion.int_typed_reviews"
+    ],
+    "outputs": [
+      "prm_shuttle_company_reviews",
+      "prm_spine_table"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='ingestion.combine_step'"
+  },
+  "d0e9b00f": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/cancellation_breakdown.json",
+    "preview": {
+      "sha256": "d31a458839f17cbcb950d270143d30c1d079bedb3f65df61462a53fd2959fb8e"
+    },
+    "preview_type": "PlotlyPreview",
+    "run_command": "kedro run --to-outputs=reporting.cancellation_policy_breakdown",
+    "stats": {
+      "columns": 3,
+      "file_size": 8744,
+      "rows": 21
+    },
+    "type": "plotly.plotly_dataset.PlotlyDataset"
+  },
+  "d2885635": {
+    "code": "def evaluate_model(\n    regressor: BaseEstimator,\n    X_test: pd.DataFrame,\n    y_test: pd.Series,\n) -> Dict[str, float]:\n    \"\"\"Calculates and logs the coefficient of determination.\n\n    Args:\n        regressor: Trained model.\n        X_test: Testing data of independent features.\n        y_test: Testing data for price.\n    \"\"\"\n    y_pred = regressor.predict(X_test)\n    score = r2_score(y_test, y_pred)\n    a2_score = random.randint(0, 100) * 0.1\n    b2_score = random.randint(0, 100) * 0.1\n    logger = logging.getLogger(__name__)\n    logger.info(\n        f\"Model has a coefficient R^2 of {score:.3f} on test data using a \"\n        f\"regressor of type '{type(regressor)}'\"\n    )\n    return {\"r2_score\": score, \"a2_score\": a2_score, \"b2_score\": b2_score}\n",
+    "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+    "inputs": [
+      "train_evaluation.linear_regression.regressor",
+      "X_test",
+      "y_test"
+    ],
+    "outputs": [
+      "train_evaluation.linear_regression.r2_score"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='train_evaluation.linear_regression.evaluate_model__1c49c35c'"
+  },
+  "e50f81b8": {
+    "code": "def create_static_features(data: pd.DataFrame, column_names: List[str]) -> pd.DataFrame:\n    \"\"\"This function accepts a pandas DataFrame as well as a list of\n    columns to keep in scope. A DataFrame limited to any ID columns as well\n    as the provided column names will be returned\n\n    Args:\n        data (pd.DataFrame): The DataFrame to process\n        column_names (List[str]): The column names to keep in scope\n\n    Returns:\n        (pd.DataFrame): The limited DataFrame to return\n    \"\"\"\n    id_columns = _get_id_columns(data)\n    columns_to_select = id_columns + column_names\n    return data[columns_to_select]\n",
+    "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+    "inputs": [
+      "prm_shuttle_company_reviews",
+      "params:feature_engineering.feature.static"
+    ],
+    "outputs": [
+      "feature_engineering.feat_static_features"
+    ],
+    "parameters": {
+      "feature_engineering.feature.static": [
+        "engines",
+        "passenger_capacity",
+        "crew",
+        "d_check_complete",
+        "moon_clearance_complete",
+        "iata_approved",
+        "company_rating",
+        "review_scores_rating",
+        "price"
+      ]
+    },
+    "run_command": "kedro run --to-nodes='feature_engineering.create_static_features__dd7d7ef1'"
+  },
+  "ea604da4": {
+    "code": "def apply_types_to_reviews(\n    reviews: pd.DataFrame, columns_as_floats: List[str]\n) -> pd.DataFrame:\n    \"\"\"Preprocess the data for reviews\n\n    Args:\n        reviews: Raw data\n        columns_as_floats: Which columns to cast as floats\n    Returns:\n        Preprocessed data, with parametrised columns cast as `float`, all other columns\n        will be cast as `int` data types. Null values are dropped\n\n    \"\"\"\n    non_null_reviews = reviews.dropna()\n\n    # Retrieve columns to type\n    all_columns_set = set(non_null_reviews.columns)\n    float_columns_set = set(columns_as_floats)\n    integer_columns_set = all_columns_set - float_columns_set\n\n    # Prepare dictionaries to apply\n    new_integer_columns = {c: int for c in integer_columns_set}\n    new_float_columns = {c: float for c in float_columns_set}\n    new_dtypes = {**new_integer_columns, **new_float_columns}  # merge dictionaries\n\n    # Apply types\n    typed_reviews = non_null_reviews.astype(new_dtypes)\n\n    # With add ID column to review table\n    return typed_reviews.assign(review_id=lambda df: df.index + 1)\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+    "inputs": [
+      "reviews",
+      "params:ingestion.typing.reviews.columns_as_floats"
+    ],
+    "outputs": [
+      "ingestion.int_typed_reviews"
+    ],
+    "parameters": {
+      "ingestion.typing.reviews.columns_as_floats": [
+        "reviews_per_month"
+      ]
+    },
+    "run_command": "kedro run --to-nodes='ingestion.apply_types_to_reviews'"
+  },
+  "eb7d6d28": {
+    "filepath": "<DEMO_PROJECT>/data/08_reporting/feature_importance_plot.json",
+    "preview": {
+      "sha256": "b81f0db70b7bd33f63d1aa57b02c545b73669227cde4a595d32c1542b0eff557"
+    },
+    "preview_type": "PlotlyPreview",
+    "run_command": "kedro run --to-outputs=reporting.feature_importance",
+    "type": "plotly.json_dataset.JSONDataset"
+  },
+  "f063cc82": {
+    "filepath": "<DEMO_PROJECT>/data/03_primary/prm_spine_table.pq",
+    "preview": {
+      "sha256": "5c0f91e8406edd40fe9360b38584d28ac3d8deffc91a98df9f9ef7cb60a69cd7"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=prm_spine_table",
+    "stats": {
+      "columns": 3,
+      "file_size": 655994,
+      "rows": 29768
+    },
+    "type": "pandas.parquet_dataset.ParquetDataset"
+  },
+  "f1d596c2": {
+    "filepath": "<DEMO_PROJECT>/data/01_raw/shuttles.xlsx",
+    "preview": {
+      "sha256": "3f4ea523337b336468b409ab03ca6e2b2300779cbd288f6e924669c085b8fa92"
+    },
+    "preview_type": "TablePreview",
+    "stats": {
+      "columns": 13,
+      "file_size": 4195290,
+      "rows": 77096
+    },
+    "type": "pandas.excel_dataset.ExcelDataset"
+  },
+  "f23ad217": {
+    "filepath": "<DEMO_PROJECT>/data/02_intermediate/typed_companies.pq",
+    "preview": {
+      "sha256": "4c4e49866fd6e0defc7e359a18f89438a41db4a3df07a7437c37468bba87d06a"
+    },
+    "preview_type": "TablePreview",
+    "run_command": "kedro run --to-outputs=ingestion.int_typed_companies",
+    "stats": {
+      "columns": 5,
+      "file_size": 550616,
+      "rows": 77096
+    },
+    "type": "pandas.parquet_dataset.ParquetDataset"
+  },
+  "f33b9291": {
+    "code": "def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Preprocesses the data for shuttles.\n\n    Args:\n        shuttles: Raw data.\n    Returns:\n        Preprocessed data, with `price` converted to a float and `d_check_complete`,\n        `moon_clearance_complete` converted to boolean.\n    \"\"\"\n    shuttles[\"d_check_complete\"] = _is_true(shuttles[\"d_check_complete\"])\n    shuttles[\"moon_clearance_complete\"] = _is_true(shuttles[\"moon_clearance_complete\"])\n    shuttles[\"price\"] = (\n        shuttles[\"price\"].str.replace(r\"[\\$,]\", \"\", regex=True).astype(float)\n    )\n    return shuttles\n",
+    "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+    "inputs": [
+      "shuttles"
+    ],
+    "outputs": [
+      "ingestion.int_typed_shuttles@pandas1"
+    ],
+    "parameters": {},
+    "run_command": "kedro run --to-nodes='ingestion.apply_types_to_shuttles'"
+  },
+  "f6d9538c": {
+    "run_command": "kedro run --to-outputs=y_test",
+    "type": "io.memory_dataset.MemoryDataset"
+  }
+}

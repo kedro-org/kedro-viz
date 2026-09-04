@@ -1,9 +1,9 @@
-"""Build node-detail responses from a Kedro inspection snapshot."""
+"""Build static node-detail responses with optional exact-ID live enrichment."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from kedro_viz.api.rest.responses.nodes import (
     DataNodeMetadataAPIResponse,
@@ -14,10 +14,22 @@ from kedro_viz.api.rest.responses.nodes import (
 )
 from kedro_viz.integrations.kedro.inspection.errors import NodeNotFoundError
 from kedro_viz.integrations.kedro.inspection.graph_builder import MEMORY_DATASET_TYPE
+from kedro_viz.integrations.kedro.inspection.node_metadata_enrichment import (
+    enrich_data_response,
+    enrich_task_response,
+    enrich_transcoded_response,
+    is_compatible_live_node,
+)
 from kedro_viz.integrations.kedro.inspection.parameters import parameters_for_inputs
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
     _create_task_node_id_from_node_snapshot,
+)
+from kedro_viz.models.flowchart.nodes import (
+    DataNode,
+    GraphNode,
+    TaskNode,
+    TranscodedDataNode,
 )
 from kedro_viz.models.metadata import NodeExtras
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
@@ -27,7 +39,7 @@ if TYPE_CHECKING:
 
 
 class NodeMetadataService:
-    """Prepare static node metadata keyed by the graph's canonical node IDs."""
+    """Prepare and enrich node metadata keyed by the graph's canonical node IDs."""
 
     def __init__(
         self,
@@ -35,13 +47,20 @@ class NodeMetadataService:
         *,
         parameter_feed: Mapping[str, Any],
         node_extras_by_name: Mapping[str, NodeExtras] | None = None,
+        live_nodes_by_id: Mapping[str, GraphNode] | None = None,
     ) -> None:
         self._snapshot = snapshot
         self._parameter_feed = dict(parameter_feed)
         self._node_extras_by_name = dict(node_extras_by_name or {})
         self._metadata_by_node_id = self._build_metadata_index()
+        self._live_nodes_by_id = self._copy_supported_live_nodes(live_nodes_by_id)
 
-    def get_node_metadata_response(self, node_id: str) -> NodeMetadataAPIResponse:
+    def get_node_metadata_response(
+        self,
+        node_id: str,
+        *,
+        include_previews: bool = True,
+    ) -> NodeMetadataAPIResponse:
         """Return fresh metadata for ``node_id``.
 
         Raises:
@@ -51,7 +70,41 @@ class NodeMetadataService:
             prepared = self._metadata_by_node_id[node_id]
         except KeyError as exc:
             raise NodeNotFoundError(f"Invalid node ID: {node_id!r}") from exc
-        return prepared.model_copy(deep=True)
+        response = prepared.model_copy(deep=True)
+        live_node = self._live_nodes_by_id.get(node_id)
+        if live_node is None:
+            return response
+        if isinstance(response, TaskNodeMetadataAPIResponse):
+            enrich_task_response(response, cast(TaskNode, live_node))
+        elif isinstance(response, DataNodeMetadataAPIResponse):
+            enrich_data_response(
+                response,
+                cast(DataNode, live_node),
+                include_previews=include_previews,
+            )
+        elif isinstance(response, TranscodedDataNodeMetadataAPIReponse):
+            enrich_transcoded_response(
+                response,
+                cast(TranscodedDataNode, live_node),
+            )
+        return response
+
+    def _copy_supported_live_nodes(
+        self,
+        live_nodes_by_id: Mapping[str, GraphNode] | None,
+    ) -> dict[str, GraphNode]:
+        copied = dict(live_nodes_by_id or {})
+        retained: dict[str, GraphNode] = {}
+        for node_id, node in copied.items():
+            prepared = self._metadata_by_node_id.get(node_id)
+            if (
+                not isinstance(node, GraphNode)
+                or node.id != node_id
+                or not is_compatible_live_node(prepared, node)
+            ):
+                continue
+            retained[node_id] = node
+        return retained
 
     def _build_metadata_index(self) -> dict[str, NodeMetadataAPIResponse]:
         (

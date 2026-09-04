@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from kedro_viz.integrations.kedro.inspection.enrichment import EnrichmentSources
 from kedro_viz.integrations.kedro.inspection.graph_service import (
@@ -19,6 +19,9 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     load_inspection_project_data,
 )
 from kedro_viz.models.metadata import NodeExtras
+
+if TYPE_CHECKING:
+    from kedro_viz.models.flowchart.nodes import GraphNode
 
 
 class VizProjectContext:
@@ -44,6 +47,7 @@ class VizProjectContext:
         is_lite: bool = False,
         enrichment: EnrichmentSources | None = None,
         node_extras_by_name: Mapping[str, NodeExtras] | None = None,
+        live_nodes_by_id: Mapping[str, GraphNode] | None = None,
     ) -> VizProjectContext:
         """Build project-scoped services from one inspection snapshot.
 
@@ -58,6 +62,8 @@ class VizProjectContext:
             enrichment: Explicit fields supplied by the transitional live load.
             node_extras_by_name: File-backed stats and styles already read by the live
                 loader. When omitted, they are read without constructing a catalog.
+            live_nodes_by_id: Optional live task and dataset nodes keyed by their
+                existing graph IDs.
 
         Returns:
             A project context containing the prepared inspection services.
@@ -88,5 +94,6 @@ class VizProjectContext:
                 project_data.snapshot,
                 parameter_feed=project_data.parameter_feed,
                 node_extras_by_name=prepared_node_extras,
+                live_nodes_by_id=live_nodes_by_id,
             ),
         )

@@ -107,8 +107,9 @@ def _create_viz_project_context(
         layer_by_dataset = (
             dict(live_data.catalog.layers_mapping) if include_hooks else None
         )
+        live_nodes_by_id = live_data.nodes.as_dict()
         enrichment = EnrichmentSources.from_live_nodes(
-            live_data.nodes.as_list(),
+            live_nodes_by_id.values(),
             layer_by_dataset=layer_by_dataset,
         )
         return VizProjectContext.from_project(
@@ -120,6 +121,7 @@ def _create_viz_project_context(
             is_lite=is_lite,
             enrichment=enrichment,
             node_extras_by_name=live_data.node_extras,
+            live_nodes_by_id=live_nodes_by_id,
         )
     # Context construction is an all-or-nothing startup requirement. Log and propagate every
     # failure rather than serving an app whose inspection-backed routes cannot work.

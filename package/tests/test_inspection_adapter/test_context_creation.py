@@ -20,8 +20,8 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
 ) -> None:
     """Startup builds one context from the supplied live data and CLI options."""
     live_data = mocker.MagicMock()
-    live_nodes = [mock.sentinel.live_node]
-    live_data.nodes.as_list.return_value = live_nodes
+    live_nodes_by_id = {"task-id": mock.sentinel.live_node}
+    live_data.nodes.as_dict.return_value = live_nodes_by_id
     live_data.catalog.layers_mapping = {}
     enrichment = mock.sentinel.enrichment
     from_live_nodes = mocker.patch(
@@ -46,7 +46,9 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
         include_hooks=True,
     )
 
-    from_live_nodes.assert_called_once_with(live_nodes, layer_by_dataset={})
+    from_live_nodes.assert_called_once()
+    assert list(from_live_nodes.call_args.args[0]) == [mock.sentinel.live_node]
+    assert from_live_nodes.call_args.kwargs == {"layer_by_dataset": {}}
     from_project.assert_called_once_with(
         PROJECT,
         env="staging",
@@ -56,6 +58,7 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
         is_lite=True,
         enrichment=enrichment,
         node_extras_by_name=live_data.node_extras,
+        live_nodes_by_id=live_nodes_by_id,
     )
     assert result is context
 
@@ -92,10 +95,11 @@ def test_hook_modified_factory_layer_is_forwarded_to_the_context(mocker) -> None
 
     _create_viz_project_context(PROJECT, live_data, include_hooks=True)
 
-    from_live_nodes.assert_called_once_with(
-        live_data.nodes.as_list(),
-        layer_by_dataset={"processing.int_companies": "hooked"},
-    )
+    from_live_nodes.assert_called_once()
+    assert list(from_live_nodes.call_args.args[0]) == live_data.nodes.as_list()
+    assert from_live_nodes.call_args.kwargs == {
+        "layer_by_dataset": {"processing.int_companies": "hooked"}
+    }
 
 
 def test_unmaterialized_factory_layer_is_absent_from_hook_layers(mocker) -> None:
@@ -126,33 +130,31 @@ def test_unmaterialized_factory_layer_is_absent_from_hook_layers(mocker) -> None
 
     _create_viz_project_context(PROJECT, live_data, include_hooks=True)
 
-    from_live_nodes.assert_called_once_with(
-        live_data.nodes.as_list(),
-        layer_by_dataset={},
-    )
+    from_live_nodes.assert_called_once()
+    assert list(from_live_nodes.call_args.args[0]) == live_data.nodes.as_list()
+    assert from_live_nodes.call_args.kwargs == {"layer_by_dataset": {}}
 
 
 def test_hooks_disabled_keeps_the_raw_catalog_layer_path(mocker) -> None:
     """Without hooks, the builder reads layers from raw config."""
     live_data = mocker.MagicMock()
-    live_nodes = [mock.sentinel.live_node]
-    live_data.nodes.as_list.return_value = live_nodes
+    live_nodes_by_id = {"task-id": mock.sentinel.live_node}
+    live_data.nodes.as_dict.return_value = live_nodes_by_id
     live_data.catalog.layers_mapping = {"companies": "hooked"}
     from_live_nodes = mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
     mocker.patch("kedro_viz.server.VizProjectContext.from_project")
 
     _create_viz_project_context(PROJECT, live_data)
 
-    from_live_nodes.assert_called_once_with(
-        live_nodes,
-        layer_by_dataset=None,
-    )
+    from_live_nodes.assert_called_once()
+    assert list(from_live_nodes.call_args.args[0]) == [mock.sentinel.live_node]
+    assert from_live_nodes.call_args.kwargs == {"layer_by_dataset": None}
 
 
 def test_a_context_build_failure_is_logged_and_re_raised(mocker, caplog) -> None:
     """A failed context build stops startup instead of serving an incomplete graph."""
     live_data = mocker.MagicMock()
-    live_data.nodes.as_list.return_value = []
+    live_data.nodes.as_dict.return_value = {}
     mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
     mocker.patch(
         "kedro_viz.server.VizProjectContext.from_project",
