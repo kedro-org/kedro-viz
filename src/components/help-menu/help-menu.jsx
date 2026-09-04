@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import DocsIcon from '../icons/docs';
 import HelpIcon from '../icons/help';
@@ -51,7 +51,8 @@ const menuId = 'help-menu';
  */
 export const HelpMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useOutsideClick(() => setIsOpen(false));
+  const closeMenu = useCallback(() => setIsOpen(false), []);
+  const containerRef = useOutsideClick(closeMenu);
 
   useEffect(() => {
     if (!isOpen) {
@@ -63,11 +64,12 @@ export const HelpMenu = () => {
         return;
       }
       // Closing unmounts whichever link has focus, so hand it back to the
-      // button rather than letting it fall through to the document body
+      // toggle rather than letting it fall through to the document body.
+      // Matched as a direct child so nothing added to the panel can shadow it
       const hadFocus = containerRef.current.contains(document.activeElement);
       setIsOpen(false);
       if (hadFocus) {
-        containerRef.current.querySelector('button').focus();
+        containerRef.current.querySelector(':scope > button').focus();
       }
     };
 

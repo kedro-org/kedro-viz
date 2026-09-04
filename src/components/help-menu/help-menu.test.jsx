@@ -12,6 +12,7 @@ describe('HelpMenu', () => {
     render(<HelpMenu />);
 
     expect(getButton()).toHaveAttribute('aria-expanded', 'false');
+    expect(getButton()).not.toHaveAttribute('aria-controls');
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
