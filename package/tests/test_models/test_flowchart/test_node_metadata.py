@@ -263,6 +263,84 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.stats.get("rows") == 10
         assert data_node_metadata.stats.get("columns") == 2
 
+    @pytest.mark.parametrize(
+        ("is_free_input", "expected"),
+        [
+            (True, None),
+            (False, "kedro run --to-outputs=dataset"),
+        ],
+    )
+    def test_data_node_run_command(self, is_free_input, expected):
+        data_node = GraphNode.create_data_node(
+            dataset_id="dataset",
+            dataset_name="dataset",
+            layer=None,
+            tags=set(),
+            dataset=MemoryDataset(),
+            node_extras=None,
+            modular_pipelines=set(),
+            is_free_input=is_free_input,
+        )
+
+        metadata = DataNodeMetadata(data_node=data_node)
+
+        assert metadata.run_command == expected
+
+    def test_data_node_releases_once_before_live_reads(self, mocker):
+        dataset = CSVDataset(filepath="/tmp/dataset.csv")
+        data_node = GraphNode.create_data_node(
+            dataset_id="dataset",
+            dataset_name="dataset",
+            layer=None,
+            tags=set(),
+            dataset=dataset,
+            node_extras=None,
+            modular_pipelines=set(),
+        )
+        events = []
+        mocker.patch.object(
+            dataset,
+            "release",
+            side_effect=lambda: events.append("release"),
+        )
+        mocker.patch.object(
+            dataset,
+            "_describe",
+            side_effect=lambda: events.append("describe") or {"filepath": "data.csv"},
+        )
+        mocker.patch.object(
+            dataset,
+            "preview",
+            side_effect=lambda: events.append("preview") or None,
+        )
+
+        DataNodeMetadata(data_node=data_node)
+
+        assert events[0] == "release"
+        assert events.count("release") == 1
+        assert {"describe", "preview"}.issubset(events)
+
+    def test_metadata_models_do_not_retain_request_objects_on_classes(self):
+        kedro_node = node(identity, inputs="x", outputs="y", name="identity_node")
+        task_node = GraphNode.create_task_node(kedro_node, "identity_node", set())
+        data_node = GraphNode.create_data_node(
+            dataset_id="dataset",
+            dataset_name="dataset",
+            layer=None,
+            tags=set(),
+            dataset=MemoryDataset(data=1),
+            node_extras=None,
+            modular_pipelines=set(),
+        )
+
+        TaskNodeMetadata(task_node=task_node)
+        DataNodeMetadata(data_node=data_node)
+
+        assert "kedro_node" not in TaskNodeMetadata.__dict__
+        assert "dataset" not in DataNodeMetadata.__dict__
+        assert "transcoded_data_node" not in TranscodedDataNodeMetadata.__dict__
+        assert "parameters_node" not in ParametersNodeMetadata.__dict__
+
     def test_get_preview_args(self):
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
         dataset = CSVDataset(filepath="test.csv", metadata=metadata)
@@ -357,7 +435,7 @@ class TestGraphNodeMetadata:
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
         assert preview_node_metadata.preview is None
 
-    def test_transcoded_data_node_metadata(self):
+    def test_transcoded_data_node_metadata(self, mocker):
         dataset = CSVDataset(filepath="/tmp/dataset.csv")
         transcoded_data_node = GraphNode.create_data_node(
             dataset_id="dataset@pandas2",
@@ -368,13 +446,17 @@ class TestGraphNodeMetadata:
             node_extras=NodeExtras(stats={"rows": 10, "columns": 2}),
             modular_pipelines=set(),
         )
+        original = ParquetDataset(filepath="foo.parquet")
+        transcoded = CSVDataset(filepath="foo.csv")
+        original_release = mocker.spy(original, "release")
+        transcoded_release = mocker.spy(transcoded, "release")
         transcoded_data_node.original_name = "dataset"
-        transcoded_data_node.original_version = ParquetDataset(filepath="foo.parquet")
-        transcoded_data_node.transcoded_versions = [CSVDataset(filepath="foo.csv")]
-        transcoded_data_node.is_free_input = True
+        transcoded_data_node.original_version = original
+        transcoded_data_node.transcoded_versions = [transcoded]
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
             transcoded_data_node=transcoded_data_node
         )
+        assert transcoded_data_node_metadata.filepath == "foo.parquet"
         assert (
             transcoded_data_node_metadata.original_type
             == "pandas.parquet_dataset.ParquetDataset"
@@ -385,6 +467,33 @@ class TestGraphNodeMetadata:
         ]
         assert transcoded_data_node_metadata.stats.get("rows") == 10
         assert transcoded_data_node_metadata.stats.get("columns") == 2
+        original_release.assert_not_called()
+        transcoded_release.assert_not_called()
+
+    @pytest.mark.parametrize(
+        ("is_free_input", "expected"),
+        [
+            (True, None),
+            (False, "kedro run --to-outputs=dataset@pandas2"),
+        ],
+    )
+    def test_transcoded_data_node_run_command(self, is_free_input, expected):
+        transcoded_data_node = GraphNode.create_data_node(
+            dataset_id="dataset",
+            dataset_name="dataset@pandas2",
+            layer=None,
+            tags=set(),
+            dataset=None,
+            node_extras=None,
+            modular_pipelines=set(),
+            is_free_input=is_free_input,
+        )
+        transcoded_data_node.original_name = "dataset@pandas2"
+        transcoded_data_node.original_version = MemoryDataset()
+
+        metadata = TranscodedDataNodeMetadata(transcoded_data_node=transcoded_data_node)
+
+        assert metadata.run_command == expected
 
     def test_partitioned_data_node_metadata(self):
         from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
@@ -530,13 +639,14 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.preview is None
 
     def test_no_preview_attr(self):
-        """Test that preview is None when kedro_node has no preview attribute."""
+        """Test that preview is None when the Kedro node's preview is None."""
         kedro_node = node(
             identity,
             inputs="x",
             outputs="y",
             name="preview_node",
         )
+        kedro_node.preview = None
 
         task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
@@ -561,6 +671,25 @@ class TestGraphNodeMetadata:
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
 
         assert task_node_metadata.preview is None
+
+    def test_task_preview_is_not_controlled_by_dataset_preview_policy(self):
+        from kedro.pipeline.preview_contract import TextPreview
+
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="preview_node",
+            preview_fn=lambda: TextPreview(content="content"),
+        )
+        task_node = GraphNode.create_task_node(kedro_node, "preview_node", set())
+        DataNodeMetadata.set_is_all_previews_enabled(False)
+
+        assert TaskNodeMetadata(task_node=task_node).preview == {
+            "kind": "text",
+            "content": "content",
+            "meta": None,
+        }
 
     def test_preview_exception_handler(self, mocker, caplog):
         """Test that exceptions during preview() are handled gracefully."""
