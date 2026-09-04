@@ -1,11 +1,14 @@
-"""Capture the current Kedro-Viz backend output as a generated test baseline.
+"""Capture the current Kedro-Viz backend output as generated test baselines.
 
 Runs the live-object backend against ``demo-project`` and writes normalized JSON for ``/api/main``
-and every ``/api/pipelines/{id}``, plus a per task-node ID report.
+and every ``/api/pipelines/{id}``, node-detail responses, and a per task-node ID report.
 
 Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
+
+Node metadata expectations use production imports from PR 1 commit 2, before live helper
+extraction. The source commit is recorded in the generated report.
 
 The generated files are committed under ``baseline/`` and used by inspection adapter tests.
 """
@@ -16,6 +19,7 @@ The generated files are committed under ``baseline/`` and used by inspection ada
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -23,6 +27,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 OUT_DIR = Path(__file__).resolve().parent / "baseline"
+NODE_METADATA_BASELINE_SOURCE_COMMIT = "9c3d7b5ff38619066371a8b647caa2f647291c43"
 
 
 # --------------------------------------------------------------------------- #
@@ -59,6 +64,28 @@ def normalize_graph(resp: dict) -> dict:
             _sort_in_place(entry, "inputs")
             _sort_in_place(entry, "outputs")
     return resp
+
+
+def normalize_node_metadata(response: dict) -> dict:
+    """Normalize project paths and compact complete preview payloads."""
+    response = json.loads(json.dumps(response))
+    filepath = response.get("filepath")
+    if isinstance(filepath, str):
+        project_marker = f"{DEMO_PROJECT.name}/"
+        if project_marker in filepath:
+            _, project_relative_path = filepath.split(project_marker, maxsplit=1)
+            response["filepath"] = f"<DEMO_PROJECT>/{project_relative_path}"
+    if "preview" in response:
+        preview_json = json.dumps(
+            response["preview"],
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+        response["preview"] = {
+            "sha256": hashlib.sha256(preview_json.encode()).hexdigest()
+        }
+    return response
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -142,9 +169,44 @@ def build_node_id_report() -> dict:
     }
 
 
+def build_node_metadata_report() -> dict[str, Any]:
+    """Return capture provenance and metadata-bearing legacy node responses."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from kedro_viz.api.rest.responses.nodes import (
+        NodeMetadataAPIResponse,
+        get_node_metadata_response,
+    )
+    from kedro_viz.data_access import data_access_manager
+
+    app = FastAPI()
+
+    @app.get(
+        "/api/nodes/{node_id}",
+        response_model=NodeMetadataAPIResponse,
+        response_model_exclude_none=True,
+    )
+    async def get_node_metadata(node_id: str):
+        return get_node_metadata_response(node_id)
+
+    client = TestClient(app)
+    responses = {}
+    for node_id in data_access_manager.nodes.get_node_ids():
+        node = data_access_manager.nodes.get_node_by_id(node_id)
+        if node is not None and node.has_metadata():
+            responses[node_id] = normalize_node_metadata(
+                client.get(f"/api/nodes/{node_id}").json()
+            )
+    return {
+        "captured_from_commit": NODE_METADATA_BASELINE_SOURCE_COMMIT,
+        "responses": responses,
+    }
+
+
 # --------------------------------------------------------------------------- #
 def main() -> None:
-    """Capture the baseline graph responses and node-ID report into ``baseline/``."""
+    """Capture graph, node-detail, and node-ID baselines into ``baseline/``."""
     import os
 
     os.chdir(DEMO_PROJECT)
@@ -165,6 +227,10 @@ def main() -> None:
         resp = normalize_graph(get_kedro_project_json_data(pid))
         _write_json(OUT_DIR / "pipelines" / f"{pid}.json", resp)
         print(f"  wrote pipelines/{pid}.json  (nodes={len(resp['nodes'])})")
+
+    node_metadata = build_node_metadata_report()
+    _write_json(OUT_DIR / "node_metadata.json", node_metadata)
+    print(f"  wrote node_metadata.json  (nodes={len(node_metadata['responses'])})")
 
     report = build_node_id_report()
     _write_json(OUT_DIR / "node_id_report.json", report)

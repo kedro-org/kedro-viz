@@ -1,10 +1,9 @@
-"""Parity between the served graph and the captured legacy response.
+"""Parity between context services and captured legacy responses.
 
-The baseline under ``baseline/`` was captured from the live backend, so these compare the whole
-served response against it, field for field, for every registered pipeline. The service receives
-explicit enrichment from a local live load, so no process-wide repository is involved.
-This suite covers the normal live-load response; CLI variants are covered by focused context,
-service and ``GraphBuilder`` tests.
+The baseline under ``baseline/`` was captured from the live backend before metadata helper
+extraction. These compare graph and node-detail responses field for field. The context receives
+explicit enrichment from a local live load, so no process-wide repository is involved. CLI
+variants are covered by focused context, service, and ``GraphBuilder`` tests.
 """
 
 from __future__ import annotations
@@ -20,12 +19,15 @@ from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro.inspection import (
     EnrichmentSources,
     InspectionGraphService,
+    VizProjectContext,
 )
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
-    load_inspection_project_data,
-)
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
 
-from .capture_baseline import normalize_graph
+from .capture_baseline import (
+    NODE_METADATA_BASELINE_SOURCE_COMMIT,
+    normalize_graph,
+    normalize_node_metadata,
+)
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 BASELINE_DIR = Path(__file__).parent / "baseline"
@@ -51,6 +53,30 @@ def _baseline(pipeline_id: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _node_metadata_baseline() -> dict[str, dict]:
+    report = json.loads(
+        (BASELINE_DIR / "node_metadata.json").read_text(encoding="utf-8")
+    )
+    assert report["captured_from_commit"] == NODE_METADATA_BASELINE_SOURCE_COMMIT
+    return report["responses"]
+
+
+@pytest.mark.parametrize(
+    "filepath",
+    [
+        f"{DEMO_PROJECT.as_posix()}/src/project/nodes.py",
+        "demo-project/src/project/nodes.py",
+        "kedro-viz/demo-project/src/project/nodes.py",
+    ],
+)
+def test_node_metadata_path_normalization_is_working_directory_independent(
+    filepath: str,
+) -> None:
+    response = normalize_node_metadata({"filepath": filepath})
+
+    assert response["filepath"] == "<DEMO_PROJECT>/src/project/nodes.py"
+
+
 def _normalize_expected_graph(graph: dict) -> dict:
     """Normalize the baseline and remove its one documented duplicate root child."""
     normalized = normalize_graph(graph)
@@ -64,8 +90,8 @@ def _normalize_expected_graph(graph: dict) -> dict:
 
 
 @pytest.fixture(scope="module")
-def live_enriched_graph_service(_restore_kedro_project_state):
-    """A graph service enriched from an isolated live load of the demo project.
+def live_project_context(_restore_kedro_project_state) -> VizProjectContext:
+    """Build one context enriched from an isolated live load of the demo project.
 
     Module-scoped: loading the demo project and reading the snapshot is expensive.
     """
@@ -75,11 +101,21 @@ def live_enriched_graph_service(_restore_kedro_project_state):
     manager = DataAccessManager()
     catalog, pipelines, node_extras = data_loader.load_data(DEMO_PROJECT)
     populate_data(manager, catalog, pipelines, node_extras)
-    enrichment = EnrichmentSources.from_live_nodes(manager.nodes.as_list())
-    return InspectionGraphService.from_project_data(
-        load_inspection_project_data(DEMO_PROJECT),
+    live_nodes_by_id = manager.nodes.as_dict()
+    enrichment = EnrichmentSources.from_live_nodes(live_nodes_by_id.values())
+    return VizProjectContext.from_project(
+        DEMO_PROJECT,
         enrichment=enrichment,
+        node_extras_by_name=manager.node_extras,
+        live_nodes_by_id=live_nodes_by_id,
     )
+
+
+@pytest.fixture(scope="module")
+def live_enriched_graph_service(
+    live_project_context: VizProjectContext,
+) -> InspectionGraphService:
+    return live_project_context.graph
 
 
 @pytest.mark.parametrize("pipeline_id", PIPELINE_IDS)
@@ -103,3 +139,26 @@ def test_served_graph_matches_the_baseline_after_live_enrichment(
         ), "the baseline should exercise parameters"
 
     assert served == expected, pipeline_id
+
+
+def test_node_metadata_matches_independently_captured_legacy_responses(
+    live_project_context: VizProjectContext,
+) -> None:
+    """Every supported full-mode response matches the pre-helper legacy baseline."""
+    expected_by_node_id = _node_metadata_baseline()
+    graph_node_ids = {
+        node.id
+        for pipeline_id in PIPELINE_IDS
+        for node in live_project_context.graph.get_pipeline_response(pipeline_id).nodes
+        if node.type != GraphNodeType.MODULAR_PIPELINE.value
+    }
+    assert set(expected_by_node_id) == graph_node_ids
+
+    for node_id, expected in expected_by_node_id.items():
+        response = live_project_context.node_metadata.get_node_metadata_response(
+            node_id
+        )
+        actual = normalize_node_metadata(
+            response.model_dump(mode="json", exclude_none=True)
+        )
+        assert actual == expected, node_id

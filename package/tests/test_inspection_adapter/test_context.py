@@ -40,6 +40,7 @@ def test_context_builds_graph_from_the_loaded_project_data(mocker) -> None:
     )
     enrichment = EnrichmentSources()
     runtime_params = {"split": 0.3}
+    live_nodes = {"task-id": mocker.sentinel.live_node}
 
     context = VizProjectContext.from_project(
         PROJECT,
@@ -48,6 +49,7 @@ def test_context_builds_graph_from_the_loaded_project_data(mocker) -> None:
         package_name="spaceflights",
         is_lite=True,
         enrichment=enrichment,
+        live_nodes_by_id=live_nodes,
     )
 
     load_project_data.assert_called_once_with(
@@ -66,6 +68,7 @@ def test_context_builds_graph_from_the_loaded_project_data(mocker) -> None:
         mocker.sentinel.snapshot,
         parameter_feed=mocker.sentinel.parameter_feed,
         node_extras_by_name=node_extras,
+        live_nodes_by_id=live_nodes,
     )
     assert context.graph is graph
     assert context.node_metadata is node_metadata
@@ -107,6 +110,7 @@ def test_context_filters_shared_project_data_before_building_services(mocker) ->
         mocker.sentinel.filtered_snapshot,
         parameter_feed=mocker.sentinel.filtered_parameter_feed,
         node_extras_by_name=node_extras,
+        live_nodes_by_id=None,
     )
 
 
@@ -140,4 +144,5 @@ def test_context_uses_explicit_node_extras_without_reading_files(mocker) -> None
         mocker.sentinel.snapshot,
         parameter_feed={"parameters": {}},
         node_extras_by_name=node_extras,
+        live_nodes_by_id=None,
     )
