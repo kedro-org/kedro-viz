@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
 from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
+from kedro_viz.api.rest.responses.run_events import get_run_status_response
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
@@ -23,6 +24,7 @@ from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.inspection import (
     InspectionGraphService,
     NodeMetadataService,
+    RunStatusService,
     VizProjectContext,
 )
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
@@ -523,9 +525,14 @@ def repository_project_context() -> VizProjectContext:
         def get_node_metadata_response(self, node_id):
             return get_node_metadata_response(node_id)
 
+    class _RepositoryBackedRunStatusService:
+        def get_run_status_response(self):
+            return get_run_status_response()
+
     return VizProjectContext(
         graph=cast(InspectionGraphService, _RepositoryBackedGraphService()),
         node_metadata=cast(NodeMetadataService, _RepositoryBackedNodeMetadataService()),
+        run_status=cast(RunStatusService, _RepositoryBackedRunStatusService()),
     )
 
 

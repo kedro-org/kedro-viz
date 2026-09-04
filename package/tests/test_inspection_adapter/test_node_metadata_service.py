@@ -26,6 +26,7 @@ from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.integrations.kedro.inspection import (
     InspectionGraphService,
     InspectionProjectData,
+    NodeMetadataNotAvailableError,
     NodeMetadataService,
     NodeNotFoundError,
 )
@@ -605,12 +606,27 @@ def test_missing_transcoded_catalog_entry_uses_memory_dataset_type() -> None:
     assert response.transcoded_types == ["io.memory_dataset.MemoryDataset"]
 
 
-def test_unknown_and_modular_ids_are_rejected() -> None:
+def test_known_modular_id_has_no_metadata() -> None:
+    service = _service(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [_node("group.task", namespace="group")],
+                )
+            ]
+        )
+    )
+
+    with pytest.raises(NodeMetadataNotAvailableError, match="not available"):
+        service.get_node_metadata_response("group")
+
+
+def test_unknown_id_is_rejected() -> None:
     service = _service(_snapshot([_pipeline("__default__", [_node("task")])]))
 
-    for node_id in ["unknown", "a.modular.pipeline"]:
-        with pytest.raises(NodeNotFoundError, match="Invalid node ID"):
-            service.get_node_metadata_response(node_id)
+    with pytest.raises(NodeNotFoundError, match="Invalid node ID"):
+        service.get_node_metadata_response("unknown")
 
 
 def test_each_lookup_returns_fresh_validated_metadata() -> None:

@@ -14,6 +14,7 @@ from kedro_viz.integrations.kedro.inspection.node_extras import load_node_extras
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_project_data,
     load_inspection_project_data,
@@ -31,9 +32,11 @@ class VizProjectContext:
         self,
         graph: InspectionGraphService,
         node_metadata: NodeMetadataService,
+        run_status: RunStatusService,
     ) -> None:
         self.graph = graph
         self.node_metadata = node_metadata
+        self.run_status = run_status
 
     @classmethod
     def from_project(
@@ -96,4 +99,5 @@ class VizProjectContext:
                 node_extras_by_name=prepared_node_extras,
                 live_nodes_by_id=live_nodes_by_id,
             ),
+            run_status=RunStatusService(project_path),
         )

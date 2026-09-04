@@ -3,6 +3,7 @@
 from kedro_viz.integrations.kedro.inspection.context import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.enrichment import EnrichmentSources
 from kedro_viz.integrations.kedro.inspection.errors import (
+    NodeMetadataNotAvailableError,
     NodeNotFoundError,
     PipelineNotFoundError,
 )
@@ -13,6 +14,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import (
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     InspectionProjectData,
 )
@@ -23,7 +25,9 @@ __all__ = [
     "InspectionGraphService",
     "InspectionProjectData",
     "NodeMetadataService",
+    "NodeMetadataNotAvailableError",
     "NodeNotFoundError",
     "PipelineNotFoundError",
+    "RunStatusService",
     "VizProjectContext",
 ]

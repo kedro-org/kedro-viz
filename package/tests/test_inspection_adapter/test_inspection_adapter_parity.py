@@ -12,7 +12,9 @@ import json
 from pathlib import Path
 
 import pytest
+from fastapi.testclient import TestClient
 
+from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
@@ -146,6 +148,9 @@ def test_node_metadata_matches_independently_captured_legacy_responses(
 ) -> None:
     """Every supported full-mode response matches the pre-helper legacy baseline."""
     expected_by_node_id = _node_metadata_baseline()
+    client = TestClient(
+        apps.create_api_app_from_project(live_project_context, DEMO_PROJECT)
+    )
     graph_node_ids = {
         node.id
         for pipeline_id in PIPELINE_IDS
@@ -155,10 +160,7 @@ def test_node_metadata_matches_independently_captured_legacy_responses(
     assert set(expected_by_node_id) == graph_node_ids
 
     for node_id, expected in expected_by_node_id.items():
-        response = live_project_context.node_metadata.get_node_metadata_response(
-            node_id
-        )
-        actual = normalize_node_metadata(
-            response.model_dump(mode="json", exclude_none=True)
-        )
+        response = client.get(f"/api/nodes/{node_id}")
+        assert response.status_code == 200
+        actual = normalize_node_metadata(response.json())
         assert actual == expected, node_id

@@ -12,8 +12,14 @@ from kedro_viz.api.rest.responses.nodes import (
     TaskNodeMetadataAPIResponse,
     TranscodedDataNodeMetadataAPIReponse,
 )
-from kedro_viz.integrations.kedro.inspection.errors import NodeNotFoundError
+from kedro_viz.integrations.kedro.inspection.errors import (
+    NodeMetadataNotAvailableError,
+    NodeNotFoundError,
+)
 from kedro_viz.integrations.kedro.inspection.graph_builder import MEMORY_DATASET_TYPE
+from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+    ModularPipelineIndex,
+)
 from kedro_viz.integrations.kedro.inspection.node_metadata_enrichment import (
     enrich_data_response,
     enrich_parameters_response,
@@ -54,6 +60,9 @@ class NodeMetadataService:
         self._snapshot = snapshot
         self._parameter_feed = dict(parameter_feed)
         self._node_extras_by_name = dict(node_extras_by_name or {})
+        self._modular_pipeline_index = ModularPipelineIndex.from_registered_pipelines(
+            snapshot.pipelines
+        )
         self._metadata_by_node_id = self._build_metadata_index()
         self._live_nodes_by_id = self._copy_supported_live_nodes(live_nodes_by_id)
 
@@ -66,11 +75,16 @@ class NodeMetadataService:
         """Return fresh metadata for ``node_id``.
 
         Raises:
-            NodeNotFoundError: If the ID is unknown or represents an unsupported node kind.
+            NodeMetadataNotAvailableError: If the ID represents a modular pipeline.
+            NodeNotFoundError: If the ID is unknown.
         """
         try:
             prepared = self._metadata_by_node_id[node_id]
         except KeyError as exc:
+            if self._modular_pipeline_index.has_modular_pipeline(node_id):
+                raise NodeMetadataNotAvailableError(
+                    f"Node metadata is not available for: {node_id!r}"
+                ) from exc
             raise NodeNotFoundError(f"Invalid node ID: {node_id!r}") from exc
         response = prepared.model_copy(deep=True)
         live_node = self._live_nodes_by_id.get(node_id)

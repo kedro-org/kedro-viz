@@ -37,3 +37,13 @@ def test_modular_pipelines_for_dataset_accepts_a_transcoded_name(
         == index.modular_pipelines_for_dataset("ds")
         == ["ns"]
     )
+
+
+def test_modular_pipeline_ids_can_be_recognized(_node, _modular_pipeline_index) -> None:
+    index = _modular_pipeline_index(
+        [_node("outer.inner.task", ["x"], ["y"], namespace="outer.inner")]
+    )
+
+    assert index.has_modular_pipeline("outer")
+    assert index.has_modular_pipeline("outer.inner")
+    assert not index.has_modular_pipeline("unknown")
