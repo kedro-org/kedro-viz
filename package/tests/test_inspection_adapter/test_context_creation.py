@@ -55,6 +55,7 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
         package_name="spaceflights",
         is_lite=True,
         enrichment=enrichment,
+        node_extras_by_name=live_data.node_extras,
     )
     assert result is context
 

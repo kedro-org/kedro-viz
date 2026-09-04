@@ -85,7 +85,7 @@ def _create_viz_project_context(
     is_lite: bool = False,
     include_hooks: bool = False,
 ) -> VizProjectContext:
-    """Create the explicit context used by the HTTP graph routes.
+    """Create the explicit context used by inspection-backed project routes.
 
     Args:
         path: The Kedro project root.
@@ -119,12 +119,13 @@ def _create_viz_project_context(
             package_name=package_name,
             is_lite=is_lite,
             enrichment=enrichment,
+            node_extras_by_name=live_data.node_extras,
         )
     # Context construction is an all-or-nothing startup requirement. Log and propagate every
-    # failure rather than serving an app whose graph routes cannot work.
+    # failure rather than serving an app whose inspection-backed routes cannot work.
     except Exception:
         logger.exception(
-            "Could not build the Kedro inspection context, so the graph cannot be served."
+            "Could not build the Kedro inspection context, so project data cannot be served."
         )
         raise
 
