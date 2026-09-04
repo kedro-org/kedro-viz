@@ -38,6 +38,11 @@ def test_context_builds_graph_from_the_loaded_project_data(mocker) -> None:
         "kedro_viz.integrations.kedro.inspection.context.NodeMetadataService",
         return_value=node_metadata,
     )
+    run_status = mocker.sentinel.run_status
+    run_status_service = mocker.patch(
+        "kedro_viz.integrations.kedro.inspection.context.RunStatusService",
+        return_value=run_status,
+    )
     enrichment = EnrichmentSources()
     runtime_params = {"split": 0.3}
     live_nodes = {"task-id": mocker.sentinel.live_node}
@@ -70,8 +75,10 @@ def test_context_builds_graph_from_the_loaded_project_data(mocker) -> None:
         node_extras_by_name=node_extras,
         live_nodes_by_id=live_nodes,
     )
+    run_status_service.assert_called_once_with(PROJECT)
     assert context.graph is graph
     assert context.node_metadata is node_metadata
+    assert context.run_status is run_status
 
 
 def test_context_filters_shared_project_data_before_building_services(mocker) -> None:

@@ -1,5 +1,7 @@
 """Apply live-only fields to prepared node-metadata responses."""
 
+from __future__ import annotations
+
 from typing import cast
 
 from kedro.io.core import AbstractDataset

@@ -17,6 +17,7 @@ from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import (
     InspectionGraphService,
     NodeMetadataService,
+    RunStatusService,
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection.graph_service import (
@@ -54,6 +55,13 @@ class _UnusedNodeMetadataService:
         raise AssertionError(f"Unexpected node metadata request: {node_id}")
 
 
+class _UnusedRunStatusService:
+    """Fail loudly if graph-only route tests unexpectedly request run status."""
+
+    def get_run_status_response(self):
+        raise AssertionError("Unexpected run-status request")
+
+
 @pytest.fixture
 def spy_service() -> _SpyGraphService:
     return _SpyGraphService()
@@ -64,6 +72,7 @@ def client(spy_service: _SpyGraphService) -> TestClient:
     context = VizProjectContext(
         graph=spy_service,
         node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+        run_status=cast(RunStatusService, _UnusedRunStatusService()),
     )
     return TestClient(apps.create_api_app_from_project(context, Path.cwd()))
 
@@ -106,6 +115,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
             VizProjectContext(
                 graph=first_service,
                 node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+                run_status=cast(RunStatusService, _UnusedRunStatusService()),
             ),
             Path.cwd(),
         )
@@ -115,6 +125,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
             VizProjectContext(
                 graph=second_service,
                 node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+                run_status=cast(RunStatusService, _UnusedRunStatusService()),
             ),
             Path.cwd(),
         )

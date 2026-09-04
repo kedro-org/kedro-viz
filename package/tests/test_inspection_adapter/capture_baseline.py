@@ -7,6 +7,9 @@ Run in the ``viz-3-14`` env (Python 3.14, kedro 1.4.0):
 
     conda run -n viz-3-14 python package/tests/test_inspection_adapter/capture_baseline.py
 
+Node metadata expectations use production imports from PR 1 commit 2, before live helper
+extraction. The source commit is recorded in the generated report.
+
 The generated files are committed under ``baseline/`` and used by inspection adapter tests.
 """
 
@@ -24,6 +27,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEMO_PROJECT = REPO_ROOT / "demo-project"
 OUT_DIR = Path(__file__).resolve().parent / "baseline"
+NODE_METADATA_BASELINE_SOURCE_COMMIT = "815f4baf3b384d92ffb87ba8cc6ee689b5b79e07"
 
 
 # --------------------------------------------------------------------------- #
@@ -67,10 +71,10 @@ def normalize_node_metadata(response: dict) -> dict:
     response = json.loads(json.dumps(response))
     filepath = response.get("filepath")
     if isinstance(filepath, str):
-        response["filepath"] = filepath.replace(
-            DEMO_PROJECT.as_posix(),
-            "<DEMO_PROJECT>",
-        )
+        project_marker = f"{DEMO_PROJECT.name}/"
+        if project_marker in filepath:
+            _, project_relative_path = filepath.split(project_marker, maxsplit=1)
+            response["filepath"] = f"<DEMO_PROJECT>/{project_relative_path}"
     if "preview" in response:
         preview_json = json.dumps(
             response["preview"],
@@ -165,24 +169,39 @@ def build_node_id_report() -> dict:
     }
 
 
-def build_node_metadata_report() -> dict[str, dict]:
-    """Return every metadata-bearing legacy node response, keyed by node ID."""
-    from fastapi.encoders import jsonable_encoder
+def build_node_metadata_report() -> dict[str, Any]:
+    """Return capture provenance and metadata-bearing legacy node responses."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
 
-    from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
+    from kedro_viz.api.rest.responses.nodes import (
+        NodeMetadataAPIResponse,
+        get_node_metadata_response,
+    )
     from kedro_viz.data_access import data_access_manager
 
+    app = FastAPI()
+
+    @app.get(
+        "/api/nodes/{node_id}",
+        response_model=NodeMetadataAPIResponse,
+        response_model_exclude_none=True,
+    )
+    async def get_node_metadata(node_id: str):
+        return get_node_metadata_response(node_id)
+
+    client = TestClient(app)
     responses = {}
     for node_id in data_access_manager.nodes.get_node_ids():
         node = data_access_manager.nodes.get_node_by_id(node_id)
         if node is not None and node.has_metadata():
             responses[node_id] = normalize_node_metadata(
-                jsonable_encoder(
-                    get_node_metadata_response(node_id),
-                    exclude_none=True,
-                )
+                client.get(f"/api/nodes/{node_id}").json()
             )
-    return responses
+    return {
+        "captured_from_commit": NODE_METADATA_BASELINE_SOURCE_COMMIT,
+        "responses": responses,
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -211,7 +230,7 @@ def main() -> None:
 
     node_metadata = build_node_metadata_report()
     _write_json(OUT_DIR / "node_metadata.json", node_metadata)
-    print(f"  wrote node_metadata.json  (nodes={len(node_metadata)})")
+    print(f"  wrote node_metadata.json  (nodes={len(node_metadata['responses'])})")
 
     report = build_node_id_report()
     _write_json(OUT_DIR / "node_id_report.json", report)

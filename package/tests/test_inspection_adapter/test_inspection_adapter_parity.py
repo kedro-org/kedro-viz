@@ -12,8 +12,9 @@ import json
 from pathlib import Path
 
 import pytest
-from fastapi.encoders import jsonable_encoder
+from fastapi.testclient import TestClient
 
+from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
@@ -24,7 +25,11 @@ from kedro_viz.integrations.kedro.inspection import (
 )
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 
-from .capture_baseline import normalize_graph, normalize_node_metadata
+from .capture_baseline import (
+    NODE_METADATA_BASELINE_SOURCE_COMMIT,
+    normalize_graph,
+    normalize_node_metadata,
+)
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 BASELINE_DIR = Path(__file__).parent / "baseline"
@@ -51,7 +56,27 @@ def _baseline(pipeline_id: str) -> dict:
 
 
 def _node_metadata_baseline() -> dict[str, dict]:
-    return json.loads((BASELINE_DIR / "node_metadata.json").read_text(encoding="utf-8"))
+    report = json.loads(
+        (BASELINE_DIR / "node_metadata.json").read_text(encoding="utf-8")
+    )
+    assert report["captured_from_commit"] == NODE_METADATA_BASELINE_SOURCE_COMMIT
+    return report["responses"]
+
+
+@pytest.mark.parametrize(
+    "filepath",
+    [
+        f"{DEMO_PROJECT.as_posix()}/src/project/nodes.py",
+        "demo-project/src/project/nodes.py",
+        "kedro-viz/demo-project/src/project/nodes.py",
+    ],
+)
+def test_node_metadata_path_normalization_is_working_directory_independent(
+    filepath: str,
+) -> None:
+    response = normalize_node_metadata({"filepath": filepath})
+
+    assert response["filepath"] == "<DEMO_PROJECT>/src/project/nodes.py"
 
 
 def _normalize_expected_graph(graph: dict) -> dict:
@@ -123,6 +148,9 @@ def test_node_metadata_matches_independently_captured_legacy_responses(
 ) -> None:
     """Every supported full-mode response matches the pre-helper legacy baseline."""
     expected_by_node_id = _node_metadata_baseline()
+    client = TestClient(
+        apps.create_api_app_from_project(live_project_context, DEMO_PROJECT)
+    )
     graph_node_ids = {
         node.id
         for pipeline_id in PIPELINE_IDS
@@ -132,8 +160,7 @@ def test_node_metadata_matches_independently_captured_legacy_responses(
     assert set(expected_by_node_id) == graph_node_ids
 
     for node_id, expected in expected_by_node_id.items():
-        response = live_project_context.node_metadata.get_node_metadata_response(
-            node_id
-        )
-        actual = normalize_node_metadata(jsonable_encoder(response, exclude_none=True))
+        response = client.get(f"/api/nodes/{node_id}")
+        assert response.status_code == 200
+        actual = normalize_node_metadata(response.json())
         assert actual == expected, node_id
