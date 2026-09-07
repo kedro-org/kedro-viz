@@ -3,13 +3,45 @@
 import ast
 import importlib.util
 import logging
+from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Dict, FrozenSet, List, Set, Union
 from unittest.mock import MagicMock
 
 from kedro_viz.utils import Spinner, is_file_ignored, load_gitignore_patterns
 
 logger = logging.getLogger(__name__)
+
+
+def get_unresolved_modules(
+    project_path: Union[str, Path], package_name: Union[str, None] = None
+) -> FrozenSet[str]:
+    """Return unresolved project imports, walking each project and package once.
+
+    The live loader and inspection snapshot both need this result in lite mode. Kedro-Viz
+    restarts in a new process when project files change, so the process-local cache cannot
+    serve results from an earlier reload.
+
+    Args:
+        project_path: The project directory to parse.
+        package_name: The project package to inspect, when known.
+
+    Returns:
+        The module names that need to be mocked.
+    """
+    resolved_project_path = str(Path(project_path).resolve())
+    return _get_unresolved_modules(resolved_project_path, package_name)
+
+
+# TODO(#2661): Remove this cache once --lite startup skips the live loader.
+# The inspection snapshot will then be the only caller during startup.
+@lru_cache(maxsize=None)
+def _get_unresolved_modules(
+    project_path: str, package_name: Union[str, None]
+) -> FrozenSet[str]:
+    """Parse and flatten unresolved imports for a resolved project path."""
+    unresolved_imports = LiteParser(package_name).parse(Path(project_path)) or {}
+    return frozenset().union(*unresolved_imports.values())
 
 
 class LiteParser:

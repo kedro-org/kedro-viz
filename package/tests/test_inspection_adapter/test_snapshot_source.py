@@ -13,6 +13,7 @@ import pytest
 
 from kedro_viz.integrations.kedro.inspection import snapshot_source
 from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
+from kedro_viz.integrations.kedro.lite_parser import _get_unresolved_modules
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
@@ -21,12 +22,14 @@ _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
 
 @pytest.fixture(autouse=True)
-def _restore_missing_deps_flag():
-    """Restore the global ``Metadata.has_missing_dependencies`` banner after each test."""
+def _restore_lite_mode_state():
+    """Restore process-level lite-mode state after each test."""
     from kedro_viz.models.metadata import Metadata
 
     original = Metadata.has_missing_dependencies
+    _get_unresolved_modules.cache_clear()
     yield
+    _get_unresolved_modules.cache_clear()
     Metadata.set_has_missing_dependencies(original)
 
 
