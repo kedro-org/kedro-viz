@@ -19,7 +19,7 @@ from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
-from kedro_viz.integrations.kedro.lite_parser import LiteParser, unresolved_modules
+from kedro_viz.integrations.kedro.lite_parser import LiteParser, get_unresolved_modules
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras
 
@@ -244,7 +244,7 @@ def load_data(
 
     if is_lite:
         modules_to_mock: Set[str] = set(
-            unresolved_modules(str(project_path), package_name)
+            get_unresolved_modules(project_path, package_name)
         )
         sys_modules_patch = sys.modules.copy()
 

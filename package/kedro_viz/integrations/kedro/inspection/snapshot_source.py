@@ -24,11 +24,11 @@ def lite_import_stubs(
 
     from kedro_viz.integrations.kedro.lite_parser import (
         LiteParser,
-        unresolved_modules,
+        get_unresolved_modules,
     )
     from kedro_viz.models.metadata import Metadata
 
-    modules_to_mock = set(unresolved_modules(str(project_path), package_name))
+    modules_to_mock = set(get_unresolved_modules(project_path, package_name))
 
     sys_modules_patch = sys.modules.copy()
     if modules_to_mock:
@@ -37,7 +37,7 @@ def lite_import_stubs(
         sys_modules_patch.update(
             LiteParser(package_name).create_mock_modules(modules_to_mock)
         )
-        # TODO(#2724): Restore this warning when the live loader is removed.
+        # TODO(#2661): Restore this warning when --lite startup skips the live loader.
         # The live loader already warned the user about these modules.
         logger.debug(
             "Building the snapshot with %d project dependency module(s) mocked:\n%s",

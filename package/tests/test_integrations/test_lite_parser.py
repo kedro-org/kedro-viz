@@ -3,7 +3,18 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kedro_viz.integrations.kedro.lite_parser import LiteParser, unresolved_modules
+from kedro_viz.integrations.kedro.lite_parser import (
+    LiteParser,
+    _get_unresolved_modules,
+    get_unresolved_modules,
+)
+
+
+@pytest.fixture(autouse=True)
+def _clear_unresolved_modules_cache():
+    _get_unresolved_modules.cache_clear()
+    yield
+    _get_unresolved_modules.cache_clear()
 
 
 @pytest.fixture
@@ -250,27 +261,40 @@ class TestLiteParser:
         assert len(unresolvable_imports) == 0
 
 
-class TestUnresolvedModules:
+class TestGetUnresolvedModules:
     def test_returns_the_flattened_module_names(
         self, sample_project_path, mock_spinner
     ):
-        unresolved_modules.cache_clear()
-        assert unresolved_modules(
-            str(sample_project_path / "mock_spaceflights"), None
+        assert get_unresolved_modules(
+            sample_project_path / "mock_spaceflights", None
         ) == frozenset({"nonexistentmodule"})
 
     def test_the_project_is_walked_once_per_project_and_package(
         self, sample_project_path, mock_spinner
     ):
         """The two lite-mode callers should share one project walk."""
-        unresolved_modules.cache_clear()
-        target = str(sample_project_path / "mock_spaceflights")
+        target = sample_project_path / "mock_spaceflights"
 
         with patch.object(
             LiteParser, "parse", autospec=True, return_value={}
         ) as mock_parse:
-            unresolved_modules(target, None)
-            unresolved_modules(target, None)
-            unresolved_modules(target, "mock_spaceflights")
+            get_unresolved_modules(target, None)
+            get_unresolved_modules(target, None)
+            get_unresolved_modules(target, "mock_spaceflights")
 
         assert mock_parse.call_count == 2
+
+    def test_normalizes_the_project_path_before_cache_lookup(
+        self, sample_project_path, mock_spinner, monkeypatch
+    ):
+        """Relative and absolute paths to one project should share a cache entry."""
+        absolute_target = sample_project_path / "mock_spaceflights"
+        monkeypatch.chdir(sample_project_path)
+
+        with patch.object(
+            LiteParser, "parse", autospec=True, return_value={}
+        ) as mock_parse:
+            get_unresolved_modules(Path("mock_spaceflights"), None)
+            get_unresolved_modules(absolute_target, None)
+
+        mock_parse.assert_called_once()

@@ -13,9 +13,8 @@ from kedro_viz.utils import Spinner, is_file_ignored, load_gitignore_patterns
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=None)
-def unresolved_modules(
-    project_path: str, package_name: Union[str, None] = None
+def get_unresolved_modules(
+    project_path: Union[str, Path], package_name: Union[str, None] = None
 ) -> FrozenSet[str]:
     """Return unresolved project imports, walking each project and package once.
 
@@ -30,6 +29,17 @@ def unresolved_modules(
     Returns:
         The module names that need to be mocked.
     """
+    resolved_project_path = str(Path(project_path).resolve())
+    return _get_unresolved_modules(resolved_project_path, package_name)
+
+
+# TODO(#2661): Remove this cache once --lite startup skips the live loader.
+# The inspection snapshot will then be the only caller during startup.
+@lru_cache(maxsize=None)
+def _get_unresolved_modules(
+    project_path: str, package_name: Union[str, None]
+) -> FrozenSet[str]:
+    """Parse and flatten unresolved imports for a resolved project path."""
     unresolved_imports = LiteParser(package_name).parse(Path(project_path)) or {}
     return frozenset().union(*unresolved_imports.values())
 
