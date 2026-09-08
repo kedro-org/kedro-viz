@@ -18,6 +18,7 @@ import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
+import { isBackendAvailable } from '../../utils/data-source';
 import { processRunStatus } from '../../store/normalize-run-data';
 import './app.scss';
 
@@ -41,12 +42,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.data === 'json') {
+    if (isBackendAvailable(this.props.data)) {
       this.store.dispatch(loadInitialPipelineData());
     }
 
     // Only fetch run status when a backend is actually available
-    if (this.props.data === 'json' && !this.props.runData) {
+    if (isBackendAvailable(this.props.data) && !this.props.runData) {
       this.store.dispatch(loadInitialRunStatusData());
     }
     this.announceFlags(this.store.getState().flags);

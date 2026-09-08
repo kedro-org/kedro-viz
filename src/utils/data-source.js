@@ -61,6 +61,15 @@ export const getDataValue = (source) => {
 };
 
 /**
+ * Determine whether there's a live backend to fetch pipeline/run-status data
+ * from. Data is only fetched over HTTP when the source is 'json'; anything
+ * else means it was supplied directly, so there is no API to call.
+ * @param {Object|String} dataSource Data source identifier, or supplied data
+ * @return {Boolean} True if backend API calls should be made
+ */
+export const isBackendAvailable = (dataSource) => dataSource === 'json';
+
+/**
  * Determine which data source to use, and return it
  * @return {Object|String} Pipeline data, or 'json'
  */

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { isBackendAvailable } from '../../utils/data-source';
 import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
@@ -25,7 +26,7 @@ export const Wrapper = ({ dataSource, displayGlobalNavigation, theme }) => {
   useEffect(() => {
     // Skip when there's no backend to answer it, e.g. embedded with data
     // supplied directly.
-    if (dataSource !== 'json') {
+    if (!isBackendAvailable(dataSource)) {
       return;
     }
 
