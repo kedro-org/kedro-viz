@@ -8,6 +8,7 @@ Please follow the established format:
 # Release 12.5.0
 
 ## Bug fixes and other changes
+ - Fix version and run-status API requests for embedded and static Kedro-Viz. (#2753)
  - Fix for `autoreload` to ignore notebook file changes. (#2712)
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
  - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
