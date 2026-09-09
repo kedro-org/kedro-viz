@@ -9,3 +9,6 @@ src/utils/random-utils.js
 src/components/update-reminder/update-reminder-content.js
 src/components/feature-hints/feature-hints-content.js
 esm/
+# Generated preview checksums and the public source commit used by legacy capture.
+^package/tests/test_inspection_adapter/baseline/node_metadata\.json$
+^package/tests/test_inspection_adapter/capture_node_metadata_baseline\.py$

@@ -42,6 +42,7 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
     node_extras = {"data": NodeExtras(stats={"rows": 3})}
     load_extras = mocker.patch.object(context_module, "load_enrichment_sources")
     enrichment = EnrichmentSources(node_extras_by_name=node_extras)
+    live_nodes = {"task-id": mocker.sentinel.live_node}
     runtime_params = {"split": 0.3}
 
     context = VizProjectContext.from_project(
@@ -51,6 +52,7 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         package_name="spaceflights",
         is_lite=True,
         enrichment=enrichment,
+        live_nodes_by_id=live_nodes,
     )
 
     load_inputs.assert_called_once_with(
@@ -65,7 +67,9 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         enrichment=enrichment.graph_extras,
     )
     assert context.graph is graph
-    prepare_nodes.assert_called_once_with(inputs, enrichment=node_extras)
+    prepare_nodes.assert_called_once_with(
+        inputs, enrichment=node_extras, live_nodes_by_id=live_nodes
+    )
     load_extras.assert_not_called()
     assert context.nodes is nodes
 
@@ -96,7 +100,9 @@ def test_context_filters_shared_inputs_before_building_services(mocker) -> None:
     from_inspection_inputs.assert_called_once_with(
         filtered_inputs, enrichment=GraphExtras()
     )
-    prepare_nodes.assert_called_once_with(filtered_inputs, enrichment={})
+    prepare_nodes.assert_called_once_with(
+        filtered_inputs, enrichment={}, live_nodes_by_id=None
+    )
 
 
 @pytest.mark.parametrize("pipeline_name", ["unknown", ""])
@@ -158,7 +164,9 @@ def test_context_reuses_explicit_node_extras(mocker, node_extras) -> None:
     )
 
     load_extras.assert_not_called()
-    prepare_nodes.assert_called_once_with(inputs, enrichment=node_extras)
+    prepare_nodes.assert_called_once_with(
+        inputs, enrichment=node_extras, live_nodes_by_id=None
+    )
 
 
 def test_context_preserves_unvalidated_parameter_values(
