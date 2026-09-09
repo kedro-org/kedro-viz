@@ -14,6 +14,7 @@ from kedro_viz.api.rest.responses.pipelines import (
 )
 from kedro_viz.integrations.kedro.inspection.enrichment import (
     EnrichmentSources,
+    GraphExtras,
     enrich_graph_response,
     load_enrichment_sources,
 )
@@ -89,7 +90,7 @@ def test_live_dataset_fields_are_copied_by_existing_node_id() -> None:
         "/unused", nodes=[live_node], node_extras_by_name={}
     )
 
-    enrich_graph_response(_graph_response(graph_node), sources)
+    enrich_graph_response(_graph_response(graph_node), sources.graph_extras)
 
     assert live_node.id == graph_node.id
     assert graph_node.dataset_type == "pandas.csv_dataset.CSVDataset"
@@ -107,22 +108,35 @@ def test_enrichment_sources_copy_the_layer_mapping() -> None:
 
     layers["companies"] = "changed"
 
-    assert sources.layer_by_dataset_name == {"companies": "raw"}
+    assert sources.graph_extras.layer_by_dataset_name == {"companies": "raw"}
 
 
 def test_enrichment_sources_are_frozen() -> None:
     """Prepared enrichment fields cannot be replaced after construction."""
-    sources = EnrichmentSources(layer_by_dataset_name={"companies": "raw"})
+    sources = GraphExtras(layer_by_dataset_name={"companies": "raw"})
 
     with pytest.raises(ValidationError, match="Instance is frozen"):
         sources.layer_by_dataset_name = {}  # type: ignore[misc]
+
+
+def test_enrichment_container_keeps_consumers_separate() -> None:
+    extras = {"data": NodeExtras(stats={"rows": 3})}
+    graph_extras = GraphExtras(layer_by_dataset_name={"data": "raw"})
+    sources = EnrichmentSources(node_extras_by_name=extras, graph_extras=graph_extras)
+    extras.clear()
+
+    assert sources.node_extras_by_name["data"].stats == {"rows": 3}
+    assert sources.graph_extras is graph_extras
+    assert not hasattr(sources.graph_extras, "node_extras_by_name")
+    with pytest.raises(ValidationError, match="Instance is frozen"):
+        sources.graph_extras = GraphExtras()  # type: ignore[misc]
 
 
 def test_enrichment_sources_copy_all_constructor_mappings() -> None:
     """The direct constructor defensively copies mappings just like the factory."""
     extras = {"node": NodeExtras(stats={"rows": 1})}
     dataset_types = {"node": "pandas.csv_dataset.CSVDataset"}
-    sources = EnrichmentSources(
+    sources = GraphExtras(
         node_extras_by_node_id=extras,
         dataset_type_by_node_id=dataset_types,
     )
@@ -142,14 +156,14 @@ def test_live_nodes_are_consumed_in_one_pass() -> None:
         "/unused", nodes=(node for node in [live_node]), node_extras_by_name={}
     )
 
-    assert live_node.id in sources.node_extras_by_node_id
-    assert live_node.id in sources.dataset_type_by_node_id
+    assert live_node.id in sources.graph_extras.node_extras_by_node_id
+    assert live_node.id in sources.graph_extras.dataset_type_by_node_id
 
 
 def test_missing_live_node_leaves_builder_fields_untouched() -> None:
     graph_node = _graph_dataset("only_in_snapshot")
 
-    enrich_graph_response(_graph_response(graph_node), EnrichmentSources())
+    enrich_graph_response(_graph_response(graph_node), GraphExtras())
 
     assert graph_node.dataset_type == "pandas.CSVDataset"
     assert graph_node.node_extras is None
@@ -171,7 +185,7 @@ def test_enrichment_does_not_change_graph_topology() -> None:
         node_extras_by_name={},
     )
 
-    enrich_graph_response(response, sources)
+    enrich_graph_response(response, sources.graph_extras)
 
     assert [(node.id, node.type, node.name) for node in response.nodes] == node_shape
     assert [(edge.source, edge.target) for edge in response.edges] == edge_shape
@@ -187,7 +201,7 @@ def test_transcoded_dataset_uses_one_id_without_exposing_a_dataset_type() -> Non
         "/unused", nodes=[live_node], node_extras_by_name={}
     )
 
-    enrich_graph_response(_graph_response(graph_node), sources)
+    enrich_graph_response(_graph_response(graph_node), sources.graph_extras)
 
     assert live_node.id == graph_node.id
     assert graph_node.dataset_type is None
@@ -213,9 +227,9 @@ def test_file_extras_are_available_without_live_nodes(tmp_path, mocker) -> None:
     assert sources.node_extras_by_name == {
         "companies": NodeExtras(stats={"rows": 5}, styles={"color": "red"})
     }
-    assert sources.node_extras_by_node_id == {}
-    assert sources.dataset_type_by_node_id == {}
-    assert sources.layer_by_dataset_name is None
+    assert sources.graph_extras.node_extras_by_node_id == {}
+    assert sources.graph_extras.dataset_type_by_node_id == {}
+    assert sources.graph_extras.layer_by_dataset_name is None
 
 
 @pytest.mark.parametrize("extras", [{}, {"companies": NodeExtras(stats={"rows": 5})}])
@@ -250,5 +264,7 @@ def test_file_metadata_and_live_graph_overlays_keep_their_own_values(tmp_path) -
     )
 
     assert sources.node_extras_by_name["companies"].stats == {"rows": 5}
-    assert sources.node_extras_by_node_id["existing-canonical-id"].stats == {"rows": 9}
-    assert sources.layer_by_dataset_name == {}
+    assert sources.graph_extras.node_extras_by_node_id[
+        "existing-canonical-id"
+    ].stats == {"rows": 9}
+    assert sources.graph_extras.layer_by_dataset_name == {}
