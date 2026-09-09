@@ -67,3 +67,7 @@ class ModularPipelineIndex:
             if base_name in self._datasets_by_modular_pipeline[mp_id]
         )
         return modular_pipeline_ids or None
+
+    def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
+        """Return whether the ID is a modular pipeline in this snapshot view."""
+        return modular_pipeline_id in self._modular_pipeline_ids

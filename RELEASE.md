@@ -14,6 +14,9 @@ Please follow the established format:
  - Add NodeContextMenu support for VSCode (#2609)
  - Add Consent Management Platform (CMP) script to Kedro-Viz docs (#2643)
 
+## Bug fixes and other changes
+ - Serve node metadata and run status through project-scoped inspection services. (#2763, #2764, #2765, #2766, #2767, #2768)
+
 ## Community contributions
 
 Many thanks to the following Kedroids for contributing PR to this release:

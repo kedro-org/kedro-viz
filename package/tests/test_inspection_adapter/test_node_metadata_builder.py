@@ -23,7 +23,10 @@ from kedro_viz.api.rest.responses.nodes import (
     TranscodedDataNodeMetadataAPIReponse,
 )
 from kedro_viz.api.rest.responses.utils import get_encoded_response
-from kedro_viz.integrations.kedro.inspection.errors import NodeNotFoundError
+from kedro_viz.integrations.kedro.inspection.errors import (
+    NodeMetadataNotAvailableError,
+    NodeNotFoundError,
+)
 from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.node_metadata_builder import (
     NodeMetadataBuilder,
@@ -668,7 +671,23 @@ def test_missing_transcoded_catalog_entry_uses_memory_dataset_type() -> None:
     assert response.transcoded_types == ["io.memory_dataset.MemoryDataset"]
 
 
-def test_unknown_and_modular_ids_are_rejected() -> None:
+def test_known_modular_id_has_no_metadata() -> None:
+    builder = _builder(
+        _snapshot(
+            [
+                _pipeline(
+                    "__default__",
+                    [_node("group.task", namespace="group")],
+                )
+            ]
+        )
+    )
+
+    with pytest.raises(NodeMetadataNotAvailableError, match="not available"):
+        builder.build("group")
+
+
+def test_unknown_id_is_rejected() -> None:
     builder = _builder(_snapshot([_pipeline("__default__", [_node("task")])]))
 
     for node_id in ["unknown", "a.modular.pipeline"]:

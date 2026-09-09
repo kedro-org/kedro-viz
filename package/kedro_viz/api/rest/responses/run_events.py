@@ -454,23 +454,11 @@ def transform_events_to_structured_format(
     )
 
 
-def get_run_status_response() -> RunStatusAPIResponse:
-    """Get run status data for API endpoint in structured format.
-
-    Returns:
-        Structured API response object containing run status data
-
-    Raises:
-        FileNotFoundError: If the run events file cannot be found
-        json.JSONDecodeError: If the run events file contains invalid JSON
-    """
+def read_run_status_response(
+    pipeline_events_file_path: Path,
+) -> RunStatusAPIResponse:
+    """Read and transform run events from an explicit file path."""
     try:
-        kedro_project_path = _find_kedro_project(Path.cwd())
-        if not kedro_project_path:
-            return RunStatusAPIResponse()
-
-        pipeline_events_file_path = PIPELINE_EVENT_FULL_PATH
-
         if not pipeline_events_file_path.exists():
             logger.warning(
                 f"Run events file {pipeline_events_file_path} not found. It may be due to missing `kedro run`"
@@ -491,6 +479,17 @@ def get_run_status_response() -> RunStatusAPIResponse:
     except (OSError, IOError) as exc:
         logger.error(f"Error reading run events file: {exc}")
         return RunStatusAPIResponse()
+    except Exception as exc:
+        logger.exception(f"Unexpected error loading run events: {exc}")
+        return RunStatusAPIResponse()
+
+
+def get_run_status_response() -> RunStatusAPIResponse:
+    """Read run status using the legacy current-working-directory lookup."""
+    try:
+        if not _find_kedro_project(Path.cwd()):
+            return RunStatusAPIResponse()
+        return read_run_status_response(PIPELINE_EVENT_FULL_PATH)
     except Exception as exc:
         logger.exception(f"Unexpected error loading run events: {exc}")
         return RunStatusAPIResponse()

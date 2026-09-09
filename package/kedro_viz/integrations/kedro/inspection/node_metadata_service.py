@@ -12,7 +12,10 @@ from kedro_viz.api.rest.responses.nodes import (
     TaskNodeMetadataAPIResponse,
     TranscodedDataNodeMetadataAPIReponse,
 )
-from kedro_viz.integrations.kedro.inspection.errors import NodeNotFoundError
+from kedro_viz.integrations.kedro.inspection.errors import (
+    NodeMetadataNotAvailableError,
+    NodeNotFoundError,
+)
 from kedro_viz.integrations.kedro.inspection.node_metadata_builder import (
     NodeMetadataBuilder,
 )
@@ -73,7 +76,8 @@ class NodeMetadataService:
         """Return fresh metadata with optional exact-ID live enrichment.
 
         Raises:
-            NodeNotFoundError: If the ID is unknown or represents an unsupported node kind.
+            NodeMetadataNotAvailableError: If the ID represents a modular pipeline.
+            NodeNotFoundError: If the ID is unknown.
         """
         response = self._builder.build(node_id)
         live_node = self._live_nodes_by_id.get(node_id)
@@ -103,7 +107,7 @@ class NodeMetadataService:
                 continue
             try:
                 prepared = self._builder.build(node_id)
-            except NodeNotFoundError:
+            except (NodeNotFoundError, NodeMetadataNotAvailableError):
                 continue
             if is_compatible_live_node(prepared, node):
                 retained[node_id] = node

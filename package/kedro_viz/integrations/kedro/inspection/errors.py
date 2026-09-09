@@ -6,4 +6,8 @@ class PipelineNotFoundError(ValueError):
 
 
 class NodeNotFoundError(ValueError):
-    """Raised when a requested node has no supported metadata in the inspection snapshot."""
+    """Raised when a requested node ID is absent from the inspection snapshot."""
+
+
+class NodeMetadataNotAvailableError(ValueError):
+    """Raised when a known graph node does not expose node metadata."""
