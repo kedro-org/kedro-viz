@@ -12,7 +12,9 @@ from kedro_viz.api.rest.responses.pipelines import (
 from kedro_viz.integrations.kedro.inspection.graph_builder import (
     GraphBuilder,
     _display_name,
-    _resolve_param,
+)
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    build_parameters_from_inputs,
 )
 
 if TYPE_CHECKING:
@@ -55,7 +57,9 @@ def _node(
 
 
 def _pipeline(name: str, nodes: list[SimpleNamespace]) -> SimpleNamespace:
-    return SimpleNamespace(name=name, nodes=nodes)
+    outputs = {reference for node in nodes for reference in node.outputs}
+    inputs = {reference for node in nodes for reference in node.inputs} - outputs
+    return SimpleNamespace(name=name, nodes=nodes, inputs=list(inputs))
 
 
 def _snapshot(
@@ -304,7 +308,9 @@ def test_task_parameters_preserve_value_types() -> None:
     ],
 )
 def test_resolve_param(parameters: dict[str, Any], dotted: str, expected: Any) -> None:
-    assert _resolve_param(parameters, dotted) == expected
+    assert build_parameters_from_inputs([f"params:{dotted}"], parameters) == {
+        dotted: expected
+    }
 
 
 def test_parameter_dataset_type_is_none() -> None:

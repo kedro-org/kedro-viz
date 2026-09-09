@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection.enrichment import (
-    EnrichmentSources,
+    GraphExtras,
     enrich_graph_response,
 )
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
@@ -14,28 +14,26 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 )
 
 
-class InspectionGraphService:
+class GraphService:
     """Build graph responses from one prepared inspection snapshot."""
 
     def __init__(
         self,
         builder: GraphBuilder,
-        enrichment: EnrichmentSources | None = None,
+        enrichment: GraphExtras | None = None,
     ) -> None:
         self._builder = builder
-        self._enrichment = enrichment if enrichment is not None else EnrichmentSources()
+        self._enrichment = enrichment if enrichment is not None else GraphExtras()
 
     @classmethod
     def from_inspection_inputs(
         cls,
         inspection_inputs: InspectionInputs,
         *,
-        enrichment: EnrichmentSources | None = None,
-    ) -> InspectionGraphService:
+        enrichment: GraphExtras | None = None,
+    ) -> GraphService:
         """Prepare the graph service from already-loaded inspection inputs."""
-        enrichment_sources = (
-            enrichment if enrichment is not None else EnrichmentSources()
-        )
+        enrichment_sources = enrichment if enrichment is not None else GraphExtras()
         builder = GraphBuilder(
             inspection_inputs.snapshot,
             dict(inspection_inputs.catalog_config),

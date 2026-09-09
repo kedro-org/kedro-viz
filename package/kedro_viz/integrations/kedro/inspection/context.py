@@ -10,7 +10,10 @@ from kedro_viz.integrations.kedro.inspection.enrichment import (
     load_enrichment_sources,
 )
 from kedro_viz.integrations.kedro.inspection.graph_service import (
-    InspectionGraphService,
+    GraphService,
+)
+from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
+    NodeMetadataService,
 )
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
@@ -21,8 +24,9 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 class VizProjectContext:
     """Services prepared for one Kedro project load."""
 
-    def __init__(self, graph: InspectionGraphService) -> None:
+    def __init__(self, graph: GraphService, nodes: NodeMetadataService) -> None:
         self.graph = graph
+        self.nodes = nodes
 
     @classmethod
     def from_project(
@@ -46,10 +50,11 @@ class VizProjectContext:
             runtime_params: Typed parameter overrides from ``--params``.
             package_name: Project package used to identify imports in lite mode.
             is_lite: Whether missing project dependencies should be temporarily mocked.
-            enrichment: Explicit fields supplied by the transitional live load.
+            enrichment: Prepared file-backed and live fields. When omitted, load
+                file-backed extras once without constructing a catalog.
 
         Returns:
-            A project context containing the prepared inspection graph service.
+            A project context containing the prepared inspection services.
 
         Raises:
             PipelineNotFoundError: If ``pipeline_name`` is not registered.
@@ -69,8 +74,12 @@ class VizProjectContext:
             load_enrichment_sources(project_path) if enrichment is None else enrichment
         )
         return cls(
-            graph=InspectionGraphService.from_inspection_inputs(
+            graph=GraphService.from_inspection_inputs(
                 inspection_inputs,
-                enrichment=enrichment_sources,
-            )
+                enrichment=enrichment_sources.graph_extras,
+            ),
+            nodes=NodeMetadataService.from_inspection_inputs(
+                inspection_inputs,
+                enrichment=enrichment_sources.node_extras_by_name,
+            ),
         )

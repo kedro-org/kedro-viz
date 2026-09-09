@@ -8,10 +8,10 @@ import pytest
 
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import (
-    EnrichmentSources,
     PipelineNotFoundError,
 )
-from kedro_viz.integrations.kedro.inspection.graph_service import InspectionGraphService
+from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
+from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     InspectionInputs,
     filter_inspection_inputs,
@@ -22,11 +22,9 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
 
 @pytest.fixture(scope="module")
-def graph_service(_restore_kedro_project_state) -> InspectionGraphService:
+def graph_service(_restore_kedro_project_state) -> GraphService:
     """Build the demo snapshot once for the service response tests."""
-    return InspectionGraphService.from_inspection_inputs(
-        load_inspection_inputs(DEMO_PROJECT)
-    )
+    return GraphService.from_inspection_inputs(load_inspection_inputs(DEMO_PROJECT))
 
 
 def test_default_pipeline_is_served_when_none_is_requested(graph_service) -> None:
@@ -67,7 +65,7 @@ def test_pipeline_filter_hides_every_other_pipeline(
         load_inspection_inputs(DEMO_PROJECT),
         "data_ingestion",
     )
-    service = InspectionGraphService.from_inspection_inputs(inputs)
+    service = GraphService.from_inspection_inputs(inputs)
 
     response = service.get_pipeline_response()
     assert [pipeline.id for pipeline in response.pipelines] == ["data_ingestion"]
@@ -87,7 +85,7 @@ def test_inputs_reaches_the_builder(mocker) -> None:
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
 
-    InspectionGraphService.from_inspection_inputs(inputs)
+    GraphService.from_inspection_inputs(inputs)
 
     graph_builder.assert_called_once_with(
         mocker.sentinel.snapshot,
@@ -102,7 +100,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
     graph_builder = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
-    enrichment = EnrichmentSources(layer_by_dataset_name={"companies": "hooked"})
+    enrichment = GraphExtras(layer_by_dataset_name={"companies": "hooked"})
     inputs = mocker.Mock(
         spec=InspectionInputs,
         snapshot=mocker.sentinel.snapshot,
@@ -110,7 +108,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
         parameters={},
     )
 
-    InspectionGraphService.from_inspection_inputs(inputs, enrichment=enrichment)
+    GraphService.from_inspection_inputs(inputs, enrichment=enrichment)
 
     graph_builder.assert_called_once_with(
         mocker.sentinel.snapshot,
@@ -135,11 +133,11 @@ def test_service_enriches_the_built_response(mocker) -> None:
         selected_pipeline="__default__",
     )
     builder.build.return_value = response
-    enrichment = EnrichmentSources()
+    enrichment = GraphExtras()
     enrich_graph_response = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.enrich_graph_response"
     )
-    service = InspectionGraphService(builder, enrichment)
+    service = GraphService(builder, enrichment)
 
     assert service.get_pipeline_response() is response
     builder.build.assert_called_once_with("__default__")

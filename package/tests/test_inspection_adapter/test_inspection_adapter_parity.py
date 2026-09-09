@@ -17,10 +17,8 @@ import pytest
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.integrations.kedro.inspection import (
-    EnrichmentSources,
-)
-from kedro_viz.integrations.kedro.inspection.graph_service import InspectionGraphService
+from kedro_viz.integrations.kedro.inspection import EnrichmentSources
+from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     load_inspection_inputs,
 )
@@ -84,9 +82,9 @@ def live_enriched_graph_service(_restore_kedro_project_state):
         nodes=manager.nodes.as_list(),
         node_extras_by_name=manager.node_extras,
     )
-    return InspectionGraphService.from_inspection_inputs(
+    return GraphService.from_inspection_inputs(
         load_inspection_inputs(DEMO_PROJECT),
-        enrichment=enrichment,
+        enrichment=enrichment.graph_extras,
     )
 
 

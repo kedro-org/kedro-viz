@@ -19,10 +19,11 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
-from kedro_viz.integrations.kedro.inspection import (
-    VizProjectContext,
+from kedro_viz.integrations.kedro.inspection import VizProjectContext
+from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
+from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
+    NodeMetadataService,
 )
-from kedro_viz.integrations.kedro.inspection.graph_service import InspectionGraphService
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.models.metadata import NodeExtras
@@ -517,8 +518,13 @@ def repository_project_context() -> VizProjectContext:
         def get_pipeline_response(self, pipeline_id=None):
             return get_pipeline_response(pipeline_id)
 
+    class _UnusedNodeMetadataService:
+        def get_node_metadata_response(self, node_id):
+            raise AssertionError(f"Unexpected inspection metadata request: {node_id}")
+
     return VizProjectContext(
-        graph=cast(InspectionGraphService, _RepositoryBackedGraphService())
+        graph=cast(GraphService, _RepositoryBackedGraphService()),
+        nodes=cast(NodeMetadataService, _UnusedNodeMetadataService()),
     )
 
 
