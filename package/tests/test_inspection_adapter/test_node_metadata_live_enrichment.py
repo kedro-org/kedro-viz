@@ -1,6 +1,7 @@
 """Tests for exact-ID live enrichment of inspection-backed node metadata."""
 
 from collections.abc import Iterable
+from pathlib import Path
 
 import pytest
 from kedro.inspection.models import (
@@ -27,6 +28,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import (
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     InspectionInputs,
 )
@@ -311,6 +313,7 @@ def test_graph_requests_do_not_read_or_release_live_metadata() -> None:
     snapshot = _snapshot([_node("produce", outputs=["data"])])
     inputs = InspectionInputs(snapshot=snapshot)
     context = VizProjectContext(
+        run_status=RunStatusService(Path.cwd()),
         graph=GraphService.from_inspection_inputs(inputs),
         nodes=NodeMetadataService.from_inspection_inputs(
             inputs, live_nodes_by_id={data_id: live_data}

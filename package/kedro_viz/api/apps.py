@@ -20,7 +20,7 @@ from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 
-from .rest.router import create_graph_router
+from .rest.router import create_project_router
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
@@ -69,7 +69,7 @@ def create_api_app_from_project(
         The FastAPI app.
     """
     app = _create_base_api_app()
-    app.include_router(create_graph_router(context))
+    app.include_router(create_project_router(context))
     app.include_router(rest_router)
 
     # Check for html directory existence.

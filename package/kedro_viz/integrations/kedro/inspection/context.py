@@ -16,6 +16,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import (
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
@@ -26,9 +27,15 @@ from kedro_viz.models.flowchart.nodes import GraphNode
 class VizProjectContext:
     """Services prepared for one Kedro project load."""
 
-    def __init__(self, graph: GraphService, nodes: NodeMetadataService) -> None:
+    def __init__(
+        self,
+        graph: GraphService,
+        nodes: NodeMetadataService,
+        run_status: RunStatusService,
+    ) -> None:
         self.graph = graph
         self.nodes = nodes
+        self.run_status = run_status
 
     @classmethod
     def from_project(
@@ -88,4 +95,5 @@ class VizProjectContext:
                 enrichment=enrichment_sources.node_extras_by_name,
                 live_nodes_by_id=live_nodes_by_id,
             ),
+            run_status=RunStatusService(project_path),
         )

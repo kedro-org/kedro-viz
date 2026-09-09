@@ -329,40 +329,27 @@ class TestTransformEventsToStructuredFormat:
 
 
 class TestGetRunStatusResponse:
-    # get_run_status_response – all code paths
-    def test_missing_file(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-        path_attr = "kedro_viz.api.rest.responses.run_events.PIPELINE_EVENT_FULL_PATH"
-        monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: Path.cwd())
-        monkeypatch.setattr(path_attr, tmp_path / "missing.json", raising=False)
-
-        response = run_events.get_run_status_response()
+    def test_missing_file(self, tmp_path: Path):
+        response = run_events.read_run_status_response(tmp_path / "missing.json")
         assert response.nodes == {}
 
-    def test_malformed_json(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-        path_attr = "kedro_viz.api.rest.responses.run_events.PIPELINE_EVENT_FULL_PATH"
-        monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: Path.cwd())
-
+    def test_malformed_json(self, tmp_path: Path):
         bad = tmp_path / "bad.json"
         bad.write_text("{ nope")
-        monkeypatch.setattr(path_attr, bad, raising=False)
 
-        response = run_events.get_run_status_response()
+        response = run_events.read_run_status_response(bad)
         assert response.nodes == {}
 
     def test_oserror_on_open(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-        path_attr = "kedro_viz.api.rest.responses.run_events.PIPELINE_EVENT_FULL_PATH"
-        monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: Path.cwd())
-
         good = tmp_path / "good.json"
         good.write_text("[]")
-        monkeypatch.setattr(path_attr, good, raising=False)
 
         orig_open = Path.open
         monkeypatch.setattr(
             Path, "open", lambda *a, **k: (_ for _ in ()).throw(OSError), raising=True
         )
 
-        response = run_events.get_run_status_response()
+        response = run_events.read_run_status_response(good)
         assert response.nodes == {}
 
         monkeypatch.setattr(Path, "open", orig_open, raising=True)  # restore
@@ -370,12 +357,8 @@ class TestGetRunStatusResponse:
     def test_transformer_exception(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ):
-        path_attr = "kedro_viz.api.rest.responses.run_events.PIPELINE_EVENT_FULL_PATH"
-        monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: Path.cwd())
-
         good = tmp_path / "good.json"
         good.write_text("[]")
-        monkeypatch.setattr(path_attr, good, raising=False)
 
         orig_transform = run_events.transform_events_to_structured_format
         monkeypatch.setattr(
@@ -384,17 +367,14 @@ class TestGetRunStatusResponse:
             lambda *_: (_ for _ in ()).throw(ValueError),
         )
 
-        response = run_events.get_run_status_response()
+        response = run_events.read_run_status_response(good)
         assert response.nodes == {}
 
         monkeypatch.setattr(
             run_events, "transform_events_to_structured_format", orig_transform
         )
 
-    def test_happy_path(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-        path_attr = "kedro_viz.api.rest.responses.run_events.PIPELINE_EVENT_FULL_PATH"
-        monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: Path.cwd())
-
+    def test_happy_path(self, tmp_path: Path):
         events = [
             {
                 "event": run_events.EventType.AFTER_NODE_RUN,
@@ -409,9 +389,8 @@ class TestGetRunStatusResponse:
         ]
         good = tmp_path / "good.json"
         good.write_text(json.dumps(events))
-        monkeypatch.setattr(path_attr, good, raising=False)
 
-        response = run_events.get_run_status_response()
+        response = run_events.read_run_status_response(good)
         assert response.nodes["nX"].duration == 1
 
     def test_no_kedro_project(self, monkeypatch):
@@ -419,3 +398,32 @@ class TestGetRunStatusResponse:
         monkeypatch.setattr(run_events, "_find_kedro_project", lambda *_: None)
         result = run_events.get_run_status_response()
         assert result == run_events.RunStatusAPIResponse()
+
+    def test_legacy_wrapper_reads_the_existing_relative_path(self, mocker):
+        mocker.patch.object(
+            run_events,
+            "_find_kedro_project",
+            return_value=Path("/project"),
+        )
+        read = mocker.patch.object(
+            run_events,
+            "read_run_status_response",
+            return_value=run_events.RunStatusAPIResponse(),
+        )
+
+        result = run_events.get_run_status_response()
+
+        assert result == run_events.RunStatusAPIResponse()
+        read.assert_called_once_with(run_events.PIPELINE_EVENT_FULL_PATH)
+
+    def test_legacy_wrapper_handles_project_lookup_errors(self, mocker, caplog):
+        mocker.patch.object(
+            run_events,
+            "_find_kedro_project",
+            side_effect=RuntimeError("lookup failed"),
+        )
+
+        result = run_events.get_run_status_response()
+
+        assert result == run_events.RunStatusAPIResponse()
+        assert "Unexpected error loading run events: lookup failed" in caplog.text

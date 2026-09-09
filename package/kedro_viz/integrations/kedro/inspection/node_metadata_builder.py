@@ -13,7 +13,13 @@ from kedro_viz.api.rest.responses.nodes import (
     TranscodedDataNodeMetadataAPIReponse,
 )
 from kedro_viz.constants import MEMORY_DATASET_TYPE
-from kedro_viz.integrations.kedro.inspection.errors import NodeNotFoundError
+from kedro_viz.integrations.kedro.inspection.errors import (
+    NodeMetadataNotAvailableError,
+    NodeNotFoundError,
+)
+from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+    ModularPipelineIndex,
+)
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     DatasetEntry,
     build_dataset_index,
@@ -43,17 +49,25 @@ class NodeMetadataBuilder:
         self._snapshot = snapshot
         self._parameters = dict(parameters)
         self._node_extras_by_name = dict(node_extras_by_name or {})
+        self._modular_pipeline_index = ModularPipelineIndex.from_registered_pipelines(
+            snapshot.pipelines
+        )
         self._metadata_by_node_id = self._build_metadata_index()
 
     def build(self, node_id: str) -> NodeMetadataAPIResponse:
         """Return fresh metadata for ``node_id``.
 
         Raises:
-            NodeNotFoundError: If the ID is unknown or represents an unsupported node kind.
+            NodeMetadataNotAvailableError: If the ID represents a modular pipeline.
+            NodeNotFoundError: If the ID is unknown.
         """
         try:
             prepared = self._metadata_by_node_id[node_id]
         except KeyError as exc:
+            if self._modular_pipeline_index.has_modular_pipeline(node_id):
+                raise NodeMetadataNotAvailableError(
+                    f"Node metadata is not available for: {node_id!r}"
+                ) from exc
             raise NodeNotFoundError(f"Invalid node ID: {node_id!r}") from exc
         return prepared.model_copy(deep=True)
 
