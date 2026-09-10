@@ -76,7 +76,9 @@ def test_context_filters_shared_inputs_before_building_services(mocker) -> None:
     VizProjectContext.from_project(PROJECT, pipeline_name="data_science")
 
     filter_inputs.assert_called_once_with(inputs, "data_science")
-    from_inspection_inputs.assert_called_once_with(filtered_inputs, enrichment=None)
+    from_inspection_inputs.assert_called_once_with(
+        filtered_inputs, enrichment=EnrichmentSources()
+    )
 
 
 @pytest.mark.parametrize("pipeline_name", ["unknown", ""])

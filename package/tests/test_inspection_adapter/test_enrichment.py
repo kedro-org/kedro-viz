@@ -15,6 +15,7 @@ from kedro_viz.api.rest.responses.pipelines import (
 from kedro_viz.integrations.kedro.inspection.enrichment import (
     EnrichmentSources,
     enrich_graph_response,
+    load_enrichment_sources,
 )
 from kedro_viz.integrations.kedro.node_ids import _create_dataset_node_id
 from kedro_viz.models.flowchart.nodes import GraphNode, TranscodedDataNode
@@ -84,7 +85,9 @@ def test_live_dataset_fields_are_copied_by_existing_node_id() -> None:
         styles={"backgroundColor": "#fff"},
     )
     graph_node = _graph_dataset("companies")
-    sources = EnrichmentSources.from_live_nodes([live_node])
+    sources = load_enrichment_sources(
+        "/unused", nodes=[live_node], node_extras_by_name={}
+    )
 
     enrich_graph_response(_graph_response(graph_node), sources)
 
@@ -98,19 +101,21 @@ def test_live_dataset_fields_are_copied_by_existing_node_id() -> None:
 def test_enrichment_sources_copy_the_layer_mapping() -> None:
     """Later mutations of the caller's mapping cannot change a prepared service."""
     layers = {"companies": "raw"}
-    sources = EnrichmentSources.from_live_nodes([], layer_by_dataset=layers)
+    sources = load_enrichment_sources(
+        "/unused", node_extras_by_name={}, layer_by_dataset_name=layers
+    )
 
     layers["companies"] = "changed"
 
-    assert sources.layer_by_dataset == {"companies": "raw"}
+    assert sources.layer_by_dataset_name == {"companies": "raw"}
 
 
 def test_enrichment_sources_are_frozen() -> None:
     """Prepared enrichment fields cannot be replaced after construction."""
-    sources = EnrichmentSources(layer_by_dataset={"companies": "raw"})
+    sources = EnrichmentSources(layer_by_dataset_name={"companies": "raw"})
 
     with pytest.raises(ValidationError, match="Instance is frozen"):
-        sources.layer_by_dataset = {}  # type: ignore[misc]
+        sources.layer_by_dataset_name = {}  # type: ignore[misc]
 
 
 def test_enrichment_sources_copy_all_constructor_mappings() -> None:
@@ -133,7 +138,9 @@ def test_live_nodes_are_consumed_in_one_pass() -> None:
     """A generator supplies both extras and dataset types, not only the first mapping."""
     live_node = _live_dataset("companies", stats={"rows": 5})
 
-    sources = EnrichmentSources.from_live_nodes(node for node in [live_node])
+    sources = load_enrichment_sources(
+        "/unused", nodes=(node for node in [live_node]), node_extras_by_name={}
+    )
 
     assert live_node.id in sources.node_extras_by_node_id
     assert live_node.id in sources.dataset_type_by_node_id
@@ -158,8 +165,10 @@ def test_enrichment_does_not_change_graph_topology() -> None:
     )
     node_shape = [(node.id, node.type, node.name) for node in response.nodes]
     edge_shape = [(edge.source, edge.target) for edge in response.edges]
-    sources = EnrichmentSources.from_live_nodes(
-        [_live_dataset("source", stats={"rows": 5})]
+    sources = load_enrichment_sources(
+        "/unused",
+        nodes=[_live_dataset("source", stats={"rows": 5})],
+        node_extras_by_name={},
     )
 
     enrich_graph_response(response, sources)
@@ -174,7 +183,9 @@ def test_transcoded_dataset_uses_one_id_without_exposing_a_dataset_type() -> Non
     live_node = _live_dataset("ds@pandas", stats={"rows": 7})
     assert isinstance(live_node, TranscodedDataNode)
     graph_node = _graph_dataset("ds", dataset_type=None)
-    sources = EnrichmentSources.from_live_nodes([live_node])
+    sources = load_enrichment_sources(
+        "/unused", nodes=[live_node], node_extras_by_name={}
+    )
 
     enrich_graph_response(_graph_response(graph_node), sources)
 
@@ -182,3 +193,62 @@ def test_transcoded_dataset_uses_one_id_without_exposing_a_dataset_type() -> Non
     assert graph_node.dataset_type is None
     assert graph_node.node_extras is not None
     assert graph_node.node_extras.stats == {"rows": 7}
+
+
+def test_file_extras_are_available_without_live_nodes(tmp_path, mocker) -> None:
+    """File data does not depend on a populated catalog or live graph."""
+    from kedro_viz.integrations.kedro.inspection import enrichment
+
+    stats = mocker.patch.object(
+        enrichment, "_get_dataset_stats", return_value={"companies": {"rows": 5}}
+    )
+    styles = mocker.patch.object(
+        enrichment, "_get_node_styles", return_value={"companies": {"color": "red"}}
+    )
+
+    sources = load_enrichment_sources(tmp_path)
+
+    stats.assert_called_once_with(tmp_path)
+    styles.assert_called_once_with(tmp_path)
+    assert sources.node_extras_by_name == {
+        "companies": NodeExtras(stats={"rows": 5}, styles={"color": "red"})
+    }
+    assert sources.node_extras_by_node_id == {}
+    assert sources.dataset_type_by_node_id == {}
+    assert sources.layer_by_dataset_name is None
+
+
+@pytest.mark.parametrize("extras", [{}, {"companies": NodeExtras(stats={"rows": 5})}])
+def test_supplied_file_extras_are_copied_without_reading_files(
+    tmp_path, mocker, extras
+) -> None:
+    from kedro_viz.integrations.kedro.inspection import enrichment
+
+    stats = mocker.patch.object(enrichment, "_get_dataset_stats")
+    styles = mocker.patch.object(enrichment, "_get_node_styles")
+    supplied = dict(extras)
+
+    sources = load_enrichment_sources(tmp_path, node_extras_by_name=supplied)
+    supplied.clear()
+
+    stats.assert_not_called()
+    styles.assert_not_called()
+    assert sources.node_extras_by_name == extras
+
+
+def test_file_metadata_and_live_graph_overlays_keep_their_own_values(tmp_path) -> None:
+    """Consolidation must not change live graph precedence or static file metadata."""
+    file_extras = {"companies": NodeExtras(stats={"rows": 5})}
+    live_node = _live_dataset("companies", stats={"rows": 9})
+    live_node.id = "existing-canonical-id"
+
+    sources = load_enrichment_sources(
+        tmp_path,
+        nodes=[live_node],
+        node_extras_by_name=file_extras,
+        layer_by_dataset_name={},
+    )
+
+    assert sources.node_extras_by_name["companies"].stats == {"rows": 5}
+    assert sources.node_extras_by_node_id["existing-canonical-id"].stats == {"rows": 9}
+    assert sources.layer_by_dataset_name == {}
