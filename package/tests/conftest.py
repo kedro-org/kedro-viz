@@ -20,9 +20,9 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.inspection import (
-    InspectionGraphService,
     VizProjectContext,
 )
+from kedro_viz.integrations.kedro.inspection.graph_service import InspectionGraphService
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.models.metadata import NodeExtras

@@ -2,16 +2,40 @@
 
 from __future__ import annotations
 
+import dataclasses
 import logging
-from collections.abc import Iterator
-from contextlib import contextmanager
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+from pydantic import BaseModel, Field, field_validator
+
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 
 if TYPE_CHECKING:
     from kedro.inspection.models import ProjectSnapshot
 
 logger = logging.getLogger(__name__)
+
+
+class InspectionInputs(BaseModel, frozen=True):
+    """Snapshot and resolved config shared by a project's inspection services."""
+
+    # Kedro has already built the snapshot. Keep it opaque to Pydantic so importing
+    # this model does not load Kedro inspection modules before lite-mode stubs.
+    if TYPE_CHECKING:
+        snapshot: ProjectSnapshot
+    else:
+        snapshot: Any
+    catalog_config: Mapping[str, Any] = Field(default_factory=dict)
+    parameters: Mapping[str, Any] = Field(default_factory=dict)
+
+    @field_validator("catalog_config", "parameters", mode="before")
+    @classmethod
+    def _copy_mapping(cls, value: Mapping[str, Any]) -> dict[str, Any]:
+        """Copy caller-owned mappings before storing the prepared inputs."""
+        return dict(value)
 
 
 @contextmanager
@@ -48,11 +72,10 @@ def lite_import_stubs(
 
 
 class _InspectionSession:
-    """Read a project's snapshot and config, bootstrapping and building the loader once.
+    """Read a project's snapshot and config with one cached config loader.
 
-    Create one session per adapter build. The project is bootstrapped and the Kedro config loader
-    is built lazily on first use and then cached, so the catalog config and parameters reuse a
-    single loader instead of rebuilding it.
+    The catalog config and parameters share the loader built lazily here. Kedro's snapshot API
+    performs its own internal project bootstrap and config loading.
     """
 
     def __init__(
@@ -113,3 +136,60 @@ class _InspectionSession:
             return self.config_loader["parameters"]
         except (KeyError, MissingConfigException):
             return {}
+
+
+def load_inspection_inputs(
+    project_path: str | Path,
+    *,
+    env: str | None = None,
+    runtime_params: dict[str, Any] | None = None,
+    package_name: str | None = None,
+    is_lite: bool = False,
+) -> InspectionInputs:
+    """Read the snapshot and resolved config for one context build.
+
+    Lite-mode import stubs remain active until all three inputs have been read. A single
+    ``_InspectionSession`` coordinates the reads; Kedro's snapshot API may perform its own
+    internal bootstrap independently of the cached config loader used by the other two reads.
+    """
+    import_context = (
+        lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
+    )
+    with import_context:
+        session = _InspectionSession(
+            project_path,
+            env=env,
+            runtime_params=runtime_params,
+        )
+        return InspectionInputs(
+            snapshot=session.snapshot(),
+            catalog_config=session.catalog_config(),
+            parameters=session.parameters(),
+        )
+
+
+def filter_inspection_inputs(
+    inputs: InspectionInputs,
+    pipeline_name: str,
+) -> InspectionInputs:
+    """Return inspection inputs whose snapshot contains only ``pipeline_name``.
+
+    Raises:
+        PipelineNotFoundError: If ``pipeline_name`` is not registered.
+    """
+    matching = [
+        pipeline
+        for pipeline in inputs.snapshot.pipelines
+        if pipeline.name == pipeline_name
+    ]
+    if not matching:
+        available = sorted(pipeline.name for pipeline in inputs.snapshot.pipelines)
+        raise PipelineNotFoundError(
+            f"Pipeline {pipeline_name!r} not found in snapshot; available: {available}"
+        )
+
+    return InspectionInputs(
+        snapshot=dataclasses.replace(inputs.snapshot, pipelines=matching),
+        catalog_config=inputs.catalog_config,
+        parameters=inputs.parameters,
+    )

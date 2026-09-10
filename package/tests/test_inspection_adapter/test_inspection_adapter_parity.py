@@ -19,7 +19,10 @@ from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro.inspection import (
     EnrichmentSources,
-    InspectionGraphService,
+)
+from kedro_viz.integrations.kedro.inspection.graph_service import InspectionGraphService
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    load_inspection_inputs,
 )
 
 from .capture_baseline import normalize_graph
@@ -73,7 +76,10 @@ def live_enriched_graph_service(_restore_kedro_project_state):
     catalog, pipelines, node_extras = data_loader.load_data(DEMO_PROJECT)
     populate_data(manager, catalog, pipelines, node_extras)
     enrichment = EnrichmentSources.from_live_nodes(manager.nodes.as_list())
-    return InspectionGraphService.from_project(DEMO_PROJECT, enrichment=enrichment)
+    return InspectionGraphService.from_inspection_inputs(
+        load_inspection_inputs(DEMO_PROJECT),
+        enrichment=enrichment,
+    )
 
 
 @pytest.mark.parametrize("pipeline_id", PIPELINE_IDS)

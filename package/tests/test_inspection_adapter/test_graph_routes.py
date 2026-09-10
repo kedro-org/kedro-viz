@@ -14,10 +14,10 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import (
-    InspectionGraphService,
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection.graph_service import (
+    InspectionGraphService,
     PipelineNotFoundError,
 )
 
