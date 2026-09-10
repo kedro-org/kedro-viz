@@ -102,6 +102,39 @@ describe('IconButton', () => {
     );
   });
 
+  it('does not show tooltip if the pointer leaves before the show delay elapses, even across a re-render', () => {
+    jest.useFakeTimers();
+    const { container, rerender } = render(
+      <IconButton labelText="Toggle theme" active={false} visible={true} />
+    );
+
+    const button = container.querySelector('.pipeline-icon-toolbar__button');
+
+    act(() => {
+      fireEvent.mouseEnter(button);
+    });
+
+    // A re-render happens while the show-timeout is still pending (common in
+    // kedro-viz as global store state updates on hover/layout changes).
+    act(() => {
+      rerender(
+        <IconButton labelText="Toggle theme" active={true} visible={true} />
+      );
+    });
+
+    act(() => {
+      // Pointer leaves before the 333ms delay is up.
+      fireEvent.mouseLeave(button);
+      jest.runOnlyPendingTimers();
+    });
+
+    expect(
+      container.querySelector('.pipeline-toolbar__label__visible')
+    ).not.toBeInTheDocument();
+
+    jest.useRealTimers();
+  });
+
   it('hides tooltip on mouse leave', () => {
     const { container } = render(
       <IconButton
