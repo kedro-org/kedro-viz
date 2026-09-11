@@ -49,7 +49,6 @@ const IconButton = ({
       if (!isHovered.current) {
         return;
       }
-      window.localStorage.setItem('kedro-viz-tooltip-show', true);
       setIsTooltipVisible(true);
     }, 333);
   };
