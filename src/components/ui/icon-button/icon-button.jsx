@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.scss';
@@ -25,8 +25,15 @@ const IconButton = ({
   ...rest
 }) => {
   const Icon = icon;
-  let inTimeout;
+  const inTimeout = useRef(null);
+  const isHovered = useRef(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+  // Clear any pending show-timeout when the button unmounts, so the tooltip
+  // can't be shown after the pointer has already left.
+  useEffect(() => {
+    return () => clearTimeout(inTimeout.current);
+  }, []);
 
   const labelPosition = labelPositionTypes.includes(
     labelTextPosition.toLowerCase()
@@ -35,14 +42,20 @@ const IconButton = ({
     : 'right';
 
   const showTooltip = () => {
-    inTimeout = setTimeout(() => {
-      window.localStorage.setItem('kedro-viz-tooltip-show', true);
+    isHovered.current = true;
+    clearTimeout(inTimeout.current);
+    inTimeout.current = setTimeout(() => {
+      // Bail out if the pointer left while the timeout was pending.
+      if (!isHovered.current) {
+        return;
+      }
       setIsTooltipVisible(true);
     }, 333);
   };
 
   const hideTooltip = () => {
-    clearTimeout(inTimeout);
+    isHovered.current = false;
+    clearTimeout(inTimeout.current);
     setIsTooltipVisible(false);
   };
 
