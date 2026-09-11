@@ -12,6 +12,7 @@ import App from './index';
 import { Flags } from '../../utils/flags';
 import getRandomPipeline from '../../utils/random-data';
 import spaceflights from '../../utils/data/spaceflights.mock.json';
+import * as runStatusActions from '../../actions/run-status';
 // import demo from '../../utils/data/demo.mock.json';
 
 describe('App', () => {
@@ -56,6 +57,34 @@ describe('App', () => {
   describe('throws an error', () => {
     render('when data prop is empty', () => {
       expect(() => render(<App />)).toThrow();
+    });
+  });
+
+  describe('backend API calls', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('does not dispatch run-status loading when embedded with data supplied directly', () => {
+      const loadRunStatusSpy = jest.spyOn(
+        runStatusActions,
+        'loadInitialRunStatusData'
+      );
+
+      render(<App data={spaceflights} />);
+
+      expect(loadRunStatusSpy).not.toHaveBeenCalled();
+    });
+
+    it('dispatches run-status loading when running against a backend (data="json")', () => {
+      const loadRunStatusSpy = jest.spyOn(
+        runStatusActions,
+        'loadInitialRunStatusData'
+      );
+
+      render(<App data="json" />);
+
+      expect(loadRunStatusSpy).toHaveBeenCalled();
     });
   });
 });

@@ -61,6 +61,13 @@ export const getDataValue = (source) => {
 };
 
 /**
+ * Determine whether there's a live backend to fetch data from.
+ * @param {Object|String} dataSource Data source identifier, or supplied data
+ * @return {Boolean} True if backend API calls should be made
+ */
+export const isBackendAvailable = (dataSource) => dataSource === 'json';
+
+/**
  * Determine which data source to use, and return it
  * @return {Object|String} Pipeline data, or 'json'
  */
