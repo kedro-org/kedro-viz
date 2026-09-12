@@ -13,7 +13,9 @@ from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
 
 from kedro_viz.api import apps
+from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
 from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
+from kedro_viz.api.rest.responses.run_events import get_run_status_response
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
@@ -24,6 +26,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.models.metadata import NodeExtras
@@ -518,13 +521,18 @@ def repository_project_context() -> VizProjectContext:
         def get_pipeline_response(self, pipeline_id=None):
             return get_pipeline_response(pipeline_id)
 
-    class _UnusedNodeMetadataService:
+    class _RepositoryBackedNodeMetadataService:
         def get_node_metadata_response(self, node_id):
-            raise AssertionError(f"Unexpected inspection metadata request: {node_id}")
+            return get_node_metadata_response(node_id)
+
+    class _RepositoryBackedRunStatusService:
+        def get_run_status_response(self):
+            return get_run_status_response()
 
     return VizProjectContext(
         graph=cast(GraphService, _RepositoryBackedGraphService()),
-        nodes=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+        nodes=cast(NodeMetadataService, _RepositoryBackedNodeMetadataService()),
+        run_status=cast(RunStatusService, _RepositoryBackedRunStatusService()),
     )
 
 

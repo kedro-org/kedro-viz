@@ -12,7 +12,9 @@ import json
 from pathlib import Path
 
 import pytest
+from fastapi.testclient import TestClient
 
+from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
@@ -189,15 +191,22 @@ def test_node_metadata_baseline_covers_every_metadata_node_and_all_previews(
     assert sum("preview" in response for response in expected_by_node_id.values()) == 16
 
 
+@pytest.fixture(scope="module")
+def metadata_client(live_project_context, parity_project):
+    with TestClient(
+        apps.create_api_app_from_project(live_project_context, parity_project)
+    ) as client:
+        yield client
+
+
 @pytest.mark.parametrize("node_id,expected", sorted(_node_metadata_baseline().items()))
 def test_node_metadata_matches_independently_captured_legacy_responses(
-    live_project_context: VizProjectContext,
+    metadata_client: TestClient,
     node_id: str,
     expected: dict,
 ) -> None:
     """Each complete response, including its preview, matches the legacy backend."""
-    response = live_project_context.nodes.get_node_metadata_response(node_id)
-    actual = normalize_node_metadata(
-        response.model_dump(mode="json", exclude_none=True)
-    )
+    response = metadata_client.get(f"/api/nodes/{node_id}")
+    assert response.status_code == 200
+    actual = normalize_node_metadata(response.json())
     assert actual == expected, node_id

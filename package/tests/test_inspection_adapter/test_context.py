@@ -42,6 +42,10 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
     node_extras = {"data": NodeExtras(stats={"rows": 3})}
     load_extras = mocker.patch.object(context_module, "load_enrichment_sources")
     enrichment = EnrichmentSources(node_extras_by_name=node_extras)
+    run_status = mocker.sentinel.run_status
+    prepare_run_status = mocker.patch.object(
+        context_module, "RunStatusService", return_value=run_status
+    )
     live_nodes = {"task-id": mocker.sentinel.live_node}
     runtime_params = {"split": 0.3}
 
@@ -72,6 +76,8 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
     )
     load_extras.assert_not_called()
     assert context.nodes is nodes
+    prepare_run_status.assert_called_once_with(PROJECT)
+    assert context.run_status is run_status
 
 
 def test_context_filters_shared_inputs_before_building_services(mocker) -> None:

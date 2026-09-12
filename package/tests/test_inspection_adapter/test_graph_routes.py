@@ -22,6 +22,8 @@ from kedro_viz.integrations.kedro.inspection.graph_service import (
 from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
     NodeMetadataService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
@@ -52,6 +54,11 @@ class _UnusedNodeMetadataService:
         raise AssertionError(f"Unexpected node metadata request: {node_id}")
 
 
+class _UnusedRunStatusService:
+    def get_run_status_response(self):
+        raise AssertionError("Unexpected run-status request")
+
+
 @pytest.fixture
 def spy_service() -> _SpyGraphService:
     return _SpyGraphService()
@@ -62,6 +69,7 @@ def client(spy_service: _SpyGraphService) -> TestClient:
     context = VizProjectContext(
         graph=spy_service,
         nodes=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+        run_status=cast(RunStatusService, _UnusedRunStatusService()),
     )
     return TestClient(apps.create_api_app_from_project(context, Path.cwd()))
 
@@ -104,6 +112,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
             VizProjectContext(
                 graph=first_service,
                 nodes=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+                run_status=cast(RunStatusService, _UnusedRunStatusService()),
             ),
             Path.cwd(),
         )
@@ -113,6 +122,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
             VizProjectContext(
                 graph=second_service,
                 nodes=cast(NodeMetadataService, _UnusedNodeMetadataService()),
+                run_status=cast(RunStatusService, _UnusedRunStatusService()),
             ),
             Path.cwd(),
         )
@@ -147,3 +157,37 @@ def test_routes_serve_the_real_inspection_service(
     assert scoped.status_code == 200
     assert scoped.json()["selected_pipeline"] == "data_ingestion"
     assert missing.status_code == 404
+
+
+@pytest.mark.parametrize(
+    "pipeline_name,modular_status", [(None, 200), ("reporting_stage", 404)]
+)
+def test_node_route_uses_modular_ids_from_the_filtered_snapshot(
+    _restore_kedro_project_state, pipeline_name, modular_status
+) -> None:
+    """Known modular IDs work before graph requests; filtered-out IDs stay unknown."""
+    context = VizProjectContext.from_project(
+        DEMO_PROJECT,
+        pipeline_name=pipeline_name,
+        live_nodes_by_id={
+            "ingestion": GraphNode.create_modular_pipeline_node("ingestion")
+        },
+    )
+    assert context.nodes._live_nodes_by_id == {}
+    client = TestClient(apps.create_api_app_from_project(context, DEMO_PROJECT))
+
+    before = client.get("/api/nodes/ingestion")
+    main = client.get("/api/main")
+    after = client.get("/api/nodes/ingestion")
+
+    assert main.status_code == 200
+    for response in [before, after]:
+        assert response.status_code == modular_status
+        assert response.json() == (
+            {} if modular_status == 200 else {"message": "Invalid node ID"}
+        )
+    for graph_node in main.json()["nodes"]:
+        response = client.get(f"/api/nodes/{graph_node['id']}")
+        assert response.status_code == 200, graph_node["id"]
+        if graph_node["type"] == "modularPipeline":
+            assert response.json() == {}
