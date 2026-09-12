@@ -22,21 +22,14 @@ from kedro_viz.models.metadata import NodeExtras
 logger = logging.getLogger(__name__)
 
 
-class EnrichmentSources(BaseModel, frozen=True):
-    """Prepared file-backed and live enrichment for one project.
+class GraphExtras(BaseModel, frozen=True):
+    """Copied graph overlays keyed by live node IDs, with dataset-name layer overrides."""
 
-    File extras retain their names for snapshot metadata. Graph overlays retain the exact
-    live node IDs and values, including any live-node selection of transcoded extras.
-    No live nodes are retained.
-    """
-
-    node_extras_by_name: Mapping[str, NodeExtras] = Field(default_factory=dict)
     node_extras_by_node_id: Mapping[str, NodeExtras] = Field(default_factory=dict)
     dataset_type_by_node_id: Mapping[str, str | None] = Field(default_factory=dict)
     layer_by_dataset_name: Mapping[str, str] | None = None
 
     @field_validator(
-        "node_extras_by_name",
         "node_extras_by_node_id",
         "dataset_type_by_node_id",
         "layer_by_dataset_name",
@@ -48,9 +41,24 @@ class EnrichmentSources(BaseModel, frozen=True):
         return None if value is None else dict(value)
 
 
-def enrich_graph_response(
-    response: GraphAPIResponse, sources: EnrichmentSources
-) -> None:
+class EnrichmentSources(BaseModel, frozen=True):
+    """Prepared enrichment, separated by consumer without retaining live nodes.
+
+    File extras retain their names for snapshot metadata. Graph overlays retain the exact
+    live node IDs and values, including any live-node selection of transcoded extras.
+    """
+
+    node_extras_by_name: Mapping[str, NodeExtras] = Field(default_factory=dict)
+    graph_extras: GraphExtras = Field(default_factory=GraphExtras)
+
+    @field_validator("node_extras_by_name", mode="before")
+    @classmethod
+    def _copy_mapping(cls, value: Mapping[str, NodeExtras]) -> dict[str, NodeExtras]:
+        """Copy the caller's name-keyed mapping before storing it."""
+        return dict(value)
+
+
+def enrich_graph_response(response: GraphAPIResponse, sources: GraphExtras) -> None:
     """Mutate live-only response fields without adding, removing or renaming nodes."""
     for node in response.nodes:
         node_extras = sources.node_extras_by_node_id.get(node.id)
@@ -184,7 +192,9 @@ def load_enrichment_sources(
             dataset_type_by_node_id[node.id] = node.dataset_type
     return EnrichmentSources(
         node_extras_by_name=node_extras_by_name,
-        node_extras_by_node_id=node_extras_by_node_id,
-        dataset_type_by_node_id=dataset_type_by_node_id,
-        layer_by_dataset_name=layer_by_dataset_name,
+        graph_extras=GraphExtras(
+            node_extras_by_node_id=node_extras_by_node_id,
+            dataset_type_by_node_id=dataset_type_by_node_id,
+            layer_by_dataset_name=layer_by_dataset_name,
+        ),
     )

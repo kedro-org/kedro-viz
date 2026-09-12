@@ -13,6 +13,7 @@ from unittest.mock import PropertyMock
 
 import pytest
 from kedro.inspection.models import (
+    NodeSnapshot,
     PipelineSnapshot,
     ProjectMetadataSnapshot,
     ProjectSnapshot,
@@ -24,6 +25,8 @@ from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     InspectionInputs,
     _InspectionSession,
+    build_dataset_index,
+    build_parameters_from_inputs,
     filter_inspection_inputs,
     load_inspection_inputs,
 )
@@ -32,6 +35,92 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
 # A module name that does not exist, so LiteParser must flag it as unresolved.
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
+
+
+def test_dataset_index_keeps_first_identity_and_last_producer() -> None:
+    consumer = PipelineSnapshot(
+        name="consumer",
+        nodes=[
+            NodeSnapshot(
+                name="read",
+                func_name="read",
+                inputs=["asset@csv", "asset@csv", "asset"],
+            )
+        ],
+        inputs=["asset@csv", "asset"],
+    )
+    producer = PipelineSnapshot(
+        name="producer",
+        nodes=[
+            NodeSnapshot(
+                name="write", func_name="write", outputs=["asset@parquet", "asset"]
+            )
+        ],
+    )
+
+    entry = build_dataset_index([consumer, producer])["asset"]
+
+    assert entry.name == "asset@csv"
+    assert entry.is_free_input is True
+    assert entry.is_transcoded is True
+    assert entry.inputs == ["asset@csv", "asset"]
+    assert entry.output == "asset"
+
+
+def test_dataset_index_distinguishes_any_transcoding_from_first_reference() -> None:
+    pipeline = PipelineSnapshot(
+        name="mixed",
+        nodes=[
+            NodeSnapshot(
+                name="write", func_name="write", outputs=["asset", "asset@csv"]
+            )
+        ],
+    )
+
+    entry = build_dataset_index([pipeline])["asset"]
+
+    assert entry.name == "asset"
+    assert entry.is_transcoded is True
+    assert entry.is_free_input is False
+    assert entry.inputs == []
+    assert entry.output is None
+
+
+def test_dataset_index_uses_only_supplied_pipelines_and_keeps_order() -> None:
+    first = PipelineSnapshot(
+        name="first",
+        nodes=[
+            NodeSnapshot(name="write", func_name="write", outputs=["asset", "other"])
+        ],
+    )
+    second = PipelineSnapshot(
+        name="second",
+        nodes=[NodeSnapshot(name="write", func_name="write", outputs=["asset@csv"])],
+    )
+
+    selected = build_dataset_index([first])
+    combined = build_dataset_index(iter([first, second]))
+
+    assert list(selected) == ["asset", "other"]
+    assert selected["asset"].is_transcoded is False
+    assert combined["asset"].is_transcoded is True
+    assert combined["asset"].name == "asset"
+    assert build_dataset_index([]) == {}
+
+
+@pytest.mark.parametrize(
+    ("references", "expected"),
+    [
+        (["params:model.count", "parameters"], {"model": {"count": 3}}),
+        (
+            ["parameters", "params:model.count"],
+            {"model": {"count": 3}, "model.count": 3},
+        ),
+        (["dataset", "params:missing"], {"missing": None}),
+    ],
+)
+def test_parameter_preparation_preserves_input_order(references, expected) -> None:
+    assert build_parameters_from_inputs(references, {"model": {"count": 3}}) == expected
 
 
 def _snapshot(*pipeline_names: str) -> ProjectSnapshot:
