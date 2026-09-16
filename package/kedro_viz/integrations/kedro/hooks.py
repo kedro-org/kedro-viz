@@ -118,17 +118,23 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-            elif (
-                isinstance(data, dict)
-                and data
-                and all(isinstance(value, pd.DataFrame) for value in data.values())
-            ):
-                self._stats[stats_dataset_name]["partitions"] = len(data)
+            elif isinstance(data, dict) and data:
+                # PartitionedDataset returns a dict of lazy partition loaders
+                # while multi-sheet Excel returns a dict of DataFrames.
+                dataframes = [
+                    value() if callable(value) else value for value in data.values()
+                ]
+                if not all(
+                    isinstance(dataframe, pd.DataFrame) for dataframe in dataframes
+                ):
+                    return
+
+                self._stats[stats_dataset_name]["partitions"] = len(dataframes)
                 self._stats[stats_dataset_name]["rows"] = sum(
-                    int(value.shape[0]) for value in data.values()
+                    int(dataframe.shape[0]) for dataframe in dataframes
                 )
 
-                column_counts = {int(value.shape[1]) for value in data.values()}
+                column_counts = {int(dataframe.shape[1]) for dataframe in dataframes}
                 if len(column_counts) == 1:
                     self._stats[stats_dataset_name]["columns"] = column_counts.pop()
 
