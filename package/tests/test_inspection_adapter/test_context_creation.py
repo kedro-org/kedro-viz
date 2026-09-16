@@ -24,8 +24,8 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
     live_data.nodes.as_list.return_value = live_nodes
     live_data.catalog.layers_mapping = {}
     enrichment = mock.sentinel.enrichment
-    from_live_nodes = mocker.patch(
-        "kedro_viz.server.EnrichmentSources.from_live_nodes",
+    load_enrichment = mocker.patch(
+        "kedro_viz.server.load_enrichment_sources",
         return_value=enrichment,
     )
     context = mock.sentinel.context
@@ -46,7 +46,12 @@ def test_cli_options_and_explicit_enrichment_are_forwarded_to_the_context(
         include_hooks=True,
     )
 
-    from_live_nodes.assert_called_once_with(live_nodes, layer_by_dataset={})
+    load_enrichment.assert_called_once_with(
+        PROJECT,
+        nodes=live_nodes,
+        node_extras_by_name=live_data.node_extras,
+        layer_by_dataset_name={},
+    )
     from_project.assert_called_once_with(
         PROJECT,
         env="staging",
@@ -86,14 +91,16 @@ def test_hook_modified_factory_layer_is_forwarded_to_the_context(mocker) -> None
     )
     live_data = DataAccessManager()
     live_data.add_catalog(catalog, {"__default__": processing_pipeline})
-    from_live_nodes = mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
+    load_enrichment = mocker.patch("kedro_viz.server.load_enrichment_sources")
     mocker.patch("kedro_viz.server.VizProjectContext.from_project")
 
     _create_viz_project_context(PROJECT, live_data, include_hooks=True)
 
-    from_live_nodes.assert_called_once_with(
-        live_data.nodes.as_list(),
-        layer_by_dataset={"processing.int_companies": "hooked"},
+    load_enrichment.assert_called_once_with(
+        PROJECT,
+        nodes=live_data.nodes.as_list(),
+        node_extras_by_name=live_data.node_extras,
+        layer_by_dataset_name={"processing.int_companies": "hooked"},
     )
 
 
@@ -120,14 +127,16 @@ def test_unmaterialized_factory_layer_is_absent_from_hook_layers(mocker) -> None
     live_data = DataAccessManager()
     live_data.add_catalog(catalog, {"__default__": processing_pipeline})
     assert "companies_input" not in catalog.keys()
-    from_live_nodes = mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
+    load_enrichment = mocker.patch("kedro_viz.server.load_enrichment_sources")
     mocker.patch("kedro_viz.server.VizProjectContext.from_project")
 
     _create_viz_project_context(PROJECT, live_data, include_hooks=True)
 
-    from_live_nodes.assert_called_once_with(
-        live_data.nodes.as_list(),
-        layer_by_dataset={},
+    load_enrichment.assert_called_once_with(
+        PROJECT,
+        nodes=live_data.nodes.as_list(),
+        node_extras_by_name=live_data.node_extras,
+        layer_by_dataset_name={},
     )
 
 
@@ -137,14 +146,16 @@ def test_hooks_disabled_keeps_the_raw_catalog_layer_path(mocker) -> None:
     live_nodes = [mock.sentinel.live_node]
     live_data.nodes.as_list.return_value = live_nodes
     live_data.catalog.layers_mapping = {"companies": "hooked"}
-    from_live_nodes = mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
+    load_enrichment = mocker.patch("kedro_viz.server.load_enrichment_sources")
     mocker.patch("kedro_viz.server.VizProjectContext.from_project")
 
     _create_viz_project_context(PROJECT, live_data)
 
-    from_live_nodes.assert_called_once_with(
-        live_nodes,
-        layer_by_dataset=None,
+    load_enrichment.assert_called_once_with(
+        PROJECT,
+        nodes=live_nodes,
+        node_extras_by_name=live_data.node_extras,
+        layer_by_dataset_name=None,
     )
 
 
@@ -152,7 +163,7 @@ def test_a_context_build_failure_is_logged_and_re_raised(mocker, caplog) -> None
     """A failed context build stops startup instead of serving an incomplete graph."""
     live_data = mocker.MagicMock()
     live_data.nodes.as_list.return_value = []
-    mocker.patch("kedro_viz.server.EnrichmentSources.from_live_nodes")
+    mocker.patch("kedro_viz.server.load_enrichment_sources")
     mocker.patch(
         "kedro_viz.server.VizProjectContext.from_project",
         side_effect=RuntimeError("no snapshot"),

@@ -40,7 +40,7 @@ class InspectionGraphService:
             inspection_inputs.snapshot,
             dict(inspection_inputs.catalog_config),
             parameters=dict(inspection_inputs.parameters),
-            layer_by_dataset=enrichment_sources.layer_by_dataset,
+            layer_by_dataset_name=enrichment_sources.layer_by_dataset_name,
         )
         return cls(builder, enrichment_sources)
 

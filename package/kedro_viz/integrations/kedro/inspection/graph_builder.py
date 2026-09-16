@@ -110,12 +110,12 @@ class GraphBuilder:
         catalog_config: dict[str, Any] | None = None,
         *,
         parameters: dict[str, Any] | None = None,
-        layer_by_dataset: Mapping[str, str] | None = None,
+        layer_by_dataset_name: Mapping[str, str] | None = None,
     ) -> None:
         self._snapshot = snapshot
-        self._layer_by_dataset = (
-            dict(layer_by_dataset)
-            if layer_by_dataset is not None
+        self._layer_by_dataset_name = (
+            dict(layer_by_dataset_name)
+            if layer_by_dataset_name is not None
             else _extract_layers(
                 catalog_config=catalog_config or {},
                 dataset_names=_dataset_names_from_snapshot(snapshot),
@@ -302,7 +302,9 @@ class GraphBuilder:
             modular_pipelines=(
                 self._modular_pipeline_index.modular_pipelines_for_dataset(base_name)
             ),
-            layer=(None if is_parameter else self._layer_by_dataset.get(base_name)),
+            layer=(
+                None if is_parameter else self._layer_by_dataset_name.get(base_name)
+            ),
             dataset_type=dataset_type,
         )
 
@@ -312,7 +314,7 @@ class GraphBuilder:
         edges: dict[tuple[str, str], GraphEdgeAPIResponse],
     ) -> list[str]:
         """Sort the project-wide layer set using the selected pipeline's edges."""
-        if not self._layer_by_dataset:
+        if not self._layer_by_dataset_name:
             return []
         dependencies: dict[str, set[str]] = defaultdict(set)
         for source, target in edges:
@@ -323,7 +325,7 @@ class GraphBuilder:
         }
         # Include layered datasets used by any pipeline so every view exposes the
         # project-wide layer set; this view's edges determine their order.
-        for dataset_name, layer in self._layer_by_dataset.items():
+        for dataset_name, layer in self._layer_by_dataset_name.items():
             dataset_pipelines = self._index.get_pipelines_for_dataset_name(dataset_name)
             if is_dataset_param(dataset_name) or not dataset_pipelines:
                 continue

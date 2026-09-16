@@ -24,13 +24,13 @@ def _builder(
     catalog_config: dict[str, Any] | None = None,
     *,
     parameters: dict[str, Any] | None = None,
-    layer_by_dataset: dict[str, str] | None = None,
+    layer_by_dataset_name: dict[str, str] | None = None,
 ) -> GraphBuilder:
     return GraphBuilder(
         cast("ProjectSnapshot", snapshot),
         catalog_config,
         parameters=parameters,
-        layer_by_dataset=layer_by_dataset,
+        layer_by_dataset_name=layer_by_dataset_name,
     )
 
 
@@ -479,7 +479,7 @@ def test_populated_catalog_layers_override_raw_config() -> None:
     graph = _builder(
         snapshot,
         catalog_config,
-        layer_by_dataset={"x": "hooked"},
+        layer_by_dataset_name={"x": "hooked"},
     ).build("__default__")
     data_nodes = {
         node.name: node
@@ -497,7 +497,9 @@ def test_empty_populated_catalog_layers_remove_raw_config_layers() -> None:
     catalog_config = {
         "x": {"metadata": {"kedro-viz": {"layer": "raw"}}},
     }
-    graph = _builder(snapshot, catalog_config, layer_by_dataset={}).build("__default__")
+    graph = _builder(snapshot, catalog_config, layer_by_dataset_name={}).build(
+        "__default__"
+    )
     data_nodes = [
         node
         for node in graph.nodes

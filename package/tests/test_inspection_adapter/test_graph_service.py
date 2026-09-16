@@ -93,7 +93,7 @@ def test_inputs_reaches_the_builder(mocker) -> None:
         mocker.sentinel.snapshot,
         {"companies": {}},
         parameters={"split": 0.2},
-        layer_by_dataset=None,
+        layer_by_dataset_name=None,
     )
 
 
@@ -102,7 +102,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
     graph_builder = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
-    enrichment = EnrichmentSources(layer_by_dataset={"companies": "hooked"})
+    enrichment = EnrichmentSources(layer_by_dataset_name={"companies": "hooked"})
     inputs = mocker.Mock(
         spec=InspectionInputs,
         snapshot=mocker.sentinel.snapshot,
@@ -116,7 +116,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
         mocker.sentinel.snapshot,
         {},
         parameters={},
-        layer_by_dataset={"companies": "hooked"},
+        layer_by_dataset_name={"companies": "hooked"},
     )
 
 

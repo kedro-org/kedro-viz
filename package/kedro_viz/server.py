@@ -13,9 +13,9 @@ from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.inspection import (
-    EnrichmentSources,
     VizProjectContext,
 )
+from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
 
@@ -104,12 +104,14 @@ def _create_viz_project_context(
         # A hook can add, change or remove layer metadata, and only the populated catalog
         # reflects that, so with hooks the builder reads layers from there instead of the
         # raw catalog config.
-        layer_by_dataset = (
+        layer_by_dataset_name = (
             dict(live_data.catalog.layers_mapping) if include_hooks else None
         )
-        enrichment = EnrichmentSources.from_live_nodes(
-            live_data.nodes.as_list(),
-            layer_by_dataset=layer_by_dataset,
+        enrichment = load_enrichment_sources(
+            path,
+            nodes=live_data.nodes.as_list(),
+            node_extras_by_name=live_data.node_extras,
+            layer_by_dataset_name=layer_by_dataset_name,
         )
         return VizProjectContext.from_project(
             path,

@@ -5,7 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from kedro_viz.integrations.kedro.inspection.enrichment import EnrichmentSources
+from kedro_viz.integrations.kedro.inspection.enrichment import (
+    EnrichmentSources,
+    load_enrichment_sources,
+)
 from kedro_viz.integrations.kedro.inspection.graph_service import (
     InspectionGraphService,
 )
@@ -62,9 +65,12 @@ class VizProjectContext:
             inspection_inputs = filter_inspection_inputs(
                 inspection_inputs, pipeline_name
             )
+        enrichment_sources = (
+            load_enrichment_sources(project_path) if enrichment is None else enrichment
+        )
         return cls(
             graph=InspectionGraphService.from_inspection_inputs(
                 inspection_inputs,
-                enrichment=enrichment,
+                enrichment=enrichment_sources,
             )
         )
