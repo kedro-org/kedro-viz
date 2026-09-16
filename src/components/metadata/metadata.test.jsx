@@ -348,6 +348,9 @@ describe('MetaData', () => {
       expect(
         container.querySelector('[data-test="metadata-stats-label-file_size"]')
       ).toBeTruthy();
+      expect(
+        container.querySelector('[data-test="metadata-stats-label-partitions"]')
+      ).toBeTruthy();
 
       expect(
         parseInt(
