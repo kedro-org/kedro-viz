@@ -9,6 +9,7 @@ import {
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 
 import DownloadIcon from '../icons/download';
+import HelpMenu from '../help-menu';
 import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
@@ -120,6 +121,7 @@ export const GlobalToolbar = ({
         >
           {isOutdated && <span className="update-reminder-dot"></span>}
         </IconButton>
+        <HelpMenu />
       </ul>
     </div>
   );
