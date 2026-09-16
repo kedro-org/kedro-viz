@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 class DatasetStatsHook:
     """Class to collect dataset statistics during a kedro run
     and save it to a JSON file. The class currently supports
-    (pd.DataFrame) dataset instances"""
+    (pd.DataFrame) dataset instances and dictionaries of
+    (pd.DataFrame) instances"""
 
     def __init__(self):
         self._stats = defaultdict(dict)
@@ -39,7 +40,8 @@ class DatasetStatsHook:
     def after_dataset_loaded(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is loaded from the catalog.
         Once the dataset is loaded, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame) dataset instances and
+        dictionaries of (pd.DataFrame) instances
 
         Args:
             dataset_name: name of the dataset that was loaded from the catalog.
@@ -52,7 +54,8 @@ class DatasetStatsHook:
     def after_dataset_saved(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is saved to the catalog.
         Once the dataset is saved, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame) dataset instances and
+        dictionaries of (pd.DataFrame) instances
 
         Args:
             dataset_name: name of the dataset that was saved to the catalog.
@@ -94,7 +97,12 @@ class DatasetStatsHook:
 
     def create_dataset_stats(self, dataset_name: str, data: Any):
         """Helper method to create dataset statistics.
-        Currently supports (pd.DataFrame) dataset instances.
+        Currently supports (pd.DataFrame) dataset instances and dictionaries
+        of (pd.DataFrame) instances, such as those returned by partitioned
+        datasets (PartitionedDataset/IncrementalDataset) and multi-sheet Excel
+        datasets. For dictionaries, the number of partitions/sheets, the total
+        number of rows and, when every partition/sheet has the same number of
+        columns, the number of columns are reported.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -110,12 +118,35 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-                current_dataset = self.datasets.get(dataset_name)
+            elif isinstance(data, dict) and data:
+                # PartitionedDataset returns a dict of lazy partition loaders
+                # while multi-sheet Excel returns a dict of DataFrames.
+                dataframes = [
+                    value() if callable(value) else value for value in data.values()
+                ]
+                if not all(
+                    isinstance(dataframe, pd.DataFrame) for dataframe in dataframes
+                ):
+                    return
 
-                if current_dataset:
-                    dataset_file_size = self.get_file_size(current_dataset)
-                    if dataset_file_size:
-                        self._stats[stats_dataset_name]["file_size"] = dataset_file_size
+                self._stats[stats_dataset_name]["partitions"] = len(dataframes)
+                self._stats[stats_dataset_name]["rows"] = sum(
+                    int(dataframe.shape[0]) for dataframe in dataframes
+                )
+
+                column_counts = {int(dataframe.shape[1]) for dataframe in dataframes}
+                if len(column_counts) == 1:
+                    self._stats[stats_dataset_name]["columns"] = column_counts.pop()
+
+            else:
+                return
+
+            current_dataset = self.datasets.get(dataset_name)
+
+            if current_dataset:
+                dataset_file_size = self.get_file_size(current_dataset)
+                if dataset_file_size:
+                    self._stats[stats_dataset_name]["file_size"] = dataset_file_size
 
         except ImportError as exc:  # pragma: no cover
             logger.warning(
@@ -131,7 +162,10 @@ class DatasetStatsHook:
             )
 
     def get_file_size(self, dataset: Any) -> Union[int, None]:
-        """Helper method to return the file size of a dataset
+        """Helper method to return the file size of a dataset.
+        For datasets backed by a single file the size of that file is returned.
+        For directory-backed datasets, such as partitioned datasets, the sizes
+        of all the files in the directory are summed.
 
         Args:
             dataset: A dataset instance for which we need the file size
@@ -145,15 +179,22 @@ class DatasetStatsHook:
             # Fallback to private '_filepath' for known datasets
             elif hasattr(dataset, "_filepath") and dataset._filepath:
                 filepath = dataset._filepath
+            # Partitioned datasets expose their directory path instead
+            elif hasattr(dataset, "path") and dataset.path:
+                filepath = dataset.path
+            elif hasattr(dataset, "_path") and dataset._path:
+                filepath = dataset._path
             else:
                 return None
 
             fs, path_in_fs = fsspec.core.url_to_fs(str(filepath))
-            if fs.exists(path_in_fs):
-                file_size = fs.size(path_in_fs)
-                return file_size
-            else:
+            if not fs.exists(path_in_fs):
                 return None
+
+            if fs.isdir(path_in_fs):
+                return fs.du(path_in_fs, total=True)
+
+            return fs.size(path_in_fs)
 
         except Exception as exc:  # pragma: no cover
             logger.warning(
@@ -170,7 +211,7 @@ class DatasetStatsHook:
         Returns: A sorted dictionary based on the sort_order
         """
         # Custom sort order
-        sort_order = ["rows", "columns", "file_size"]
+        sort_order = ["partitions", "rows", "columns", "file_size"]
         return {stat: stats.get(stat) for stat in sort_order if stat in stats}
 
     def get_stats_dataset_name(self, dataset_name: str) -> str:
