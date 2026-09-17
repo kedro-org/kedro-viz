@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -12,11 +12,97 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, Field, field_validator
 
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
+from kedro_viz.utils import _strip_transcoding
 
 if TYPE_CHECKING:
-    from kedro.inspection.models import ProjectSnapshot
+    from kedro.inspection.models import PipelineSnapshot, ProjectSnapshot
 
 logger = logging.getLogger(__name__)
+
+
+class DatasetEntry(BaseModel):
+    """Dataset references indexed under their base name, without an ``@`` suffix.
+
+    Name and free-input status use the first encounter; producer assignment uses the last.
+    Only transcoded-first entries collect distinct ordered ``inputs`` and ``output``,
+    including later plain references. ``is_transcoded`` records any transcoded reference
+    for graph rendering, independently of that first-encounter metadata rule.
+    """
+
+    name: str
+    is_free_input: bool = False
+    is_transcoded: bool = False
+    inputs: list[str] = Field(default_factory=list)
+    output: str | None = None
+
+
+def build_dataset_index(
+    pipelines: Iterable[PipelineSnapshot],
+) -> dict[str, DatasetEntry]:
+    """Index references in encounter order over exactly the supplied pipelines.
+
+    Graphs pass their selected pipeline; metadata passes the loaded snapshot's pipelines.
+    Sharing the traversal must not broaden either consumer's scope.
+    """
+    datasets: dict[str, DatasetEntry] = {}
+
+    def index_reference(reference: str, *, is_input: bool, is_free_input: bool) -> None:
+        base_name = _strip_transcoding(reference)
+        entry = datasets.get(base_name)
+        if entry is None:
+            entry = datasets[base_name] = DatasetEntry(
+                name=reference, is_free_input=is_free_input
+            )
+        if reference != base_name:
+            entry.is_transcoded = True
+        if entry.name == base_name:
+            return
+        if is_input:
+            if reference not in entry.inputs:
+                entry.inputs.append(reference)
+        else:
+            entry.output = reference
+
+    for pipeline in pipelines:
+        for node in pipeline.nodes:
+            for reference in node.inputs:
+                index_reference(
+                    reference,
+                    is_input=True,
+                    is_free_input=reference in pipeline.inputs,
+                )
+            for reference in node.outputs:
+                index_reference(reference, is_input=False, is_free_input=False)
+    return datasets
+
+
+def build_parameters_from_inputs(
+    inputs: list[str], parameters: dict[str, Any]
+) -> dict[str, Any]:
+    """Resolve input references with the existing inspection parameter semantics.
+
+    Walk inputs in order: ``parameters`` replaces the result with the root mapping,
+    while ``params:name`` adds one nested lookup. No validation or typed-field expansion.
+    """
+    result: dict[str, Any] = {}
+    for ref in inputs:
+        if ref == "parameters":
+            result = dict(parameters)
+        elif ref.startswith("params:"):
+            name = ref[len("params:") :]
+            result[name] = _resolve_parameters(parameters, name)
+    return result
+
+
+def _resolve_parameters(parameters: dict[str, Any], dotted: str) -> Any:
+    """Look up a dotted dictionary path, returning ``None`` when it is absent."""
+    node: Any = parameters
+    for key in dotted.split("."):
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        else:
+            return None
+    return node
 
 
 class InspectionInputs(BaseModel, frozen=True):

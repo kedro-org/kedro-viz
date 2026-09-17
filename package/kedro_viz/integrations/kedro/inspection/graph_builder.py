@@ -21,7 +21,7 @@ from kedro_viz.api.rest.responses.pipelines import (
     NamedEntityAPIResponse,
     TaskNodeAPIResponse,
 )
-from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID
+from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, MEMORY_DATASET_TYPE
 from kedro_viz.integrations.kedro.inspection.layers import (
     _extract_layers,
     sort_layers,
@@ -29,6 +29,10 @@ from kedro_viz.integrations.kedro.inspection.layers import (
 from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
     ModularPipelineIndex,
     ModularPipelineView,
+)
+from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+    build_dataset_index,
+    build_parameters_from_inputs,
 )
 from kedro_viz.integrations.kedro.node_ids import (
     _create_dataset_node_id,
@@ -44,10 +48,6 @@ if TYPE_CHECKING:
         PipelineSnapshot,
         ProjectSnapshot,
     )
-
-# Match the live backend's get_dataset_type(MemoryDataset()) output for datasets
-# absent from the snapshot catalog.
-MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 
 
 class _SnapshotGraphIndex:
@@ -188,29 +188,22 @@ class GraphBuilder:
 
         nodes: list[TaskNodeAPIResponse | DataNodeAPIResponse] = []
         edges: dict[tuple[str, str], GraphEdgeAPIResponse] = {}
-        referenced_name_by_base_name: dict[str, str] = {}
-        transcoded_base_names: set[str] = set()
+        datasets = build_dataset_index([pipeline])
 
         for node in pipeline.nodes:
             task_id = _create_task_node_id_from_node_snapshot(node)
             nodes.append(self._build_task_node(node, task_id))
             for name in node.inputs:
                 self._add_edge(edges, _create_dataset_node_id(name), task_id)
-                self._register_dataset(
-                    name, referenced_name_by_base_name, transcoded_base_names
-                )
             for name in node.outputs:
                 self._add_edge(edges, task_id, _create_dataset_node_id(name))
-                self._register_dataset(
-                    name, referenced_name_by_base_name, transcoded_base_names
-                )
 
-        for base_name, referenced_name in referenced_name_by_base_name.items():
+        for base_name, entry in datasets.items():
             nodes.append(
                 self._build_dataset_node(
                     base_name,
-                    referenced_name,
-                    is_transcoded=base_name in transcoded_base_names,
+                    entry.name,
+                    is_transcoded=entry.is_transcoded,
                 )
             )
 
@@ -243,24 +236,8 @@ class GraphBuilder:
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
-            parameters=self._task_parameters(node.inputs),
+            parameters=build_parameters_from_inputs(node.inputs, self._parameters),
         )
-
-    def _task_parameters(self, inputs: list[str]) -> dict[str, Any]:
-        """Build the parameter dict for a task node's detail panel.
-
-        Walk ``inputs`` in order. ``parameters`` sets the full resolved mapping. Each
-        ``params:name`` adds one entry. Dotted names like ``model_options.test_size`` pick
-        out nested values.
-        """
-        result: dict[str, Any] = {}
-        for ref in inputs:
-            if ref == "parameters":
-                result = dict(self._parameters)
-            elif ref.startswith("params:"):
-                name = ref[len("params:") :]
-                result[name] = _resolve_param(self._parameters, name)
-        return result
 
     def _build_dataset_node(
         self,
@@ -333,18 +310,6 @@ class GraphBuilder:
         return sort_layers(layer_by_node_id, dependencies)
 
     @staticmethod
-    def _register_dataset(
-        referenced_name: str,
-        referenced_name_by_base_name: dict[str, str],
-        transcoded_base_names: set[str],
-    ) -> None:
-        """Group transcoded references by base name and retain one for catalog lookup."""
-        base_name = _strip_transcoding(referenced_name)
-        referenced_name_by_base_name.setdefault(base_name, referenced_name)
-        if base_name != referenced_name:
-            transcoded_base_names.add(base_name)
-
-    @staticmethod
     def _add_edge(
         edges: dict[tuple[str, str], GraphEdgeAPIResponse], source: str, target: str
     ) -> None:
@@ -380,14 +345,3 @@ def _dataset_names_from_snapshot(snapshot: ProjectSnapshot) -> set[str]:
         for name in (*node.inputs, *node.outputs)
         if not is_dataset_param(name)
     }
-
-
-def _resolve_param(parameters: dict[str, Any], dotted: str) -> Any:
-    """Look up ``dotted`` (e.g. ``model_options.test_size``) in the parameters dict; ``None`` if absent."""
-    node: Any = parameters
-    for key in dotted.split("."):
-        if isinstance(node, dict) and key in node:
-            node = node[key]
-        else:
-            return None
-    return node
