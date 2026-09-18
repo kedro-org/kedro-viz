@@ -21,6 +21,7 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.models.metadata import NodeExtras
@@ -517,6 +518,7 @@ def repository_project_context() -> VizProjectContext:
 
     return VizProjectContext(
         graph=cast(GraphService, _RepositoryBackedGraphService()),
+        run_status=RunStatusService(Path.cwd()),
     )
 
 

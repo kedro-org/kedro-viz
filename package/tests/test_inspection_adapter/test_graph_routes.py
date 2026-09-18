@@ -18,6 +18,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import (
     GraphService,
     PipelineNotFoundError,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
@@ -52,6 +53,7 @@ def spy_service() -> _SpyGraphService:
 def client(spy_service: _SpyGraphService) -> TestClient:
     context = VizProjectContext(
         graph=spy_service,
+        run_status=RunStatusService(Path.cwd()),
     )
     return TestClient(apps.create_api_app_from_project(context, Path.cwd()))
 
@@ -93,6 +95,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
         apps.create_api_app_from_project(
             VizProjectContext(
                 graph=first_service,
+                run_status=RunStatusService(Path.cwd()),
             ),
             Path.cwd(),
         )
@@ -101,6 +104,7 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
         apps.create_api_app_from_project(
             VizProjectContext(
                 graph=second_service,
+                run_status=RunStatusService(Path.cwd()),
             ),
             Path.cwd(),
         )
