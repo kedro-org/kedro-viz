@@ -13,9 +13,6 @@ from kedro_viz.integrations.kedro.inspection import (
 from kedro_viz.integrations.kedro.inspection import context as context_module
 from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
 from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
-from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
-    NodeMetadataService,
-)
 from kedro_viz.models.metadata import NodeExtras
 
 PROJECT = Path("/some/project")
@@ -34,10 +31,6 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         GraphService,
         "from_inspection_inputs",
         return_value=graph,
-    )
-    node_metadata = mocker.sentinel.node_metadata
-    prepare_node_metadata = mocker.patch.object(
-        NodeMetadataService, "from_inspection_inputs", return_value=node_metadata
     )
     node_extras = {"data": NodeExtras(stats={"rows": 3})}
     load_extras = mocker.patch.object(context_module, "load_enrichment_sources")
@@ -65,18 +58,13 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         enrichment=enrichment.graph_extras,
     )
     assert context.graph is graph
-    prepare_node_metadata.assert_called_once_with(inputs, enrichment=node_extras)
     load_extras.assert_not_called()
-    assert context.node_metadata is node_metadata
 
 
 def test_context_filters_shared_inputs_before_building_services(mocker) -> None:
     """A pipeline restriction is applied once at the context boundary."""
     inputs = mocker.sentinel.inputs
     filtered_inputs = mocker.sentinel.filtered_inputs
-    prepare_node_metadata = mocker.patch.object(
-        NodeMetadataService, "from_inspection_inputs"
-    )
     mocker.patch(
         "kedro_viz.integrations.kedro.inspection.context.load_inspection_inputs",
         return_value=inputs,
@@ -98,7 +86,6 @@ def test_context_filters_shared_inputs_before_building_services(mocker) -> None:
     from_inspection_inputs.assert_called_once_with(
         filtered_inputs, enrichment=GraphExtras()
     )
-    prepare_node_metadata.assert_called_once_with(filtered_inputs, enrichment={})
 
 
 @pytest.mark.parametrize("pipeline_name", ["unknown", ""])
@@ -106,16 +93,12 @@ def test_unknown_pipeline_is_rejected_before_service_construction(
     mocker, _restore_kedro_project_state, pipeline_name
 ) -> None:
     prepare = mocker.patch.object(GraphService, "from_inspection_inputs")
-    prepare_node_metadata = mocker.patch.object(
-        NodeMetadataService, "from_inspection_inputs"
-    )
     load_extras = mocker.patch.object(context_module, "load_enrichment_sources")
 
     with pytest.raises(PipelineNotFoundError, match="not found in snapshot"):
         VizProjectContext.from_project(DEMO_PROJECT, pipeline_name=pipeline_name)
 
     prepare.assert_not_called()
-    prepare_node_metadata.assert_not_called()
     load_extras.assert_not_called()
 
 
@@ -125,7 +108,6 @@ def test_context_reuses_loaded_inputs_across_requests(
     load = mocker.spy(context_module, "load_inspection_inputs")
     filter_inputs = mocker.spy(context_module, "filter_inspection_inputs")
     prepare = mocker.spy(GraphService, "from_inspection_inputs")
-    prepare_node_metadata = mocker.spy(NodeMetadataService, "from_inspection_inputs")
     load_extras = mocker.spy(context_module, "load_enrichment_sources")
 
     context = VizProjectContext.from_project(
@@ -133,30 +115,20 @@ def test_context_reuses_loaded_inputs_across_requests(
     )
     first = context.graph.get_pipeline_response()
     second = context.graph.get_pipeline_response("data_ingestion")
-    task_id = next(node.id for node in first.nodes if node.type == "task")
-    first_metadata = context.node_metadata.get_node_metadata_response(task_id)
-    second_metadata = context.node_metadata.get_node_metadata_response(task_id)
 
     load.assert_called_once()
     filter_inputs.assert_called_once()
     prepare.assert_called_once()
-    prepare_node_metadata.assert_called_once()
     load_extras.assert_called_once()
-    assert prepare.call_args.args[0] is prepare_node_metadata.call_args.args[0]
     assert first == second
     assert first is not second
-    assert first_metadata == second_metadata
-    assert first_metadata is not second_metadata
 
 
 @pytest.mark.parametrize("node_extras", [{}, {"data": NodeExtras(stats={"rows": 3})}])
 def test_context_reuses_explicit_node_extras(mocker, node_extras) -> None:
     inputs = mocker.sentinel.inputs
     mocker.patch.object(context_module, "load_inspection_inputs", return_value=inputs)
-    mocker.patch.object(GraphService, "from_inspection_inputs")
-    prepare_node_metadata = mocker.patch.object(
-        NodeMetadataService, "from_inspection_inputs"
-    )
+    prepare_graph = mocker.patch.object(GraphService, "from_inspection_inputs")
     load_extras = mocker.patch.object(context_module, "load_enrichment_sources")
 
     VizProjectContext.from_project(
@@ -164,7 +136,7 @@ def test_context_reuses_explicit_node_extras(mocker, node_extras) -> None:
     )
 
     load_extras.assert_not_called()
-    prepare_node_metadata.assert_called_once_with(inputs, enrichment=node_extras)
+    prepare_graph.assert_called_once_with(inputs, enrichment=GraphExtras())
 
 
 def test_context_preserves_unvalidated_parameter_values(

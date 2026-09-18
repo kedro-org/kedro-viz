@@ -44,7 +44,7 @@ class GraphExtras(BaseModel, frozen=True):
 class EnrichmentSources(BaseModel, frozen=True):
     """Prepared enrichment, separated by consumer without retaining live nodes.
 
-    File extras retain their names for snapshot metadata. Graph overlays retain the exact
+    File extras retain their names for the legacy loader. Graph overlays retain the exact
     live node IDs and values, including any live-node selection of transcoded extras.
     """
 

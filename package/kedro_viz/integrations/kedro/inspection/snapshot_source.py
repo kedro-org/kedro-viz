@@ -23,17 +23,12 @@ logger = logging.getLogger(__name__)
 class DatasetEntry(BaseModel):
     """Dataset references indexed under their base name, without an ``@`` suffix.
 
-    Name and free-input status use the first encounter; producer assignment uses the last.
-    Only transcoded-first entries collect distinct ordered ``inputs`` and ``output``,
-    including later plain references. ``is_transcoded`` records any transcoded reference
-    for graph rendering, independently of that first-encounter metadata rule.
+    Keep the first reference for catalog lookup and record whether any reference is
+    transcoded for graph rendering.
     """
 
     name: str
-    is_free_input: bool = False
     is_transcoded: bool = False
-    inputs: list[str] = Field(default_factory=list)
-    output: str | None = None
 
 
 def build_dataset_index(
@@ -41,38 +36,24 @@ def build_dataset_index(
 ) -> dict[str, DatasetEntry]:
     """Index references in encounter order over exactly the supplied pipelines.
 
-    Graphs pass their selected pipeline; metadata passes the loaded snapshot's pipelines.
-    Sharing the traversal must not broaden either consumer's scope.
+    Graphs pass their selected pipeline so indexing does not broaden the rendered view.
     """
     datasets: dict[str, DatasetEntry] = {}
 
-    def index_reference(reference: str, *, is_input: bool, is_free_input: bool) -> None:
+    def index_reference(reference: str) -> None:
         base_name = _strip_transcoding(reference)
         entry = datasets.get(base_name)
         if entry is None:
-            entry = datasets[base_name] = DatasetEntry(
-                name=reference, is_free_input=is_free_input
-            )
+            entry = datasets[base_name] = DatasetEntry(name=reference)
         if reference != base_name:
             entry.is_transcoded = True
-        if entry.name == base_name:
-            return
-        if is_input:
-            if reference not in entry.inputs:
-                entry.inputs.append(reference)
-        else:
-            entry.output = reference
 
     for pipeline in pipelines:
         for node in pipeline.nodes:
             for reference in node.inputs:
-                index_reference(
-                    reference,
-                    is_input=True,
-                    is_free_input=reference in pipeline.inputs,
-                )
+                index_reference(reference)
             for reference in node.outputs:
-                index_reference(reference, is_input=False, is_free_input=False)
+                index_reference(reference)
     return datasets
 
 

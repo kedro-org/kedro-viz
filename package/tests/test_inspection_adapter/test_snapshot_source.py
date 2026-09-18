@@ -37,7 +37,7 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
 
-def test_dataset_index_keeps_first_identity_and_last_producer() -> None:
+def test_dataset_index_keeps_first_reference_across_consumers_and_producers() -> None:
     consumer = PipelineSnapshot(
         name="consumer",
         nodes=[
@@ -61,10 +61,7 @@ def test_dataset_index_keeps_first_identity_and_last_producer() -> None:
     entry = build_dataset_index([consumer, producer])["asset"]
 
     assert entry.name == "asset@csv"
-    assert entry.is_free_input is True
     assert entry.is_transcoded is True
-    assert entry.inputs == ["asset@csv", "asset"]
-    assert entry.output == "asset"
 
 
 def test_dataset_index_distinguishes_any_transcoding_from_first_reference() -> None:
@@ -81,9 +78,6 @@ def test_dataset_index_distinguishes_any_transcoding_from_first_reference() -> N
 
     assert entry.name == "asset"
     assert entry.is_transcoded is True
-    assert entry.is_free_input is False
-    assert entry.inputs == []
-    assert entry.output is None
 
 
 def test_dataset_index_uses_only_supplied_pipelines_and_keeps_order() -> None:
