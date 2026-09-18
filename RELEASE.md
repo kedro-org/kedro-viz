@@ -6,12 +6,6 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Upcoming release
-
-## Bug fixes and other changes
-
-- Remove unused inspection node metadata preparation; retain existing node-detail behavior.
-
 # Release 12.4.0
 
 ## Major features and improvements
