@@ -12,9 +12,6 @@ from kedro_viz.integrations.kedro.inspection.enrichment import (
 from kedro_viz.integrations.kedro.inspection.graph_service import (
     GraphService,
 )
-from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
-    NodeMetadataService,
-)
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
@@ -24,9 +21,8 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 class VizProjectContext:
     """Services prepared for one Kedro project load."""
 
-    def __init__(self, graph: GraphService, node_metadata: NodeMetadataService) -> None:
+    def __init__(self, graph: GraphService) -> None:
         self.graph = graph
-        self.node_metadata = node_metadata
 
     @classmethod
     def from_project(
@@ -77,9 +73,5 @@ class VizProjectContext:
             graph=GraphService.from_inspection_inputs(
                 inspection_inputs,
                 enrichment=enrichment_sources.graph_extras,
-            ),
-            node_metadata=NodeMetadataService.from_inspection_inputs(
-                inspection_inputs,
-                enrichment=enrichment_sources.node_extras_by_name,
             ),
         )

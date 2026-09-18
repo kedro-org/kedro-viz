@@ -7,7 +7,6 @@ for, so these fail if ``/api/main`` or ``/api/pipelines/{id}`` bypasses the expl
 from __future__ import annotations
 
 from pathlib import Path
-from typing import cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -18,9 +17,6 @@ from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.graph_service import (
     GraphService,
     PipelineNotFoundError,
-)
-from kedro_viz.integrations.kedro.inspection.node_metadata_service import (
-    NodeMetadataService,
 )
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -47,11 +43,6 @@ class _SpyGraphService(GraphService):
         )
 
 
-class _UnusedNodeMetadataService:
-    def get_node_metadata_response(self, node_id):
-        raise AssertionError(f"Unexpected node metadata request: {node_id}")
-
-
 @pytest.fixture
 def spy_service() -> _SpyGraphService:
     return _SpyGraphService()
@@ -61,7 +52,6 @@ def spy_service() -> _SpyGraphService:
 def client(spy_service: _SpyGraphService) -> TestClient:
     context = VizProjectContext(
         graph=spy_service,
-        node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
     )
     return TestClient(apps.create_api_app_from_project(context, Path.cwd()))
 
@@ -103,7 +93,6 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
         apps.create_api_app_from_project(
             VizProjectContext(
                 graph=first_service,
-                node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
             ),
             Path.cwd(),
         )
@@ -112,7 +101,6 @@ def test_each_app_uses_the_context_bound_when_it_was_created() -> None:
         apps.create_api_app_from_project(
             VizProjectContext(
                 graph=second_service,
-                node_metadata=cast(NodeMetadataService, _UnusedNodeMetadataService()),
             ),
             Path.cwd(),
         )
