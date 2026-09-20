@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wrapper, mapStateToProps } from './wrapper';
 import { setup, mockState } from '../../utils/state.mock';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 
@@ -116,8 +116,46 @@ describe('Wrapper', () => {
 
   it('maps state to props', () => {
     expect(mapStateToProps(mockState.spaceflights)).toEqual({
+      dataSource: null,
       displayGlobalNavigation: true,
       theme,
     });
+  });
+});
+
+describe('Wrapper version check', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('does not call the version API when dataSource is not "json" (embedded mode)', () => {
+    const fetchSpy = jest.spyOn(window, 'fetch');
+
+    render(<Wrapper dataSource={null} />);
+
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('/version'),
+      expect.anything()
+    );
+  });
+
+  it('calls the version API when dataSource is "json" (standalone app)', async () => {
+    const fetchSpy = jest
+      .spyOn(window, 'fetch')
+      .mockResolvedValue(
+        new window.Response(JSON.stringify({}), { status: 200 })
+      );
+
+    await act(async () => {
+      render(<Wrapper dataSource="json" />);
+      // Flush the pending getVersion()/response.json() microtasks so the
+      // resulting state updates settle inside act().
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.stringContaining('/version'),
+      expect.anything()
+    );
   });
 });

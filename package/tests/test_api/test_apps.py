@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 import pytest
@@ -114,3 +115,21 @@ class TestRegisteredPipelineEndpoint:
 
         if response.status_code == 200:
             assert response.json()["selected_pipeline"] == pipeline_id
+
+
+class TestAPIAppFromFile:
+    def test_get_version(self, tmp_path):
+        expected_response = {
+            "installed": "1.0.0",
+            "is_outdated": False,
+            "latest": "1.0.0",
+        }
+        (tmp_path / "version").write_text(json.dumps(expected_response))
+
+        api_app = apps.create_api_app_from_file(str(tmp_path))
+        client = TestClient(api_app)
+
+        response = client.get("/api/version")
+
+        assert response.status_code == 200
+        assert response.json() == expected_response
