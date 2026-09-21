@@ -1,10 +1,15 @@
 """Tests for project-owned run-status file access."""
 
 import json
+from datetime import datetime
 from pathlib import Path
 
+import pytest
+
+from kedro_viz.api.rest.responses import run_events
 from kedro_viz.api.rest.responses.run_events import EventType
 from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
+from kedro_viz.integrations.kedro.inspection import run_status_service
 from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 
 
@@ -73,3 +78,71 @@ def test_service_reads_updated_events_on_each_request(tmp_path: Path) -> None:
 
     _write_node_event(tmp_path, "second-run")
     assert set(service.get_run_status_response().nodes) == {"second-run"}
+
+
+class TestReadRunStatusResponse:
+    def test_missing_file(self, tmp_path: Path):
+        response = run_status_service.read_run_status_response(
+            tmp_path / "missing.json"
+        )
+        assert response.nodes == {}
+
+    def test_malformed_json(self, tmp_path: Path):
+        bad = tmp_path / "bad.json"
+        bad.write_text("{ nope")
+
+        response = run_status_service.read_run_status_response(bad)
+        assert response.nodes == {}
+
+    def test_oserror_on_open(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+        good = tmp_path / "good.json"
+        good.write_text("[]")
+
+        orig_open = Path.open
+        monkeypatch.setattr(
+            Path, "open", lambda *a, **k: (_ for _ in ()).throw(OSError), raising=True
+        )
+
+        response = run_status_service.read_run_status_response(good)
+        assert response.nodes == {}
+
+        monkeypatch.setattr(Path, "open", orig_open, raising=True)  # restore
+
+    def test_transformer_exception(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ):
+        good = tmp_path / "good.json"
+        good.write_text("[]")
+
+        orig_transform = run_status_service.transform_events_to_structured_format
+        monkeypatch.setattr(
+            run_status_service,
+            "transform_events_to_structured_format",
+            lambda *_: (_ for _ in ()).throw(ValueError),
+        )
+
+        response = run_status_service.read_run_status_response(good)
+        assert response.nodes == {}
+
+        monkeypatch.setattr(
+            run_status_service, "transform_events_to_structured_format", orig_transform
+        )
+
+    def test_happy_path(self, tmp_path: Path):
+        events = [
+            {
+                "event": run_events.EventType.AFTER_NODE_RUN,
+                "node_id": "nX",
+                "duration": 1,
+                "status": "success",
+            },
+            {
+                "event": run_events.EventType.AFTER_PIPELINE_RUN,
+                "timestamp": datetime.now().isoformat(),
+            },
+        ]
+        good = tmp_path / "good.json"
+        good.write_text(json.dumps(events))
+
+        response = run_status_service.read_run_status_response(good)
+        assert response.nodes["nX"].duration == 1
