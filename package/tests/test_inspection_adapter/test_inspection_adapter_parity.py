@@ -79,12 +79,12 @@ def live_enriched_graph_service(_restore_kedro_project_state):
 
     enrichment = load_enrichment_sources(
         DEMO_PROJECT,
-        nodes=manager.nodes.as_list(),
         node_extras_by_name=manager.node_extras,
     )
     return GraphService.from_inspection_inputs(
         load_inspection_inputs(DEMO_PROJECT),
-        enrichment=enrichment.graph_extras,
+        node_extras_by_name=enrichment.node_extras_by_name,
+        graph_extras=enrichment.graph_extras,
     )
 
 

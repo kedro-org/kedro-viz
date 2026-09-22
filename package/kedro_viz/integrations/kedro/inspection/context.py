@@ -72,6 +72,7 @@ class VizProjectContext:
         return cls(
             graph=GraphService.from_inspection_inputs(
                 inspection_inputs,
-                enrichment=enrichment_sources.graph_extras,
+                node_extras_by_name=enrichment_sources.node_extras_by_name,
+                graph_extras=enrichment_sources.graph_extras,
             ),
         )

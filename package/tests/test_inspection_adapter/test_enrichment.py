@@ -1,102 +1,22 @@
-"""Tests for explicit live-field enrichment of inspection graph responses."""
+"""Tests for file-backed node extras and layer overrides for inspection graph responses.
+
+Node extras (stats/styles) are always read directly from the snapshot's node/dataset names
+or from ``.viz/stats.json``/``.viz/styles.json``, so no live Kedro catalog or session is
+needed here. How the graph builder attaches these to a node by name is covered in
+``test_graph_builder_edge_cases.py``.
+"""
 
 from __future__ import annotations
 
 import pytest
-from kedro_datasets.pandas import CSVDataset
 from pydantic import ValidationError
 
-from kedro_viz.api.rest.responses.pipelines import (
-    DataNodeAPIResponse,
-    GraphAPIResponse,
-    GraphEdgeAPIResponse,
-    NodeExtrasAPIResponse,
-)
 from kedro_viz.integrations.kedro.inspection.enrichment import (
     EnrichmentSources,
     GraphExtras,
-    enrich_graph_response,
     load_enrichment_sources,
 )
-from kedro_viz.integrations.kedro.node_ids import _create_dataset_node_id
-from kedro_viz.models.flowchart.nodes import GraphNode, TranscodedDataNode
 from kedro_viz.models.metadata import NodeExtras
-from kedro_viz.utils import _hash_input_output
-
-
-def _live_dataset(
-    name: str,
-    *,
-    stats: dict | None = None,
-    styles: dict | None = None,
-) -> GraphNode:
-    extras = (
-        NodeExtras(stats=stats, styles=styles)
-        if stats is not None or styles is not None
-        else None
-    )
-    return GraphNode.create_data_node(
-        dataset_id=_hash_input_output(name),
-        dataset_name=name,
-        layer=None,
-        tags=set(),
-        dataset=CSVDataset(filepath="data.csv"),
-        modular_pipelines=None,
-        node_extras=extras,
-    )
-
-
-def _graph_dataset(
-    name: str,
-    *,
-    dataset_type: str | None = "pandas.CSVDataset",
-) -> DataNodeAPIResponse:
-    return DataNodeAPIResponse(
-        id=_create_dataset_node_id(name),
-        name=name,
-        tags=[],
-        pipelines=["__default__"],
-        type="data",
-        modular_pipelines=None,
-        layer=None,
-        dataset_type=dataset_type,
-    )
-
-
-def _graph_response(
-    *nodes: DataNodeAPIResponse,
-    edges: list[GraphEdgeAPIResponse] | None = None,
-) -> GraphAPIResponse:
-    return GraphAPIResponse(
-        nodes=list(nodes),
-        edges=edges or [],
-        layers=[],
-        tags=[],
-        pipelines=[],
-        modular_pipelines={},
-        selected_pipeline="__default__",
-    )
-
-
-def test_live_dataset_fields_are_copied_by_existing_node_id() -> None:
-    """Copy icon type, stats and styles without recalculating the live node ID."""
-    live_node = _live_dataset(
-        "companies",
-        stats={"rows": 5},
-        styles={"backgroundColor": "#fff"},
-    )
-    graph_node = _graph_dataset("companies")
-    sources = load_enrichment_sources(
-        "/unused", nodes=[live_node], node_extras_by_name={}
-    )
-
-    enrich_graph_response(_graph_response(graph_node), sources.graph_extras)
-
-    assert live_node.id == graph_node.id
-    assert graph_node.dataset_type == "pandas.csv_dataset.CSVDataset"
-    assert isinstance(graph_node.node_extras, NodeExtrasAPIResponse)
-    assert graph_node.node_extras.stats == {"rows": 5}
-    assert graph_node.node_extras.styles == {"backgroundColor": "#fff"}
 
 
 def test_enrichment_sources_copy_the_layer_mapping() -> None:
@@ -127,90 +47,12 @@ def test_enrichment_container_keeps_consumers_separate() -> None:
 
     assert sources.node_extras_by_name["data"].stats == {"rows": 3}
     assert sources.graph_extras is graph_extras
-    assert not hasattr(sources.graph_extras, "node_extras_by_name")
     with pytest.raises(ValidationError, match="Instance is frozen"):
         sources.graph_extras = GraphExtras()  # type: ignore[misc]
 
 
-def test_enrichment_sources_copy_all_constructor_mappings() -> None:
-    """The direct constructor defensively copies mappings just like the factory."""
-    extras = {"node": NodeExtras(stats={"rows": 1})}
-    dataset_types = {"node": "pandas.csv_dataset.CSVDataset"}
-    sources = GraphExtras(
-        node_extras_by_node_id=extras,
-        dataset_type_by_node_id=dataset_types,
-    )
-
-    extras.clear()
-    dataset_types.clear()
-
-    assert list(sources.node_extras_by_node_id) == ["node"]
-    assert list(sources.dataset_type_by_node_id) == ["node"]
-
-
-def test_live_nodes_are_consumed_in_one_pass() -> None:
-    """A generator supplies both extras and dataset types, not only the first mapping."""
-    live_node = _live_dataset("companies", stats={"rows": 5})
-
-    sources = load_enrichment_sources(
-        "/unused", nodes=(node for node in [live_node]), node_extras_by_name={}
-    )
-
-    assert live_node.id in sources.graph_extras.node_extras_by_node_id
-    assert live_node.id in sources.graph_extras.dataset_type_by_node_id
-
-
-def test_missing_live_node_leaves_builder_fields_untouched() -> None:
-    graph_node = _graph_dataset("only_in_snapshot")
-
-    enrich_graph_response(_graph_response(graph_node), GraphExtras())
-
-    assert graph_node.dataset_type == "pandas.CSVDataset"
-    assert graph_node.node_extras is None
-
-
-def test_enrichment_does_not_change_graph_topology() -> None:
-    source = _graph_dataset("source")
-    target = _graph_dataset("target")
-    response = _graph_response(
-        source,
-        target,
-        edges=[GraphEdgeAPIResponse(source=source.id, target=target.id)],
-    )
-    node_shape = [(node.id, node.type, node.name) for node in response.nodes]
-    edge_shape = [(edge.source, edge.target) for edge in response.edges]
-    sources = load_enrichment_sources(
-        "/unused",
-        nodes=[_live_dataset("source", stats={"rows": 5})],
-        node_extras_by_name={},
-    )
-
-    enrich_graph_response(response, sources.graph_extras)
-
-    assert [(node.id, node.type, node.name) for node in response.nodes] == node_shape
-    assert [(edge.source, edge.target) for edge in response.edges] == edge_shape
-    assert source.node_extras is not None
-
-
-def test_transcoded_dataset_uses_one_id_without_exposing_a_dataset_type() -> None:
-    """A transcoded live node enriches the base graph node but keeps its type hidden."""
-    live_node = _live_dataset("ds@pandas", stats={"rows": 7})
-    assert isinstance(live_node, TranscodedDataNode)
-    graph_node = _graph_dataset("ds", dataset_type=None)
-    sources = load_enrichment_sources(
-        "/unused", nodes=[live_node], node_extras_by_name={}
-    )
-
-    enrich_graph_response(_graph_response(graph_node), sources.graph_extras)
-
-    assert live_node.id == graph_node.id
-    assert graph_node.dataset_type is None
-    assert graph_node.node_extras is not None
-    assert graph_node.node_extras.stats == {"rows": 7}
-
-
-def test_file_extras_are_available_without_live_nodes(tmp_path, mocker) -> None:
-    """File data does not depend on a populated catalog or live graph."""
+def test_file_extras_are_read_when_none_are_supplied(tmp_path, mocker) -> None:
+    """File data is the default source, with no catalog or live graph involved."""
     from kedro_viz.integrations.kedro.inspection import enrichment
 
     stats = mocker.patch.object(
@@ -227,8 +69,6 @@ def test_file_extras_are_available_without_live_nodes(tmp_path, mocker) -> None:
     assert sources.node_extras_by_name == {
         "companies": NodeExtras(stats={"rows": 5}, styles={"color": "red"})
     }
-    assert sources.graph_extras.node_extras_by_node_id == {}
-    assert sources.graph_extras.dataset_type_by_node_id == {}
     assert sources.graph_extras.layer_by_dataset_name is None
 
 
@@ -248,23 +88,3 @@ def test_supplied_file_extras_are_copied_without_reading_files(
     stats.assert_not_called()
     styles.assert_not_called()
     assert sources.node_extras_by_name == extras
-
-
-def test_file_metadata_and_live_graph_overlays_keep_their_own_values(tmp_path) -> None:
-    """Consolidation must not change live graph precedence or static file metadata."""
-    file_extras = {"companies": NodeExtras(stats={"rows": 5})}
-    live_node = _live_dataset("companies", stats={"rows": 9})
-    live_node.id = "existing-canonical-id"
-
-    sources = load_enrichment_sources(
-        tmp_path,
-        nodes=[live_node],
-        node_extras_by_name=file_extras,
-        layer_by_dataset_name={},
-    )
-
-    assert sources.node_extras_by_name["companies"].stats == {"rows": 5}
-    assert sources.graph_extras.node_extras_by_node_id[
-        "existing-canonical-id"
-    ].stats == {"rows": 9}
-    assert sources.graph_extras.layer_by_dataset_name == {}

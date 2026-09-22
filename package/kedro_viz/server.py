@@ -3,7 +3,7 @@ for Kedro pipeline visualisation."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -12,10 +12,12 @@ from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.catalog_layers import resolve_live_catalog_layers
 from kedro_viz.integrations.kedro.inspection import (
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
+from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
 
@@ -43,6 +45,27 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
+def _load_project_data(
+    path: Path,
+    env: Optional[str] = None,
+    include_hooks: bool = False,
+    package_name: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False,
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict[str, NodeExtras]]:
+    """Load one project's catalog, pipelines and node extras, filtered to ``pipeline_name``."""
+    catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
+        path, env, include_hooks, package_name, extra_params, is_lite
+    )
+    pipelines = (
+        pipelines
+        if pipeline_name is None
+        else {pipeline_name: pipelines[pipeline_name]}
+    )
+    return catalog, pipelines, node_extras_dict
+
+
 def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
@@ -57,16 +80,8 @@ def load_and_populate_data(
     VSCode and deployment call this entry point and ignore its return value. The HTTP
     server uses the returned repositories to build its project-scoped inspection context.
     """
-
-    # Loads data from underlying Kedro Project
-    catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
-        path, env, include_hooks, package_name, extra_params, is_lite
-    )
-
-    pipelines = (
-        pipelines
-        if pipeline_name is None
-        else {pipeline_name: pipelines[pipeline_name]}
+    catalog, pipelines, node_extras_dict = _load_project_data(
+        path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
@@ -76,41 +91,33 @@ def load_and_populate_data(
 
 def _create_viz_project_context(
     path: Path,
-    live_data: DataAccessManager,
     *,
     env: Optional[str] = None,
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     package_name: Optional[str] = None,
     is_lite: bool = False,
-    include_hooks: bool = False,
+    layer_by_dataset_name: Optional[Dict[str, str]] = None,
 ) -> VizProjectContext:
     """Create the explicit context used by the HTTP graph routes.
 
     Args:
         path: The Kedro project root.
-        live_data: Repositories populated by the transitional live load.
         env: The Kedro environment, honouring ``--env``.
         pipeline_name: Restrict the view to one registered pipeline, honouring ``--pipeline``.
         extra_params: Typed parameter overrides from ``--params``.
         package_name: The Kedro project package, used to identify project imports in lite mode.
         is_lite: Whether to mock missing project dependencies while building the snapshot.
-        include_hooks: Whether hook-modified layers should replace raw catalog layers.
+        layer_by_dataset_name: Layers read from a populated catalog (``--include-hooks``),
+            replacing the raw catalog config a hook may have added, changed or removed. Absent
+            (rather than empty) means "read layers from the raw catalog config instead."
 
     Raises:
         Exception: If the inspection context cannot be constructed.
     """
     try:
-        # A hook can add, change or remove layer metadata, and only the populated catalog
-        # reflects that, so with hooks the builder reads layers from there instead of the
-        # raw catalog config.
-        layer_by_dataset_name = (
-            dict(live_data.catalog.layers_mapping) if include_hooks else None
-        )
         enrichment = load_enrichment_sources(
             path,
-            nodes=live_data.nodes.as_list(),
-            node_extras_by_name=live_data.node_extras,
             layer_by_dataset_name=layer_by_dataset_name,
         )
         return VizProjectContext.from_project(
@@ -179,21 +186,56 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        live_data = load_and_populate_data(
-            path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
-        )
-        # Copy enrichment from the transitional live repositories into the project-scoped
-        # context. The graph service keeps no reference to the global repositories.
-        context = _create_viz_project_context(
-            path,
-            live_data,
-            env=env,
-            pipeline_name=pipeline_name,
-            extra_params=extra_params,
-            package_name=package_name,
-            is_lite=is_lite,
-            include_hooks=include_hooks,
-        )
+        if include_hooks:
+            # Hook-modified layers can only be read from a populated catalog, so this still
+            # runs the one live Kedro session bootstrap eagerly. But layers only need the
+            # catalog, not the expensive graph-structure build `add_pipelines` does, so this
+            # reads them with a plain function instead of `DataAccessManager`. The loaded
+            # catalog/pipelines/node extras are then reused (not reloaded) for the deferred
+            # full population below, so this still costs exactly one Kedro session.
+            catalog, pipelines, node_extras_dict = _load_project_data(
+                path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
+            )
+            layer_by_dataset_name = resolve_live_catalog_layers(catalog, pipelines)
+            context = _create_viz_project_context(
+                path,
+                env=env,
+                pipeline_name=pipeline_name,
+                extra_params=extra_params,
+                package_name=package_name,
+                is_lite=is_lite,
+                layer_by_dataset_name=layer_by_dataset_name,
+            )
+            live_data_loader.configure(
+                lambda: populate_data(
+                    data_access_manager, catalog, pipelines, node_extras_dict
+                )
+            )
+        else:
+            # The graph routes are served entirely from the inspection snapshot and from
+            # file-backed enrichment, so building the context does not wait on the live
+            # load. The live load only runs later, on first use, for the legacy
+            # repositories `/api/nodes/{id}` and `--save-file` still depend on: a session
+            # that only ever looks at the graph never pays for it.
+            context = _create_viz_project_context(
+                path,
+                env=env,
+                pipeline_name=pipeline_name,
+                extra_params=extra_params,
+                package_name=package_name,
+                is_lite=is_lite,
+            )
+            live_data_loader.configure(
+                lambda: load_and_populate_data(
+                    path,
+                    env,
+                    include_hooks,
+                    package_name,
+                    pipeline_name,
+                    extra_params,
+                    is_lite,
+                )
+            )
 
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]

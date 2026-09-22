@@ -19,6 +19,7 @@ from kedro_viz.api.rest.responses.pipelines import (
     GraphAPIResponse,
     GraphEdgeAPIResponse,
     NamedEntityAPIResponse,
+    NodeExtrasAPIResponse,
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, MEMORY_DATASET_TYPE
@@ -48,6 +49,8 @@ if TYPE_CHECKING:
         PipelineSnapshot,
         ProjectSnapshot,
     )
+
+    from kedro_viz.models.metadata import NodeExtras
 
 
 class _SnapshotGraphIndex:
@@ -111,6 +114,7 @@ class GraphBuilder:
         *,
         parameters: dict[str, Any] | None = None,
         layer_by_dataset_name: Mapping[str, str] | None = None,
+        node_extras_by_name: Mapping[str, NodeExtras] | None = None,
     ) -> None:
         self._snapshot = snapshot
         self._layer_by_dataset_name = (
@@ -124,6 +128,9 @@ class GraphBuilder:
         # Resolved parameter values (``--params`` already applied), used to fill task-node
         # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
         self._parameters = parameters or {}
+        # File-backed stats/styles (``.viz/stats.json``, ``.viz/styles.json``), keyed by the
+        # same node name used for task-extras matching and dataset base names.
+        self._node_extras_by_name = dict(node_extras_by_name or {})
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
@@ -228,15 +235,19 @@ class GraphBuilder:
         )
 
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
+        # The live loader matches task extras on the node's own explicit name (falling back
+        # to the function name for a Kedro-generated one), which is exactly the display name.
+        display_name = _display_name(node.name, node.func_name, node.namespace)
         return TaskNodeAPIResponse(
             id=task_id,
-            name=_display_name(node.name, node.func_name, node.namespace),
+            name=display_name,
             full_name=node.name,
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
             parameters=build_parameters_from_inputs(node.inputs, self._parameters),
+            node_extras=self._node_extras_response(display_name),
         )
 
     def _build_dataset_node(
@@ -283,7 +294,15 @@ class GraphBuilder:
                 None if is_parameter else self._layer_by_dataset_name.get(base_name)
             ),
             dataset_type=dataset_type,
+            node_extras=self._node_extras_response(base_name),
         )
+
+    def _node_extras_response(self, name: str) -> NodeExtrasAPIResponse | None:
+        """Return the file-backed stats/styles response for a node name, if any."""
+        extras = self._node_extras_by_name.get(name)
+        if extras is None:
+            return None
+        return NodeExtrasAPIResponse(stats=extras.stats, styles=extras.styles)
 
     def _sorted_layers_for_pipeline(
         self,

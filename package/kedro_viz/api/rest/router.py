@@ -73,7 +73,10 @@ def create_graph_router(context: VizProjectContext) -> APIRouter:
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-async def get_single_node_metadata(node_id: str):
+def get_single_node_metadata(node_id: str):
+    # A plain (non-async) route so FastAPI runs it in its threadpool: the first call may
+    # trigger the deferred live load (see `LiveDataLoader`), which must not block the event
+    # loop and other in-flight requests while it runs.
     return get_node_metadata_response(node_id)
 
 

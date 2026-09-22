@@ -4,11 +4,20 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
 from kedro_viz.server import load_and_populate_data, run_server
 
 
 class ExampleAPIResponse(BaseModel):
     content: str
+
+
+@pytest.fixture(autouse=True)
+def reset_live_data_loader():
+    """The loader is a module-level singleton; each test starts from a clean slate."""
+    live_data_loader.reset()
+    yield
+    live_data_loader.reset()
 
 
 @pytest.fixture(autouse=True)
@@ -61,34 +70,24 @@ class TestServer:
         example_catalog,
         example_pipelines,
     ):
-        events = []
-        patched_data_access_manager.add_pipelines.side_effect = lambda _: events.append(
-            "populated"
-        )
+        """Without `--include-hooks`, startup builds the context but does not touch the
+        live repositories: the graph routes don't need them, so the live load is deferred
+        until something that does need them (`/api/nodes/{id}`, `--save-file`) runs.
+        """
         context = patched_create_viz_project_context.return_value
-        patched_create_viz_project_context.side_effect = lambda *args, **kwargs: (
-            events.append("context") or context
-        )
 
         run_server()
 
-        patched_data_access_manager.add_catalog.assert_called_once_with(
-            example_catalog, example_pipelines
-        )
-        patched_data_access_manager.add_pipelines.assert_called_once_with(
-            example_pipelines
-        )
         patched_create_viz_project_context.assert_called_once_with(
             Path.cwd(),
-            patched_data_access_manager,
             env=None,
             pipeline_name=None,
             extra_params=None,
             package_name=None,
             is_lite=False,
-            include_hooks=False,
         )
-        assert events == ["populated", "context"]
+        patched_data_access_manager.add_catalog.assert_not_called()
+        patched_data_access_manager.add_pipelines.assert_not_called()
 
         patched_create_api_app_from_project.assert_called_once_with(
             context, Path.cwd(), False
@@ -97,14 +96,24 @@ class TestServer:
         # an uvicorn server is launched
         patched_uvicorn_run.assert_called_once()
 
+        # The deferred load only runs once something asks for it.
+        live_data_loader.ensure_loaded()
+        patched_data_access_manager.add_catalog.assert_called_once_with(
+            example_catalog, example_pipelines
+        )
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            example_pipelines
+        )
+
     def test_specific_pipeline(
         self,
         patched_data_access_manager,
         example_pipelines,
     ):
         run_server(pipeline_name="data_science")
+        live_data_loader.ensure_loaded()
 
-        # assert that when running server, data are added correctly to the data access manager
+        # assert that when the deferred load runs, data are added correctly
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             {"data_science": example_pipelines["data_science"]}
         )
@@ -113,8 +122,14 @@ class TestServer:
         self,
         patched_create_viz_project_context,
         patched_data_access_manager,
+        example_pipelines,
         tmp_path,
     ):
+        """With `--include-hooks`, the catalog (needed for hook-modified layers) still loads
+        eagerly, but layers are read with a plain function -- no `DataAccessManager` involved
+        -- and the expensive graph build on the global repositories stays deferred, just like
+        the non-hooks path.
+        """
         runtime_params = {"split": {"test_size": 0.3}}
 
         run_server(
@@ -129,13 +144,25 @@ class TestServer:
 
         patched_create_viz_project_context.assert_called_once_with(
             tmp_path,
-            patched_data_access_manager,
             env="staging",
             pipeline_name="data_science",
             extra_params=runtime_params,
             package_name="spaceflights",
             is_lite=True,
-            include_hooks=True,
+            # Every catalog entry with layer metadata, regardless of pipeline filtering --
+            # `resolve_live_catalog_layers` only scopes materialization to the pipelines,
+            # not which already-registered catalog entries are read.
+            layer_by_dataset_name={
+                "model_inputs": "model_inputs",
+                "uk.data_processing.raw_data": "raw",
+            },
+        )
+        patched_data_access_manager.add_pipelines.assert_not_called()
+
+        # The expensive graph build on the global repositories is still deferred.
+        live_data_loader.ensure_loaded()
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            {"data_science": example_pipelines["data_science"]}
         )
 
     def test_load_and_populate_data_returns_repositories_without_creating_a_context(
