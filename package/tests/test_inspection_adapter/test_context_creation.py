@@ -1,11 +1,4 @@
-"""Tests for creating the project-scoped inspection context at server startup.
-
-``_create_viz_project_context`` is a pure function of the snapshot and file-backed enrichment:
-it has no dependency on the legacy live repositories or ``DataAccessManager``. Reading layers
-from a live, populated catalog (``--include-hooks``) is a separate concern, covered in
-``test_catalog_layers.py``; here we only check that a resolved ``layer_by_dataset_name`` is
-forwarded through unchanged, whatever produced it.
-"""
+"""Tests for creating the project-scoped inspection context at server startup."""
 
 from __future__ import annotations
 

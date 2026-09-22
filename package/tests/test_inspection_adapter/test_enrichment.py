@@ -1,10 +1,4 @@
-"""Tests for file-backed node extras and layer overrides for inspection graph responses.
-
-Node extras (stats/styles) are always read directly from the snapshot's node/dataset names
-or from ``.viz/stats.json``/``.viz/styles.json``, so no live Kedro catalog or session is
-needed here. How the graph builder attaches these to a node by name is covered in
-``test_graph_builder_edge_cases.py``.
-"""
+"""Tests for file-backed node extras and layer overrides for inspection graph responses."""
 
 from __future__ import annotations
 
