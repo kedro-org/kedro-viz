@@ -92,6 +92,7 @@ def test_inputs_reaches_the_builder(mocker) -> None:
         {"companies": {}},
         parameters={"split": 0.2},
         layer_by_dataset_name=None,
+        node_extras_by_name=None,
     )
 
 
@@ -100,7 +101,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
     graph_builder = mocker.patch(
         "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
     )
-    enrichment = GraphExtras(layer_by_dataset_name={"companies": "hooked"})
+    graph_extras = GraphExtras(layer_by_dataset_name={"companies": "hooked"})
     inputs = mocker.Mock(
         spec=InspectionInputs,
         snapshot=mocker.sentinel.snapshot,
@@ -108,18 +109,43 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
         parameters={},
     )
 
-    GraphService.from_inspection_inputs(inputs, enrichment=enrichment)
+    GraphService.from_inspection_inputs(inputs, graph_extras=graph_extras)
 
     graph_builder.assert_called_once_with(
         mocker.sentinel.snapshot,
         {},
         parameters={},
         layer_by_dataset_name={"companies": "hooked"},
+        node_extras_by_name=None,
     )
 
 
-def test_service_enriches_the_built_response(mocker) -> None:
-    """The service applies its prepared enrichment after building each graph."""
+def test_file_backed_node_extras_reach_the_builder(mocker) -> None:
+    """Stats/styles read at the context boundary are threaded straight to the builder."""
+    graph_builder = mocker.patch(
+        "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
+    )
+    inputs = mocker.Mock(
+        spec=InspectionInputs,
+        snapshot=mocker.sentinel.snapshot,
+        catalog_config={},
+        parameters={},
+    )
+    node_extras_by_name = {"companies": mocker.sentinel.extras}
+
+    GraphService.from_inspection_inputs(inputs, node_extras_by_name=node_extras_by_name)
+
+    graph_builder.assert_called_once_with(
+        mocker.sentinel.snapshot,
+        {},
+        parameters={},
+        layer_by_dataset_name=None,
+        node_extras_by_name=node_extras_by_name,
+    )
+
+
+def test_service_returns_the_built_response_unchanged(mocker) -> None:
+    """The service has no post-build enrichment step; the builder's response is final."""
     builder = mocker.Mock()
     builder.default_pipeline_id.return_value = "__default__"
     builder.has_pipeline.return_value = True
@@ -133,12 +159,7 @@ def test_service_enriches_the_built_response(mocker) -> None:
         selected_pipeline="__default__",
     )
     builder.build.return_value = response
-    enrichment = GraphExtras()
-    enrich_graph_response = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service.enrich_graph_response"
-    )
-    service = GraphService(builder, enrichment)
+    service = GraphService(builder)
 
     assert service.get_pipeline_response() is response
     builder.build.assert_called_once_with("__default__")
-    enrich_graph_response.assert_called_once_with(response, enrichment)

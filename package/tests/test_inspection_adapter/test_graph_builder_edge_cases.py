@@ -27,12 +27,14 @@ def _builder(
     *,
     parameters: dict[str, Any] | None = None,
     layer_by_dataset_name: dict[str, str] | None = None,
+    node_extras_by_name: dict[str, Any] | None = None,
 ) -> GraphBuilder:
     return GraphBuilder(
         cast("ProjectSnapshot", snapshot),
         catalog_config,
         parameters=parameters,
         layer_by_dataset_name=layer_by_dataset_name,
+        node_extras_by_name=node_extras_by_name,
     )
 
 
@@ -159,6 +161,23 @@ def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
     )
     assert isinstance(memory_node, DataNodeAPIResponse)
     assert memory_node.dataset_type == "io.memory_dataset.MemoryDataset"
+
+
+def test_unresolvable_dataset_type_falls_back_to_the_raw_string() -> None:
+    """A type that can't be imported (e.g. a missing dependency in --lite mode) degrades
+    gracefully to the raw catalog string instead of failing the whole graph response.
+    """
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("consume", ["raw"], ["out"])])],
+            {"raw": SimpleNamespace(type="not_a_real_package.NotARealDataset")},
+        )
+    )
+
+    nodes = builder.build("__default__").nodes
+    raw_node = next(n for n in nodes if n.type == "data" and n.name == "raw")
+    assert isinstance(raw_node, DataNodeAPIResponse)
+    assert raw_node.dataset_type == "not_a_real_package.NotARealDataset"
 
 
 def test_empty_catalog_type_string_maps_to_none() -> None:
@@ -329,6 +348,105 @@ def test_parameter_dataset_type_is_none() -> None:
     )
     assert isinstance(parameter_node, DataNodeAPIResponse)
     assert parameter_node.dataset_type is None
+
+
+def test_task_node_extras_match_on_explicit_local_name() -> None:
+    """A namespaced, explicitly named task matches extras on its local name.
+
+    Mirrors the live loader's ``node._name`` matching, without a live catalog.
+    """
+    node = _node(
+        "ingestion.company_agg",
+        ["x"],
+        ["y"],
+        func_name="aggregate",
+        namespace="ingestion",
+    )
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [node])]),
+        node_extras_by_name={
+            "company_agg": SimpleNamespace(stats={"rows": 5}, styles=None)
+        },
+    )
+
+    task_node = _task_node(builder)
+    assert task_node.node_extras is not None
+    assert task_node.node_extras.stats == {"rows": 5}
+
+
+def test_task_node_extras_match_on_function_name_for_generated_names() -> None:
+    """A Kedro-generated name matches extras on the function name, like ``node._func_name``."""
+    node = _node(
+        "processing.clean_data__a1b2c3d4",
+        ["x"],
+        ["y"],
+        func_name="clean_data",
+        namespace="processing",
+    )
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [node])]),
+        node_extras_by_name={
+            "clean_data": SimpleNamespace(stats=None, styles={"c": 1})
+        },
+    )
+
+    task_node = _task_node(builder)
+    assert task_node.node_extras is not None
+    assert task_node.node_extras.styles == {"c": 1}
+
+
+def test_dataset_node_extras_match_on_base_name() -> None:
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("consume", ["companies"], ["out"])])],
+            {"companies": SimpleNamespace(type="pandas.CSVDataset")},
+        ),
+        node_extras_by_name={
+            "companies": SimpleNamespace(stats={"rows": 3}, styles=None)
+        },
+    )
+
+    dataset_node = next(
+        n
+        for n in builder.build("__default__").nodes
+        if n.type == "data" and n.name == "companies"
+    )
+    assert isinstance(dataset_node, DataNodeAPIResponse)
+    assert dataset_node.node_extras is not None
+    assert dataset_node.node_extras.stats == {"rows": 3}
+
+
+def test_transcoded_dataset_node_extras_match_on_base_name() -> None:
+    """Extras still attach to a transcoded dataset, even though its type stays hidden."""
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("consume_ds", ["ds@pandas"], ["out"])])],
+            {"ds@pandas": SimpleNamespace(type="pandas.CSVDataset")},
+        ),
+        node_extras_by_name={"ds": SimpleNamespace(stats={"rows": 7}, styles=None)},
+    )
+
+    ds_node = next(
+        n
+        for n in builder.build("__default__").nodes
+        if n.type == "data" and n.name == "ds"
+    )
+    assert isinstance(ds_node, DataNodeAPIResponse)
+    assert ds_node.dataset_type is None
+    assert ds_node.node_extras is not None
+    assert ds_node.node_extras.stats == {"rows": 7}
+
+
+def test_node_without_matching_extras_leaves_node_extras_unset() -> None:
+    builder = _builder(
+        _snapshot([_pipeline("__default__", [_node("task", ["x"], ["y"])])]),
+        node_extras_by_name={
+            "unrelated": SimpleNamespace(stats={"rows": 1}, styles=None)
+        },
+    )
+
+    task_node = _task_node(builder)
+    assert task_node.node_extras is None
 
 
 def test_default_pipeline_id_falls_back_to_first_when_no_default() -> None:

@@ -4,21 +4,24 @@ Builds task, data, parameter and modular pipeline nodes for one selected pipelin
 their edges and the modular pipeline tree. Also includes the global tag, layer and registered
 pipeline lists.
 
-Node IDs come from ``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets
-use raw catalog type strings from the snapshot.
+Node IDs come from ``kedro_viz.integrations.kedro.node_ids``.
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Mapping
+from functools import lru_cache
 from typing import TYPE_CHECKING, Any
+
+from kedro.io.core import parse_dataset_definition
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
     GraphAPIResponse,
     GraphEdgeAPIResponse,
     NamedEntityAPIResponse,
+    NodeExtrasAPIResponse,
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, MEMORY_DATASET_TYPE
@@ -48,6 +51,8 @@ if TYPE_CHECKING:
         PipelineSnapshot,
         ProjectSnapshot,
     )
+
+    from kedro_viz.models.metadata import NodeExtras
 
 
 class _SnapshotGraphIndex:
@@ -111,6 +116,7 @@ class GraphBuilder:
         *,
         parameters: dict[str, Any] | None = None,
         layer_by_dataset_name: Mapping[str, str] | None = None,
+        node_extras_by_name: Mapping[str, NodeExtras] | None = None,
     ) -> None:
         self._snapshot = snapshot
         self._layer_by_dataset_name = (
@@ -124,6 +130,9 @@ class GraphBuilder:
         # Resolved parameter values (``--params`` already applied), used to fill task-node
         # ``parameters`` in the format the detail panel expects. Empty when values aren't loaded.
         self._parameters = parameters or {}
+        # File-backed stats/styles (``.viz/stats.json``, ``.viz/styles.json``), keyed by the
+        # same node name used for task-extras matching and dataset base names.
+        self._node_extras_by_name = dict(node_extras_by_name or {})
         self._pipelines_by_id = {
             pipeline.name: pipeline for pipeline in snapshot.pipelines
         }
@@ -228,15 +237,19 @@ class GraphBuilder:
         )
 
     def _build_task_node(self, node: NodeSnapshot, task_id: str) -> TaskNodeAPIResponse:
+        # The live loader matches task extras on the node's own explicit name (falling back
+        # to the function name for a Kedro-generated one), which is exactly the display name.
+        display_name = _display_name(node.name, node.func_name, node.namespace)
         return TaskNodeAPIResponse(
             id=task_id,
-            name=_display_name(node.name, node.func_name, node.namespace),
+            name=display_name,
             full_name=node.name,
             tags=self._index.get_tags_for_task_id(task_id),
             pipelines=self._index.get_pipelines_for_task_id(task_id),
             type=GraphNodeType.TASK.value,
             modular_pipelines=[node.namespace] if node.namespace else None,
             parameters=build_parameters_from_inputs(node.inputs, self._parameters),
+            node_extras=self._node_extras_response(display_name),
         )
 
     def _build_dataset_node(
@@ -264,8 +277,10 @@ class GraphBuilder:
             if dataset is None:
                 # No catalog entry means an unregistered (in-memory) dataset.
                 dataset_type = MEMORY_DATASET_TYPE
+            elif dataset.type:
+                dataset_type = _resolve_dataset_type(dataset.type)
             else:
-                dataset_type = dataset.type or None
+                dataset_type = None
         return DataNodeAPIResponse(
             id=_create_dataset_node_id(base_name),
             name=base_name,
@@ -283,7 +298,15 @@ class GraphBuilder:
                 None if is_parameter else self._layer_by_dataset_name.get(base_name)
             ),
             dataset_type=dataset_type,
+            node_extras=self._node_extras_response(base_name),
         )
+
+    def _node_extras_response(self, name: str) -> NodeExtrasAPIResponse | None:
+        """Return the file-backed stats/styles response for a node name, if any."""
+        extras = self._node_extras_by_name.get(name)
+        if extras is None:
+            return None
+        return NodeExtrasAPIResponse(stats=extras.stats, styles=extras.styles)
 
     def _sorted_layers_for_pipeline(
         self,
@@ -316,6 +339,20 @@ class GraphBuilder:
         edges.setdefault(
             (source, target), GraphEdgeAPIResponse(source=source, target=target)
         )
+
+
+@lru_cache(maxsize=None)
+def _resolve_dataset_type(type_string: str) -> str:
+    """Resolve a catalog ``type:`` shorthand (e.g. ``pandas.CSVDataset``) to the module the
+    class is actually defined in (``pandas.csv_dataset.CSVDataset``), via import only -- no
+    live catalog. Falls back to the raw string if the class can't be imported.
+    """
+    try:
+        dataset_class, _ = parse_dataset_definition({"type": type_string})
+    except Exception:  # noqa: BLE001
+        return type_string
+    abbreviated_module = ".".join(dataset_class.__module__.split(".")[-2:])
+    return f"{abbreviated_module}.{dataset_class.__qualname__}"
 
 
 def _display_name(snapshot_name: str, func_name: str, namespace: str | None) -> str:

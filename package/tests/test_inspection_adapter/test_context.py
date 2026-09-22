@@ -59,7 +59,8 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
     )
     from_inspection_inputs.assert_called_once_with(
         inputs,
-        enrichment=enrichment.graph_extras,
+        node_extras_by_name=enrichment.node_extras_by_name,
+        graph_extras=enrichment.graph_extras,
     )
     assert context.graph is graph
     run_status.assert_called_once_with(PROJECT)
@@ -90,7 +91,7 @@ def test_context_filters_shared_inputs_before_building_services(mocker) -> None:
 
     filter_inputs.assert_called_once_with(inputs, "data_science")
     from_inspection_inputs.assert_called_once_with(
-        filtered_inputs, enrichment=GraphExtras()
+        filtered_inputs, node_extras_by_name={}, graph_extras=GraphExtras()
     )
 
 
@@ -145,7 +146,9 @@ def test_context_reuses_explicit_node_extras(mocker, node_extras) -> None:
     )
 
     load_extras.assert_not_called()
-    prepare_graph.assert_called_once_with(inputs, enrichment=GraphExtras())
+    prepare_graph.assert_called_once_with(
+        inputs, node_extras_by_name=node_extras, graph_extras=GraphExtras()
+    )
 
 
 def test_context_preserves_unvalidated_parameter_values(

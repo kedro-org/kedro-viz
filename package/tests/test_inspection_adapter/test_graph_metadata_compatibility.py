@@ -13,12 +13,7 @@ from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro import data_loader
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
-from kedro_viz.models.flowchart.node_metadata import (
-    DataNodeMetadata,
-    ParametersNodeMetadata,
-    TaskNodeMetadata,
-    TranscodedDataNodeMetadata,
-)
+from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.server import populate_data
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
@@ -40,24 +35,13 @@ def test_inspection_graph_ids_resolve_through_legacy_metadata(
         project, package_name="demo_project", is_lite=is_lite
     )
     populate_data(manager, catalog, pipelines, extras)
-    enrichment = load_enrichment_sources(
-        project, nodes=manager.nodes.as_list(), node_extras_by_name=extras
-    )
+    enrichment = load_enrichment_sources(project, node_extras_by_name=extras)
     context = VizProjectContext.from_project(
         project, package_name="demo_project", is_lite=is_lite, enrichment=enrichment
     )
     monkeypatch.setattr(legacy_responses, "data_access_manager", manager)
     monkeypatch.setattr(DataNodeMetadata, "is_all_previews_enabled", False)
     monkeypatch.setattr(Node, "preview", lambda self: None)
-    # Legacy validators retain node objects on their classes; restore them after the test.
-    for model, names in (
-        (TaskNodeMetadata, ("task_node", "kedro_node")),
-        (DataNodeMetadata, ("data_node", "dataset")),
-        (TranscodedDataNodeMetadata, ("transcoded_data_node",)),
-        (ParametersNodeMetadata, ("parameters_node",)),
-    ):
-        for name in names:
-            monkeypatch.setattr(model, name, getattr(model, name, None), raising=False)
 
     with TestClient(apps.create_api_app_from_project(context, project)) as client:
         main = client.get("/api/main")

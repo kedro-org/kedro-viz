@@ -1,40 +1,27 @@
-"""Load file-backed node extras and enrich inspection graph responses."""
+"""Load file-backed node extras and layer overrides for inspection graph responses."""
 
 from __future__ import annotations
 
 import json
 import logging
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from kedro_viz.api.rest.responses.pipelines import (
-    DataNodeAPIResponse,
-    GraphAPIResponse,
-    NodeExtrasAPIResponse,
-)
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.models.flowchart.nodes import DataNode, GraphNode
 from kedro_viz.models.metadata import NodeExtras
 
 logger = logging.getLogger(__name__)
 
 
 class GraphExtras(BaseModel, frozen=True):
-    """Copied graph overlays keyed by live node IDs, with dataset-name layer overrides."""
+    """Dataset-name layer overrides, read from the populated catalog when hooks run."""
 
-    node_extras_by_node_id: Mapping[str, NodeExtras] = Field(default_factory=dict)
-    dataset_type_by_node_id: Mapping[str, str | None] = Field(default_factory=dict)
     layer_by_dataset_name: Mapping[str, str] | None = None
 
-    @field_validator(
-        "node_extras_by_node_id",
-        "dataset_type_by_node_id",
-        "layer_by_dataset_name",
-        mode="before",
-    )
+    @field_validator("layer_by_dataset_name", mode="before")
     @classmethod
     def _copy_mapping(cls, value: Mapping | None) -> dict | None:
         """Copy caller-owned mappings before storing them on the prepared model."""
@@ -42,10 +29,10 @@ class GraphExtras(BaseModel, frozen=True):
 
 
 class EnrichmentSources(BaseModel, frozen=True):
-    """Prepared enrichment, separated by consumer without retaining live nodes.
+    """Prepared enrichment, separated by consumer.
 
-    File extras retain their names for the legacy loader. Graph overlays retain the exact
-    live node IDs and values, including any live-node selection of transcoded extras.
+    File extras are name-keyed so the graph builder can attach them to a node by the same
+    name it uses to compute that node's canonical ID.
     """
 
     node_extras_by_name: Mapping[str, NodeExtras] = Field(default_factory=dict)
@@ -56,22 +43,6 @@ class EnrichmentSources(BaseModel, frozen=True):
     def _copy_mapping(cls, value: Mapping[str, NodeExtras]) -> dict[str, NodeExtras]:
         """Copy the caller's name-keyed mapping before storing it."""
         return dict(value)
-
-
-def enrich_graph_response(response: GraphAPIResponse, sources: GraphExtras) -> None:
-    """Mutate live-only response fields without adding, removing or renaming nodes."""
-    for node in response.nodes:
-        node_extras = sources.node_extras_by_node_id.get(node.id)
-        if node_extras is not None:
-            node.node_extras = NodeExtrasAPIResponse(
-                stats=node_extras.stats,
-                styles=node_extras.styles,
-            )
-        if (
-            isinstance(node, DataNodeAPIResponse)
-            and node.id in sources.dataset_type_by_node_id
-        ):
-            node.dataset_type = sources.dataset_type_by_node_id[node.id]
 
 
 def _read_and_validate_json(
@@ -160,15 +131,13 @@ def _get_node_styles(project_path: Path) -> dict[str, Any]:
 def load_enrichment_sources(
     project_path: str | Path,
     *,
-    nodes: Iterable[GraphNode] = (),
     node_extras_by_name: Mapping[str, NodeExtras] | None = None,
     layer_by_dataset_name: Mapping[str, str] | None = None,
 ) -> EnrichmentSources:
-    """Prepare enrichment once, reusing file extras when the live load supplied them.
+    """Prepare enrichment once, reusing file extras when a caller already loaded them.
 
-    An explicit empty extras mapping skips file reads. Live graph overlays are copied by
-    their existing IDs; they do not replace the name-keyed file values used by metadata.
-    Layers are supplied by the caller, preserving the distinction between absent and empty.
+    An explicit extras mapping (including an empty one) skips the file reads. Layers are
+    supplied by the caller, preserving the distinction between absent and empty.
     """
     if node_extras_by_name is None:
         stats_by_name = _get_dataset_stats(Path(project_path))
@@ -183,18 +152,7 @@ def load_enrichment_sources(
                 file_extras[node_name] = node_extras
         node_extras_by_name = file_extras
 
-    node_extras_by_node_id: dict[str, NodeExtras] = {}
-    dataset_type_by_node_id: dict[str, str | None] = {}
-    for node in nodes:
-        if node.node_extras is not None:
-            node_extras_by_node_id[node.id] = node.node_extras
-        if isinstance(node, DataNode):
-            dataset_type_by_node_id[node.id] = node.dataset_type
     return EnrichmentSources(
         node_extras_by_name=node_extras_by_name,
-        graph_extras=GraphExtras(
-            node_extras_by_node_id=node_extras_by_node_id,
-            dataset_type_by_node_id=dataset_type_by_node_id,
-            layer_by_dataset_name=layer_by_dataset_name,
-        ),
+        graph_extras=GraphExtras(layer_by_dataset_name=layer_by_dataset_name),
     )

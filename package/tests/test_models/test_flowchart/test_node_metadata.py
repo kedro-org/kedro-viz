@@ -580,3 +580,77 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.preview is None
         assert "'exception_node' could not be previewed" in caplog.text
         assert "RuntimeError" in caplog.text
+
+    def test_concurrent_parameters_metadata_construction_is_not_cross_contaminated(
+        self,
+    ):
+        """Two nodes built concurrently must not leak one instance's data into the other's."""
+        import threading
+
+        def make_parameters_node(dataset_id, value):
+            return GraphNode.create_parameters_node(
+                dataset_id=dataset_id,
+                dataset_name=dataset_id,
+                layer=None,
+                tags=set(),
+                parameters=MemoryDataset(data=value),
+                modular_pipelines=set(),
+            )
+
+        node_a = make_parameters_node("params:a", 1)
+        node_b = make_parameters_node("params:b", 2)
+
+        for _ in range(50):
+            results = {}
+            barrier = threading.Barrier(2)
+
+            def build(name, parameters_node, results=results, barrier=barrier):
+                barrier.wait(timeout=5)
+                results[name] = ParametersNodeMetadata(
+                    parameters_node=parameters_node
+                ).parameters
+
+            threads = [
+                threading.Thread(target=build, args=("a", node_a)),
+                threading.Thread(target=build, args=("b", node_b)),
+            ]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(timeout=5)
+
+            assert results == {"a": {"a": 1}, "b": {"b": 2}}
+
+    def test_concurrent_task_metadata_construction_is_not_cross_contaminated(self):
+        """Two task nodes built concurrently must not leak one instance's data into the other's."""
+        import threading
+
+        node_a = GraphNode.create_task_node(
+            node(identity, inputs="x", outputs="y", name="node_a"),
+            "node_a",
+            set(),
+        )
+        node_b = GraphNode.create_task_node(
+            node(identity, inputs="z", outputs="w", name="node_b"),
+            "node_b",
+            set(),
+        )
+
+        for _ in range(50):
+            results = {}
+            barrier = threading.Barrier(2)
+
+            def build(name, task_node, results=results, barrier=barrier):
+                barrier.wait(timeout=5)
+                results[name] = TaskNodeMetadata(task_node=task_node).inputs
+
+            threads = [
+                threading.Thread(target=build, args=("a", node_a)),
+                threading.Thread(target=build, args=("b", node_b)),
+            ]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(timeout=5)
+
+            assert results == {"a": ["x"], "b": ["z"]}
