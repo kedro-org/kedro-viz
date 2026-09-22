@@ -40,9 +40,7 @@ def test_inspection_graph_ids_resolve_through_legacy_metadata(
         project, package_name="demo_project", is_lite=is_lite
     )
     populate_data(manager, catalog, pipelines, extras)
-    enrichment = load_enrichment_sources(
-        project, nodes=manager.nodes.as_list(), node_extras_by_name=extras
-    )
+    enrichment = load_enrichment_sources(project, node_extras_by_name=extras)
     context = VizProjectContext.from_project(
         project, package_name="demo_project", is_lite=is_lite, enrichment=enrichment
     )

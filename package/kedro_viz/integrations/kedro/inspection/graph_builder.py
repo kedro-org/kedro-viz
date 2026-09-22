@@ -4,15 +4,17 @@ Builds task, data, parameter and modular pipeline nodes for one selected pipelin
 their edges and the modular pipeline tree. Also includes the global tag, layer and registered
 pipeline lists.
 
-Node IDs come from ``kedro_viz.integrations.kedro.node_ids``. Registered non-transcoded datasets
-use raw catalog type strings from the snapshot.
+Node IDs come from ``kedro_viz.integrations.kedro.node_ids``.
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Mapping
+from functools import lru_cache
 from typing import TYPE_CHECKING, Any
+
+from kedro.io.core import parse_dataset_definition
 
 from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
@@ -275,8 +277,10 @@ class GraphBuilder:
             if dataset is None:
                 # No catalog entry means an unregistered (in-memory) dataset.
                 dataset_type = MEMORY_DATASET_TYPE
+            elif dataset.type:
+                dataset_type = _resolve_dataset_type(dataset.type)
             else:
-                dataset_type = dataset.type or None
+                dataset_type = None
         return DataNodeAPIResponse(
             id=_create_dataset_node_id(base_name),
             name=base_name,
@@ -335,6 +339,20 @@ class GraphBuilder:
         edges.setdefault(
             (source, target), GraphEdgeAPIResponse(source=source, target=target)
         )
+
+
+@lru_cache(maxsize=None)
+def _resolve_dataset_type(type_string: str) -> str:
+    """Resolve a catalog ``type:`` shorthand (e.g. ``pandas.CSVDataset``) to the module the
+    class is actually defined in (``pandas.csv_dataset.CSVDataset``), via import only -- no
+    live catalog. Falls back to the raw string if the class can't be imported.
+    """
+    try:
+        dataset_class, _ = parse_dataset_definition({"type": type_string})
+    except Exception:  # noqa: BLE001
+        return type_string
+    abbreviated_module = ".".join(dataset_class.__module__.split(".")[-2:])
+    return f"{abbreviated_module}.{dataset_class.__qualname__}"
 
 
 def _display_name(snapshot_name: str, func_name: str, namespace: str | None) -> str:
