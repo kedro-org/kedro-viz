@@ -402,7 +402,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_original_type(cls, _, info: ValidationInfo):
         node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
-        return get_dataset_type(node.original_version)
+        return get_dataset_type(cast(AbstractDataset, node.original_version))
 
     @field_validator("transcoded_types")
     @classmethod
