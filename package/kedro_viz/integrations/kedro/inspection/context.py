@@ -12,6 +12,7 @@ from kedro_viz.integrations.kedro.inspection.enrichment import (
 from kedro_viz.integrations.kedro.inspection.graph_service import (
     GraphService,
 )
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
@@ -21,8 +22,9 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
 class VizProjectContext:
     """Services prepared for one Kedro project load."""
 
-    def __init__(self, graph: GraphService) -> None:
+    def __init__(self, graph: GraphService, run_status: RunStatusService) -> None:
         self.graph = graph
+        self.run_status = run_status
 
     @classmethod
     def from_project(
@@ -74,4 +76,5 @@ class VizProjectContext:
                 inspection_inputs,
                 enrichment=enrichment_sources.graph_extras,
             ),
+            run_status=RunStatusService(project_path),
         )

@@ -13,6 +13,7 @@ from kedro_viz.integrations.kedro.inspection import (
 from kedro_viz.integrations.kedro.inspection import context as context_module
 from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
 from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
+from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.models.metadata import NodeExtras
 
 PROJECT = Path("/some/project")
@@ -27,6 +28,9 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         return_value=inputs,
     )
     graph = mocker.sentinel.graph
+    run_status = mocker.patch.object(
+        context_module, "RunStatusService", return_value=mocker.sentinel.run_status
+    )
     from_inspection_inputs = mocker.patch.object(
         GraphService,
         "from_inspection_inputs",
@@ -58,6 +62,8 @@ def test_context_builds_graph_from_the_loaded_inputs(mocker) -> None:
         enrichment=enrichment.graph_extras,
     )
     assert context.graph is graph
+    run_status.assert_called_once_with(PROJECT)
+    assert context.run_status is mocker.sentinel.run_status
     load_extras.assert_not_called()
 
 
@@ -109,6 +115,7 @@ def test_context_reuses_loaded_inputs_across_requests(
     filter_inputs = mocker.spy(context_module, "filter_inspection_inputs")
     prepare = mocker.spy(GraphService, "from_inspection_inputs")
     load_extras = mocker.spy(context_module, "load_enrichment_sources")
+    run_status = mocker.spy(context_module, "RunStatusService")
 
     context = VizProjectContext.from_project(
         DEMO_PROJECT, pipeline_name="data_ingestion"
@@ -120,6 +127,8 @@ def test_context_reuses_loaded_inputs_across_requests(
     filter_inputs.assert_called_once()
     prepare.assert_called_once()
     load_extras.assert_called_once()
+    run_status.assert_called_once_with(DEMO_PROJECT)
+    assert isinstance(context.run_status, RunStatusService)
     assert first == second
     assert first is not second
 
