@@ -194,7 +194,13 @@ def run_server(
             # catalog/pipelines/node extras are then reused (not reloaded) for the deferred
             # full population below, so this still costs exactly one Kedro session.
             catalog, pipelines, node_extras_dict = _load_project_data(
-                path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
+                path,
+                env,
+                include_hooks,
+                package_name,
+                pipeline_name,
+                extra_params,
+                is_lite,
             )
             layer_by_dataset_name = resolve_live_catalog_layers(catalog, pipelines)
             context = _create_viz_project_context(

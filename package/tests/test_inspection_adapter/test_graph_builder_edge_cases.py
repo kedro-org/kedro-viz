@@ -347,7 +347,9 @@ def test_task_node_extras_match_on_explicit_local_name() -> None:
     )
     builder = _builder(
         _snapshot([_pipeline("__default__", [node])]),
-        node_extras_by_name={"company_agg": SimpleNamespace(stats={"rows": 5}, styles=None)},
+        node_extras_by_name={
+            "company_agg": SimpleNamespace(stats={"rows": 5}, styles=None)
+        },
     )
 
     task_node = _task_node(builder)
@@ -366,7 +368,9 @@ def test_task_node_extras_match_on_function_name_for_generated_names() -> None:
     )
     builder = _builder(
         _snapshot([_pipeline("__default__", [node])]),
-        node_extras_by_name={"clean_data": SimpleNamespace(stats=None, styles={"c": 1})},
+        node_extras_by_name={
+            "clean_data": SimpleNamespace(stats=None, styles={"c": 1})
+        },
     )
 
     task_node = _task_node(builder)
@@ -380,7 +384,9 @@ def test_dataset_node_extras_match_on_base_name() -> None:
             [_pipeline("__default__", [_node("consume", ["companies"], ["out"])])],
             {"companies": SimpleNamespace(type="pandas.CSVDataset")},
         ),
-        node_extras_by_name={"companies": SimpleNamespace(stats={"rows": 3}, styles=None)},
+        node_extras_by_name={
+            "companies": SimpleNamespace(stats={"rows": 3}, styles=None)
+        },
     )
 
     dataset_node = next(
@@ -404,7 +410,9 @@ def test_transcoded_dataset_node_extras_match_on_base_name() -> None:
     )
 
     ds_node = next(
-        n for n in builder.build("__default__").nodes if n.type == "data" and n.name == "ds"
+        n
+        for n in builder.build("__default__").nodes
+        if n.type == "data" and n.name == "ds"
     )
     assert isinstance(ds_node, DataNodeAPIResponse)
     assert ds_node.dataset_type is None
@@ -415,7 +423,9 @@ def test_transcoded_dataset_node_extras_match_on_base_name() -> None:
 def test_node_without_matching_extras_leaves_node_extras_unset() -> None:
     builder = _builder(
         _snapshot([_pipeline("__default__", [_node("task", ["x"], ["y"])])]),
-        node_extras_by_name={"unrelated": SimpleNamespace(stats={"rows": 1}, styles=None)},
+        node_extras_by_name={
+            "unrelated": SimpleNamespace(stats={"rows": 1}, styles=None)
+        },
     )
 
     task_node = _task_node(builder)

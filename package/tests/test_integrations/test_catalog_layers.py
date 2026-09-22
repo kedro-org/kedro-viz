@@ -22,9 +22,7 @@ def test_layer_is_read_from_dataset_metadata() -> None:
 
 
 def test_dataset_without_metadata_is_absent_from_layers() -> None:
-    catalog = DataCatalog.from_config(
-        {"companies": {"type": "kedro.io.MemoryDataset"}}
-    )
+    catalog = DataCatalog.from_config({"companies": {"type": "kedro.io.MemoryDataset"}})
     pipelines = {"__default__": pipeline([])}
 
     assert resolve_live_catalog_layers(catalog, pipelines) == {}
@@ -52,9 +50,7 @@ def test_materialized_factory_layer_is_included() -> None:
         namespace="processing",
     )
 
-    layers = resolve_live_catalog_layers(
-        catalog, {"__default__": processing_pipeline}
-    )
+    layers = resolve_live_catalog_layers(catalog, {"__default__": processing_pipeline})
 
     assert layers == {"processing.int_companies": "intermediate"}
 
@@ -85,9 +81,7 @@ def test_hook_modified_metadata_on_a_materialized_dataset_is_reflected() -> None
         namespace="processing",
     )
 
-    layers = resolve_live_catalog_layers(
-        catalog, {"__default__": processing_pipeline}
-    )
+    layers = resolve_live_catalog_layers(catalog, {"__default__": processing_pipeline})
 
     assert layers == {"processing.int_companies": "hooked"}
 
@@ -114,9 +108,7 @@ def test_unmaterializable_factory_dataset_is_absent_from_layers() -> None:
     )
     assert "companies_input" not in catalog.keys()
 
-    layers = resolve_live_catalog_layers(
-        catalog, {"__default__": processing_pipeline}
-    )
+    layers = resolve_live_catalog_layers(catalog, {"__default__": processing_pipeline})
 
     assert layers == {}
 
@@ -160,5 +152,7 @@ def test_transcoded_datasets_with_conflicting_layers_raise() -> None:
     )
     pipelines = {"__default__": pipeline([])}
 
-    with pytest.raises(ValueError, match="Transcoded datasets should have the same layer"):
+    with pytest.raises(
+        ValueError, match="Transcoded datasets should have the same layer"
+    ):
         resolve_live_catalog_layers(catalog, pipelines)

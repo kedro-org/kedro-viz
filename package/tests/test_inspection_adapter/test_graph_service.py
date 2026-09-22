@@ -133,9 +133,7 @@ def test_file_backed_node_extras_reach_the_builder(mocker) -> None:
     )
     node_extras_by_name = {"companies": mocker.sentinel.extras}
 
-    GraphService.from_inspection_inputs(
-        inputs, node_extras_by_name=node_extras_by_name
-    )
+    GraphService.from_inspection_inputs(inputs, node_extras_by_name=node_extras_by_name)
 
     graph_builder.assert_called_once_with(
         mocker.sentinel.snapshot,
