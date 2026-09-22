@@ -41,7 +41,7 @@ def resolve_live_catalog_layers(
             continue
         try:
             layer = metadata["kedro-viz"]["layer"]
-        except (AttributeError, KeyError):
+        except (AttributeError, KeyError):  # pragma: no cover
             logger.debug(
                 "No layer info provided under metadata in the catalog for %s",
                 dataset_name,

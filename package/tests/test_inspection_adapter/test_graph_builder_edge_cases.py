@@ -163,6 +163,23 @@ def test_unregistered_dataset_type_is_synthesized_as_memory_dataset() -> None:
     assert memory_node.dataset_type == "io.memory_dataset.MemoryDataset"
 
 
+def test_unresolvable_dataset_type_falls_back_to_the_raw_string() -> None:
+    """A type that can't be imported (e.g. a missing dependency in --lite mode) degrades
+    gracefully to the raw catalog string instead of failing the whole graph response.
+    """
+    builder = _builder(
+        _snapshot(
+            [_pipeline("__default__", [_node("consume", ["raw"], ["out"])])],
+            {"raw": SimpleNamespace(type="not_a_real_package.NotARealDataset")},
+        )
+    )
+
+    nodes = builder.build("__default__").nodes
+    raw_node = next(n for n in nodes if n.type == "data" and n.name == "raw")
+    assert isinstance(raw_node, DataNodeAPIResponse)
+    assert raw_node.dataset_type == "not_a_real_package.NotARealDataset"
+
+
 def test_empty_catalog_type_string_maps_to_none() -> None:
     builder = _builder(
         _snapshot(
