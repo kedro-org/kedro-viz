@@ -126,8 +126,8 @@ def load_data(
     if is_lite:
         lite_parser = LiteParser(package_name)
         unresolved_imports = lite_parser.parse(project_path)
-        sys_modules_patch = sys.modules.copy()
 
+        added_stubs: Dict[str, Any] = {}
         if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
@@ -138,7 +138,10 @@ def load_data(
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
-            sys_modules_patch.update(mocked_modules)
+            for name, mock in mocked_modules.items():
+                if name not in sys.modules:
+                    sys.modules[name] = mock
+                    added_stubs[name] = mock
 
             logger.debug(
                 "Kedro-Viz is running with limited functionality. "
@@ -148,11 +151,15 @@ def load_data(
                 list(mocked_modules.keys()),
             )
 
-        # Patch actual sys modules
-        with patch.dict("sys.modules", sys_modules_patch):
+        try:
             return _load_data_helper(
                 project_path, env, include_hooks, extra_params, is_lite
             )
+        finally:
+            # Only remove the specific stub entries added above
+            for name, mock in added_stubs.items():
+                if sys.modules.get(name) is mock:
+                    del sys.modules[name]
     else:
         return _load_data_helper(
             project_path, env, include_hooks, extra_params, is_lite

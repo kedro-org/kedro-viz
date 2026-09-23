@@ -141,7 +141,7 @@ def _restore_missing_deps_flag():
 
 
 def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
-    """Test that a missing project import resolves to a mock inside the context and is gone outside."""
+    """A missing project import resolves to a mock inside the context and is gone outside."""
     (tmp_path / "uses_missing.py").write_text(
         f"import {_MISSING_MODULE}\n", encoding="utf-8"
     )
@@ -152,6 +152,33 @@ def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
         assert mocked is not None
 
     assert _MISSING_MODULE not in sys.modules
+
+
+def test_lite_import_stubs_does_not_evict_a_real_import_that_happens_inside(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A real module imported as a side effect while the stub window is open survives it"""
+    real_module_name = "totally_real_module_for_lite_stub_test"
+    module_dir = tmp_path / "real_module_src"
+    module_dir.mkdir()
+    (module_dir / f"{real_module_name}.py").write_text("VALUE = 1\n", encoding="utf-8")
+    monkeypatch.syspath_prepend(str(module_dir))
+
+    (tmp_path / "uses_missing.py").write_text(
+        f"import {_MISSING_MODULE}\n", encoding="utf-8"
+    )
+    assert real_module_name not in sys.modules
+
+    try:
+        with snapshot_source.lite_import_stubs(tmp_path):
+            importlib.import_module(real_module_name)
+            assert real_module_name in sys.modules
+
+        # The real import survives; only the stub entry is gone.
+        assert real_module_name in sys.modules
+        assert _MISSING_MODULE not in sys.modules
+    finally:
+        sys.modules.pop(real_module_name, None)
 
 
 def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> None:

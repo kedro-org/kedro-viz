@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Generator, Iterable, Mapping
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -108,10 +108,9 @@ class InspectionInputs(BaseModel, frozen=True):
 @contextmanager
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
-) -> Iterator[None]:
+) -> Generator[None]:
     """Temporarily mock missing project imports for kedro-viz lite mode."""
     import sys
-    from unittest.mock import patch
 
     from kedro_viz.integrations.kedro.lite_parser import LiteParser
     from kedro_viz.models.metadata import Metadata
@@ -122,11 +121,14 @@ def lite_import_stubs(
     for module_set in unresolved.values():
         modules_to_mock |= module_set
 
-    sys_modules_patch = sys.modules.copy()
+    added_stubs: dict[str, object] = {}
     if modules_to_mock:
         # Same banner the live --lite loader sets, so the UI flags limited functionality.
         Metadata.set_has_missing_dependencies(True)
-        sys_modules_patch.update(lite_parser.create_mock_modules(modules_to_mock))
+        for name, mock in lite_parser.create_mock_modules(modules_to_mock).items():
+            if name not in sys.modules:
+                sys.modules[name] = mock
+                added_stubs[name] = mock
         logger.warning(
             "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
             "mocked. Install them for full functionality:\n%s",
@@ -134,8 +136,13 @@ def lite_import_stubs(
             sorted(modules_to_mock),
         )
 
-    with patch.dict("sys.modules", sys_modules_patch):
+    try:
         yield
+    finally:
+        for name, mock in added_stubs.items():
+            # Only remove it if it is still our stub
+            if sys.modules.get(name) is mock:
+                del sys.modules[name]
 
 
 class _InspectionSession:
