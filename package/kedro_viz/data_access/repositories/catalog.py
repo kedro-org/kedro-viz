@@ -4,11 +4,9 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import Optional
 
-from kedro.io import DataCatalog, DatasetNotFoundError, MemoryDataset
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import AbstractDataset
-from packaging.version import parse
-
-from kedro_viz.constants import KEDRO_VERSION
+from kedro_viz.integrations.utils import get_dataset_lite_safe
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
@@ -19,12 +17,14 @@ class CatalogRepository:
 
     def __init__(self):
         self._layers_mapping = None
+        self._is_lite = False
 
     def get_catalog(self) -> DataCatalog:
         return self._catalog
 
-    def set_catalog(self, value: DataCatalog):
+    def set_catalog(self, value: DataCatalog, is_lite: bool = False):
         self._catalog = value
+        self._is_lite = is_lite
 
     def _validate_layers_for_transcoding(self, dataset_name, layer):
         existing_layer = self._layers_mapping.get(dataset_name)
@@ -49,7 +49,9 @@ class CatalogRepository:
 
         datasets = self._catalog.keys()
         for dataset_name in datasets:
-            dataset = self._catalog.get(dataset_name)
+            dataset = get_dataset_lite_safe(
+                self._catalog, dataset_name, self._is_lite
+            )
 
             metadata = getattr(dataset, "metadata", None)
             if not metadata:
@@ -71,7 +73,7 @@ class CatalogRepository:
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> "AbstractDataset":
-        dataset_obj = self._catalog.get(dataset_name)
+        dataset_obj = get_dataset_lite_safe(self._catalog, dataset_name, self._is_lite)
         return dataset_obj or MemoryDataset()
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:

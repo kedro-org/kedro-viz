@@ -5,12 +5,11 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Set, Union
 
 from kedro.io import DataCatalog
-from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.integrations.utils import UnavailableDataset
+from kedro_viz.integrations.utils import get_dataset_lite_safe
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
@@ -73,6 +72,7 @@ class DataAccessManager:
         self,
         catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
+        is_lite: bool = False,
     ):
         """Resolve dataset factory patterns in data catalog by matching
         them against the datasets in the pipelines. This is also required
@@ -85,7 +85,7 @@ class DataAccessManager:
 
         for dataset_name in all_datasets:
             try:
-                catalog.get(dataset_name)
+                get_dataset_lite_safe(catalog, dataset_name, is_lite)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
@@ -93,14 +93,18 @@ class DataAccessManager:
         self,
         catalog: DataCatalog,
         pipelines: Dict[str, KedroPipeline],
+        is_lite: bool = False,
     ):
         """Add the catalog to the CatalogRepository
 
         Args:
             catalog: The DataCatalog instance to add.
+            pipelines: All registered pipelines, used to resolve dataset factory patterns.
+            is_lite: Whether a broken dataset (e.g. a missing kedro-datasets extra) should
+                degrade to UnavailableDataset instead of raising.
         """
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
-        self.catalog.set_catalog(catalog)
+        self.resolve_dataset_factory_patterns(catalog, pipelines, is_lite)
+        self.catalog.set_catalog(catalog, is_lite)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
@@ -317,10 +321,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        try:
-            dataset_obj = self.catalog.get_dataset(dataset_name)
-        except DatasetError:
-            dataset_obj = UnavailableDataset()
+        dataset_obj = self.catalog.get_dataset(dataset_name)
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         (

@@ -406,11 +406,15 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "companies#csv"
         catalog = DataCatalog(datasets={dataset_name: dataset})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        # is_lite=True: this graceful degradation only applies in lite mode.
+        data_access_manager.add_catalog(catalog, example_pipelines, is_lite=True)
 
+        # Simulate a dataset that fails to materialize (e.g. a missing kedro-datasets
+        # extra) by making the underlying catalog's own `.get` raise, so this exercises
+        # the same `get_dataset_lite_safe` recovery path `add_dataset` relies on.
         mocker.patch.object(
-            data_access_manager.catalog,
-            "get_dataset",
+            catalog,
+            "get",
             side_effect=DatasetError("Dataset not found"),
         )
 

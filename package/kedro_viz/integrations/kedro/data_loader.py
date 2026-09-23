@@ -140,7 +140,7 @@ def load_data(
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
             sys_modules_patch.update(mocked_modules)
 
-            logger.warning(
+            logger.debug(
                 "Kedro-Viz is running with limited functionality. "
                 "For the best experience with full functionality, please\n"
                 "install the missing Kedro project dependencies:\n"

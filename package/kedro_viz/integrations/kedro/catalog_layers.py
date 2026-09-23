@@ -11,6 +11,7 @@ import logging
 from typing import TYPE_CHECKING, Dict
 
 from kedro_viz.integrations.kedro.inspection.layers import _set_layer
+from kedro_viz.integrations.utils import get_dataset_lite_safe
 
 if TYPE_CHECKING:
     from kedro.io import DataCatalog
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def resolve_live_catalog_layers(
-    catalog: DataCatalog, pipelines: Dict[str, Pipeline]
+    catalog: DataCatalog, pipelines: Dict[str, Pipeline], is_lite: bool = False
 ) -> Dict[str, str]:
     """Return the kedro-viz layer for each dataset in a live, populated catalog.
 
@@ -28,14 +29,17 @@ def resolve_live_catalog_layers(
     metadata (and therefore layer) can be read: Kedro only resolves a pattern into a concrete
     dataset once something asks the catalog for it by name.
 
+    Outside lite mode, a broken dataset (e.g. a missing kedro-datasets extra) raises here same
+    as always; in lite mode it degrades to UnavailableDataset instead.
+
     Raises:
         ValueError: If transcoded variants of one dataset declare different layers.
     """
-    _materialize_factory_datasets(catalog, pipelines)
+    _materialize_factory_datasets(catalog, pipelines, is_lite)
 
     layer_by_dataset_name: Dict[str, str] = {}
     for dataset_name in catalog.keys():
-        dataset = catalog.get(dataset_name)
+        dataset = get_dataset_lite_safe(catalog, dataset_name, is_lite)
         metadata = getattr(dataset, "metadata", None)
         if not metadata:
             continue
@@ -52,7 +56,7 @@ def resolve_live_catalog_layers(
 
 
 def _materialize_factory_datasets(
-    catalog: DataCatalog, pipelines: Dict[str, Pipeline]
+    catalog: DataCatalog, pipelines: Dict[str, Pipeline], is_lite: bool = False
 ) -> None:
     """Force factory-pattern catalog entries referenced by the pipelines to resolve."""
     all_datasets = {
@@ -60,6 +64,6 @@ def _materialize_factory_datasets(
     }
     for dataset_name in all_datasets:
         try:
-            catalog.get(dataset_name)
+            get_dataset_lite_safe(catalog, dataset_name, is_lite)
         except Exception:  # noqa: BLE001
             continue

@@ -24,7 +24,7 @@ from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
-from kedro_viz.models.metadata import NodeExtras
+from kedro_viz.models.metadata import Metadata, NodeExtras
 from kedro_viz.server import populate_data
 
 
@@ -792,6 +792,13 @@ def pipeline_with_data_sets_mock():
 @pytest.fixture(autouse=True)
 def reset_is_all_previews_enabled():
     DataNodeMetadata.is_all_previews_enabled = True
+
+
+@pytest.fixture(autouse=True)
+def reset_metadata_missing_dependencies():
+    Metadata.set_has_missing_dependencies(False)
+    yield
+    Metadata.set_has_missing_dependencies(False)
 
 
 @pytest.fixture

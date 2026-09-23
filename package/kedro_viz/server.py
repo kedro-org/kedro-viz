@@ -31,12 +31,13 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     node_extras_dict: Dict[str, NodeExtras],
+    is_lite: bool = False,
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
 
-    data_access_manager.add_catalog(catalog, pipelines)
+    data_access_manager.add_catalog(catalog, pipelines, is_lite)
 
     # add node_extras like dataset stats, styles before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines
@@ -85,7 +86,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+    populate_data(data_access_manager, catalog, pipelines, node_extras_dict, is_lite)
     return data_access_manager
 
 
@@ -202,7 +203,9 @@ def run_server(
                 extra_params,
                 is_lite,
             )
-            layer_by_dataset_name = resolve_live_catalog_layers(catalog, pipelines)
+            layer_by_dataset_name = resolve_live_catalog_layers(
+                catalog, pipelines, is_lite
+            )
             context = _create_viz_project_context(
                 path,
                 env=env,
@@ -214,7 +217,11 @@ def run_server(
             )
             live_data_loader.configure(
                 lambda: populate_data(
-                    data_access_manager, catalog, pipelines, node_extras_dict
+                    data_access_manager,
+                    catalog,
+                    pipelines,
+                    node_extras_dict,
+                    is_lite,
                 )
             )
         else:
