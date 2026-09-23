@@ -139,9 +139,9 @@ def lite_import_stubs(
     try:
         yield
     finally:
-        for name, mock in added_stubs.items():
+        for name, stub in added_stubs.items():
             # Only remove it if it is still our stub
-            if sys.modules.get(name) is mock:
+            if sys.modules.get(name) is stub:
                 del sys.modules[name]
 
 

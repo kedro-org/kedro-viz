@@ -157,8 +157,8 @@ def load_data(
             )
         finally:
             # Only remove the specific stub entries added above
-            for name, mock in added_stubs.items():
-                if sys.modules.get(name) is mock:
+            for name, stub in added_stubs.items():
+                if sys.modules.get(name) is stub:
                     del sys.modules[name]
     else:
         return _load_data_helper(
