@@ -176,7 +176,11 @@ class _InspectionSession:
         """Return the read-only inspection snapshot for the project."""
         from kedro.inspection import get_project_snapshot
 
-        return get_project_snapshot(project_path=self.project_path, env=self.env)
+        return get_project_snapshot(
+            project_path=self.project_path,
+            env=self.env,
+            runtime_params=self.runtime_params,
+        )
 
     def catalog_config(self) -> dict[str, Any]:
         """Return the raw catalog config (no DataCatalog is built), or {} if there is none.

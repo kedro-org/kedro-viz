@@ -9,9 +9,11 @@ import importlib.util
 import sys
 from contextlib import contextmanager
 from pathlib import Path
+from shutil import copytree, ignore_patterns
 from unittest.mock import PropertyMock
 
 import pytest
+from fastapi.testclient import TestClient
 from kedro.inspection.models import (
     NodeSnapshot,
     PipelineSnapshot,
@@ -30,8 +32,12 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
 )
+from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.server import run_server
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
+
+_RUNTIME_DATASET = "runtime_params_output"
 
 # A module name that does not exist, so LiteParser must flag it as unresolved.
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
@@ -384,3 +390,83 @@ def test_filter_inputs_rejects_unknown_pipeline() -> None:
         match=r"Pipeline 'unknown' not found in snapshot; available: \['__default__'\]",
     ):
         filter_inspection_inputs(inputs, "unknown")
+
+
+# -- runtime params (``--params``) -- #
+
+
+def _demo_with_runtime_param_filepath(tmp_path: Path, filepath: str) -> Path:
+    """Copy the demo project and add one catalog entry whose filepath is ``filepath``."""
+    project = tmp_path / "demo-project"
+    copytree(
+        DEMO_PROJECT,
+        project,
+        ignore=ignore_patterns("data", "__pycache__", ".git", ".venv"),
+    )
+    (project / "conf" / "base" / "catalog_runtime_params.yml").write_text(
+        f'{_RUNTIME_DATASET}:\n  type: pandas.CSVDataset\n  filepath: "{filepath}"\n'
+    )
+    return project
+
+
+@pytest.mark.parametrize("is_lite", [False, True], ids=["full", "lite"])
+@pytest.mark.parametrize(
+    ("filepath", "runtime_params", "expected"),
+    [
+        (
+            "${runtime_params:output_dir}/out.csv",
+            {"output_dir": "data/override"},
+            "data/override/out.csv",
+        ),
+        (
+            "${runtime_params:output_dir,data/default}/out.csv",
+            {"output_dir": "data/override"},
+            "data/override/out.csv",
+        ),
+        (
+            "${runtime_params:output_dir,data/default}/out.csv",
+            None,
+            "data/default/out.csv",
+        ),
+    ],
+    ids=["override-required", "override-beats-default", "no-override-uses-default"],
+)
+def test_snapshot_and_config_resolve_the_same_runtime_params(
+    tmp_path, filepath, runtime_params, expected, is_lite
+) -> None:
+    """The snapshot and the config loader must see the same ``--params`` overrides."""
+    project = _demo_with_runtime_param_filepath(tmp_path, filepath)
+
+    inputs = load_inspection_inputs(
+        project,
+        runtime_params=runtime_params,
+        package_name="demo_project",
+        is_lite=is_lite,
+    )
+
+    assert inputs.snapshot.datasets[_RUNTIME_DATASET].filepath == expected
+    assert inputs.catalog_config[_RUNTIME_DATASET]["filepath"] == expected
+
+
+@pytest.mark.parametrize("is_lite", [False, True], ids=["full", "lite"])
+def test_server_starts_when_the_catalog_needs_a_runtime_param(
+    tmp_path, mocker, is_lite
+) -> None:
+    """``kedro viz run --params output_dir=...`` starts and serves the graph."""
+    project = _demo_with_runtime_param_filepath(
+        tmp_path, "${runtime_params:output_dir}/out.csv"
+    )
+    uvicorn_run = mocker.patch("uvicorn.run")
+
+    try:
+        run_server(
+            project_path=str(project),
+            package_name="demo_project",
+            extra_params={"output_dir": "data/override"},
+            is_lite=is_lite,
+        )
+    finally:
+        live_data_loader.reset()
+
+    with TestClient(uvicorn_run.call_args.args[0]) as client:
+        assert client.get("/api/main").status_code == 200
