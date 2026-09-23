@@ -6,6 +6,7 @@ from typing import Optional
 
 from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import AbstractDataset
+
 from kedro_viz.integrations.utils import get_dataset_lite_safe
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
@@ -49,9 +50,7 @@ class CatalogRepository:
 
         datasets = self._catalog.keys()
         for dataset_name in datasets:
-            dataset = get_dataset_lite_safe(
-                self._catalog, dataset_name, self._is_lite
-            )
+            dataset = get_dataset_lite_safe(self._catalog, dataset_name, self._is_lite)
 
             metadata = getattr(dataset, "metadata", None)
             if not metadata:
