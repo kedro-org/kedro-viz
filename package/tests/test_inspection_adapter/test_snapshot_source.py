@@ -37,6 +37,8 @@ from kedro_viz.server import run_server
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
+_RUNTIME_DATASET = "runtime_params_output"
+
 # A module name that does not exist, so LiteParser must flag it as unresolved.
 _MISSING_MODULE = "totally_missing_pkg_for_lite_stub_test"
 
@@ -391,8 +393,6 @@ def test_filter_inputs_rejects_unknown_pipeline() -> None:
 
 
 # -- runtime params (``--params``) -- #
-
-_RUNTIME_DATASET = "runtime_params_output"
 
 
 def _demo_with_runtime_param_filepath(tmp_path: Path, filepath: str) -> Path:
