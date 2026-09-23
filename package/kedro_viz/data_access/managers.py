@@ -5,11 +5,12 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Set, Union
 
 from kedro.io import DataCatalog
+from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.integrations.utils import get_dataset_lite_safe
+from kedro_viz.integrations.utils import UnavailableDataset, get_dataset_lite_safe
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
@@ -321,7 +322,10 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        dataset_obj = self.catalog.get_dataset(dataset_name)
+        try:
+            dataset_obj = self.catalog.get_dataset(dataset_name)
+        except DatasetError:
+            dataset_obj = UnavailableDataset()
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         (

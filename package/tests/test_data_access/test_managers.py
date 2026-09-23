@@ -396,7 +396,7 @@ class TestAddDataset:
             "uk.data_science",
         }
 
-    def test_add_dataset_with_unresolved_pattern(
+    def test_add_dataset_with_unresolved_pattern_in_lite_mode(
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
@@ -406,12 +406,44 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "companies#csv"
         catalog = DataCatalog(datasets={dataset_name: dataset})
-        # is_lite=True: this graceful degradation only applies in lite mode.
+        # is_lite=True: get_dataset_lite_safe's own recovery (caching the placeholder,
+        # flagging the banner) only applies in lite mode.
         data_access_manager.add_catalog(catalog, example_pipelines, is_lite=True)
 
         # Simulate a dataset that fails to materialize (e.g. a missing kedro-datasets
         # extra) by making the underlying catalog's own `.get` raise, so this exercises
         # the same `get_dataset_lite_safe` recovery path `add_dataset` relies on.
+        mocker.patch.object(
+            catalog,
+            "get",
+            side_effect=DatasetError("Dataset not found"),
+        )
+
+        dataset_obj = data_access_manager.add_dataset(
+            "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
+        )
+
+        assert isinstance(dataset_obj.kedro_obj, UnavailableDataset)
+
+    def test_add_dataset_with_unresolved_pattern_in_full_mode(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_repo_obj,
+        mocker,
+    ):
+        """`add_dataset` falls back to UnavailableDataset for a broken dataset even
+        outside lite mode -- this is `add_dataset`'s own fallback, not lite-gated."""
+        dataset = CSVDataset(filepath="dataset.csv")
+        dataset_name = "companies#csv"
+        catalog = DataCatalog(datasets={dataset_name: dataset})
+        data_access_manager.add_catalog(catalog, example_pipelines)
+
+        # `layers_mapping` walks every catalog entry and is never lite-guarded (matching
+        # its pre-existing behaviour); warm its cache with the real, working catalog
+        # first so only `add_dataset`'s own `get_dataset` call below hits the mock.
+        data_access_manager.catalog.get_layer_for_dataset(dataset_name)
+
         mocker.patch.object(
             catalog,
             "get",

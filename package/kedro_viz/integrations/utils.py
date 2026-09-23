@@ -68,6 +68,20 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
         return {"data": self._data}
 
 
+def _declared_metadata(
+    catalog: "DataCatalog", dataset_name: str
+) -> Union[dict[str, Any], None]:
+    """Return the ``metadata`` declared for ``dataset_name`` in the catalog config.
+
+    Read directly from the config, not the (unbuildable) dataset instance, so a
+    declared layer still shows up even though the dataset itself couldn't load.
+    """
+    try:
+        return catalog.config_resolver.config.get(dataset_name, {}).get("metadata")
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def get_dataset_lite_safe(
     catalog: "DataCatalog", dataset_name: str, is_lite: bool = False
 ) -> Union[AbstractDataset, None]:
@@ -95,15 +109,20 @@ def get_dataset_lite_safe(
             dataset_name,
             exc,
         )
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         # Last-resort guard: anything a dataset's constructor raises that isn't a
         # DatasetError (e.g. a native extension aborting on import) still shouldn't crash
-        # whichever caller touched this dataset first.
+        # whichever caller touched this dataset first, but the reason is kept so the
+        # cause is still diagnosable.
+        reason = str(exc)
         logger.debug(
-            "Kedro-Viz: dataset '%s' could not be loaded and will show as unavailable.",
+            "Kedro-Viz: dataset '%s' could not be loaded and will show as unavailable:\n%s",
             dataset_name,
+            exc,
         )
-    dataset = UnavailableDataset(reason=reason)
+    dataset = UnavailableDataset(
+        metadata=_declared_metadata(catalog, dataset_name), reason=reason
+    )
     try:
         catalog[dataset_name] = dataset
     except Exception:  # noqa: BLE001
