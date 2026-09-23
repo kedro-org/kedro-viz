@@ -7,6 +7,7 @@ from kedro.io import MemoryDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
 
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
     ParametersNodeMetadata,
@@ -262,6 +263,24 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats.get("rows") == 10
         assert data_node_metadata.stats.get("columns") == 2
+
+    def test_unavailable_data_node_metadata_warns_with_reason(self, caplog):
+        dataset = UnavailableDataset(reason="No module named 'plotly'")
+        data_node = GraphNode.create_data_node(
+            dataset_id="broken_dataset",
+            dataset_name="broken_dataset",
+            layer=None,
+            tags=set(),
+            dataset=dataset,
+            node_extras=None,
+            modular_pipelines=set(),
+        )
+
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
+
+        assert data_node_metadata.type == "UnavailableDataset"
+        assert "'broken_dataset' could not be loaded" in caplog.text
+        assert "No module named 'plotly'" in caplog.text
 
     def test_get_preview_args(self):
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
