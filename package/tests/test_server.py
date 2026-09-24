@@ -4,7 +4,10 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.integrations.kedro.live_data_loader import (
+    LiveDataLoadError,
+    live_data_loader,
+)
 from kedro_viz.server import load_and_populate_data, run_server
 
 
@@ -99,7 +102,7 @@ class TestServer:
         # The deferred load only runs once something asks for it.
         live_data_loader.ensure_loaded()
         patched_data_access_manager.add_catalog.assert_called_once_with(
-            example_catalog, example_pipelines
+            example_catalog, example_pipelines, False
         )
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
@@ -164,6 +167,42 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             {"data_science": example_pipelines["data_science"]}
         )
+
+    def test_deferred_load_failure_resets_state_and_is_not_retried(
+        self,
+        patched_data_access_manager,
+        patched_create_viz_project_context,
+    ):
+        """A failed deferred load (no `--include-hooks`) resets whatever
+        `data_access_manager` state the failed attempt had already written, and a second
+        request fails fast instead of re-running (and re-failing/duplicating) the load."""
+        patched_data_access_manager.add_catalog.side_effect = RuntimeError("broken")
+
+        run_server()
+
+        with pytest.raises(LiveDataLoadError):
+            live_data_loader.ensure_loaded()
+        patched_data_access_manager.reset_fields.assert_called_once()
+
+        with pytest.raises(LiveDataLoadError):
+            live_data_loader.ensure_loaded()
+        # Still exactly one real attempt: the second call didn't touch add_catalog again.
+        assert patched_data_access_manager.add_catalog.call_count == 1
+
+    def test_deferred_load_failure_with_include_hooks_resets_state(
+        self,
+        patched_data_access_manager,
+        patched_create_viz_project_context,
+    ):
+        """Same recovery behaviour on the `--include-hooks` branch, where the deferred load
+        is `populate_data` directly rather than `load_and_populate_data`."""
+        patched_data_access_manager.add_pipelines.side_effect = RuntimeError("broken")
+
+        run_server(include_hooks=True)
+
+        with pytest.raises(LiveDataLoadError):
+            live_data_loader.ensure_loaded()
+        patched_data_access_manager.reset_fields.assert_called_once()
 
     def test_load_and_populate_data_returns_repositories_without_creating_a_context(
         self, patched_create_viz_project_context, patched_data_access_manager

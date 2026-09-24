@@ -19,6 +19,7 @@ from pydantic import (
     model_validator,
 )
 
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.utils import get_dataset_type
 
 from .model_utils import _extract_wrapped_func, _parse_filepath
@@ -262,7 +263,18 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("type")
     @classmethod
     def set_type(cls, _, info: ValidationInfo):
-        return cast(DataNode, info.data["data_node"]).dataset_type
+        data_node = cast(DataNode, info.data["data_node"])
+        dataset = cls._dataset(info)
+        if isinstance(dataset, UnavailableDataset):
+            # Logged here, not while a bulk project load happens to touch every
+            # dataset, so this only fires for the node actually being requested.
+            logger.warning(
+                "Kedro-Viz: dataset '%s' could not be loaded and is shown as "
+                "unavailable. Install its missing dependency for full functionality:\n%s",
+                data_node.name,
+                dataset.reason or "unknown error",
+            )
+        return data_node.dataset_type
 
     @field_validator("filepath")
     @classmethod

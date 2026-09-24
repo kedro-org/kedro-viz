@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Generator, Iterable, Mapping
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, Field, field_validator
 
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
-from kedro_viz.utils import _strip_transcoding
+from kedro_viz.utils import _strip_transcoding, stub_modules
 
 if TYPE_CHECKING:
     from kedro.inspection.models import PipelineSnapshot, ProjectSnapshot
@@ -108,11 +108,8 @@ class InspectionInputs(BaseModel, frozen=True):
 @contextmanager
 def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
-) -> Iterator[None]:
+) -> Generator[None]:
     """Temporarily mock missing project imports for kedro-viz lite mode."""
-    import sys
-    from unittest.mock import patch
-
     from kedro_viz.integrations.kedro.lite_parser import LiteParser
     from kedro_viz.models.metadata import Metadata
 
@@ -122,19 +119,20 @@ def lite_import_stubs(
     for module_set in unresolved.values():
         modules_to_mock |= module_set
 
-    sys_modules_patch = sys.modules.copy()
-    if modules_to_mock:
-        # Same banner the live --lite loader sets, so the UI flags limited functionality.
-        Metadata.set_has_missing_dependencies(True)
-        sys_modules_patch.update(lite_parser.create_mock_modules(modules_to_mock))
-        logger.warning(
-            "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
-            "mocked. Install them for full functionality:\n%s",
-            len(modules_to_mock),
-            sorted(modules_to_mock),
-        )
+    if not modules_to_mock:
+        yield
+        return
 
-    with patch.dict("sys.modules", sys_modules_patch):
+    # Same banner the live --lite loader sets, so the UI flags limited functionality.
+    Metadata.set_has_missing_dependencies(True)
+    logger.warning(
+        "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
+        "mocked. Install them for full functionality:\n%s",
+        len(modules_to_mock),
+        sorted(modules_to_mock),
+    )
+
+    with stub_modules(lite_parser.create_mock_modules(modules_to_mock)):
         yield
 
 

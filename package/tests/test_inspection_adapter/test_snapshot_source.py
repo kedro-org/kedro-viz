@@ -147,7 +147,7 @@ def _restore_missing_deps_flag():
 
 
 def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
-    """Test that a missing project import resolves to a mock inside the context and is gone outside."""
+    """A missing project import resolves to a mock inside the context and is gone outside."""
     (tmp_path / "uses_missing.py").write_text(
         f"import {_MISSING_MODULE}\n", encoding="utf-8"
     )
@@ -158,6 +158,33 @@ def test_lite_import_stubs_mocks_unresolved_imports(tmp_path: Path) -> None:
         assert mocked is not None
 
     assert _MISSING_MODULE not in sys.modules
+
+
+def test_lite_import_stubs_does_not_evict_a_real_import_that_happens_inside(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A real module imported as a side effect while the stub window is open survives it"""
+    real_module_name = "totally_real_module_for_lite_stub_test"
+    module_dir = tmp_path / "real_module_src"
+    module_dir.mkdir()
+    (module_dir / f"{real_module_name}.py").write_text("VALUE = 1\n", encoding="utf-8")
+    monkeypatch.syspath_prepend(str(module_dir))
+
+    (tmp_path / "uses_missing.py").write_text(
+        f"import {_MISSING_MODULE}\n", encoding="utf-8"
+    )
+    assert real_module_name not in sys.modules
+
+    try:
+        with snapshot_source.lite_import_stubs(tmp_path):
+            importlib.import_module(real_module_name)
+            assert real_module_name in sys.modules
+
+        # The real import survives; only the stub entry is gone.
+        assert real_module_name in sys.modules
+        assert _MISSING_MODULE not in sys.modules
+    finally:
+        sys.modules.pop(real_module_name, None)
 
 
 def test_lite_import_stubs_is_noop_when_all_imports_resolve(tmp_path: Path) -> None:
@@ -177,6 +204,32 @@ def test_session_snapshot_returns_demo_pipelines() -> None:
     snapshot = _InspectionSession(DEMO_PROJECT).snapshot()
     pipeline_names = {pipeline.name for pipeline in snapshot.pipelines}
     assert "__default__" in pipeline_names
+
+
+def test_snapshot_build_then_deferred_load_do_not_conflict_on_reimport() -> None:
+    """Regression test for the "first node click" crash."""
+    from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+
+    # Pass 1: mirrors `_create_viz_project_context` building the inspection snapshot.
+    inputs = load_inspection_inputs(
+        DEMO_PROJECT, is_lite=True, package_name="demo_project"
+    )
+    assert inputs.snapshot.pipelines
+
+    numpy_after_pass_1 = sys.modules.get("numpy")
+    assert numpy_after_pass_1 is not None, (
+        "expected numpy to be genuinely imported as a side effect of loading the demo "
+        "project's own pipeline code -- if this fails, the test needs a different "
+        "always-installed, non-mocked dependency of the demo project to stand in for it"
+    )
+
+    # Pass 2: mirrors the deferred live-catalog load `live_data_loader` runs later, on the
+    # first `/api/nodes/{id}` request -- a separate lite-stub scan over the same project.
+    _catalog, pipelines, _node_extras = kedro_data_loader.load_data(
+        DEMO_PROJECT, package_name="demo_project", is_lite=True
+    )
+    assert pipelines
+    assert sys.modules.get("numpy") is numpy_after_pass_1
 
 
 def test_session_snapshot_exposes_fields_kedro_viz_needs() -> None:

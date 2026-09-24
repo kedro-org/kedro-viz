@@ -3,7 +3,7 @@ for Kedro pipeline visualisation."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -31,12 +31,13 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     node_extras_dict: Dict[str, NodeExtras],
+    is_lite: bool = False,
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
 
-    data_access_manager.add_catalog(catalog, pipelines)
+    data_access_manager.add_catalog(catalog, pipelines, is_lite)
 
     # add node_extras like dataset stats, styles before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines
@@ -85,7 +86,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+    populate_data(data_access_manager, catalog, pipelines, node_extras_dict, is_lite)
     return data_access_manager
 
 
@@ -136,6 +137,21 @@ def _create_viz_project_context(
             "Could not build the Kedro inspection context, so the graph cannot be served."
         )
         raise
+
+
+def _reset_on_failure(
+    data_access_manager: DataAccessManager, load: Callable[[], object]
+) -> Callable[[], None]:
+    """Wrap a live-data load so a failure leaves ``data_access_manager`` clean."""
+
+    def _run() -> None:
+        try:
+            load()
+        except Exception:
+            data_access_manager.reset_fields()
+            raise
+
+    return _run
 
 
 def run_server(
@@ -202,7 +218,9 @@ def run_server(
                 extra_params,
                 is_lite,
             )
-            layer_by_dataset_name = resolve_live_catalog_layers(catalog, pipelines)
+            layer_by_dataset_name = resolve_live_catalog_layers(
+                catalog, pipelines, is_lite
+            )
             context = _create_viz_project_context(
                 path,
                 env=env,
@@ -213,8 +231,15 @@ def run_server(
                 layer_by_dataset_name=layer_by_dataset_name,
             )
             live_data_loader.configure(
-                lambda: populate_data(
-                    data_access_manager, catalog, pipelines, node_extras_dict
+                _reset_on_failure(
+                    data_access_manager,
+                    lambda: populate_data(
+                        data_access_manager,
+                        catalog,
+                        pipelines,
+                        node_extras_dict,
+                        is_lite,
+                    ),
                 )
             )
         else:
@@ -232,14 +257,17 @@ def run_server(
                 is_lite=is_lite,
             )
             live_data_loader.configure(
-                lambda: load_and_populate_data(
-                    path,
-                    env,
-                    include_hooks,
-                    package_name,
-                    pipeline_name,
-                    extra_params,
-                    is_lite,
+                _reset_on_failure(
+                    data_access_manager,
+                    lambda: load_and_populate_data(
+                        path,
+                        env,
+                        include_hooks,
+                        package_name,
+                        pipeline_name,
+                        extra_params,
+                        is_lite,
+                    ),
                 )
             )
 
