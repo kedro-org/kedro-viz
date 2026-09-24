@@ -125,7 +125,7 @@ To avoid needing to remember the `-s` flag on every commit, you might like to se
 
 ### JavaScript development
 
-_*Note*: We suggest using the [latest release of Node.js v18](https://nodejs.org/download/release/latest-v18.x/) in your development environment._
+_*Note*: We suggest using the [latest release of Node.js v24](https://nodejs.org/download/release/latest-v24.x/) in your development environment._
 
 First clone this repo, then download and install dependencies:
 
@@ -139,7 +139,7 @@ Now you're ready to begin development. Start the development server:
 npm start
 ```
 
-> _*Note*_: If you face any issues running this, we recommend installing Node.js v18:
+> _*Note*_: If you face any issues running this, we recommend installing Node.js v24:
 > 
 > 1. Delete `package-lock.json` and `node_modules`.
 > 2. Run `npm install` to reinstall dependencies.

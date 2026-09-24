@@ -4,6 +4,8 @@ name: Build backend
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'package/**'
       - '.github/**'
@@ -12,6 +14,10 @@ on:
       - 'package/**'
       - '.github/**'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

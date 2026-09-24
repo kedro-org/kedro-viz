@@ -5,6 +5,15 @@ on:
     paths:
       - "docs/**"
       - '**.md'
+      - '.github/styles/**'
+      - '.github/workflows/docs-checks.yml'
+      - 'Makefile'
+      - 'mkdocs.yml'
+      - 'package/pyproject.toml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

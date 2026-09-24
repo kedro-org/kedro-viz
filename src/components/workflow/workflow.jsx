@@ -62,6 +62,7 @@ import {
   GraphSVG,
 } from '../draw';
 import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
+import { positionLayerNames } from '../draw/utils/position-layer-names';
 import { getNodeStatusKey } from './workflow-utils/getNodeStatusKey';
 
 import ExportModal from '../export-modal';
@@ -90,6 +91,8 @@ export class Workflow extends Component {
     this.wrapperRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+    // Holds the latest view transform so the layer labels can self-position
+    this.viewTransformRef = React.createRef();
 
     // Re-measures node label widths if the chart was mounted while hidden
     this.nodeRemeasurer = createNodeRemeasurer(
@@ -255,30 +258,14 @@ export class Workflow extends Component {
       '.pipeline-workflow__zoom-wrapper--animating',
       true
     );
-    // Update layer label y positions
-    if (this.layerNamesRef?.current) {
-      const layerNames = this.layerNamesRef.current.querySelectorAll(
-        '.pipeline-layer-name'
-      );
-      if (layerNames.length !== this.props.layers.length) {
-        // If all layer labels are rendered yet; defer the update
-        setTimeout(() => this.onViewChange(transform), 0);
-        return;
-      }
-      this.props.layers.forEach((layer, i) => {
-        const el = layerNames[i];
-        if (!el) {
-          return;
-        }
-        if (this.props.orientation === 'vertical') {
-          const updateY = y + (layer.y + (layer.height || 0) / 2) * scale;
-          el.style.transform = `translateY(${updateY}px)`;
-        } else {
-          const updateX = x + (layer.x + (layer.width || 0) / 2) * scale;
-          el.style.transform = `translateX(${updateX}px) translateX(-50%)`;
-        }
-      });
-    }
+    // Record the latest transform and position the layer labels
+    this.viewTransformRef.current = transform;
+    positionLayerNames(
+      this.layerNamesRef.current,
+      this.props.layers,
+      transform,
+      this.props.orientation
+    );
 
     // Update extents
     this.updateViewExtents(transform);
@@ -752,6 +739,7 @@ export class Workflow extends Component {
               chartSize={chartSize}
               orientation={orientation}
               layerNamesRef={this.layerNamesRef}
+              viewTransformRef={this.viewTransformRef}
             />
             <RunStatusNotification
               status={pipelineStatus.status}

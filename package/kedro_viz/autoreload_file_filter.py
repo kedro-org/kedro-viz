@@ -1,6 +1,6 @@
 """
 This module provides a custom file filter for autoreloading that filters out files based on allowed
-file extensions and patterns specified in a .gitignore file.
+file extensions, patterns specified in a .gitignore file, and changes under the notebooks folder.
 """
 
 import logging
@@ -18,10 +18,12 @@ logger = logging.getLogger(__name__)
 class AutoreloadFileFilter(DefaultFilter):
     """
     Custom file filter for autoreloading that extends DefaultFilter.
-    Filters out files based on allowed file extensions and patterns specified in a .gitignore file.
+    Filters out files based on allowed file extensions, patterns specified in a .gitignore file,
+    and changes under the notebooks folder.
     """
 
     allowed_extensions: Set[str] = {".py", ".yml", ".yaml", ".json"}
+    ignore_patterns: tuple[str, ...] = ("notebooks/**",)
 
     def __init__(self, base_path: Optional[Path] = None):
         """
@@ -38,6 +40,28 @@ class AutoreloadFileFilter(DefaultFilter):
 
         # Load .gitignore patterns
         self.gitignore_spec = load_gitignore_patterns(self.cwd)
+        self.ignore_spec = GitIgnoreSpec.from_lines(
+            "gitwildmatch", list(self.ignore_patterns)
+        )
+
+    def _matches_ignore_patterns(self, relative_path: Path) -> Optional[bool]:
+        """Return True if ignored, False if not, None if matching failed."""
+        try:
+            if self.gitignore_spec and self.gitignore_spec.match_file(
+                str(relative_path)
+            ):
+                logger.debug("Filtered out by .gitignore: %s", relative_path)
+                return True
+
+            if self.ignore_spec.match_file(str(relative_path)):
+                logger.debug("Filtered out by ignore_patterns: %s", relative_path)
+                return True
+        # ruff: noqa: BLE001
+        except Exception as exc:
+            logger.debug("Exception during ignore pattern matching: %s", exc)
+            return None
+
+        return False
 
     def __call__(self, change: Change, path: str) -> bool:
         """
@@ -56,27 +80,19 @@ class AutoreloadFileFilter(DefaultFilter):
 
         path_obj = Path(path)
 
-        # Exclude files matching .gitignore patterns
         try:
             relative_path = path_obj.resolve().relative_to(self.cwd.resolve())
         except ValueError:
             logger.debug("Path not relative to CWD: %s", path)
             return False
 
-        try:
-            if self.gitignore_spec and self.gitignore_spec.match_file(
-                str(relative_path)
-            ):
-                logger.debug("Filtered out by .gitignore: %s", relative_path)
-                return False
-        # ruff: noqa: BLE001
-        except Exception as exc:
-            logger.debug("Exception during .gitignore matching: %s", exc)
-            return True  # Pass the file if .gitignore matching fails
+        ignore_result = self._matches_ignore_patterns(relative_path)
+        if ignore_result is True:
+            return False
 
-        # Include only files with allowed extensions
-        if path_obj.suffix in self.allowed_extensions:
+        allowed = path_obj.suffix in self.allowed_extensions
+        if allowed:
             logger.debug("Allowed file: %s", path)
-            return True
-        logger.debug("Filtered out by allowed_extensions: %s", path_obj.suffix)
-        return False
+        else:
+            logger.debug("Filtered out by allowed_extensions: %s", path_obj.suffix)
+        return allowed
