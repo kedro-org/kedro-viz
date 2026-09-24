@@ -98,7 +98,7 @@ def test_get_run_status_exception_handling(client, mocker):
     """Preserve the HTTP error response and logging for unexpected service failures."""
     error = RuntimeError("Test exception")
     mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.run_status_service."
+        "kedro_viz.integrations.kedro.inspection.services.run_status_service."
         "RunStatusService.get_run_status_response",
         side_effect=error,
     )

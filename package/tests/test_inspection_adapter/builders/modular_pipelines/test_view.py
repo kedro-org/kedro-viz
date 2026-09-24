@@ -8,10 +8,10 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines import (
     ModularPipelineView,
 )
-from kedro_viz.integrations.kedro.inspection.modular_pipelines.view import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines.view import (
     _add_modular_pipeline_boundary_edges,
     _remove_cyclic_modular_pipeline_boundary_edges,
 )

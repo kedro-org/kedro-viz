@@ -16,7 +16,9 @@ from kedro_viz.integrations.kedro.catalog_layers import resolve_live_catalog_lay
 from kedro_viz.integrations.kedro.inspection import (
     VizProjectContext,
 )
-from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+    load_enrichment_sources,
+)
 from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras

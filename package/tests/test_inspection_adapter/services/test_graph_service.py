@@ -10,15 +10,15 @@ from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import (
     PipelineNotFoundError,
 )
-from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
-from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import GraphExtras
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     InspectionInputs,
     filter_inspection_inputs,
     load_inspection_inputs,
 )
+from kedro_viz.integrations.kedro.inspection.services.graph_service import GraphService
 
-DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
+DEMO_PROJECT = Path(__file__).resolve().parents[4] / "demo-project"
 
 
 @pytest.fixture(scope="module")
@@ -82,7 +82,7 @@ def test_inputs_reaches_the_builder(mocker) -> None:
         parameters={"split": 0.2},
     )
     graph_builder = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
+        "kedro_viz.integrations.kedro.inspection.services.graph_service.GraphBuilder"
     )
 
     GraphService.from_inspection_inputs(inputs)
@@ -99,7 +99,7 @@ def test_inputs_reaches_the_builder(mocker) -> None:
 def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
     """The post-hook catalog mapping is authoritative for rendered layers."""
     graph_builder = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
+        "kedro_viz.integrations.kedro.inspection.services.graph_service.GraphBuilder"
     )
     graph_extras = GraphExtras(layer_by_dataset_name={"companies": "hooked"})
     inputs = mocker.Mock(
@@ -123,7 +123,7 @@ def test_populated_catalog_layers_reach_the_builder(mocker) -> None:
 def test_file_backed_node_extras_reach_the_builder(mocker) -> None:
     """Stats/styles read at the context boundary are threaded straight to the builder."""
     graph_builder = mocker.patch(
-        "kedro_viz.integrations.kedro.inspection.graph_service.GraphBuilder"
+        "kedro_viz.integrations.kedro.inspection.services.graph_service.GraphBuilder"
     )
     inputs = mocker.Mock(
         spec=InspectionInputs,

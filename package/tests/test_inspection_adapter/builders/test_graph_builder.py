@@ -7,11 +7,13 @@ from typing import Any
 import pytest
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
-from kedro_viz.integrations.kedro.inspection.snapshot_source import _InspectionSession
+from kedro_viz.integrations.kedro.inspection.builders.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
+    _InspectionSession,
+)
 
-DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
-BASELINE_DIR = Path(__file__).parent / "baseline"
+DEMO_PROJECT = Path(__file__).resolve().parents[4] / "demo-project"
+BASELINE_DIR = Path(__file__).parent.parent / "baseline"
 
 # Every registered pipeline in the demo project (a baseline file exists for each).
 ALL_PIPELINES = [

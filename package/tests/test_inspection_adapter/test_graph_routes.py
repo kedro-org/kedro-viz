@@ -14,11 +14,13 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
-from kedro_viz.integrations.kedro.inspection.graph_service import (
+from kedro_viz.integrations.kedro.inspection.services.graph_service import (
     GraphService,
     PipelineNotFoundError,
 )
-from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
+from kedro_viz.integrations.kedro.inspection.services.run_status_service import (
+    RunStatusService,
+)
 
 DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 

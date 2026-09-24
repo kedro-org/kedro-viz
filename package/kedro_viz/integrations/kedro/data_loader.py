@@ -16,7 +16,9 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
-from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+    load_enrichment_sources,
+)
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras

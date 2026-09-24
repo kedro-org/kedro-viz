@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from kedro_viz.api.rest.responses import run_events
-from kedro_viz.integrations.kedro.inspection import run_status_service
+from kedro_viz.integrations.kedro.inspection.services import run_status_service
 
 
 class TestGetRunStatusResponse:

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from kedro_viz.api.rest.responses import run_events
-from kedro_viz.integrations.kedro.inspection import run_status_builder
+from kedro_viz.integrations.kedro.inspection.builders import run_status_builder
 from kedro_viz.utils import _hash_input_output
 
 

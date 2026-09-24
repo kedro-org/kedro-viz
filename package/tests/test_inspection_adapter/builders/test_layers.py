@@ -4,7 +4,10 @@ import logging
 
 import pytest
 
-from kedro_viz.integrations.kedro.inspection.layers import _extract_layers, sort_layers
+from kedro_viz.integrations.kedro.inspection.builders.layers import (
+    _extract_layers,
+    sort_layers,
+)
 
 
 def test_reads_kedro_viz_layer() -> None:
@@ -152,7 +155,7 @@ def test_sort_layers_returns_empty_on_cyclic_layers(
 ) -> None:
     with caplog.at_level(
         logging.WARNING,
-        logger="kedro_viz.integrations.kedro.inspection.layers",
+        logger="kedro_viz.integrations.kedro.inspection.builders.layers",
     ):
         result = sort_layers(
             {"first": "raw", "second": "intermediate", "third": "raw"},

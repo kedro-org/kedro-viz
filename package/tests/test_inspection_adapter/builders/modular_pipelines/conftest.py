@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
 
-from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines import (
     ModularPipelineIndex,
 )
-from kedro_viz.integrations.kedro.inspection.modular_pipelines.tree import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines.tree import (
     _ModularPipelineTreeBuilder,
 )
 

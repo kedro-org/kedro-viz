@@ -8,7 +8,9 @@ from kedro_viz.api import apps
 from kedro_viz.api.rest.responses.run_events import RunStatusAPIResponse
 from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
-from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
+from kedro_viz.integrations.kedro.inspection.services.run_status_service import (
+    RunStatusService,
+)
 
 
 def test_run_status_apps_read_their_own_project_files(

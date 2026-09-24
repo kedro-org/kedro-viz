@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from kedro_viz.integrations.kedro.inspection.enrichment import (
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     EnrichmentSources,
     GraphExtras,
     load_enrichment_sources,
@@ -47,7 +47,7 @@ def test_enrichment_container_keeps_consumers_separate() -> None:
 
 def test_file_extras_are_read_when_none_are_supplied(tmp_path, mocker) -> None:
     """File data is the default source, with no catalog or live graph involved."""
-    from kedro_viz.integrations.kedro.inspection import enrichment
+    from kedro_viz.integrations.kedro.inspection.datasource import enrichment
 
     stats = mocker.patch.object(
         enrichment, "_get_dataset_stats", return_value={"companies": {"rows": 5}}
@@ -70,7 +70,7 @@ def test_file_extras_are_read_when_none_are_supplied(tmp_path, mocker) -> None:
 def test_supplied_file_extras_are_copied_without_reading_files(
     tmp_path, mocker, extras
 ) -> None:
-    from kedro_viz.integrations.kedro.inspection import enrichment
+    from kedro_viz.integrations.kedro.inspection.datasource import enrichment
 
     stats = mocker.patch.object(enrichment, "_get_dataset_stats")
     styles = mocker.patch.object(enrichment, "_get_node_styles")

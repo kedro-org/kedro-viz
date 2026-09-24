@@ -10,7 +10,7 @@ from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
 )
 from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
-from kedro_viz.integrations.kedro.inspection.run_status_builder import (
+from kedro_viz.integrations.kedro.inspection.builders.run_status_builder import (
     transform_events_to_structured_format,
 )
 
