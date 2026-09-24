@@ -18,7 +18,7 @@ from kedro_viz.data_access import DataAccessManager
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
-from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
+from kedro_viz.integrations.kedro.hooks.stats_hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.services.graph_service import GraphService
 from kedro_viz.integrations.kedro.inspection.services.run_status_service import (

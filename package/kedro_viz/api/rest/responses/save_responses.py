@@ -9,7 +9,7 @@ from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
 from kedro_viz.api.rest.responses.run_events import get_run_status_response
 from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled: bool):
     """Saves all Kedro Viz API responses to a directory."""
-    live_data_loader.ensure_loaded()
+    deferred_data_loader.ensure_loaded()
     try:
         logger.debug(
             """Saving/Uploading api files to %s""",

@@ -113,7 +113,7 @@ def test_tags_and_pipelines_match_baseline(builder: GraphBuilder) -> None:
 def test_task_parameters_match_baseline(
     builder: GraphBuilder, pipeline_id: str
 ) -> None:
-    """Task-node parameter mappings match the legacy backend for every demo pipeline."""
+    """Task-node parameter mappings match the live backend for every demo pipeline."""
     adapter = builder.build(pipeline_id).model_dump()
     baseline = _baseline(pipeline_id)
     adapter_by_full = {

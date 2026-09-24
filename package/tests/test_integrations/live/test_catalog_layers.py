@@ -4,7 +4,7 @@ import pytest
 from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import node, pipeline
 
-from kedro_viz.integrations.kedro.catalog_layers import resolve_live_catalog_layers
+from kedro_viz.integrations.kedro.live.catalog_layers import resolve_live_catalog_layers
 
 
 def test_layer_is_read_from_dataset_metadata() -> None:

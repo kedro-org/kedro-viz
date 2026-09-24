@@ -120,7 +120,7 @@ def create_project_router(context: VizProjectContext) -> APIRouter:
 )
 def get_single_node_metadata(node_id: str):
     # A plain (non-async) route so FastAPI runs it in its threadpool: the first call may
-    # trigger the deferred live load (see `LiveDataLoader`), which must not block the event
+    # trigger the deferred live load (see `DeferredDataLoader`), which must not block the event
     # loop and other in-flight requests while it runs.
     return get_node_metadata_response(node_id)
 

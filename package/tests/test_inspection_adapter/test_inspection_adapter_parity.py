@@ -1,4 +1,4 @@
-"""Parity between the served graph and the captured legacy response.
+"""Parity between the served graph and the captured live-backend response.
 
 The baseline under ``baseline/`` was captured from the live backend, so these compare the whole
 served response against it, field for field, for every registered pipeline. The service receives
@@ -67,7 +67,7 @@ def live_enriched_graph_service(_restore_kedro_project_state):
 
     Module-scoped: loading the demo project and reading the snapshot is expensive.
     """
-    from kedro_viz.integrations.kedro import data_loader
+    from kedro_viz.integrations.kedro.live import data_loader
     from kedro_viz.server import populate_data
 
     manager = DataAccessManager()

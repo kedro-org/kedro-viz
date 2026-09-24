@@ -6,21 +6,21 @@ import threading
 
 import pytest
 
-from kedro_viz.integrations.kedro.live_data_loader import (
-    LiveDataLoader,
-    LiveDataLoadError,
+from kedro_viz.integrations.kedro.live.deferred_loader import (
+    DeferredDataLoader,
+    DeferredDataLoadError,
 )
 
 
 def test_ensure_loaded_without_configure_is_a_safe_no_op() -> None:
     """A caller that populated the data some other way has nothing to defer."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
 
     loader.ensure_loaded()
 
 
 def test_ensure_loaded_runs_the_configured_load_once() -> None:
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     calls = []
     loader.configure(lambda: calls.append("loaded"))
 
@@ -33,7 +33,7 @@ def test_ensure_loaded_runs_the_configured_load_once() -> None:
 
 def test_reconfigure_allows_loading_again() -> None:
     """A fresh ``configure()`` (e.g. a new server run) resets the once-only guard."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     first_calls = []
     loader.configure(lambda: first_calls.append("loaded"))
     loader.ensure_loaded()
@@ -47,7 +47,7 @@ def test_reconfigure_allows_loading_again() -> None:
 
 
 def test_reset_clears_configuration_and_the_loaded_guard() -> None:
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     calls = []
     loader.configure(lambda: calls.append("loaded"))
     loader.ensure_loaded()
@@ -61,7 +61,7 @@ def test_reset_clears_configuration_and_the_loaded_guard() -> None:
 
 def test_a_failed_load_is_not_retried() -> None:
     """Recovery policy: one attempt only. Later calls fail fast without rerunning it."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     attempts = []
 
     def failing_load() -> None:
@@ -70,13 +70,13 @@ def test_a_failed_load_is_not_retried() -> None:
 
     loader.configure(failing_load)
 
-    with pytest.raises(LiveDataLoadError):
+    with pytest.raises(DeferredDataLoadError):
         loader.ensure_loaded()
 
     # Two more calls: neither should re-run the load.
-    with pytest.raises(LiveDataLoadError):
+    with pytest.raises(DeferredDataLoadError):
         loader.ensure_loaded()
-    with pytest.raises(LiveDataLoadError):
+    with pytest.raises(DeferredDataLoadError):
         loader.ensure_loaded()
 
     assert attempts == ["attempt"]
@@ -84,7 +84,7 @@ def test_a_failed_load_is_not_retried() -> None:
 
 def test_a_failed_load_chains_the_original_exception() -> None:
     """The original failure stays discoverable via ``__cause__`` for diagnosis."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     original = RuntimeError("broken")
 
     def failing_load() -> None:
@@ -92,7 +92,7 @@ def test_a_failed_load_chains_the_original_exception() -> None:
 
     loader.configure(failing_load)
 
-    with pytest.raises(LiveDataLoadError) as excinfo:
+    with pytest.raises(DeferredDataLoadError) as excinfo:
         loader.ensure_loaded()
 
     assert excinfo.value.__cause__ is original
@@ -100,9 +100,9 @@ def test_a_failed_load_chains_the_original_exception() -> None:
 
 def test_reconfigure_after_a_failure_allows_loading_again() -> None:
     """A fresh ``configure()`` clears the remembered failure, same as a fresh run."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     loader.configure(lambda: (_ for _ in ()).throw(RuntimeError("broken")))
-    with pytest.raises(LiveDataLoadError):
+    with pytest.raises(DeferredDataLoadError):
         loader.ensure_loaded()
 
     calls = []
@@ -113,9 +113,9 @@ def test_reconfigure_after_a_failure_allows_loading_again() -> None:
 
 
 def test_reset_after_a_failure_clears_the_remembered_error() -> None:
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     loader.configure(lambda: (_ for _ in ()).throw(RuntimeError("broken")))
-    with pytest.raises(LiveDataLoadError):
+    with pytest.raises(DeferredDataLoadError):
         loader.ensure_loaded()
 
     loader.reset()
@@ -126,7 +126,7 @@ def test_reset_after_a_failure_clears_the_remembered_error() -> None:
 
 def test_concurrent_first_calls_load_exactly_once() -> None:
     """Racing callers block on the same load instead of duplicating it."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     started = threading.Event()
     finish_load = threading.Event()
     call_count = 0
@@ -152,7 +152,7 @@ def test_concurrent_first_calls_load_exactly_once() -> None:
 
 def test_concurrent_first_calls_attempt_a_failing_load_exactly_once() -> None:
     """Racing callers on a failing load all get the error; only one attempt is made."""
-    loader = LiveDataLoader()
+    loader = DeferredDataLoader()
     started = threading.Event()
     finish_load = threading.Event()
     call_count = 0
@@ -183,4 +183,4 @@ def test_concurrent_first_calls_attempt_a_failing_load_exactly_once() -> None:
 
     assert call_count == 1
     assert len(errors) == 5
-    assert all(isinstance(exc, LiveDataLoadError) for exc in errors)
+    assert all(isinstance(exc, DeferredDataLoadError) for exc in errors)
