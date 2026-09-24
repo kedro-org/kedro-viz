@@ -149,8 +149,6 @@ def load_data(
                 list(mocked_modules.keys()),
             )
 
-        # See `kedro_viz.utils.stub_modules` for why the stubs are removed surgically on
-        # exit rather than restoring the whole `sys.modules` snapshot.
         with stub_modules(mocked_modules):
             return _load_data_helper(
                 project_path, env, include_hooks, extra_params, is_lite
