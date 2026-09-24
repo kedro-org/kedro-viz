@@ -1,4 +1,4 @@
-"""Compatibility between inspection graphs and legacy node-detail routes."""
+"""Compatibility between inspection graphs and the live backend's node-detail routes."""
 
 from pathlib import Path
 from shutil import copytree, ignore_patterns
@@ -8,13 +8,13 @@ from fastapi.testclient import TestClient
 from kedro.pipeline.node import Node
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import nodes as legacy_responses
+from kedro_viz.api.rest.responses import nodes as live_responses
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.integrations.kedro import data_loader
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     load_enrichment_sources,
 )
+from kedro_viz.integrations.kedro.live import data_loader
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.server import populate_data
 
@@ -22,7 +22,7 @@ DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
 
 
 @pytest.mark.parametrize("is_lite", [False, True], ids=["full", "lite"])
-def test_inspection_graph_ids_resolve_through_legacy_metadata(
+def test_inspection_graph_ids_resolve_through_live_metadata(
     tmp_path, monkeypatch, is_lite
 ):
     """Every supported graph node resolves without relying on generated dataset files."""
@@ -41,7 +41,7 @@ def test_inspection_graph_ids_resolve_through_legacy_metadata(
     context = VizProjectContext.from_project(
         project, package_name="demo_project", is_lite=is_lite, enrichment=enrichment
     )
-    monkeypatch.setattr(legacy_responses, "data_access_manager", manager)
+    monkeypatch.setattr(live_responses, "data_access_manager", manager)
     monkeypatch.setattr(DataNodeMetadata, "is_all_previews_enabled", False)
     monkeypatch.setattr(Node, "preview", lambda self: None)
 

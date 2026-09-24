@@ -58,7 +58,7 @@ def _create_task_node_id(
     inputs: Sequence[str],
     outputs: Sequence[str],
 ) -> str:
-    """Reconstruct and hash ``Node.__str__`` for the legacy Viz task ID.
+    """Reconstruct and hash ``Node.__str__`` to match the live backend's Viz task ID.
 
     Args:
         node_name: ``NodeSnapshot.name`` (already namespace-prefixed).

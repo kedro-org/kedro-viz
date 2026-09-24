@@ -1,4 +1,4 @@
-"""`kedro_viz.integrations.kedro.data_loader` provides interface to
+"""`kedro_viz.integrations.kedro.live.data_loader` provides interface to
 load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
@@ -15,11 +15,11 @@ from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
-from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     load_enrichment_sources,
 )
-from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.kedro.lite.abstract_dataset_lite import AbstractDatasetLite
+from kedro_viz.integrations.kedro.lite.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras
 from kedro_viz.utils import stub_modules

@@ -1,4 +1,4 @@
-"""Tests for the legacy run-status export wrapper."""
+"""Tests for the run-status export wrapper."""
 
 from pathlib import Path
 
@@ -13,7 +13,7 @@ class TestGetRunStatusResponse:
         result = run_events.get_run_status_response()
         assert result == run_events.RunStatusAPIResponse()
 
-    def test_legacy_wrapper_reads_the_existing_relative_path(self, mocker):
+    def test_wrapper_reads_the_existing_relative_path(self, mocker):
         mocker.patch.object(
             run_events,
             "_find_kedro_project",
@@ -30,7 +30,7 @@ class TestGetRunStatusResponse:
         assert result == run_events.RunStatusAPIResponse()
         read.assert_called_once_with(run_events.PIPELINE_EVENT_FULL_PATH)
 
-    def test_legacy_wrapper_handles_project_lookup_errors(self, mocker, caplog):
+    def test_wrapper_handles_project_lookup_errors(self, mocker, caplog):
         mocker.patch.object(
             run_events,
             "_find_kedro_project",

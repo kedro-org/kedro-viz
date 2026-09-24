@@ -32,7 +32,7 @@ from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     load_inspection_inputs,
 )
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
-from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 from kedro_viz.server import run_server
 
 DEMO_PROJECT = Path(__file__).resolve().parents[4] / "demo-project"
@@ -208,7 +208,7 @@ def test_session_snapshot_returns_demo_pipelines() -> None:
 
 def test_snapshot_build_then_deferred_load_do_not_conflict_on_reimport() -> None:
     """Regression test for the "first node click" crash."""
-    from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+    from kedro_viz.integrations.kedro.live import data_loader as kedro_data_loader
 
     # Pass 1: mirrors `_create_viz_project_context` building the inspection snapshot.
     inputs = load_inspection_inputs(
@@ -223,7 +223,7 @@ def test_snapshot_build_then_deferred_load_do_not_conflict_on_reimport() -> None
         "always-installed, non-mocked dependency of the demo project to stand in for it"
     )
 
-    # Pass 2: mirrors the deferred live-catalog load `live_data_loader` runs later, on the
+    # Pass 2: mirrors the deferred live-catalog load `deferred_data_loader` runs later, on the
     # first `/api/nodes/{id}` request -- a separate lite-stub scan over the same project.
     _catalog, pipelines, _node_extras = kedro_data_loader.load_data(
         DEMO_PROJECT, package_name="demo_project", is_lite=True
@@ -519,7 +519,7 @@ def test_server_starts_when_the_catalog_needs_a_runtime_param(
             is_lite=is_lite,
         )
     finally:
-        live_data_loader.reset()
+        deferred_data_loader.reset()
 
     with TestClient(uvicorn_run.call_args.args[0]) as client:
         assert client.get("/api/main").status_code == 200

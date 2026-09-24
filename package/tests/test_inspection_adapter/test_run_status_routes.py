@@ -1,4 +1,4 @@
-"""HTTP coverage for project-bound run status alongside legacy metadata routes."""
+"""HTTP coverage for project-bound run status alongside the live backend's metadata routes."""
 
 import json
 
@@ -33,9 +33,9 @@ def test_run_status_apps_read_their_own_project_files(
         clients.append(TestClient(apps.create_api_app_from_project(context, project)))
 
     monkeypatch.chdir(tmp_path)
-    legacy = mocker.patch(
+    cwd_lookup = mocker.patch(
         "kedro_viz.api.rest.responses.run_events.get_run_status_response",
-        side_effect=AssertionError("HTTP must not use the legacy cwd lookup"),
+        side_effect=AssertionError("HTTP must not use the cwd-based lookup"),
     )
     for client, name in zip(clients, ("first", "second"), strict=True):
         with client:
@@ -43,7 +43,7 @@ def test_run_status_apps_read_their_own_project_files(
             assert response.status_code == 200
             assert set(response.json()["nodes"]) == {name}
             assert response.json()["nodes"][name]["duration"] == 1
-    legacy.assert_not_called()
+    cwd_lookup.assert_not_called()
 
 
 def test_run_status_route_delegates_to_context_service(

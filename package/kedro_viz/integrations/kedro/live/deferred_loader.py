@@ -1,4 +1,4 @@
-"""Defer the legacy live Kedro load until something actually needs it.
+"""Defer the live Kedro load until something actually needs it.
 
 The inspection snapshot serves ``/api/main`` and ``/api/pipelines/{id}`` directly, so nothing
 on that path needs a live Kedro catalog or session. ``/api/nodes/{id}`` and ``--save-file``
@@ -16,7 +16,7 @@ from typing import Callable, Optional
 logger = logging.getLogger(__name__)
 
 
-class LiveDataLoadError(RuntimeError):
+class DeferredDataLoadError(RuntimeError):
     """Raised by ``ensure_loaded`` once the deferred live load has already failed.
 
     A stable, user-facing message distinct from whatever the underlying load raised (chained
@@ -25,11 +25,11 @@ class LiveDataLoadError(RuntimeError):
     """
 
 
-class LiveDataLoader:
+class DeferredDataLoader:
     """Run a configured load at most once, on first use, thread-safely.
 
     Recovery policy: a failed load is not retried. Every call after the first failure
-    immediately raises `LiveDataLoadError` instead of repeating the (expensive,
+    immediately raises `DeferredDataLoadError` instead of repeating the (expensive,
     already-failed) load.
     """
 
@@ -58,7 +58,7 @@ class LiveDataLoader:
         by some other means (tests, a direct ``populate_data`` call) has nothing to defer.
 
         Raises:
-            LiveDataLoadError: If the load has already failed once -- see the class
+            DeferredDataLoadError: If the load has already failed once -- see the class
                 docstring for why this isn't retried.
         """
         if self._loaded:
@@ -87,11 +87,11 @@ class LiveDataLoader:
                 self._loaded = True
 
     def _raise_load_error(self) -> None:
-        raise LiveDataLoadError(
+        raise DeferredDataLoadError(
             "Kedro-Viz could not load the live project data, node metadata and "
             "--save-file are unavailable for the rest of this run. See the server log "
             "for the original error."
         ) from self._error
 
 
-live_data_loader = LiveDataLoader()
+deferred_data_loader = DeferredDataLoader()

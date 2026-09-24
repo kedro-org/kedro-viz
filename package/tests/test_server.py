@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from kedro_viz.integrations.kedro.live_data_loader import (
-    LiveDataLoadError,
-    live_data_loader,
+from kedro_viz.integrations.kedro.live.deferred_loader import (
+    DeferredDataLoadError,
+    deferred_data_loader,
 )
 from kedro_viz.server import load_and_populate_data, run_server
 
@@ -16,11 +16,11 @@ class ExampleAPIResponse(BaseModel):
 
 
 @pytest.fixture(autouse=True)
-def reset_live_data_loader():
+def reset_deferred_data_loader():
     """The loader is a module-level singleton; each test starts from a clean slate."""
-    live_data_loader.reset()
+    deferred_data_loader.reset()
     yield
-    live_data_loader.reset()
+    deferred_data_loader.reset()
 
 
 @pytest.fixture(autouse=True)
@@ -100,7 +100,7 @@ class TestServer:
         patched_uvicorn_run.assert_called_once()
 
         # The deferred load only runs once something asks for it.
-        live_data_loader.ensure_loaded()
+        deferred_data_loader.ensure_loaded()
         patched_data_access_manager.add_catalog.assert_called_once_with(
             example_catalog, example_pipelines, False
         )
@@ -114,7 +114,7 @@ class TestServer:
         example_pipelines,
     ):
         run_server(pipeline_name="data_science")
-        live_data_loader.ensure_loaded()
+        deferred_data_loader.ensure_loaded()
 
         # assert that when the deferred load runs, data are added correctly
         patched_data_access_manager.add_pipelines.assert_called_once_with(
@@ -163,7 +163,7 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_not_called()
 
         # The expensive graph build on the global repositories is still deferred.
-        live_data_loader.ensure_loaded()
+        deferred_data_loader.ensure_loaded()
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             {"data_science": example_pipelines["data_science"]}
         )
@@ -180,12 +180,12 @@ class TestServer:
 
         run_server()
 
-        with pytest.raises(LiveDataLoadError):
-            live_data_loader.ensure_loaded()
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
         patched_data_access_manager.reset_fields.assert_called_once()
 
-        with pytest.raises(LiveDataLoadError):
-            live_data_loader.ensure_loaded()
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
         # Still exactly one real attempt: the second call didn't touch add_catalog again.
         assert patched_data_access_manager.add_catalog.call_count == 1
 
@@ -200,8 +200,8 @@ class TestServer:
 
         run_server(include_hooks=True)
 
-        with pytest.raises(LiveDataLoadError):
-            live_data_loader.ensure_loaded()
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
         patched_data_access_manager.reset_fields.assert_called_once()
 
     def test_load_and_populate_data_returns_repositories_without_creating_a_context(

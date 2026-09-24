@@ -11,15 +11,15 @@ from kedro.pipeline import Pipeline
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.integrations.kedro.catalog_layers import resolve_live_catalog_layers
 from kedro_viz.integrations.kedro.inspection import (
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     load_enrichment_sources,
 )
-from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.integrations.kedro.live import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.live.catalog_layers import resolve_live_catalog_layers
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
 
@@ -78,7 +78,7 @@ def load_and_populate_data(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ) -> DataAccessManager:
-    """Load a project and return the populated legacy repositories.
+    """Load a project and return the populated repositories.
 
     VSCode and deployment call this entry point and ignore its return value. The HTTP
     server uses the returned repositories to build its project-scoped inspection context.
@@ -232,7 +232,7 @@ def run_server(
                 is_lite=is_lite,
                 layer_by_dataset_name=layer_by_dataset_name,
             )
-            live_data_loader.configure(
+            deferred_data_loader.configure(
                 _reset_on_failure(
                     data_access_manager,
                     lambda: populate_data(
@@ -247,8 +247,8 @@ def run_server(
         else:
             # The graph routes are served entirely from the inspection snapshot and from
             # file-backed enrichment, so building the context does not wait on the live
-            # load. The live load only runs later, on first use, for the legacy
-            # repositories `/api/nodes/{id}` and `--save-file` still depend on: a session
+            # load. The live load only runs later, on first use, for the repositories
+            # `/api/nodes/{id}` and `--save-file` still depend on: a session
             # that only ever looks at the graph never pays for it.
             context = _create_viz_project_context(
                 path,
@@ -258,7 +258,7 @@ def run_server(
                 package_name=package_name,
                 is_lite=is_lite,
             )
-            live_data_loader.configure(
+            deferred_data_loader.configure(
                 _reset_on_failure(
                     data_access_manager,
                     lambda: load_and_populate_data(

@@ -73,7 +73,7 @@ def _write_json(path: Path, data: Any) -> None:
 def classify_node(node) -> dict:
     """Build the node-ID report entry for a Kedro node."""
     from kedro_viz.integrations.kedro import node_ids
-    from kedro_viz.integrations.kedro.hooks_utils import hash_node
+    from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
 
     # Store both IDs so tests can detect whether graph and run-status IDs are aligned.
     graph_id = node_ids._create_task_node_id(

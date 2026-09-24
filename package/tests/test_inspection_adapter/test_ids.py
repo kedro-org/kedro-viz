@@ -1,4 +1,4 @@
-"""Tests for legacy-compatible Viz node IDs.
+"""Tests for Viz node IDs that stay compatible with the live backend.
 
 The node list is read from ``baseline/node_id_report.json``, so no Kedro project is loaded.
 """
@@ -29,7 +29,7 @@ def _task_id(node: dict) -> str:
     )
 
 
-def test_task_node_ids_match_legacy_backend(task_nodes: list[dict]) -> None:
+def test_task_node_ids_match_live_backend(task_nodes: list[dict]) -> None:
     """Reconstructed IDs match the graph and run-status baseline."""
     for node in task_nodes:
         assert (

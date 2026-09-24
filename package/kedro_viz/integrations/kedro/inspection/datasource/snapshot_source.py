@@ -110,7 +110,7 @@ def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Generator[None]:
     """Temporarily mock missing project imports for kedro-viz lite mode."""
-    from kedro_viz.integrations.kedro.lite_parser import LiteParser
+    from kedro_viz.integrations.kedro.lite.lite_parser import LiteParser
     from kedro_viz.models.metadata import Metadata
 
     lite_parser = LiteParser(package_name)

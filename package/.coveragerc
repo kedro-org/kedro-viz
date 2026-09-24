@@ -1,7 +1,7 @@
 [report]
 show_missing = True
 omit =
-    */integrations/kedro/data_loader.py  
+    */integrations/kedro/live/data_loader.py
 exclude_lines =
     pragma: no cover
     raise NotImplementedError

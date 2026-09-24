@@ -9,9 +9,9 @@ from pydantic import ConfigDict
 
 from kedro_viz.api.rest.responses.base import BaseAPIResponse
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.integrations.kedro.live_data_loader import (
-    LiveDataLoadError,
-    live_data_loader,
+from kedro_viz.integrations.kedro.live.deferred_loader import (
+    DeferredDataLoadError,
+    deferred_data_loader,
 )
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
@@ -155,8 +155,8 @@ NodeMetadataAPIResponse = Union[
 def get_node_metadata_response(node_id: str):
     """API response for `/api/nodes/node_id`."""
     try:
-        live_data_loader.ensure_loaded()
-    except LiveDataLoadError as exc:
+        deferred_data_loader.ensure_loaded()
+    except DeferredDataLoadError as exc:
         return JSONResponse(status_code=503, content={"message": str(exc)})
 
     return _build_node_metadata_response(node_id)

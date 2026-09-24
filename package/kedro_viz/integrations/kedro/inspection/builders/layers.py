@@ -25,7 +25,7 @@ def _extract_layers(
 
     Raises:
         ValueError: If transcoded variants of one dataset (``name@a``, ``name@b``) declare
-            different layers, matching the legacy backend's validation.
+            different layers, matching the live backend's validation.
     """
     layer_by_dataset_name: dict[str, str] = {}
     resolver_config: dict[str, dict[str, Any]] = {}
