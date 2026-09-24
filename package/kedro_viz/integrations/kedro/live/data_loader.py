@@ -73,7 +73,7 @@ def _load_data_helper(
     with kedro_session:
         # check for --include-hooks option
         if not include_hooks:
-            kedro_session._hook_manager = _VizNullPluginManager()
+            kedro_session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = kedro_session.load_context()
 
