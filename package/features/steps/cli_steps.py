@@ -196,7 +196,6 @@ def _wait_for_main_response() -> dict:
     """Poll ``/api/main`` until it responds, returning the parsed JSON body."""
     max_duration = 45  # 30 seconds
     end_by = time() + max_duration
-    data_json = None
 
     while time() < end_by:
         try:

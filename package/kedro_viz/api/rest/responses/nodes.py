@@ -156,8 +156,19 @@ def get_node_metadata_response(node_id: str):
     """API response for `/api/nodes/node_id`."""
     try:
         deferred_data_loader.ensure_loaded()
-    except DeferredDataLoadError as exc:
-        return JSONResponse(status_code=503, content={"message": str(exc)})
+    except DeferredDataLoadError:
+        logger.exception(
+            "Deferred data loader failed while building node metadata response."
+        )
+        return JSONResponse(
+            status_code=503,
+            content={
+                "message": (
+                    "Node metadata is temporarily unavailable because the live "
+                    "project failed to load. Check the server logs for details."
+                )
+            },
+        )
 
     return _build_node_metadata_response(node_id)
 
