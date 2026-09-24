@@ -5,17 +5,19 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from kedro_viz.integrations.kedro.inspection.enrichment import (
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     EnrichmentSources,
     load_enrichment_sources,
 )
-from kedro_viz.integrations.kedro.inspection.graph_service import (
-    GraphService,
-)
-from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
+)
+from kedro_viz.integrations.kedro.inspection.services.graph_service import (
+    GraphService,
+)
+from kedro_viz.integrations.kedro.inspection.services.run_status_service import (
+    RunStatusService,
 )
 
 

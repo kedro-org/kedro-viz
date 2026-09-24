@@ -16,7 +16,9 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
-from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+    load_enrichment_sources,
+)
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras
@@ -147,8 +149,6 @@ def load_data(
                 list(mocked_modules.keys()),
             )
 
-        # See `kedro_viz.utils.stub_modules` for why the stubs are removed surgically on
-        # exit rather than restoring the whole `sys.modules` snapshot.
         with stub_modules(mocked_modules):
             return _load_data_helper(
                 project_path, env, include_hooks, extra_params, is_lite

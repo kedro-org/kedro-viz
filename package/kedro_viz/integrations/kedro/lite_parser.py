@@ -234,7 +234,7 @@ class LiteParser:
         Returns:
             A dictionary of file(s) in the target path and a set of module names
         """
-        spinner = Spinner("Processing your project files...")
+        spinner = Spinner("Parsing your project files for missing dependencies...")
         spinner.start()
 
         if not target_path.exists():

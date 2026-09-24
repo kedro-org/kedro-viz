@@ -22,9 +22,8 @@ from kedro.inspection.models import (
 )
 from pydantic import ValidationError
 
-from kedro_viz.integrations.kedro.inspection import snapshot_source
-from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource import snapshot_source
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     InspectionInputs,
     _InspectionSession,
     build_dataset_index,
@@ -32,10 +31,11 @@ from kedro_viz.integrations.kedro.inspection.snapshot_source import (
     filter_inspection_inputs,
     load_inspection_inputs,
 )
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
 from kedro_viz.server import run_server
 
-DEMO_PROJECT = Path(__file__).resolve().parents[3] / "demo-project"
+DEMO_PROJECT = Path(__file__).resolve().parents[4] / "demo-project"
 
 _RUNTIME_DATASET = "runtime_params_output"
 

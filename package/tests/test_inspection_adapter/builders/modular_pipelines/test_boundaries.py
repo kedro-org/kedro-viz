@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, cast
 
-from kedro_viz.integrations.kedro.inspection.modular_pipelines.boundaries import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines.boundaries import (
     _ancestor_namespaces,
     _compute_namespace_boundaries,
 )

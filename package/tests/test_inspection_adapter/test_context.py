@@ -11,9 +11,11 @@ from kedro_viz.integrations.kedro.inspection import (
     VizProjectContext,
 )
 from kedro_viz.integrations.kedro.inspection import context as context_module
-from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
-from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
-from kedro_viz.integrations.kedro.inspection.run_status_service import RunStatusService
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import GraphExtras
+from kedro_viz.integrations.kedro.inspection.services.graph_service import GraphService
+from kedro_viz.integrations.kedro.inspection.services.run_status_service import (
+    RunStatusService,
+)
 from kedro_viz.models.metadata import NodeExtras
 
 PROJECT = Path("/some/project")

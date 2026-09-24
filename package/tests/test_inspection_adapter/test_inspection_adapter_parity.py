@@ -18,10 +18,10 @@ from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro.inspection import EnrichmentSources
-from kedro_viz.integrations.kedro.inspection.graph_service import GraphService
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     load_inspection_inputs,
 )
+from kedro_viz.integrations.kedro.inspection.services.graph_service import GraphService
 
 from .capture_baseline import normalize_graph
 
@@ -73,7 +73,7 @@ def live_enriched_graph_service(_restore_kedro_project_state):
     manager = DataAccessManager()
     catalog, pipelines, node_extras = data_loader.load_data(DEMO_PROJECT)
     populate_data(manager, catalog, pipelines, node_extras)
-    from kedro_viz.integrations.kedro.inspection.enrichment import (
+    from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
         load_enrichment_sources,
     )
 

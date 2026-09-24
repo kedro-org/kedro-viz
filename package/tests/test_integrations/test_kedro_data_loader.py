@@ -10,7 +10,7 @@ from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.data_loader import (
     _create_node_extras_mapping,
 )
-from kedro_viz.integrations.kedro.inspection.enrichment import (
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     _get_dataset_stats,
     _get_node_styles,
 )

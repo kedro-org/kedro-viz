@@ -12,7 +12,9 @@ from kedro_viz.api.rest.responses import nodes as legacy_responses
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro import data_loader
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
-from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_sources
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+    load_enrichment_sources,
+)
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.server import populate_data
 

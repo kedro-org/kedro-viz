@@ -25,15 +25,15 @@ from kedro_viz.api.rest.responses.pipelines import (
     TaskNodeAPIResponse,
 )
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, MEMORY_DATASET_TYPE
-from kedro_viz.integrations.kedro.inspection.layers import (
+from kedro_viz.integrations.kedro.inspection.builders.layers import (
     _extract_layers,
     sort_layers,
 )
-from kedro_viz.integrations.kedro.inspection.modular_pipelines import (
+from kedro_viz.integrations.kedro.inspection.builders.modular_pipelines import (
     ModularPipelineIndex,
     ModularPipelineView,
 )
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     build_dataset_index,
     build_parameters_from_inputs,
 )

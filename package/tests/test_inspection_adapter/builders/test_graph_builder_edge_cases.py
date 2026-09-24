@@ -9,11 +9,11 @@ from kedro_viz.api.rest.responses.pipelines import (
     DataNodeAPIResponse,
     TaskNodeAPIResponse,
 )
-from kedro_viz.integrations.kedro.inspection.graph_builder import (
+from kedro_viz.integrations.kedro.inspection.builders.graph_builder import (
     GraphBuilder,
     _display_name,
 )
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     build_parameters_from_inputs,
 )
 

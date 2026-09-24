@@ -5,16 +5,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
-from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
-from kedro_viz.integrations.kedro.inspection.graph_builder import GraphBuilder
-from kedro_viz.integrations.kedro.inspection.snapshot_source import (
+from kedro_viz.integrations.kedro.inspection.builders.graph_builder import GraphBuilder
+from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
     InspectionInputs,
 )
+from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from kedro_viz.integrations.kedro.inspection.enrichment import GraphExtras
+    from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+        GraphExtras,
+    )
     from kedro_viz.models.metadata import NodeExtras
 
 

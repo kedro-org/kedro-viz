@@ -1,8 +1,8 @@
 """Read ``kedro-viz`` layer metadata directly from a live, populated Kedro catalog.
 
-Unlike ``inspection.layers._extract_layers`` (which reads the raw catalog config, so it works
-without a live catalog), this reads each dataset's actual ``.metadata``, so it also reflects any
-layer a project hook added, changed or removed on the populated catalog (``--include-hooks``).
+Unlike ``inspection.builders.layers._extract_layers`` (which reads the raw catalog config, so it
+works without a live catalog), this reads each dataset's actual ``.metadata``, so it also reflects
+any layer a project hook added, changed or removed on the populated catalog (``--include-hooks``).
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Dict
 
-from kedro_viz.integrations.kedro.inspection.layers import _set_layer
+from kedro_viz.integrations.kedro.inspection.builders.layers import _set_layer
 from kedro_viz.integrations.utils import get_dataset_lite_safe
 
 if TYPE_CHECKING:
