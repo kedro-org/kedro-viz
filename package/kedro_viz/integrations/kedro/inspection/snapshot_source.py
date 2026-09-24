@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, Field, field_validator
 
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
-from kedro_viz.utils import _strip_transcoding
+from kedro_viz.utils import _strip_transcoding, stub_modules
 
 if TYPE_CHECKING:
     from kedro.inspection.models import PipelineSnapshot, ProjectSnapshot
@@ -110,8 +110,6 @@ def lite_import_stubs(
     project_path: str | Path, package_name: str | None = None
 ) -> Generator[None]:
     """Temporarily mock missing project imports for kedro-viz lite mode."""
-    import sys
-
     from kedro_viz.integrations.kedro.lite_parser import LiteParser
     from kedro_viz.models.metadata import Metadata
 
@@ -121,28 +119,21 @@ def lite_import_stubs(
     for module_set in unresolved.values():
         modules_to_mock |= module_set
 
-    added_stubs: dict[str, object] = {}
-    if modules_to_mock:
-        # Same banner the live --lite loader sets, so the UI flags limited functionality.
-        Metadata.set_has_missing_dependencies(True)
-        for name, mock in lite_parser.create_mock_modules(modules_to_mock).items():
-            if name not in sys.modules:
-                sys.modules[name] = mock
-                added_stubs[name] = mock
-        logger.warning(
-            "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
-            "mocked. Install them for full functionality:\n%s",
-            len(modules_to_mock),
-            sorted(modules_to_mock),
-        )
-
-    try:
+    if not modules_to_mock:
         yield
-    finally:
-        for name, stub in added_stubs.items():
-            # Only remove it if it is still our stub
-            if sys.modules.get(name) is stub:
-                del sys.modules[name]
+        return
+
+    # Same banner the live --lite loader sets, so the UI flags limited functionality.
+    Metadata.set_has_missing_dependencies(True)
+    logger.warning(
+        "Kedro-Viz --lite: building the snapshot with %d project dependency module(s) "
+        "mocked. Install them for full functionality:\n%s",
+        len(modules_to_mock),
+        sorted(modules_to_mock),
+    )
+
+    with stub_modules(lite_parser.create_mock_modules(modules_to_mock)):
+        yield
 
 
 class _InspectionSession:

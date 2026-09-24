@@ -9,7 +9,10 @@ from pydantic import ConfigDict
 
 from kedro_viz.api.rest.responses.base import BaseAPIResponse
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.integrations.kedro.live_data_loader import live_data_loader
+from kedro_viz.integrations.kedro.live_data_loader import (
+    LiveDataLoadError,
+    live_data_loader,
+)
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
     ParametersNodeMetadata,
@@ -151,7 +154,16 @@ NodeMetadataAPIResponse = Union[
 
 def get_node_metadata_response(node_id: str):
     """API response for `/api/nodes/node_id`."""
-    live_data_loader.ensure_loaded()
+    try:
+        live_data_loader.ensure_loaded()
+    except LiveDataLoadError as exc:
+        return JSONResponse(status_code=503, content={"message": str(exc)})
+
+    return _build_node_metadata_response(node_id)
+
+
+def _build_node_metadata_response(node_id: str):
+    """Resolve ``node_id`` against the (already-loaded) live repositories."""
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})

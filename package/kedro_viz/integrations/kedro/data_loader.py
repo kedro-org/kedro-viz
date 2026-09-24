@@ -4,7 +4,6 @@ load data from projects created in a range of Kedro versions.
 """
 
 import logging
-import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Set, Tuple
 from unittest.mock import patch
@@ -21,6 +20,7 @@ from kedro_viz.integrations.kedro.inspection.enrichment import load_enrichment_s
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata, NodeExtras
+from kedro_viz.utils import stub_modules
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +127,7 @@ def load_data(
         lite_parser = LiteParser(package_name)
         unresolved_imports = lite_parser.parse(project_path)
 
-        added_stubs: Dict[str, Any] = {}
+        mocked_modules: Dict[str, Any] = {}
         if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
@@ -138,10 +138,6 @@ def load_data(
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
-            for name, mock in mocked_modules.items():
-                if name not in sys.modules:
-                    sys.modules[name] = mock
-                    added_stubs[name] = mock
 
             logger.debug(
                 "Kedro-Viz is running with limited functionality. "
@@ -151,15 +147,12 @@ def load_data(
                 list(mocked_modules.keys()),
             )
 
-        try:
+        # See `kedro_viz.utils.stub_modules` for why the stubs are removed surgically on
+        # exit rather than restoring the whole `sys.modules` snapshot.
+        with stub_modules(mocked_modules):
             return _load_data_helper(
                 project_path, env, include_hooks, extra_params, is_lite
             )
-        finally:
-            # Only remove the specific stub entries added above
-            for name, stub in added_stubs.items():
-                if sys.modules.get(name) is stub:
-                    del sys.modules[name]
     else:
         return _load_data_helper(
             project_path, env, include_hooks, extra_params, is_lite

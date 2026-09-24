@@ -140,25 +140,53 @@ def exec_viz_lite_command(context):
     )
 
 
-@then("kedro-viz should start successfully")
-def check_kedroviz_up(context):
-    """Check that Kedro-Viz is up and responding to requests."""
+def _wait_for_main_response() -> dict:
+    """Poll ``/api/main`` until it responds, returning the parsed JSON body."""
     max_duration = 30  # 30 seconds
     end_by = time() + max_duration
 
     while time() < end_by:
         try:
-            data_json = requests.get("http://localhost:4141/api/main").json()
+            return requests.get("http://localhost:4141/api/main").json()
         except Exception:  # noqa: BLE001
             sleep(2.0)
             continue
-        else:
-            break
+    return {}
+
+
+@then("kedro-viz should start successfully")
+def check_kedroviz_up(context):
+    """Check that Kedro-Viz is up and responding to requests."""
+    data_json = _wait_for_main_response()
 
     try:
         assert context.result.poll() is None
         assert (
             "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
+        )
+    finally:
+        context.result.terminate()
+
+
+@then("kedro-viz should serve the graph and node metadata successfully")
+def check_kedroviz_up_and_node_metadata(context):
+    """Check that Kedro-Viz is up, and that a node metadata request also succeeds."""
+    data_json = _wait_for_main_response()
+
+    try:
+        assert context.result.poll() is None
+        assert (
+            "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
+        )
+
+        nodes = data_json["nodes"]
+        data_nodes = [node for node in nodes if node.get("type") == "data"]
+        node_id = (data_nodes[0] if data_nodes else nodes[0])["id"]
+
+        node_response = requests.get(f"http://localhost:4141/api/nodes/{node_id}")
+        assert node_response.status_code == 200, (
+            f"Expected node metadata request for node '{node_id}' to succeed, "
+            f"got {node_response.status_code}: {node_response.text}"
         )
     finally:
         context.result.terminate()

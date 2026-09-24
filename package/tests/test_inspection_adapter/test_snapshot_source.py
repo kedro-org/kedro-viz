@@ -200,6 +200,32 @@ def test_session_snapshot_returns_demo_pipelines() -> None:
     assert "__default__" in pipeline_names
 
 
+def test_snapshot_build_then_deferred_load_do_not_conflict_on_reimport() -> None:
+    """Regression test for the "first node click" crash."""
+    from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+
+    # Pass 1: mirrors `_create_viz_project_context` building the inspection snapshot.
+    inputs = load_inspection_inputs(
+        DEMO_PROJECT, is_lite=True, package_name="demo_project"
+    )
+    assert inputs.snapshot.pipelines
+
+    numpy_after_pass_1 = sys.modules.get("numpy")
+    assert numpy_after_pass_1 is not None, (
+        "expected numpy to be genuinely imported as a side effect of loading the demo "
+        "project's own pipeline code -- if this fails, the test needs a different "
+        "always-installed, non-mocked dependency of the demo project to stand in for it"
+    )
+
+    # Pass 2: mirrors the deferred live-catalog load `live_data_loader` runs later, on the
+    # first `/api/nodes/{id}` request -- a separate lite-stub scan over the same project.
+    _catalog, pipelines, _node_extras = kedro_data_loader.load_data(
+        DEMO_PROJECT, package_name="demo_project", is_lite=True
+    )
+    assert pipelines
+    assert sys.modules.get("numpy") is numpy_after_pass_1
+
+
 def test_session_snapshot_exposes_fields_kedro_viz_needs() -> None:
     """Test that the demo snapshot exposes every field kedro-viz reads (a contract guard)."""
     snapshot = _InspectionSession(DEMO_PROJECT).snapshot()

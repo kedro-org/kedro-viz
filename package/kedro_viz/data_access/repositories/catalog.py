@@ -27,8 +27,9 @@ class CatalogRepository:
         self._catalog = value
         self._is_lite = is_lite
 
-    def _validate_layers_for_transcoding(self, dataset_name, layer):
-        existing_layer = self._layers_mapping.get(dataset_name)
+    @staticmethod
+    def _validate_layers_for_transcoding(dataset_name, layer, layers_mapping):
+        existing_layer = layers_mapping.get(dataset_name)
         if existing_layer is not None and existing_layer != layer:
             raise ValueError(
                 "Transcoded datasets should have the same layer. "
@@ -46,7 +47,8 @@ class CatalogRepository:
         if self._layers_mapping is not None:
             return self._layers_mapping
 
-        self._layers_mapping = {}
+        # Built locally and only published to `self._layers_mapping` on success
+        layers_mapping: dict = {}
 
         datasets = self._catalog.keys()
         for dataset_name in datasets:
@@ -66,9 +68,12 @@ class CatalogRepository:
             else:
                 if TRANSCODING_SEPARATOR in dataset_name:
                     dataset_name = _strip_transcoding(dataset_name)
-                    self._validate_layers_for_transcoding(dataset_name, layer)
-                self._layers_mapping[dataset_name] = layer
+                    self._validate_layers_for_transcoding(
+                        dataset_name, layer, layers_mapping
+                    )
+                layers_mapping[dataset_name] = layer
 
+        self._layers_mapping = layers_mapping
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> "AbstractDataset":
