@@ -7,6 +7,7 @@ from kedro.io import MemoryDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
 
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
     ParametersNodeMetadata,
@@ -262,6 +263,24 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats.get("rows") == 10
         assert data_node_metadata.stats.get("columns") == 2
+
+    def test_unavailable_data_node_metadata_warns_with_reason(self, caplog):
+        dataset = UnavailableDataset(reason="No module named 'plotly'")
+        data_node = GraphNode.create_data_node(
+            dataset_id="broken_dataset",
+            dataset_name="broken_dataset",
+            layer=None,
+            tags=set(),
+            dataset=dataset,
+            node_extras=None,
+            modular_pipelines=set(),
+        )
+
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
+
+        assert data_node_metadata.type == "UnavailableDataset"
+        assert "'broken_dataset' could not be loaded" in caplog.text
+        assert "No module named 'plotly'" in caplog.text
 
     def test_get_preview_args(self):
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
@@ -580,3 +599,77 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.preview is None
         assert "'exception_node' could not be previewed" in caplog.text
         assert "RuntimeError" in caplog.text
+
+    def test_concurrent_parameters_metadata_construction_is_not_cross_contaminated(
+        self,
+    ):
+        """Two nodes built concurrently must not leak one instance's data into the other's."""
+        import threading
+
+        def make_parameters_node(dataset_id, value):
+            return GraphNode.create_parameters_node(
+                dataset_id=dataset_id,
+                dataset_name=dataset_id,
+                layer=None,
+                tags=set(),
+                parameters=MemoryDataset(data=value),
+                modular_pipelines=set(),
+            )
+
+        node_a = make_parameters_node("params:a", 1)
+        node_b = make_parameters_node("params:b", 2)
+
+        for _ in range(50):
+            results = {}
+            barrier = threading.Barrier(2)
+
+            def build(name, parameters_node, results=results, barrier=barrier):
+                barrier.wait(timeout=5)
+                results[name] = ParametersNodeMetadata(
+                    parameters_node=parameters_node
+                ).parameters
+
+            threads = [
+                threading.Thread(target=build, args=("a", node_a)),
+                threading.Thread(target=build, args=("b", node_b)),
+            ]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(timeout=5)
+
+            assert results == {"a": {"a": 1}, "b": {"b": 2}}
+
+    def test_concurrent_task_metadata_construction_is_not_cross_contaminated(self):
+        """Two task nodes built concurrently must not leak one instance's data into the other's."""
+        import threading
+
+        node_a = GraphNode.create_task_node(
+            node(identity, inputs="x", outputs="y", name="node_a"),
+            "node_a",
+            set(),
+        )
+        node_b = GraphNode.create_task_node(
+            node(identity, inputs="z", outputs="w", name="node_b"),
+            "node_b",
+            set(),
+        )
+
+        for _ in range(50):
+            results = {}
+            barrier = threading.Barrier(2)
+
+            def build(name, task_node, results=results, barrier=barrier):
+                barrier.wait(timeout=5)
+                results[name] = TaskNodeMetadata(task_node=task_node).inputs
+
+            threads = [
+                threading.Thread(target=build, args=("a", node_a)),
+                threading.Thread(target=build, args=("b", node_b)),
+            ]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(timeout=5)
+
+            assert results == {"a": ["x"], "b": ["z"]}

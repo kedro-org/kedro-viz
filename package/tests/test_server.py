@@ -1,13 +1,26 @@
 import json
+from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
 
-from kedro_viz.server import run_server
+from kedro_viz.integrations.kedro.live.deferred_loader import (
+    DeferredDataLoadError,
+    deferred_data_loader,
+)
+from kedro_viz.server import load_and_populate_data, run_server
 
 
 class ExampleAPIResponse(BaseModel):
     content: str
+
+
+@pytest.fixture(autouse=True)
+def reset_deferred_data_loader():
+    """The loader is a module-level singleton; each test starts from a clean slate."""
+    deferred_data_loader.reset()
+    yield
+    deferred_data_loader.reset()
 
 
 @pytest.fixture(autouse=True)
@@ -31,6 +44,12 @@ def patched_create_api_app_from_file(mocker):
 
 
 @pytest.fixture(autouse=True)
+def patched_create_viz_project_context(mocker):
+    """These tests drive startup against a mock path, which has no snapshot to read."""
+    yield mocker.patch("kedro_viz.server._create_viz_project_context")
+
+
+@pytest.fixture(autouse=True)
 def patched_load_data(
     mocker, example_catalog, example_pipelines, example_node_extras_dict
 ):
@@ -49,23 +68,45 @@ class TestServer:
         self,
         patched_create_api_app_from_project,
         patched_data_access_manager,
+        patched_create_viz_project_context,
         patched_uvicorn_run,
         example_catalog,
         example_pipelines,
     ):
+        """Without `--include-hooks`, startup builds the context but does not touch the
+        live repositories: the graph routes don't need them, so the live load is deferred
+        until something that does need them (`/api/nodes/{id}`, `--save-file`) runs.
+        """
+        context = patched_create_viz_project_context.return_value
+
         run_server()
+
+        patched_create_viz_project_context.assert_called_once_with(
+            Path.cwd(),
+            env=None,
+            pipeline_name=None,
+            extra_params=None,
+            package_name=None,
+            is_lite=False,
+        )
+        patched_data_access_manager.add_catalog.assert_not_called()
+        patched_data_access_manager.add_pipelines.assert_not_called()
+
+        patched_create_api_app_from_project.assert_called_once_with(
+            context, Path.cwd(), False
+        )
+
+        # an uvicorn server is launched
+        patched_uvicorn_run.assert_called_once()
+
+        # The deferred load only runs once something asks for it.
+        deferred_data_loader.ensure_loaded()
         patched_data_access_manager.add_catalog.assert_called_once_with(
-            example_catalog, example_pipelines
+            example_catalog, example_pipelines, False
         )
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
-
-        # correct api app is created
-        patched_create_api_app_from_project.assert_called_once()
-
-        # an uvicorn server is launched
-        patched_uvicorn_run.assert_called_once()
 
     def test_specific_pipeline(
         self,
@@ -73,13 +114,110 @@ class TestServer:
         example_pipelines,
     ):
         run_server(pipeline_name="data_science")
+        deferred_data_loader.ensure_loaded()
 
-        # assert that when running server, data are added correctly to the data access manager
+        # assert that when the deferred load runs, data are added correctly
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             {"data_science": example_pipelines["data_science"]}
         )
 
-    def test_load_file(self, patched_create_api_app_from_file, tmp_path):
+    def test_runtime_options_are_forwarded_to_context_creation(
+        self,
+        patched_create_viz_project_context,
+        patched_data_access_manager,
+        example_pipelines,
+        tmp_path,
+    ):
+        """With `--include-hooks`, the catalog (needed for hook-modified layers) still loads
+        eagerly, but layers are read with a plain function -- no `DataAccessManager` involved
+        -- and the expensive graph build on the global repositories stays deferred, just like
+        the non-hooks path.
+        """
+        runtime_params = {"split": {"test_size": 0.3}}
+
+        run_server(
+            project_path=str(tmp_path),
+            env="staging",
+            pipeline_name="data_science",
+            extra_params=runtime_params,
+            package_name="spaceflights",
+            is_lite=True,
+            include_hooks=True,
+        )
+
+        patched_create_viz_project_context.assert_called_once_with(
+            tmp_path,
+            env="staging",
+            pipeline_name="data_science",
+            extra_params=runtime_params,
+            package_name="spaceflights",
+            is_lite=True,
+            # Every catalog entry with layer metadata, regardless of pipeline filtering --
+            # `resolve_live_catalog_layers` only scopes materialization to the pipelines,
+            # not which already-registered catalog entries are read.
+            layer_by_dataset_name={
+                "model_inputs": "model_inputs",
+                "uk.data_processing.raw_data": "raw",
+            },
+        )
+        patched_data_access_manager.add_pipelines.assert_not_called()
+
+        # The expensive graph build on the global repositories is still deferred.
+        deferred_data_loader.ensure_loaded()
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            {"data_science": example_pipelines["data_science"]}
+        )
+
+    def test_deferred_load_failure_resets_state_and_is_not_retried(
+        self,
+        patched_data_access_manager,
+        patched_create_viz_project_context,
+    ):
+        """A failed deferred load (no `--include-hooks`) resets whatever
+        `data_access_manager` state the failed attempt had already written, and a second
+        request fails fast instead of re-running (and re-failing/duplicating) the load."""
+        patched_data_access_manager.add_catalog.side_effect = RuntimeError("broken")
+
+        run_server()
+
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
+        patched_data_access_manager.reset_fields.assert_called_once()
+
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
+        # Still exactly one real attempt: the second call didn't touch add_catalog again.
+        assert patched_data_access_manager.add_catalog.call_count == 1
+
+    def test_deferred_load_failure_with_include_hooks_resets_state(
+        self,
+        patched_data_access_manager,
+        patched_create_viz_project_context,
+    ):
+        """Same recovery behaviour on the `--include-hooks` branch, where the deferred load
+        is `populate_data` directly rather than `load_and_populate_data`."""
+        patched_data_access_manager.add_pipelines.side_effect = RuntimeError("broken")
+
+        run_server(include_hooks=True)
+
+        with pytest.raises(DeferredDataLoadError):
+            deferred_data_loader.ensure_loaded()
+        patched_data_access_manager.reset_fields.assert_called_once()
+
+    def test_load_and_populate_data_returns_repositories_without_creating_a_context(
+        self, patched_create_viz_project_context, patched_data_access_manager
+    ):
+        result = load_and_populate_data(Path.cwd())
+
+        assert result is patched_data_access_manager
+        patched_create_viz_project_context.assert_not_called()
+
+    def test_load_file(
+        self,
+        patched_create_api_app_from_file,
+        patched_create_viz_project_context,
+        tmp_path,
+    ):
         file_path = "test.json"
         json_file_path = tmp_path / file_path
 
@@ -88,6 +226,7 @@ class TestServer:
 
         run_server(load_file=json_file_path)
         patched_create_api_app_from_file.assert_called_once()
+        patched_create_viz_project_context.assert_not_called()
 
     def test_save_file(self, tmp_path, mocker):
         mock_filesystem = mocker.patch("fsspec.filesystem")

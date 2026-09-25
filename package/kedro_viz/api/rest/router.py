@@ -1,6 +1,9 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -15,18 +18,18 @@ from kedro_viz.api.rest.responses.nodes import (
     NodeMetadataAPIResponse,
     get_node_metadata_response,
 )
-from kedro_viz.api.rest.responses.pipelines import (
-    GraphAPIResponse,
-    get_pipeline_response,
-)
+from kedro_viz.api.rest.responses.pipelines import GraphAPIResponse
 from kedro_viz.api.rest.responses.run_events import (
     RunStatusAPIResponse,
-    get_run_status_response,
 )
 from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
 )
+from kedro_viz.integrations.kedro.inspection import PipelineNotFoundError
+
+if TYPE_CHECKING:
+    from kedro_viz.integrations.kedro.inspection import VizProjectContext
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +39,78 @@ router = APIRouter(
 )
 
 
-@router.get("/main", response_model=GraphAPIResponse)
-async def main():
-    return get_pipeline_response()
+def create_project_router(context: VizProjectContext) -> APIRouter:
+    """Bind graph and run-status routes to one project context."""
+    project_router = APIRouter(
+        prefix="/api",
+        responses={404: {"model": APINotFoundResponse}},
+    )
+
+    @project_router.get("/main", response_model=GraphAPIResponse)
+    async def main():
+        # With no caller-supplied ID, the service selects from its own registered pipelines,
+        # so PipelineNotFoundError cannot occur here.
+        return context.graph.get_pipeline_response()
+
+    @project_router.get(
+        "/pipelines/{registered_pipeline_id}",
+        response_model=GraphAPIResponse,
+    )
+    async def get_single_pipeline_data(registered_pipeline_id: str):
+        try:
+            return context.graph.get_pipeline_response(registered_pipeline_id)
+        except PipelineNotFoundError:
+            return JSONResponse(
+                status_code=404, content={"message": "Invalid pipeline ID"}
+            )
+
+    @project_router.get("/run-status", response_model=RunStatusAPIResponse)
+    async def get_last_run_status():
+        """Get run status data for pipeline visualization.
+
+        This endpoint provides access to Kedro pipeline run status in structured format.
+
+        Returns:
+            JSON response containing run status data in structured format
+
+        Example structured format:
+        ```
+        {
+            "nodes": {
+                "node_id": {
+                    "status": "success",
+                    "duration": 0.123,
+                    "error": null
+                }
+            },
+            "datasets": {
+                "dataset_id": {
+                    "name": "dataset.name",
+                    "size": 1024,
+                    "error": null
+                }
+            },
+            "pipeline": {
+                "run_id": "unique-id",
+                "start_time": "2023-05-14T10:15:30Z",
+                "end_time": "2023-05-14T10:20:45Z",
+                "duration": 315.25,
+                "status": "completed"
+                "error": null
+            }
+        }
+        ```
+        """
+        try:
+            return context.run_status.get_run_status_response()
+        except Exception as exc:
+            logger.exception("An exception occurred while getting run status: %s", exc)
+            return JSONResponse(
+                status_code=500,
+                content={"message": "Failed to get run status data"},
+            )
+
+    return project_router
 
 
 @router.get(
@@ -46,16 +118,11 @@ async def main():
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-async def get_single_node_metadata(node_id: str):
+def get_single_node_metadata(node_id: str):
+    # A plain (non-async) route so FastAPI runs it in its threadpool: the first call may
+    # trigger the deferred live load (see `DeferredDataLoader`), which must not block the event
+    # loop and other in-flight requests while it runs.
     return get_node_metadata_response(node_id)
-
-
-@router.get(
-    "/pipelines/{registered_pipeline_id}",
-    response_model=GraphAPIResponse,
-)
-async def get_single_pipeline_data(registered_pipeline_id: str):
-    return get_pipeline_response(registered_pipeline_id)
 
 
 @router.get(
@@ -64,53 +131,6 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 )
 async def get_version():
     return get_version_response()
-
-
-@router.get("/run-status", response_model=RunStatusAPIResponse)
-async def get_last_run_status():
-    """Get run status data for pipeline visualization.
-
-    This endpoint provides access to Kedro pipeline run status in structured format.
-
-    Returns:
-        JSON response containing run status data in structured format
-
-    Example structured format:
-    ```
-    {
-        "nodes": {
-            "node_id": {
-                "status": "success",
-                "duration": 0.123,
-                "error": null
-            }
-        },
-        "datasets": {
-            "dataset_id": {
-                "name": "dataset.name",
-                "size": 1024,
-                "error": null
-            }
-        },
-        "pipeline": {
-            "run_id": "unique-id",
-            "start_time": "2023-05-14T10:15:30Z",
-            "end_time": "2023-05-14T10:20:45Z",
-            "duration": 315.25,
-            "status": "completed"
-            "error": null
-        }
-    }
-    ```
-    """
-    try:
-        return get_run_status_response()
-    except Exception as exc:
-        logger.exception("An exception occurred while getting run status: %s", exc)
-        return JSONResponse(
-            status_code=500,
-            content={"message": "Failed to get run status data"},
-        )
 
 
 @router.post("/deploy")

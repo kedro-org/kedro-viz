@@ -1,8 +1,9 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
+import logging
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -10,9 +11,19 @@ from kedro.pipeline import Pipeline
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.inspection import (
+    VizProjectContext,
+)
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
+    load_enrichment_sources,
+)
+from kedro_viz.integrations.kedro.live import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.live.catalog_layers import resolve_live_catalog_layers
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 from kedro_viz.models.metadata import NodeExtras
+
+logger = logging.getLogger(__name__)
 
 DEV_PORT = 4142
 
@@ -22,18 +33,40 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     node_extras_dict: Dict[str, NodeExtras],
+    is_lite: bool = False,
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
 
-    data_access_manager.add_catalog(catalog, pipelines)
+    data_access_manager.add_catalog(catalog, pipelines, is_lite)
 
     # add node_extras like dataset stats, styles before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines
     data_access_manager.add_node_extras(node_extras_dict)
 
     data_access_manager.add_pipelines(pipelines)
+
+
+def _load_project_data(
+    path: Path,
+    env: Optional[str] = None,
+    include_hooks: bool = False,
+    package_name: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False,
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict[str, NodeExtras]]:
+    """Load one project's catalog, pipelines and node extras, filtered to ``pipeline_name``."""
+    catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
+        path, env, include_hooks, package_name, extra_params, is_lite
+    )
+    pipelines = (
+        pipelines
+        if pipeline_name is None
+        else {pipeline_name: pipelines[pipeline_name]}
+    )
+    return catalog, pipelines, node_extras_dict
 
 
 def load_and_populate_data(
@@ -44,22 +77,83 @@ def load_and_populate_data(
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):
-    """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
+) -> DataAccessManager:
+    """Load a project and return the populated repositories.
 
-    # Loads data from underlying Kedro Project
-    catalog, pipelines, node_extras_dict = kedro_data_loader.load_data(
-        path, env, include_hooks, package_name, extra_params, is_lite
-    )
-
-    pipelines = (
-        pipelines
-        if pipeline_name is None
-        else {pipeline_name: pipelines[pipeline_name]}
+    VSCode and deployment call this entry point and ignore its return value. The HTTP
+    server uses the returned repositories to build its project-scoped inspection context.
+    """
+    catalog, pipelines, node_extras_dict = _load_project_data(
+        path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, node_extras_dict)
+    populate_data(data_access_manager, catalog, pipelines, node_extras_dict, is_lite)
+    return data_access_manager
+
+
+def _create_viz_project_context(
+    path: Path,
+    *,
+    env: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+    package_name: Optional[str] = None,
+    is_lite: bool = False,
+    layer_by_dataset_name: Optional[Dict[str, str]] = None,
+) -> VizProjectContext:
+    """Create the explicit context used by the HTTP graph routes.
+
+    Args:
+        path: The Kedro project root.
+        env: The Kedro environment, honouring ``--env``.
+        pipeline_name: Restrict the view to one registered pipeline, honouring ``--pipeline``.
+        extra_params: Typed parameter overrides from ``--params``.
+        package_name: The Kedro project package, used to identify project imports in lite mode.
+        is_lite: Whether to mock missing project dependencies while building the snapshot.
+        layer_by_dataset_name: Layers read from a populated catalog (``--include-hooks``),
+            replacing the raw catalog config a hook may have added, changed or removed. Absent
+            (rather than empty) means "read layers from the raw catalog config instead."
+
+    Raises:
+        Exception: If the inspection context cannot be constructed.
+    """
+    try:
+        enrichment = load_enrichment_sources(
+            path,
+            layer_by_dataset_name=layer_by_dataset_name,
+        )
+        return VizProjectContext.from_project(
+            path,
+            env=env,
+            pipeline_name=pipeline_name,
+            runtime_params=extra_params,
+            package_name=package_name,
+            is_lite=is_lite,
+            enrichment=enrichment,
+        )
+    # Context construction is an all-or-nothing startup requirement. Log and propagate every
+    # failure rather than serving an app whose graph routes cannot work.
+    except Exception:
+        logger.exception(
+            "Could not build the Kedro inspection context, so the graph cannot be served."
+        )
+        raise
+
+
+def _reset_on_failure(
+    data_access_manager: DataAccessManager, load: Callable[[], object]
+) -> Callable[[], None]:
+    """Wrap a live-data load so a failure leaves ``data_access_manager`` clean."""
+
+    def _run() -> None:
+        try:
+            load()
+        except Exception:
+            data_access_manager.reset_fields()
+            raise
+
+    return _run
 
 
 def run_server(
@@ -110,11 +204,79 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(
-            path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
-        )
+        if include_hooks:
+            # Hook-modified layers can only be read from a populated catalog, so this still
+            # runs the one live Kedro session bootstrap eagerly. But layers only need the
+            # catalog, not the expensive graph-structure build `add_pipelines` does, so this
+            # reads them with a plain function instead of `DataAccessManager`. The loaded
+            # catalog/pipelines/node extras are then reused (not reloaded) for the deferred
+            # full population below, so this still costs exactly one Kedro session.
+            catalog, pipelines, node_extras_dict = _load_project_data(
+                path,
+                env,
+                include_hooks,
+                package_name,
+                pipeline_name,
+                extra_params,
+                is_lite,
+            )
+            layer_by_dataset_name = resolve_live_catalog_layers(
+                catalog, pipelines, is_lite
+            )
+            context = _create_viz_project_context(
+                path,
+                env=env,
+                pipeline_name=pipeline_name,
+                extra_params=extra_params,
+                package_name=package_name,
+                is_lite=is_lite,
+                layer_by_dataset_name=layer_by_dataset_name,
+            )
+            deferred_data_loader.configure(
+                _reset_on_failure(
+                    data_access_manager,
+                    lambda: populate_data(
+                        data_access_manager,
+                        catalog,
+                        pipelines,
+                        node_extras_dict,
+                        is_lite,
+                    ),
+                )
+            )
+        else:
+            # The graph routes are served entirely from the inspection snapshot and from
+            # file-backed enrichment, so building the context does not wait on the live
+            # load. The live load only runs later, on first use, for the repositories
+            # `/api/nodes/{id}` and `--save-file` still depend on: a session
+            # that only ever looks at the graph never pays for it.
+            context = _create_viz_project_context(
+                path,
+                env=env,
+                pipeline_name=pipeline_name,
+                extra_params=extra_params,
+                package_name=package_name,
+                is_lite=is_lite,
+            )
+            deferred_data_loader.configure(
+                _reset_on_failure(
+                    data_access_manager,
+                    lambda: load_and_populate_data(
+                        path,
+                        env,
+                        include_hooks,
+                        package_name,
+                        pipeline_name,
+                        extra_params,
+                        is_lite,
+                    ),
+                )
+            )
+
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
+        # TODO(#2660): make ``--save-file`` and ``kedro viz build`` use the project
+        # context so static exports match the HTTP graph responses.
         if save_file:
             from kedro_viz.api.rest.responses.save_responses import (
                 save_api_responses_to_fs,
@@ -122,7 +284,7 @@ def run_server(
 
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
-        app = apps.create_api_app_from_project(path, autoreload)
+        app = apps.create_api_app_from_project(context, path, autoreload)
     else:
         app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
 

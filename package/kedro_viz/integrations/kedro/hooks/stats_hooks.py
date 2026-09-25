@@ -1,5 +1,5 @@
-"""`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
-functionalities for a kedro run."""
+"""`kedro_viz.integrations.kedro.hooks.stats_hooks` defines the hook that collects
+dataset statistics during a kedro run."""
 
 import json
 import logging

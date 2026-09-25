@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 from kedro.io.core import DatasetError
 
-from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
+from kedro_viz.integrations.kedro.lite.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.utils import UnavailableDataset
 
 

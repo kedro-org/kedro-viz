@@ -1,4 +1,4 @@
-"""`kedro_viz.integrations.kedro.lite_parser` defines a Kedro parser using AST."""
+"""`kedro_viz.integrations.kedro.lite.lite_parser` defines a Kedro parser using AST."""
 
 import ast
 import importlib.util
@@ -234,7 +234,7 @@ class LiteParser:
         Returns:
             A dictionary of file(s) in the target path and a set of module names
         """
-        spinner = Spinner("Processing your project files...")
+        spinner = Spinner("Parsing your project files for missing dependencies...")
         spinner.start()
 
         if not target_path.exists():

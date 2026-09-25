@@ -1,0 +1,770 @@
+{
+  "edges": [
+    {
+      "source": "4f7ffa1b",
+      "target": "cb5166f3"
+    },
+    {
+      "source": "69c523b6",
+      "target": "f23ad217"
+    },
+    {
+      "source": "7b2c6e04",
+      "target": "ea604da4"
+    },
+    {
+      "source": "7b2c6e04",
+      "target": "ingestion"
+    },
+    {
+      "source": "8de402c1",
+      "target": "8f20d98e"
+    },
+    {
+      "source": "8f20d98e",
+      "target": "cb5166f3"
+    },
+    {
+      "source": "9a6ef457",
+      "target": "c08c7708"
+    },
+    {
+      "source": "aed46479",
+      "target": "69c523b6"
+    },
+    {
+      "source": "aed46479",
+      "target": "ingestion"
+    },
+    {
+      "source": "b5609df0",
+      "target": "ea604da4"
+    },
+    {
+      "source": "b5609df0",
+      "target": "ingestion"
+    },
+    {
+      "source": "c0ddbcbf",
+      "target": "cb5166f3"
+    },
+    {
+      "source": "cb5166f3",
+      "target": "9f266f06"
+    },
+    {
+      "source": "cb5166f3",
+      "target": "f063cc82"
+    },
+    {
+      "source": "ea604da4",
+      "target": "4f7ffa1b"
+    },
+    {
+      "source": "f063cc82",
+      "target": "9a6ef457"
+    },
+    {
+      "source": "f1d596c2",
+      "target": "f33b9291"
+    },
+    {
+      "source": "f1d596c2",
+      "target": "ingestion"
+    },
+    {
+      "source": "f23ad217",
+      "target": "8de402c1"
+    },
+    {
+      "source": "f33b9291",
+      "target": "c0ddbcbf"
+    },
+    {
+      "source": "ingestion",
+      "target": "9f266f06"
+    },
+    {
+      "source": "ingestion",
+      "target": "c08c7708"
+    }
+  ],
+  "layers": [
+    "feature",
+    "raw",
+    "model_input",
+    "reporting",
+    "intermediate",
+    "primary"
+  ],
+  "modular_pipelines": {
+    "__root__": {
+      "children": [
+        {
+          "id": "7b2c6e04",
+          "type": "data"
+        },
+        {
+          "id": "9f266f06",
+          "type": "data"
+        },
+        {
+          "id": "aed46479",
+          "type": "data"
+        },
+        {
+          "id": "b5609df0",
+          "type": "parameters"
+        },
+        {
+          "id": "c08c7708",
+          "type": "data"
+        },
+        {
+          "id": "f1d596c2",
+          "type": "data"
+        },
+        {
+          "id": "ingestion",
+          "type": "modularPipeline"
+        }
+      ],
+      "id": "__root__",
+      "inputs": [],
+      "name": "__root__",
+      "outputs": []
+    },
+    "ingestion": {
+      "children": [
+        {
+          "id": "4f7ffa1b",
+          "type": "data"
+        },
+        {
+          "id": "69c523b6",
+          "type": "task"
+        },
+        {
+          "id": "8de402c1",
+          "type": "task"
+        },
+        {
+          "id": "8f20d98e",
+          "type": "data"
+        },
+        {
+          "id": "9a6ef457",
+          "type": "task"
+        },
+        {
+          "id": "c0ddbcbf",
+          "type": "data"
+        },
+        {
+          "id": "cb5166f3",
+          "type": "task"
+        },
+        {
+          "id": "ea604da4",
+          "type": "task"
+        },
+        {
+          "id": "f063cc82",
+          "type": "data"
+        },
+        {
+          "id": "f23ad217",
+          "type": "data"
+        },
+        {
+          "id": "f33b9291",
+          "type": "task"
+        }
+      ],
+      "id": "ingestion",
+      "inputs": [
+        "7b2c6e04",
+        "aed46479",
+        "b5609df0",
+        "f1d596c2"
+      ],
+      "name": "ingestion",
+      "outputs": [
+        "9f266f06",
+        "c08c7708"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "4f7ffa1b",
+      "layer": "intermediate",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "ingestion.int_typed_reviews",
+      "node_extras": {
+        "stats": {
+          "columns": 11,
+          "file_size": 1335600,
+          "rows": 55790
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "ingestion.apply_types_to_companies",
+      "id": "69c523b6",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "apply_types_to_companies",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "1px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#747474",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#000000",
+              "fill": "#989898",
+              "stroke": "#747474"
+            }
+          }
+        }
+      },
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "companies"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pandas.csv_dataset.CSVDataset",
+      "id": "7b2c6e04",
+      "layer": "raw",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "reviews",
+      "node_extras": {
+        "stats": {
+          "columns": 10,
+          "file_size": 2937144,
+          "rows": 77096
+        },
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#747474",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#000000",
+              "fill": "#989898",
+              "stroke": "#747474"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "ingestion.company_agg",
+      "id": "8de402c1",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "company_agg",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "8f20d98e",
+      "layer": null,
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "ingestion.prm_agg_companies",
+      "node_extras": {
+        "stats": {
+          "columns": 5,
+          "rows": 50098
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "full_name": "ingestion.<lambda>__2de1c226",
+      "id": "9a6ef457",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "<lambda>",
+      "node_extras": null,
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "9f266f06",
+      "layer": "primary",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion",
+        "reporting"
+      ],
+      "name": "prm_shuttle_company_reviews",
+      "node_extras": {
+        "stats": {
+          "columns": 27,
+          "file_size": 1020356,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "feature_engineering",
+        "pre_modelling",
+        "reporting_stage"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.csv_dataset.CSVDataset",
+      "id": "aed46479",
+      "layer": "raw",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "companies",
+      "node_extras": {
+        "stats": {
+          "columns": 5,
+          "file_size": 1810602,
+          "rows": 77096
+        },
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#D9DCDE",
+              "fill": "#0F0F11",
+              "stroke": "#525252"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#ECEDEF",
+              "stroke": "#C6CACE"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "companies"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "b5609df0",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "params:ingestion.typing.reviews.columns_as_floats",
+      "node_extras": null,
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "parameters"
+    },
+    {
+      "dataset_type": "io.memory_dataset.MemoryDataset",
+      "id": "c08c7708",
+      "layer": null,
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "ingestion.prm_spine_table_clone",
+      "node_extras": {
+        "stats": {
+          "columns": 3,
+          "rows": 29768
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": null,
+      "id": "c0ddbcbf",
+      "layer": "intermediate",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "ingestion.int_typed_shuttles",
+      "node_extras": {
+        "stats": {
+          "columns": 13,
+          "file_size": 1235685,
+          "rows": 77096
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "shuttles"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "ingestion.combine_step",
+      "id": "cb5166f3",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "combine_step",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.85",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#242424",
+              "fill": "#F9F9FA",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#D9DCDE",
+              "fill": "#000000",
+              "stroke": "#868686"
+            }
+          }
+        }
+      },
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "full_name": "ingestion.apply_types_to_reviews",
+      "id": "ea604da4",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "apply_types_to_reviews",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "1px",
+          "themes": {
+            "dark": {
+              "color": "#242424",
+              "fill": "#F9F9FA",
+              "stroke": "#B2B2B2"
+            },
+            "light": {
+              "color": "#D9DCDE",
+              "fill": "#000000",
+              "stroke": "#868686"
+            }
+          }
+        }
+      },
+      "parameters": {
+        "ingestion.typing.reviews.columns_as_floats": [
+          "reviews_per_month"
+        ]
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "task"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "f063cc82",
+      "layer": "primary",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion"
+      ],
+      "name": "prm_spine_table",
+      "node_extras": {
+        "stats": {
+          "columns": 3,
+          "file_size": 655994,
+          "rows": 29768
+        },
+        "styles": {
+          "opacity": "0.9",
+          "strokeWidth": "3px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "feature_engineering",
+        "pre_modelling"
+      ],
+      "tags": [],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.excel_dataset.ExcelDataset",
+      "id": "f1d596c2",
+      "layer": "raw",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "shuttles",
+      "node_extras": {
+        "stats": {
+          "columns": 13,
+          "file_size": 4195290,
+          "rows": 77096
+        },
+        "styles": {
+          "opacity": "0.9",
+          "strokeWidth": "2px",
+          "themes": {
+            "dark": {
+              "color": "#FFFFFF",
+              "fill": "#424242",
+              "stroke": "#636363"
+            },
+            "light": {
+              "color": "#242424",
+              "fill": "#D3D6D9",
+              "stroke": "#B2B2B2"
+            }
+          }
+        }
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "shuttles"
+      ],
+      "type": "data"
+    },
+    {
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "id": "f23ad217",
+      "layer": "intermediate",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "ingestion.int_typed_companies",
+      "node_extras": {
+        "stats": {
+          "columns": 5,
+          "file_size": 550616,
+          "rows": 77096
+        },
+        "styles": null
+      },
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "companies"
+      ],
+      "type": "data"
+    },
+    {
+      "full_name": "ingestion.apply_types_to_shuttles",
+      "id": "f33b9291",
+      "modular_pipelines": [
+        "ingestion"
+      ],
+      "name": "apply_types_to_shuttles",
+      "node_extras": {
+        "stats": null,
+        "styles": {
+          "opacity": "0.8",
+          "strokeWidth": "1px",
+          "themes": {
+            "dark": {
+              "color": "#000000",
+              "fill": "#B2B2B2",
+              "stroke": "#F2F3F4"
+            },
+            "light": {
+              "color": "#FFFFFF",
+              "fill": "#525252",
+              "stroke": "#323232"
+            }
+          }
+        }
+      },
+      "parameters": {},
+      "pipelines": [
+        "__default__",
+        "data_ingestion",
+        "pre_modelling"
+      ],
+      "tags": [
+        "shuttles"
+      ],
+      "type": "task"
+    },
+    {
+      "dataset_type": null,
+      "id": "ingestion",
+      "layer": null,
+      "modular_pipelines": null,
+      "name": "ingestion",
+      "node_extras": null,
+      "pipelines": [
+        "data_ingestion"
+      ],
+      "tags": [
+        "companies",
+        "shuttles"
+      ],
+      "type": "modularPipeline"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "__default__",
+      "name": "__default__"
+    },
+    {
+      "id": "data_ingestion",
+      "name": "data_ingestion"
+    },
+    {
+      "id": "feature_engineering",
+      "name": "feature_engineering"
+    },
+    {
+      "id": "modelling_stage",
+      "name": "modelling_stage"
+    },
+    {
+      "id": "pre_modelling",
+      "name": "pre_modelling"
+    },
+    {
+      "id": "reporting_stage",
+      "name": "reporting_stage"
+    }
+  ],
+  "selected_pipeline": "data_ingestion",
+  "tags": [
+    {
+      "id": "companies",
+      "name": "companies"
+    },
+    {
+      "id": "evaluate",
+      "name": "evaluate"
+    },
+    {
+      "id": "shuttles",
+      "name": "shuttles"
+    },
+    {
+      "id": "train",
+      "name": "train"
+    }
+  ]
+}

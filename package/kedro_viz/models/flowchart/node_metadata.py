@@ -11,8 +11,15 @@ from typing import ClassVar, Dict, List, Optional, Union, cast
 
 from kedro.io.core import AbstractDataset
 from kedro.pipeline.node import Node as KedroNode
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.utils import get_dataset_type
 
 from .model_utils import _extract_wrapped_func, _parse_filepath
@@ -30,9 +37,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     Args:
         task_node (TaskNode): Task node to which this metadata belongs to.
-
-    Raises:
-        AssertionError: If task_node is not supplied during instantiation.
     """
 
     task_node: TaskNode = Field(..., exclude=True)
@@ -73,38 +77,33 @@ class TaskNodeMetadata(GraphNodeMetadata):
         description="Serialized preview payload of the TaskNode",
     )
 
-    @model_validator(mode="before")
-    @classmethod
-    def check_task_node_exists(cls, values):
-        assert "task_node" in values
-        cls.set_task_and_kedro_node(values["task_node"])
-        return values
-
-    @classmethod
-    def set_task_and_kedro_node(cls, task_node):
-        cls.task_node = task_node
-        cls.kedro_node = cast(KedroNode, task_node.kedro_obj)
+    @staticmethod
+    def _kedro_node(info: ValidationInfo) -> KedroNode:
+        # Read from `info.data` (this instance's already-validated fields), not a class
+        # attribute: field validators run per instance, so a class attribute would be
+        # shared -- and overwritten -- by any other instance built concurrently.
+        task_node = cast(TaskNode, info.data["task_node"])
+        return cast(KedroNode, task_node.kedro_obj)
 
     @field_validator("code")
     @classmethod
-    def set_code(cls, code):
+    def set_code(cls, _, info: ValidationInfo):
         # this is required to handle partial, curry functions
-        func = cls.kedro_node.func
+        func = cls._kedro_node(info).func
 
         if inspect.ismethod(func):
             func = func.__func__
 
         if inspect.isfunction(func):
-            code = inspect.getsource(_extract_wrapped_func(func))
-            return code
+            return inspect.getsource(_extract_wrapped_func(func))
 
         return None
 
     @field_validator("filepath")
     @classmethod
-    def set_filepath(cls, filepath):
+    def set_filepath(cls, filepath, info: ValidationInfo):
         # this is required to handle partial, curry functions
-        func = cls.kedro_node.func
+        func = cls._kedro_node(info).func
 
         if inspect.ismethod(func):
             func = func.__func__
@@ -126,29 +125,30 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     @field_validator("parameters")
     @classmethod
-    def set_parameters(cls, _):
-        return cls.task_node.parameters
+    def set_parameters(cls, _, info: ValidationInfo):
+        return cast(TaskNode, info.data["task_node"]).parameters
 
     @field_validator("run_command")
     @classmethod
-    def set_run_command(cls, _):
-        return f"kedro run --to-nodes='{cls.kedro_node.name}'"
+    def set_run_command(cls, _, info: ValidationInfo):
+        return f"kedro run --to-nodes='{cls._kedro_node(info).name}'"
 
     @field_validator("inputs")
     @classmethod
-    def set_inputs(cls, _):
-        return cls.kedro_node.inputs
+    def set_inputs(cls, _, info: ValidationInfo):
+        return cls._kedro_node(info).inputs
 
     @field_validator("outputs")
     @classmethod
-    def set_outputs(cls, _):
-        return cls.kedro_node.outputs
+    def set_outputs(cls, _, info: ValidationInfo):
+        return cls._kedro_node(info).outputs
 
     @field_validator("preview")
     @classmethod
-    def set_preview(cls, _):
+    def set_preview(cls, _, info: ValidationInfo):
+        task_node = cast(TaskNode, info.data["task_node"])
         try:
-            task_node_preview_fn = getattr(cls.kedro_node, "preview", None)
+            task_node_preview_fn = getattr(cls._kedro_node(info), "preview", None)
 
             # for Kedro versions that do not support preview_fn
             if task_node_preview_fn is None:  # pragma: no cover
@@ -174,18 +174,16 @@ class TaskNodeMetadata(GraphNodeMetadata):
             return preview_payload.to_dict()
 
         except ImportError:  # pragma: no cover
-            if not getattr(cls.set_preview, "_import_warning_shown", False):
-                logger.warning(
-                    "Task node previews are disabled because this Kedro version "
-                    "does not provide 'kedro.pipeline.preview_contract'."
-                )
-                cls.set_preview._import_warning_shown = True
+            logger.warning(
+                "Task node previews are disabled because this Kedro version "
+                "does not provide 'kedro.pipeline.preview_contract'."
+            )
             return None
 
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
-                cls.task_node.name,
+                task_node.name,
                 type(exc).__name__,
                 exc,
             )
@@ -202,9 +200,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         is_all_previews_enabled (bool): Class-level attribute to determine if
             previews are enabled for all nodes. This can be configured via CLI
             or UI to manage the preview settings.
-
-    Raises:
-        AssertionError: If data_node is not supplied during instantiation.
     """
 
     data_node: DataNode = Field(..., exclude=True)
@@ -247,64 +242,78 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @model_validator(mode="before")
     @classmethod
-    def check_data_node_exists(cls, values):
-        assert "data_node" in values
-        cls.set_data_node_and_dataset(values["data_node"])
+    def release_dataset_cache(cls, values):
+        # dataset.release clears the cache before loading to ensure that this issue
+        # does not arise: https://github.com/kedro-org/kedro-viz/pull/573. Only a side
+        # effect on the dataset itself -- nothing is stashed on the class.
+        data_node = values.get("data_node") if isinstance(values, dict) else None
+        if data_node is not None:
+            cast(AbstractDataset, data_node.kedro_obj).release()
         return values
 
     @classmethod
     def set_is_all_previews_enabled(cls, value: bool):
         cls.is_all_previews_enabled = value
 
-    @classmethod
-    def set_data_node_and_dataset(cls, data_node):
-        cls.data_node = data_node
-        cls.dataset = cast(AbstractDataset, data_node.kedro_obj)
-
-        # dataset.release clears the cache before loading to ensure that this issue
-        # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
-        cls.dataset.release()
+    @staticmethod
+    def _dataset(info: ValidationInfo) -> AbstractDataset:
+        data_node = cast(DataNode, info.data["data_node"])
+        return cast(AbstractDataset, data_node.kedro_obj)
 
     @field_validator("type")
     @classmethod
-    def set_type(cls, _):
-        return cls.data_node.dataset_type
+    def set_type(cls, _, info: ValidationInfo):
+        data_node = cast(DataNode, info.data["data_node"])
+        dataset = cls._dataset(info)
+        if isinstance(dataset, UnavailableDataset):
+            # Logged here, not while a bulk project load happens to touch every
+            # dataset, so this only fires for the node actually being requested.
+            logger.warning(
+                "Kedro-Viz: dataset '%s' could not be loaded and is shown as "
+                "unavailable. Install its missing dependency for full functionality:\n%s",
+                data_node.name,
+                dataset.reason or "unknown error",
+            )
+        return data_node.dataset_type
 
     @field_validator("filepath")
     @classmethod
-    def set_filepath(cls, _):
-        dataset_description = cls.dataset._describe()
+    def set_filepath(cls, _, info: ValidationInfo):
+        dataset_description = cls._dataset(info)._describe()
         return _parse_filepath(dataset_description)
 
     @field_validator("run_command")
     @classmethod
-    def set_run_command(cls, _):
-        if not cls.data_node.is_free_input:
-            return f"kedro run --to-outputs={cls.data_node.name}"
+    def set_run_command(cls, _, info: ValidationInfo):
+        data_node = cast(DataNode, info.data["data_node"])
+        if not data_node.is_free_input:
+            return f"kedro run --to-outputs={data_node.name}"
         return None
 
     @field_validator("preview")
     @classmethod
-    def set_preview(cls, _):
+    def set_preview(cls, _, info: ValidationInfo):
+        data_node = cast(DataNode, info.data["data_node"])
+        dataset = cls._dataset(info)
         if (
-            not cls.data_node.is_preview_enabled()
-            or not hasattr(cls.dataset, "preview")
+            not data_node.is_preview_enabled()
+            or not hasattr(dataset, "preview")
             or not cls.is_all_previews_enabled
         ):
             return None
 
         try:
             preview_args = (
-                cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
+                data_node.get_preview_args() if data_node.viz_metadata else None
             )
             if preview_args is None:
-                return cls.dataset.preview()
-            return cls.dataset.preview(**preview_args)
+                return dataset.preview()
+            return dataset.preview(**preview_args)
 
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
-                cls.data_node.name,
+                data_node.name,
                 type(exc).__name__,
                 exc,
             )
@@ -312,29 +321,30 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @field_validator("preview_type")
     @classmethod
-    def set_preview_type(cls, _):
+    def set_preview_type(cls, _, info: ValidationInfo):
+        data_node = cast(DataNode, info.data["data_node"])
+        dataset = cls._dataset(info)
         if (
-            not cls.data_node.is_preview_enabled()
-            or not hasattr(cls.dataset, "preview")
+            not data_node.is_preview_enabled()
+            or not hasattr(dataset, "preview")
             or not cls.is_all_previews_enabled
         ):
             return None
 
         try:
             preview_type_annotation = inspect.signature(
-                cls.dataset.preview
+                dataset.preview
             ).return_annotation
             # Attempt to get the name attribute, if it exists.
             # Otherwise, use str to handle the annotation directly.
-            preview_type_name = getattr(
+            return getattr(
                 preview_type_annotation, "__name__", str(preview_type_annotation)
             )
-            return preview_type_name
 
         except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "'%s' did not have preview type. Full exception: %s: %s",
-                cls.data_node.name,
+                data_node.name,
                 type(exc).__name__,
                 exc,
             )
@@ -342,17 +352,15 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @field_validator("stats")
     @classmethod
-    def set_stats(cls, _):
-        return cls.data_node.node_extras and cls.data_node.node_extras.stats
+    def set_stats(cls, _, info: ValidationInfo):
+        data_node = cast(DataNode, info.data["data_node"])
+        return data_node.node_extras and data_node.node_extras.stats
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TranscodedDataNode.
     Args:
         transcoded_data_node: The transcoded data node to which this metadata belongs.
-
-    Raises:
-        AssertionError: If `transcoded_data_node` is not supplied during instantiation.
     """
 
     transcoded_data_node: TranscodedDataNode = Field(..., exclude=True)
@@ -387,46 +395,41 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         description="The statistics for the transcoded data node metadata.",
     )
 
-    @model_validator(mode="before")
-    @classmethod
-    def check_transcoded_data_node_exists(cls, values):
-        assert "transcoded_data_node" in values
-        cls.transcoded_data_node = values["transcoded_data_node"]
-        return values
-
     @field_validator("filepath")
     @classmethod
-    def set_filepath(cls, _):
-        dataset_description = cls.transcoded_data_node.original_version._describe()
+    def set_filepath(cls, _, info: ValidationInfo):
+        node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
+        dataset_description = cast(AbstractDataset, node.original_version)._describe()
         return _parse_filepath(dataset_description)
 
     @field_validator("run_command")
     @classmethod
-    def set_run_command(cls, _):
-        if not cls.transcoded_data_node.is_free_input:
-            return f"kedro run --to-outputs={cls.transcoded_data_node.original_name}"
+    def set_run_command(cls, _, info: ValidationInfo):
+        node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
+        if not node.is_free_input:
+            return f"kedro run --to-outputs={node.original_name}"
         return None
 
     @field_validator("original_type")
     @classmethod
-    def set_original_type(cls, _):
-        return get_dataset_type(cls.transcoded_data_node.original_version)
+    def set_original_type(cls, _, info: ValidationInfo):
+        node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
+        return get_dataset_type(cast(AbstractDataset, node.original_version))
 
     @field_validator("transcoded_types")
     @classmethod
-    def set_transcoded_types(cls, _):
+    def set_transcoded_types(cls, _, info: ValidationInfo):
+        node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
         return [
             get_dataset_type(transcoded_version)
-            for transcoded_version in cls.transcoded_data_node.transcoded_versions
+            for transcoded_version in node.transcoded_versions
         ]
 
     @field_validator("stats")
     @classmethod
-    def set_stats(cls, _):
-        return (
-            cls.transcoded_data_node.node_extras
-            and cls.transcoded_data_node.node_extras.stats
-        )
+    def set_stats(cls, _, info: ValidationInfo):
+        node = cast(TranscodedDataNode, info.data["transcoded_data_node"])
+        return node.node_extras and node.node_extras.stats
 
 
 class ParametersNodeMetadata(GraphNodeMetadata):
@@ -435,9 +438,6 @@ class ParametersNodeMetadata(GraphNodeMetadata):
     Args:
         parameters_node (ParametersNode): The underlying parameters node
                 for the parameters metadata node.
-
-    Raises:
-        AssertionError: If parameters_node is not supplied during instantiation.
     """
 
     parameters_node: ParametersNode = Field(..., exclude=True)
@@ -447,18 +447,10 @@ class ParametersNodeMetadata(GraphNodeMetadata):
         description="The parameters dictionary for the parameters metadata node",
     )
 
-    @model_validator(mode="before")
-    @classmethod
-    def check_parameters_node_exists(cls, values):
-        assert "parameters_node" in values
-        cls.parameters_node = values["parameters_node"]
-        return values
-
     @field_validator("parameters")
     @classmethod
-    def set_parameters(cls, _):
-        if cls.parameters_node.is_single_parameter():
-            return {
-                cls.parameters_node.parameter_name: cls.parameters_node.parameter_value
-            }
-        return cls.parameters_node.parameter_value
+    def set_parameters(cls, _, info: ValidationInfo):
+        node = cast(ParametersNode, info.data["parameters_node"])
+        if node.is_single_parameter():
+            return {node.parameter_name: node.parameter_value}
+        return node.parameter_value
