@@ -184,3 +184,169 @@ def test_concurrent_first_calls_attempt_a_failing_load_exactly_once() -> None:
     assert call_count == 1
     assert len(errors) == 5
     assert all(isinstance(exc, DeferredDataLoadError) for exc in errors)
+
+
+def test_preload_runs_the_configured_load_once() -> None:
+    loader = DeferredDataLoader()
+    calls = []
+    loader.configure(lambda: calls.append("loaded"))
+
+    loader.preload()
+    loader.preload()
+    # Already loaded, so this doesn't load again.
+    loader.ensure_loaded()
+
+    assert calls == ["loaded"]
+
+
+def test_preload_without_configure_is_a_safe_no_op() -> None:
+    DeferredDataLoader().preload()
+
+
+def test_preload_after_the_load_finished_does_nothing() -> None:
+    loader = DeferredDataLoader()
+    calls = []
+    loader.configure(lambda: calls.append("loaded"))
+    loader.ensure_loaded()
+
+    loader.preload()
+
+    assert calls == ["loaded"]
+
+
+def test_a_second_preload_returns_at_once_while_the_first_is_loading() -> None:
+    """Page reloads don't queue up behind a running load."""
+    loader = DeferredDataLoader()
+    started = threading.Event()
+    release = threading.Event()
+    calls = []
+
+    def slow_load() -> None:
+        calls.append("loaded")
+        started.set()
+        release.wait(timeout=5)
+
+    loader.configure(slow_load)
+    first = threading.Thread(target=loader.preload)
+    first.start()
+    assert started.wait(timeout=5)
+
+    second = threading.Thread(target=loader.preload)
+    second.start()
+    second.join(timeout=1)
+    assert not second.is_alive(), "the second preload should not wait for the load"
+
+    release.set()
+    first.join(timeout=5)
+    assert calls == ["loaded"]
+
+
+def test_a_request_during_the_preload_waits_instead_of_loading_again() -> None:
+    loader = DeferredDataLoader()
+    started = threading.Event()
+    release = threading.Event()
+    calls = []
+
+    def slow_load() -> None:
+        calls.append("loaded")
+        started.set()
+        release.wait(timeout=5)
+
+    loader.configure(slow_load)
+    preload = threading.Thread(target=loader.preload)
+    preload.start()
+    assert started.wait(timeout=5)
+
+    request = threading.Thread(target=loader.ensure_loaded)
+    request.start()
+    request.join(timeout=0.2)
+    assert request.is_alive(), "the request should wait for the running load"
+
+    release.set()
+    request.join(timeout=5)
+    preload.join(timeout=5)
+    assert not request.is_alive()
+    assert calls == ["loaded"]
+
+
+def test_a_failed_preload_does_not_raise_and_is_reported_on_next_use() -> None:
+    """A failed preload doesn't raise. The next caller still gets the error."""
+    loader = DeferredDataLoader()
+    attempts = []
+
+    def failing_load() -> None:
+        attempts.append("attempt")
+        raise RuntimeError("broken")
+
+    loader.configure(failing_load)
+
+    loader.preload()
+
+    with pytest.raises(DeferredDataLoadError):
+        loader.ensure_loaded()
+    # The failure is remembered, so nothing retries the load.
+    loader.preload()
+    assert attempts == ["attempt"]
+
+
+def test_reconfigure_allows_a_new_preload() -> None:
+    """After a new ``configure()`` (a new server run), the preload runs again."""
+    loader = DeferredDataLoader()
+    loader.configure(lambda: None)
+    loader.preload()
+
+    calls = []
+    loader.configure(lambda: calls.append("loaded"))
+    loader.preload()
+
+    assert calls == ["loaded"]
+
+
+def test_reset_prevents_a_preload() -> None:
+    loader = DeferredDataLoader()
+    calls = []
+    loader.configure(lambda: calls.append("loaded"))
+
+    loader.reset()
+    loader.preload()
+
+    assert calls == []
+
+
+@pytest.mark.parametrize("change", ["configure", "reset_then_configure"])
+def test_changing_the_configuration_waits_for_a_running_load(change: str) -> None:
+    """A running load can't mark the next configuration as loaded.
+
+    Otherwise the old load would finish after ``configure()``, set the loaded flag, and
+    the new load would never run.
+    """
+    loader = DeferredDataLoader()
+    started = threading.Event()
+    release = threading.Event()
+
+    def old_load() -> None:
+        started.set()
+        release.wait(timeout=5)
+
+    new_calls = []
+    loader.configure(old_load)
+    running = threading.Thread(target=loader.ensure_loaded)
+    running.start()
+    assert started.wait(timeout=5)
+
+    def change_configuration() -> None:
+        if change == "reset_then_configure":
+            loader.reset()
+        loader.configure(lambda: new_calls.append("loaded"))
+
+    changer = threading.Thread(target=change_configuration)
+    changer.start()
+    changer.join(timeout=0.2)
+    assert changer.is_alive(), "reconfiguring should wait for the running load"
+
+    release.set()
+    running.join(timeout=5)
+    changer.join(timeout=5)
+    loader.ensure_loaded()
+
+    assert new_calls == ["loaded"]

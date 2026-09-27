@@ -245,11 +245,10 @@ def run_server(
                 )
             )
         else:
-            # The graph routes are served entirely from the inspection snapshot and from
-            # file-backed enrichment, so building the context does not wait on the live
-            # load. The live load only runs later, on first use, for the repositories
-            # `/api/nodes/{id}` and `--save-file` still depend on: a session
-            # that only ever looks at the graph never pays for it.
+            # The graph routes are served from the inspection snapshot and file-backed
+            # enrichment, so startup doesn't wait for the live load. That load (needed by
+            # `/api/nodes/{id}` and `--save-file`) runs later: in the background after
+            # `/api/main` is sent (not with `--autoreload`), or on first use if sooner.
             context = _create_viz_project_context(
                 path,
                 env=env,

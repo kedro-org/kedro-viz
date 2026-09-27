@@ -1,10 +1,14 @@
-"""Defer the live Kedro load until something actually needs it.
+"""Run the live Kedro load after the graph is served, not at startup.
 
-The inspection snapshot serves ``/api/main`` and ``/api/pipelines/{id}`` directly, so nothing
-on that path needs a live Kedro catalog or session. ``/api/nodes/{id}`` and ``--save-file``
-(including ``kedro viz deploy``) are the two remaining consumers of the live-loaded
-``DataAccessManager``. This loader keeps the live load out of server startup, running it once,
-on first use, so a session that never asks for node metadata or a static export never pays for it.
+The graph routes (``/api/main`` and ``/api/pipelines/{id}``) are served from the inspection
+snapshot. Only ``/api/nodes/{id}`` and ``--save-file`` (including ``kedro viz deploy``) still
+need the live ``DataAccessManager``. The load runs once, whichever comes first:
+
+- ``preload``: a background task that starts after ``/api/main`` is sent (not with
+  ``--autoreload``). So every session that opens the graph pays for the load, but after
+  the graph, not before it.
+- ``ensure_loaded``: the first ``/api/nodes/{id}`` or ``--save-file`` call. If a preload is
+  already running, it waits for it.
 """
 
 from __future__ import annotations
@@ -26,7 +30,7 @@ class DeferredDataLoadError(RuntimeError):
 
 
 class DeferredDataLoader:
-    """Run a configured load at most once, on first use, thread-safely.
+    """Run a configured load at most once, thread-safely.
 
     Recovery policy: a failed load is not retried. Every call after the first failure
     immediately raises `DeferredDataLoadError` instead of repeating the (expensive,
@@ -34,22 +38,66 @@ class DeferredDataLoader:
     """
 
     def __init__(self) -> None:
+        # Held for the whole load. configure() and reset() take it too, so a load from the
+        # old configuration can't mark the new one as loaded.
         self._lock = threading.Lock()
         self._loaded = False
         self._load: Optional[Callable[[], object]] = None
         self._error: Optional[BaseException] = None
+        # A separate lock, so starting a preload never waits on a running load.
+        self._preload_lock = threading.Lock()
+        self._preload_started = False
 
     def configure(self, load: Callable[[], object]) -> None:
-        """Bind this run's load call. Does not run it yet."""
-        self._load = load
-        self._loaded = False
-        self._error = None
+        """Bind this run's load call. Does not run it yet.
+
+        Waits for a running load to finish first.
+        """
+        with self._lock, self._preload_lock:
+            self._load = load
+            self._loaded = False
+            self._error = None
+            self._preload_started = False
 
     def reset(self) -> None:
-        """Clear any configured load, the once-only guard and any remembered failure."""
-        self._load = None
-        self._loaded = False
-        self._error = None
+        """Clear the configured load, the once-only guard and any remembered failure.
+
+        Waits for a running load to finish first.
+        """
+        with self._lock, self._preload_lock:
+            self._load = None
+            self._loaded = False
+            self._error = None
+            self._preload_started = False
+
+    def preload(self) -> None:
+        """Run the load now, before anything needs it. Never raises.
+
+        It runs as a FastAPI background task after ``/api/main`` is sent. The server tracks
+        it, so shutdown waits for it and the load can clean up.
+
+        Only the first call per ``configure()`` does anything. Other calls return straight
+        away rather than waiting on the load. It also does nothing if no load is configured,
+        or the load has already run.
+
+        If the load fails, the error is logged. The next ``ensure_loaded()`` call then raises
+        ``DeferredDataLoadError``, the same as without a preload.
+        """
+        with self._preload_lock:
+            if (
+                self._preload_started
+                or self._load is None
+                or self._loaded
+                or self._error is not None
+            ):
+                return
+            self._preload_started = True
+
+        try:
+            self.ensure_loaded()
+        except DeferredDataLoadError:
+            # Already logged. The request that needs the data reports it.
+            pass
 
     def ensure_loaded(self) -> None:
         """Run the configured load once. Safe to call repeatedly, including concurrently.

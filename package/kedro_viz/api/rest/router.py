@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
@@ -27,6 +27,7 @@ from kedro_viz.api.rest.responses.version import (
     get_version_response,
 )
 from kedro_viz.integrations.kedro.inspection import PipelineNotFoundError
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 
 if TYPE_CHECKING:
     from kedro_viz.integrations.kedro.inspection import VizProjectContext
@@ -39,15 +40,27 @@ router = APIRouter(
 )
 
 
-def create_project_router(context: VizProjectContext) -> APIRouter:
-    """Bind graph and run-status routes to one project context."""
+def create_project_router(
+    context: VizProjectContext, *, preload_live_data: bool = True
+) -> APIRouter:
+    """Bind graph and run-status routes to one project context.
+
+    Args:
+        context: The project context the routes read from.
+        preload_live_data: Whether ``/api/main`` preloads the live data in the background.
+    """
     project_router = APIRouter(
         prefix="/api",
         responses={404: {"model": APINotFoundResponse}},
     )
 
     @project_router.get("/main", response_model=GraphAPIResponse)
-    async def main():
+    async def main(background_tasks: BackgroundTasks):
+        # The frontend always requests /api/main first. Once the response is sent, preload
+        # the live data in the background so the first node click is quick. This doesn't
+        # delay the graph, but the load does use server CPU while it runs.
+        if preload_live_data:
+            background_tasks.add_task(deferred_data_loader.preload)
         # With no caller-supplied ID, the service selects from its own registered pipelines,
         # so PipelineNotFoundError cannot occur here.
         return context.graph.get_pipeline_response()

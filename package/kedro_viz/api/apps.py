@@ -69,7 +69,9 @@ def create_api_app_from_project(
         The FastAPI app.
     """
     app = _create_base_api_app()
-    app.include_router(create_project_router(context))
+    # With autoreload, every file save restarts the server. A running preload would hold
+    # up each restart, so skip it: the first node click loads the data instead.
+    app.include_router(create_project_router(context, preload_live_data=not autoreload))
     app.include_router(rest_router)
 
     # Check for html directory existence.
