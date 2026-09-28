@@ -16,6 +16,7 @@ Please follow the established format:
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
  - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
  - Fix toolbar `tooltip` not dismissing on mouse leave. (#2770)
+ - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 
 
 # Release 12.4.0
