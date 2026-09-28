@@ -275,7 +275,7 @@ def run_server(
 
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
-        # TODO(#2660): make ``--save-file`` and ``kedro viz build`` use the project
+        # TODO(#2776): make ``--save-file`` and ``kedro viz build`` use the project
         # context so static exports match the HTTP graph responses.
         if save_file:
             from kedro_viz.api.rest.responses.save_responses import (

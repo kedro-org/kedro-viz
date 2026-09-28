@@ -128,7 +128,7 @@ class RunStatusAPIResponse(BaseModel):
 
 def get_run_status_response() -> RunStatusAPIResponse:
     """Read run status using the current-working-directory lookup."""
-    # Keep cwd-based lookup until export uses the context.
+    # Keep cwd-based lookup until export uses the context (#2776).
     # Import lazily to avoid a cycle with these response models.
     from kedro_viz.integrations.kedro.inspection.services.run_status_service import (
         read_run_status_response,
