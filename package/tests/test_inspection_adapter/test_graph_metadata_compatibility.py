@@ -10,6 +10,7 @@ from kedro.pipeline.node import Node
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import nodes as live_responses
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
 from kedro_viz.integrations.kedro.inspection import VizProjectContext
 from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     load_enrichment_sources,
@@ -32,6 +33,8 @@ def test_inspection_graph_ids_resolve_through_live_metadata(
         project,
         ignore=ignore_patterns("data", "__pycache__", ".git", ".venv"),
     )
+    # Make the copied project importable, so this test doesn't rely on earlier tests.
+    monkeypatch.syspath_prepend(str(project / "src"))
     manager = DataAccessManager()
     catalog, pipelines, extras = data_loader.load_data(
         project, package_name="demo_project", is_lite=is_lite
@@ -72,6 +75,11 @@ def test_inspection_graph_ids_resolve_through_live_metadata(
         }
         assert graph_ids == expected_ids
         assert len(graph_ids) == 57
+        # The run-status hook tags run events with its own hash of each task, so that hash
+        # must match the graph's task ID too.
+        for live_node in manager.nodes.as_list():
+            if live_node.type == "task":
+                assert hash_node(live_node.kedro_obj) == live_node.id, live_node.name
         missing = client.get("/api/nodes/unknown")
         assert missing.status_code == 404
         assert missing.json() == {"message": "Invalid node ID"}
