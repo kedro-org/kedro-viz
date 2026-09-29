@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
  - Add a help menu to the global toolbar linking to Kedro-Viz support channels. (#2756)
+ - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 ## Bug fixes and other changes
  - Fix version and run-status API requests for embedded and static Kedro-Viz. (#2753)
@@ -16,7 +17,6 @@ Please follow the established format:
  - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
  - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
  - Fix toolbar `tooltip` not dismissing on mouse leave. (#2770)
- - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 
 # Release 12.4.0

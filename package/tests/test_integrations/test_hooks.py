@@ -100,22 +100,25 @@ def test_after_dataset_loaded_with_dataframe_dict(
 
 
 def test_after_dataset_loaded_with_lazy_dataframe_dict(
-    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+    example_dataset_stats_hook_obj, example_catalog
 ):
     example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
 
     example_dataset_stats_hook_obj.after_dataset_loaded(
         "companies",
         {
-            "part_1": lambda: example_data_frame,
-            "part_2": lambda: example_data_frame,
+            "part_1": _loader,
+            "part_2": _loader,
         },
     )
 
     stats = example_dataset_stats_hook_obj._stats["companies"]
     assert stats["partitions"] == 2
-    assert stats["rows"] == int(example_data_frame.shape[0]) * 2
-    assert stats["columns"] == int(example_data_frame.shape[1])
+    assert "rows" not in stats
+    assert "columns" not in stats
 
 
 def test_after_dataset_saved_with_dataframe_dict(
@@ -175,8 +178,8 @@ def test_create_dataset_stats_for_partitioned_dataset(
 
     stats = example_dataset_stats_hook_obj._stats["partitioned_data"]
     assert stats["partitions"] == 2
-    assert stats["rows"] == 14
-    assert stats["columns"] == 3
+    assert "rows" not in stats
+    assert "columns" not in stats
     assert stats["file_size"] == expected_file_size
 
 

@@ -97,12 +97,14 @@ class DatasetStatsHook:
 
     def create_dataset_stats(self, dataset_name: str, data: Any):
         """Helper method to create dataset statistics.
-        Currently supports (pd.DataFrame) dataset instances and dictionaries
-        of (pd.DataFrame) instances, such as those returned by partitioned
-        datasets (PartitionedDataset/IncrementalDataset) and multi-sheet Excel
-        datasets. For dictionaries, the number of partitions/sheets, the total
-        number of rows and, when every partition/sheet has the same number of
-        columns, the number of columns are reported.
+        Currently supports (pd.DataFrame) dataset instances, dictionaries of
+        (pd.DataFrame) instances such as multi-sheet Excel datasets, and
+        dictionaries of lazy partition loaders returned by partitioned datasets
+        (PartitionedDataset/IncrementalDataset). For materialised dictionaries
+        the number of partitions/sheets, the total number of rows and, when
+        every partition/sheet has the same number of columns, the number of
+        columns are reported. For lazily loaded partitions the loaders are never
+        invoked, so only the number of partitions is reported.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -119,24 +121,21 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
             elif isinstance(data, dict) and data:
-                # PartitionedDataset returns a dict of lazy partition loaders
-                # while multi-sheet Excel returns a dict of DataFrames.
-                dataframes = [
-                    value() if callable(value) else value for value in data.values()
-                ]
-                if not all(
-                    isinstance(dataframe, pd.DataFrame) for dataframe in dataframes
-                ):
+                if all(isinstance(value, pd.DataFrame) for value in data.values()):
+                    self._stats[stats_dataset_name]["partitions"] = len(data)
+                    self._stats[stats_dataset_name]["rows"] = sum(
+                        int(value.shape[0]) for value in data.values()
+                    )
+
+                    column_counts = {int(value.shape[1]) for value in data.values()}
+                    if len(column_counts) == 1:
+                        self._stats[stats_dataset_name]["columns"] = column_counts.pop()
+                elif all(callable(value) for value in data.values()):
+                    # PartitionedDataset returns lazy partition loaders; only count
+                    # them so stats collection never materialises the partitions.
+                    self._stats[stats_dataset_name]["partitions"] = len(data)
+                else:
                     return
-
-                self._stats[stats_dataset_name]["partitions"] = len(dataframes)
-                self._stats[stats_dataset_name]["rows"] = sum(
-                    int(dataframe.shape[0]) for dataframe in dataframes
-                )
-
-                column_counts = {int(dataframe.shape[1]) for dataframe in dataframes}
-                if len(column_counts) == 1:
-                    self._stats[stats_dataset_name]["columns"] = column_counts.pop()
 
             else:
                 return
