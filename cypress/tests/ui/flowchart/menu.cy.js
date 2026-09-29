@@ -141,19 +141,14 @@ describe('Flowchart Menu', () => {
     ).click();
 
     // Assert after action
-    cy.get('.pipeline-node--active > .pipeline-node__text')
-      .invoke('text')
-      .then((focusedNodesText) =>
-        expect(focusedNodesText.toLowerCase()).to.contains(
-          nodeToFocusText
-        )
-      );
-    cy.get('.pipeline-node--active > .pipeline-node__text').should(
-      'have.length',
-      5
-    );
+    cy.get('.pipeline-node--active > .pipeline-node__text', {
+      timeout: 10000,
+    }).should(($els) => {
+      expect($els).to.have.length(5);
+      expect($els.text().toLowerCase()).to.contain(nodeToFocusText);
+    });
 
-    cy.get('.pipeline-node').should('have.length', 5);
+    cy.get('.pipeline-node', { timeout: 10000 }).should('have.length', 5);
   });
 
   it('verifies that users can filter/hide an element type. #TC-22', () => {

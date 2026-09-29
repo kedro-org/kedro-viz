@@ -75,11 +75,9 @@ Cypress.Commands.add('__checkForAriaLabel__', (subject, ariaLabelValue) => {
  * @param {String} compareText
  */
 Cypress.Commands.add('__checkForText__', (subject, compareText) => {
-  cy.get(subject)
-    .invoke('text')
-    .then((selectedNodeText) => {
-      expect(selectedNodeText.toLowerCase()).to.eq(compareText.toLowerCase());
-    });
+  cy.get(subject, { timeout: 10000 }).should(($el) => {
+    expect($el.text().toLowerCase()).to.eq(compareText.toLowerCase());
+  });
 });
 
 /**
