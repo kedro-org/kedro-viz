@@ -137,36 +137,29 @@ The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a
 
 ![Kedro-Viz backend architecture](/.github/img/backend-architecture.png)
 
-The backend of Kedro-Viz serves as the data provider and API layer that interacts with Kedro projects and manages data access for visualisations in the frontend. It offers a REST API to support data retrieval for the frontend, allowing access to pipeline structures and node-specific details. The CLI enables users to launch Kedro-Viz from the command line, while deploy and build options enable seamless sharing of pipeline visualisations on any static website hosting platform.
+The backend of Kedro-Viz is the data provider and API layer that interacts with Kedro projects and manages data access for visualisations in the frontend. It offers a REST API to support data retrieval for the frontend, giving access to pipeline structures and details about individual nodes. The CLI enables users to launch Kedro-Viz from the command line. Deploy and build options enable sharing of pipeline visualisations on any static website hosting platform.
 
-As of the "Modularity of Kedro-Viz" v1 work ([#2265](https://github.com/kedro-org/kedro-viz/issues/2265)), the backend is built around **two paths** that feed the same REST API contract. The diagram above predates this change and shows the original, single-path design (`DataAccessManager` and `Repositories` built from a live-loaded Kedro project); the sections below, and the data-flow diagram further down, describe the current v1 state.
+The backend answers its REST API from two paths, one for reading a project as data and one for reading a project as a running system. Both paths return the same response shapes, so the frontend and the rest of the API surface do not need to know which path answered a given request.
 
-### Inspection path (primary, since v1)
+### Inspection path
 
-Most requests are served from Kedro's **inspection snapshot** (`kedro.inspection.get_project_snapshot()`) — a serialisable description of a project's pipelines, nodes, datasets and parameters — rather than from a live-loaded `Pipeline`/`DataCatalog`. This is the path behind `/api/main`, `/api/pipelines/{id}` and `/api/run-status`.
+The inspection path treats a project as data. Kedro produces a snapshot of a project: a serialisable structure covering its pipelines, nodes, datasets, and parameters. The backend builds its graph, its layers, its modular pipeline tree, and its run status directly from that structure, without holding a live pipeline or catalog in memory. This is the primary path, and it answers most requests: `/api/main`, `/api/pipelines/{id}`, and `/api/run-status`.
 
-- **`VizProjectContext`** (`kedro_viz/integrations/kedro/inspection/context.py`) is the single object that owns one project's inspection snapshot and the services built on it. It is constructed once per project when the server starts, then passed explicitly into `create_project_router(context)` (`kedro_viz/api/rest/router.py`), which binds the graph and run-status routes to it. Routers receive the context as an argument rather than reaching for a process-wide global, so multiple project contexts can coexist in the same process without state leaking between them.
-- **`GraphService`** (`kedro_viz/integrations/kedro/inspection/services/graph_service.py`) is reached via `context.graph` and answers `get_pipeline_response(pipeline_id)` for both `/api/main` (no ID; falls back to the default registered pipeline) and `/api/pipelines/{id}`.
-- **`GraphBuilder`** (`kedro_viz/integrations/kedro/inspection/builders/graph_builder.py`), together with `builders/layers.py` and `builders/modular_pipelines/*`, turns the snapshot into the same `GraphAPIResponse` shape (nodes, edges, tags, layers, modular pipeline tree, selected pipeline) the frontend already consumes — the REST contract itself did not change.
-- **`RunStatusService`** (`kedro_viz/integrations/kedro/inspection/services/run_status_service.py`), reached via `context.run_status`, and `builders/run_status_builder.py` serve `/api/run-status` the same way.
-- **`node_ids.py`** keeps the existing node-ID hashing scheme compatible with the pre-v1 IDs, so node identity is stable across both paths (this matters for `/api/nodes/{id}` and run-status lookups, which are still keyed by the live path — see below).
-- **`datasource/snapshot_source.py`** loads and normalises the `ProjectSnapshot`; **`datasource/enrichment.py`** layers Viz-specific extras on top of it — file-backed stats, custom node/dataset styles, and layer overrides — that the snapshot itself doesn't carry.
+Each project served this way owns a context: an object that holds the snapshot together with the services built on it, created a single time per project at startup. Passing this context explicitly, rather than reading it from shared global state, keeps projects isolated. More than one project can be served from the same process without state from one leaking into another.
 
-### Live path (legacy, still required for some features)
+Lite mode is a variant of this same path, for projects with dependencies that cannot be imported in the current environment. Rather than requiring every dependency to be installed before a project can be visualised, lite mode mocks the missing ones and still builds a snapshot.
 
-The pre-v1 backend — `DataAccessManager` and its `Repositories` (`kedro_viz/data_access/`), fed by a live-loaded `KedroSession`/`Pipeline`/`DataCatalog` in `kedro_viz/integrations/kedro/live/`) — has not been removed. It remains the source of truth for the features the inspection snapshot does not cover yet:
+Statistics, custom styles, and layer overrides are not part of the snapshot itself. They are layered on top of it as a separate enrichment step, keeping the description Kedro produces distinct from the presentation choices Kedro-Viz adds to it.
 
-- **Node metadata** (`/api/nodes/{id}`) — task source code, dataset previews and run commands, served via `get_node_metadata_response` in `kedro_viz/api/rest/responses/nodes.py`.
-- **Static export** (`--save-file`, `kedro viz deploy`) — `save_responses.py` still builds its output via the legacy `get_pipeline_response()` in `kedro_viz/api/rest/responses/pipelines.py`, not `GraphService`.
+Node identity is kept stable across both paths, so a node built from the snapshot and a node built from a live project resolve to the same ID. This lets the frontend treat a node consistently even when its metadata is fetched from the other path, described below.
 
-Because these are the minority of requests, the live project load for them is deferred rather than paid upfront: **`DeferredDataLoader`** (`kedro_viz/integrations/kedro/live/deferred_loader.py`) runs the live load once, on first use, so a session that never asks for node metadata or a static export never pays for booting a live `KedroSession` at all. A failed load is not retried; every subsequent call raises `DeferredDataLoadError` with a stable, user-facing message instead of repeating an already-failed (and potentially expensive) load.
+### Live path
 
-### Remaining legacy consumers
+Kedro can also be loaded as a running system: a session, a pipeline, and a catalog, held in memory the way they exist when a project runs. The live path uses this route, and is the source of truth for the handful of features that need something the snapshot does not carry. That includes the source code and run commands behind node metadata, dataset previews, and the static output produced for deploy and save file.
 
-Two consumers bypass the REST API entirely and call the live path's Python functions directly, rather than going through `VizProjectContext`:
+Because most requests are answered by the inspection path, loading a live project is deferred until a request actually needs one. A project that never asks for node metadata or a static export never pays the cost of loading a live project. If a load fails, later requests are told about that same failure rather than retrying a load expected to fail again.
 
-- **NotebookVisualizer** (`kedro_viz/integrations/notebook/data_loader.py`) calls `populate_data`/`DataAccessManager` directly to render a pipeline passed in-memory from a notebook.
-- **VSCode extension**, via `get_kedro_project_json_data` in `pipelines.py`, which also calls the legacy `get_pipeline_response()`.
+A notebook integration and the VSCode extension also read a project this way. Both call into the live path directly, to render a pipeline without going through the REST API at all.
 
 ### Backend data flow
 
@@ -177,17 +170,17 @@ flowchart TB
         Session["KedroSession / Pipeline / DataCatalog"]
     end
 
-    subgraph Inspection["Inspection path (primary)"]
+    subgraph Inspection["Inspection path"]
         Context["VizProjectContext"]
         GraphSvc["GraphService + GraphBuilder"]
         RunSvc["RunStatusService"]
         NewAPI["/api/main<br/>/api/pipelines/&#123;id&#125;<br/>/api/run-status"]
     end
 
-    subgraph Live["Live path (legacy, deferred)"]
+    subgraph Live["Live path"]
         Deferred["DeferredDataLoader<br/>loads on first use only"]
         Manager["DataAccessManager<br/>+ Repositories"]
-        LegacyConsumers["/api/nodes/&#123;id&#125;<br/>--save-file / deploy<br/>NotebookVisualizer, VSCode"]
+        LiveConsumers["/api/nodes/&#123;id&#125;<br/>--save-file / deploy<br/>NotebookVisualizer, VSCode"]
     end
 
     UI["React UI / frontend consumers"]
@@ -200,19 +193,8 @@ flowchart TB
     NewAPI --> UI
 
     Session --> Deferred
-    LegacyConsumers --> Deferred
+    LiveConsumers --> Deferred
     Deferred --> Manager
-    Manager --> LegacyConsumers
-    LegacyConsumers --> UI
+    Manager --> LiveConsumers
+    LiveConsumers --> UI
 ```
-
-### What's next
-
-This dual-path design is an intentional checkpoint for v1, not the final architecture. Follow-up work is tracked in:
-
-- [#2723](https://github.com/kedro-org/kedro-viz/issues/2723) — serve task source metadata from the inspection snapshot, so `/api/nodes/{id}` no longer needs the live path.
-- [#2757](https://github.com/kedro-org/kedro-viz/issues/2757) — migrate NotebookVisualizer and VSCode off live objects and onto the inspection snapshot.
-- [#2724](https://github.com/kedro-org/kedro-viz/issues/2724) — remove the legacy graph-building backend (`DataAccessManager`, its `Repositories`, and the legacy `get_pipeline_response()`) once nothing depends on it.
-- [#2688](https://github.com/kedro-org/kedro-viz/issues/2688) — remove the flowchart Pydantic models that depend on live Kedro objects, once #2724 lands.
-
-Until those land, expect both paths to keep coexisting: the inspection path for the main graph and run status, and the live path — deferred, but still fully present — for node metadata, static export, and the notebook/VSCode integrations.
