@@ -1,5 +1,4 @@
-ipython==7.0.0; python_version < '3.11'
-ipython==8.10.0; python_version >= '3.11'
+ipython==8.10.0
 fastapi==0.100.0
 fsspec==2021.4; python_version < '3.12'
 fsspec==2021.06.01; python_version >= '3.12'
