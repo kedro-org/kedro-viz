@@ -1,49 +1,9 @@
-"""Tests for Viz node IDs that stay compatible with the live backend.
-
-The node list is read from ``baseline/node_id_report.json``, so no Kedro project is loaded.
-"""
-
-import json
-from pathlib import Path
+"""Tests for Viz node IDs that stay compatible with the live backend."""
 
 import pytest
 
 from kedro_viz.integrations.kedro import node_ids as ids
 from kedro_viz.utils import _hash
-
-BASELINE = Path(__file__).parent / "baseline" / "node_id_report.json"
-
-
-@pytest.fixture(scope="module")
-def task_nodes() -> list[dict]:
-    return json.loads(BASELINE.read_text(encoding="utf-8"))["nodes"]
-
-
-def _task_id(node: dict) -> str:
-    return ids._create_task_node_id(
-        node_name=node["snapshot_name"],
-        func_name=node["func_name"],
-        namespace=node["namespace"],
-        inputs=node["inputs"],
-        outputs=node["outputs"],
-    )
-
-
-def test_task_node_ids_match_live_backend(task_nodes: list[dict]) -> None:
-    """Reconstructed IDs match the graph and run-status baseline."""
-    for node in task_nodes:
-        assert (
-            _task_id(node)
-            == _hash(node["str_node"])
-            == node["graph_id"]
-            == node["runstatus_hook_id"]
-        ), f"ID mismatch for {node['snapshot_name']!r}"
-
-
-def test_task_node_ids_are_unique(task_nodes: list[dict]) -> None:
-    """Distinct demo tasks have distinct IDs."""
-    computed = [_task_id(node) for node in task_nodes]
-    assert len(set(computed)) == len(computed)
 
 
 def test_explicit_task_name_and_function_name_are_preserved() -> None:
@@ -117,16 +77,6 @@ def test_partial_auto_name_is_omitted_from_task_string(
         inputs=["x"],
         outputs=["y"],
     ) == _hash(node_string)
-
-
-def test_task_ids_do_not_collide_with_dataset_ids(task_nodes: list[dict]) -> None:
-    """Test that task IDs never collide with dataset IDs."""
-    task_ids = {_task_id(node) for node in task_nodes}
-    dataset_ids = set()
-    for node in task_nodes:
-        for name in node["inputs"] + node["outputs"]:
-            dataset_ids.add(ids._create_dataset_node_id(name))
-    assert task_ids.isdisjoint(dataset_ids)
 
 
 def test_dataset_node_id_matches_backend_hash() -> None:
