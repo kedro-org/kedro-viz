@@ -89,22 +89,19 @@ describe('Flowchart Menu', () => {
   it('verifies that users can highlight a node/dataset/parameters from the menu by hovering on their name. #TC-19', () => {
     const nodeToHighlightText = 'Companies';
 
-    // Wait for the flowchart to finish its initial draw before interacting with it
-    cy.__waitForPageLoad__(() => {
-      // Action
-      cy.get(
-        `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=node-list-tree-item--row--${nodeToHighlightText}]`
-      )
-        .should('exist')
-        .as('nodeToHighlight');
-      cy.__hover__('@nodeToHighlight');
+    // Action
+    cy.get(
+      `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=node-list-tree-item--row--${nodeToHighlightText}]`
+    )
+      .should('exist')
+      .as('nodeToHighlight');
+    cy.__hover__('@nodeToHighlight');
 
-      // Assert after action
-      cy.__checkForText__(
-        '.pipeline-node--active > .pipeline-node__text',
-        nodeToHighlightText
-      );
-    });
+    // Assert after action
+    cy.__checkForText__(
+      '.pipeline-node--active > .pipeline-node__text',
+      nodeToHighlightText
+    );
   });
 
   it('verifies that users can hide/show a node/dataset/parameters in the flowchart, by clicking on the eye icon. #TC-20', () => {
@@ -133,34 +130,30 @@ describe('Flowchart Menu', () => {
   it('verifies that users can select and only show a node/dataset/parameters in the flowchart, by clicking on the focus mode. #TC-21', () => {
     const nodeToFocusText = 'feature_engineering';
 
-    // Wait for the flowchart's initial draw to settle before interacting with it
-    cy.__waitForPageLoad__(() => {
-      // Assert before action
-      cy.get('.pipeline-node', { timeout: 5000 })
-        .should('exist')
-        .and('not.have.length', 5);
+    // Assert before action
+    cy.get('.pipeline-node', { timeout: 5000 })
+      .should('exist')
+      .and('not.have.length', 5);
 
-      // Action
-      cy.get(`[for=feature_engineering-focus]`).click();
+    // Action
+    cy.get(
+      `[for=feature_engineering-focus]`
+    ).click();
 
-      // The node list re-renders via a D3 transition (see DURATION in
-      // src/components/draw/utils/config.js), so give it time to finish
-      // exiting/entering nodes before counting them, rather than racing it.
-      cy.wait(1000);
-
-      // Assert after action
-      cy.get('.pipeline-node--active > .pipeline-node__text')
-        .invoke('text')
-        .then((focusedNodesText) =>
-          expect(focusedNodesText.toLowerCase()).to.contains(nodeToFocusText)
-        );
-      cy.get('.pipeline-node--active > .pipeline-node__text').should(
-        'have.length',
-        5
+    // Assert after action
+    cy.get('.pipeline-node--active > .pipeline-node__text')
+      .invoke('text')
+      .then((focusedNodesText) =>
+        expect(focusedNodesText.toLowerCase()).to.contains(
+          nodeToFocusText
+        )
       );
+    cy.get('.pipeline-node--active > .pipeline-node__text').should(
+      'have.length',
+      5
+    );
 
-      cy.get('.pipeline-node').should('have.length', 5);
-    });
+    cy.get('.pipeline-node').should('have.length', 5);
   });
 
   it('verifies that users can filter/hide an element type. #TC-22', () => {
