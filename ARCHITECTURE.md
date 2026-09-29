@@ -6,7 +6,7 @@ For further information, see also:
 
 - [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
 - [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
-- [Kedro-Viz Architecture Diagram](https://miro.com/app/board/uXjVKhNg1RE=/?moveToWidget=3458764606468376036&cot=10), to see a high level overview of both back-end and front-end and how they are connected.
+- [Kedro-Viz Architecture Diagram](https://miro.com/app/board/uXjVKhNg1RE=/?moveToWidget=3458764685450467670&cot=14), to see a high level overview of both back-end and front-end and how they are connected.
 
 ## High-level Overview
 
