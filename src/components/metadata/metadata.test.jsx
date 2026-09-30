@@ -350,7 +350,7 @@ describe('MetaData', () => {
       ).toBeTruthy();
       expect(
         container.querySelector('[data-test="metadata-stats-label-partitions"]')
-      ).toBeTruthy();
+      ).toBeNull();
 
       expect(
         parseInt(
@@ -368,6 +368,27 @@ describe('MetaData', () => {
         container.querySelector('[data-test="metadata-stats-value-file_size"]')
           .textContent
       ).toEqual(formatFileSize(nodeDataStats.stats.file_size));
+    });
+
+    it('shows the partitions statistic only when present', () => {
+      const { container } = renderWithState({
+        nodeId: modelInputDatasetNodeId,
+        mockMetadata: {
+          ...nodeDataStats,
+          stats: { ...nodeDataStats.stats, partitions: 2 },
+        },
+      });
+
+      expect(
+        container.querySelector('[data-test="metadata-stats-label-partitions"]')
+      ).toBeTruthy();
+      expect(
+        parseInt(
+          container.querySelector(
+            '[data-test="metadata-stats-value-partitions"]'
+          ).textContent
+        )
+      ).toEqual(2);
     });
 
     describe('Transcoded dataset nodes', () => {

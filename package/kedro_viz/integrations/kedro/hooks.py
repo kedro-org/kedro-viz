@@ -121,8 +121,20 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
             elif isinstance(data, dict) and data:
-                if all(isinstance(value, pd.DataFrame) for value in data.values()):
-                    self._stats[stats_dataset_name]["partitions"] = len(data)
+                materialised = all(
+                    isinstance(value, pd.DataFrame) for value in data.values()
+                )
+                # PartitionedDataset returns lazy partition loaders (callables)
+                # which must not be invoked, so their rows/columns are unknown.
+                lazy = all(callable(value) for value in data.values())
+                if not (materialised or lazy):
+                    return
+
+                # Reset so stale rows/columns from a previous shape are dropped.
+                self._stats[stats_dataset_name] = {}
+                self._stats[stats_dataset_name]["partitions"] = len(data)
+
+                if materialised:
                     self._stats[stats_dataset_name]["rows"] = sum(
                         int(value.shape[0]) for value in data.values()
                     )
@@ -130,12 +142,6 @@ class DatasetStatsHook:
                     column_counts = {int(value.shape[1]) for value in data.values()}
                     if len(column_counts) == 1:
                         self._stats[stats_dataset_name]["columns"] = column_counts.pop()
-                elif all(callable(value) for value in data.values()):
-                    # PartitionedDataset returns lazy partition loaders; only count
-                    # them so stats collection never materialises the partitions.
-                    self._stats[stats_dataset_name]["partitions"] = len(data)
-                else:
-                    return
 
             else:
                 return

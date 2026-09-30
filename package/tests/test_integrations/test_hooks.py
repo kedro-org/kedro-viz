@@ -183,6 +183,55 @@ def test_create_dataset_stats_for_partitioned_dataset(
     assert stats["file_size"] == expected_file_size
 
 
+def test_create_dataset_stats_resets_stale_columns(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {
+            "part_1": example_data_frame[["id"]],
+            "part_2": example_data_frame[["id"]],
+        },
+    )
+    assert example_dataset_stats_hook_obj._stats["companies"]["columns"] == 1
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "companies",
+        {
+            "part_1": example_data_frame[["id"]],
+            "part_2": example_data_frame,
+        },
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["companies"]
+    assert stats["partitions"] == 2
+    assert "columns" not in stats
+
+
+def test_create_dataset_stats_resets_when_lazy(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {"part_1": example_data_frame, "part_2": example_data_frame},
+    )
+    assert "rows" in example_dataset_stats_hook_obj._stats["companies"]
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "companies",
+        {"part_1": _loader, "part_2": _loader},
+    )
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {"partitions": 2}
+
+
 @pytest.mark.parametrize("data", [{}, [1, 2, 3], "not_a_dataframe", {"a": 1}])
 def test_create_dataset_stats_unsupported_data(
     data, example_dataset_stats_hook_obj, example_catalog
