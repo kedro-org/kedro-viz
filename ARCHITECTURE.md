@@ -159,9 +159,9 @@ Kedro can also be loaded as a running system: a session, a pipeline, and a catal
 
 Because most requests are answered by the inspection path, loading a live project inside the running server is deferred until a request actually needs one. Node metadata, `--save-file`, and deploying from within the running UI all wait until first use this way. A project that never asks for any of them never pays the cost of loading a live project. If a load fails, later requests are told about that same failure rather than retrying a load expected to fail again.
 
-One exception: when hooks are enabled, the backend loads the live catalog and pipelines at startup anyway, to capture any layers a hook modifies. Only the later step, building the repositories from that catalog, still waits until something needs them.
+One exception: when hooks are enabled, the backend loads the live catalog and pipelines at startup anyway, to capture any layers a hook modifies. The later step, building the repositories from that catalog, still waits until something needs them.
 
-`kedro viz build` and `kedro viz deploy`, run from the command line, reach that same live state a different way. Each runs in a process of its own, spun up for that single command, and loads the project directly, rather than waiting on the deferred load of the running server. A notebook integration and the VSCode extension work the same way, loading a project directly in their own process to render a pipeline without going through the REST API at all.
+`kedro viz build` and `kedro viz deploy`, run from the command line, reach that same live state a different way. Each runs in a process of its own, spun up for that single command, and loads the project directly, rather than waiting on the deferred load of the running server. A notebook integration and the VSCode extension work the same way: each loads a project directly in its own process to render a pipeline without the REST API.
 
 ### Backend data flow
 
