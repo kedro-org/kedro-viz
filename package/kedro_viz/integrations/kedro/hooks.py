@@ -62,7 +62,7 @@ class DatasetStatsHook:
             data: the actual data that was saved to the catalog.
         """
 
-        self.create_dataset_stats(dataset_name, data)
+        self.create_dataset_stats(dataset_name, data, on_save=True)
 
     @hook_impl
     def after_pipeline_run(self):
@@ -95,16 +95,10 @@ class DatasetStatsHook:
                 "Unable to write dataset statistics for the pipeline: %s", exc
             )
 
-    def create_dataset_stats(self, dataset_name: str, data: Any):
+    def create_dataset_stats(self, dataset_name: str, data: Any, on_save: bool = False):
         """Helper method to create dataset statistics.
-        Currently supports (pd.DataFrame) dataset instances, dictionaries of
-        (pd.DataFrame) instances such as multi-sheet Excel datasets, and
-        dictionaries of lazy partition loaders returned by partitioned datasets
-        (PartitionedDataset/IncrementalDataset). For materialised dictionaries
-        the number of partitions/sheets, the total number of rows and, when
-        every partition/sheet has the same number of columns, the number of
-        columns are reported. For lazily loaded partitions the loaders are never
-        invoked, so only the number of partitions is reported.
+        Currently supports (pd.DataFrame) dataset instances and dictionaries
+        of (pd.DataFrame) instances or lazy partition loaders.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -115,10 +109,13 @@ class DatasetStatsHook:
             import pandas as pd
 
             stats_dataset_name = self.get_stats_dataset_name(dataset_name)
+            is_lazy = False
 
             if isinstance(data, pd.DataFrame):
-                self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
-                self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
+                self._stats[stats_dataset_name] = {
+                    "rows": int(data.shape[0]),
+                    "columns": int(data.shape[1]),
+                }
 
             elif isinstance(data, dict) and data:
                 materialised = all(
@@ -129,6 +126,8 @@ class DatasetStatsHook:
                 lazy = all(callable(value) for value in data.values())
                 if not (materialised or lazy):
                     return
+
+                is_lazy = lazy
 
                 # Reset so stale rows/columns from a previous shape are dropped.
                 self._stats[stats_dataset_name] = {}
@@ -148,7 +147,7 @@ class DatasetStatsHook:
 
             current_dataset = self.datasets.get(dataset_name)
 
-            if current_dataset:
+            if current_dataset and not (on_save and is_lazy):
                 dataset_file_size = self.get_file_size(current_dataset)
                 if dataset_file_size:
                     self._stats[stats_dataset_name]["file_size"] = dataset_file_size
@@ -197,6 +196,8 @@ class DatasetStatsHook:
                 return None
 
             if fs.isdir(path_in_fs):
+                if "file" not in fs.protocol and "local" not in fs.protocol:
+                    return None
                 return fs.du(path_in_fs, total=True)
 
             return fs.size(path_in_fs)

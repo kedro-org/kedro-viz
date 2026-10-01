@@ -145,6 +145,29 @@ def test_after_dataset_saved_with_dataframe_dict(
     assert stats["file_size"] == 10
 
 
+def test_after_dataset_saved_with_lazy_dataframe_dict_skips_file_size(
+    mocker, example_dataset_stats_hook_obj, example_catalog
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    mock_get_file_size = mocker.Mock(return_value=10)
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        new=mock_get_file_size,
+    )
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "model_inputs",
+        {"part_1": _loader, "part_2": _loader},
+    )
+
+    assert example_dataset_stats_hook_obj._stats["model_inputs"] == {"partitions": 2}
+    mock_get_file_size.assert_not_called()
+
+
 def test_after_dataset_loaded_with_dataframe_dict_mismatched_columns(
     example_dataset_stats_hook_obj, example_catalog, example_data_frame
 ):
@@ -230,6 +253,25 @@ def test_create_dataset_stats_resets_when_lazy(
     )
 
     assert example_dataset_stats_hook_obj._stats["companies"] == {"partitions": 2}
+
+
+def test_create_dataset_stats_resets_when_dataframe(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies@pandas1",
+        {"part_1": example_data_frame, "part_2": example_data_frame},
+    )
+    assert "partitions" in example_dataset_stats_hook_obj._stats["companies"]
+
+    example_dataset_stats_hook_obj.after_dataset_saved("companies", example_data_frame)
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": int(example_data_frame.shape[0]),
+        "columns": int(example_data_frame.shape[1]),
+    }
 
 
 @pytest.mark.parametrize("data", [{}, [1, 2, 3], "not_a_dataframe", {"a": 1}])
@@ -375,3 +417,22 @@ def test_get_file_size_directory_with_public_path(
     assert (
         example_dataset_stats_hook_obj.get_file_size(mock_dataset) == expected_file_size
     )
+
+
+def test_get_file_size_directory_remote(example_dataset_stats_hook_obj, mocker):
+    class MockDataset:
+        def __init__(self):
+            self._path = "s3://bucket/partitioned"
+
+    mock_fs = mocker.Mock()
+    mock_fs.exists.return_value = True
+    mock_fs.isdir.return_value = True
+    mock_fs.protocol = "s3"
+
+    mocker.patch(
+        "fsspec.core.url_to_fs",
+        return_value=(mock_fs, "bucket/partitioned"),
+    )
+
+    assert example_dataset_stats_hook_obj.get_file_size(MockDataset()) is None
+    mock_fs.du.assert_not_called()
