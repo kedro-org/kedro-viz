@@ -156,7 +156,7 @@
     "babel-plugin-transform-remove-imports": "^1.7.0",
     "canvas": "^3.2.0",
     "cross-env": "7.0.3",
-    "css-loader": "^6.4.0",
+    "css-loader": "^7.1.5",
     "cypress": "^13.3.0",
     "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
