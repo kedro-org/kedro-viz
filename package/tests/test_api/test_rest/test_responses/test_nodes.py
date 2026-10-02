@@ -3,6 +3,7 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
+from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
 from kedro_viz.models.flowchart.nodes import TaskNode
 from tests.test_api.test_rest.test_responses.assert_helpers import (
     assert_example_transcoded_data,
@@ -35,6 +36,23 @@ class TestNodeMetadataEndpoint:
     def test_node_not_exist(self, client):
         response = client.get("/api/nodes/foo")
         assert response.status_code == 404
+
+    def test_node_metadata_returns_503_when_the_deferred_load_failed(self, client):
+        """A failed deferred load surfaces as a clear, structured error to API
+        consumers, not an opaque 500 -- and isn't silently retried on this request."""
+        deferred_data_loader.configure(
+            lambda: (_ for _ in ()).throw(RuntimeError("broken"))
+        )
+        try:
+            response = client.get("/api/nodes/782e4a43")
+        finally:
+            deferred_data_loader.reset()
+
+        assert response.status_code == 503
+        assert (
+            "Node metadata is temporarily unavailable because the live "
+            "project failed to load"
+        ) in response.json()["message"]
 
     def test_task_node_metadata(self, client):
         response = client.get("/api/nodes/782e4a43")

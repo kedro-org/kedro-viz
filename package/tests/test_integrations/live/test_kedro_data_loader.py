@@ -1,4 +1,4 @@
-"""Tests for kedro data loader functions."""
+"""Tests for Kedro data loading and file-backed node extras."""
 
 import json
 import logging
@@ -7,10 +7,12 @@ from unittest.mock import patch
 import pytest
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro.data_loader import (
-    _create_node_extras_mapping,
+from kedro_viz.integrations.kedro.inspection.datasource.enrichment import (
     _get_dataset_stats,
     _get_node_styles,
+)
+from kedro_viz.integrations.kedro.live.data_loader import (
+    _create_node_extras_mapping,
 )
 
 

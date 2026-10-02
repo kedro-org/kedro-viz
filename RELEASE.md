@@ -5,9 +5,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 12.6.0
+# Release 13.0.0
+
+## Major features and improvements
+ - Migrate the backend graph, modular pipelines, layers, parameters, and run status to be derived from Kedro's new Inspection API instead of live pipeline/catalog introspection. (#2782)
 
 ## Bug fixes and other changes
+ - Bump minimum `kedro` version to `>=1.6.0`. (#2782)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 
 

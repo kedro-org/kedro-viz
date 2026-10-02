@@ -62,6 +62,10 @@ class LazyDefaultGroup(click.Group):
         return super().parse_args(ctx, args)
 
     def resolve_command(self, ctx: click.Context, args):
+        # Click mutates `args` in place here when falling back to the default
+        # command, so keep a copy to use below.
+        original_args = list(args)
+
         # Attempt to resolve the command using the parent class method
         try:
             cmd_name, cmd, args = super().resolve_command(ctx, args)
@@ -71,5 +75,5 @@ class LazyDefaultGroup(click.Group):
                 # No command found, use the default command
                 default_cmd = self.get_command(ctx, self.default_cmd_name)
                 if default_cmd:
-                    return default_cmd.name, default_cmd, args
+                    return default_cmd.name, default_cmd, original_args
             raise exc

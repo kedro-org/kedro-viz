@@ -1,5 +1,4 @@
-import asyncio
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -95,29 +94,23 @@ def test_metadata(
     assert response.json() == expected_response
 
 
-def test_get_run_status_exception_handling():
-    """Test exception handling in get_last_run_status function."""
-    from kedro_viz.api.rest.router import get_last_run_status
+def test_get_run_status_exception_handling(client, mocker):
+    """Preserve the HTTP error response and logging for unexpected service failures."""
+    error = RuntimeError("Test exception")
+    mocker.patch(
+        "kedro_viz.integrations.kedro.inspection.services.run_status_service."
+        "RunStatusService.get_run_status_response",
+        side_effect=error,
+    )
+    logger = mocker.patch("kedro_viz.api.rest.router.logger")
 
-    # Mock get_run_status_response to raise an exception
-    with patch(
-        "kedro_viz.api.rest.router.get_run_status_response"
-    ) as mock_get_run_status:
-        with patch("kedro_viz.api.rest.router.logger") as mock_logger:
-            mock_get_run_status.side_effect = Exception("Test exception")
+    response = client.get("/api/run-status")
 
-            # Call the function directly
-            result = asyncio.run(get_last_run_status())
-
-            # Verify that the exception was logged
-            mock_logger.exception.assert_called_once_with(
-                "An exception occurred while getting run status: %s",
-                mock_get_run_status.side_effect,
-            )
-
-            # Verify that a JSONResponse with error was returned
-            assert result.status_code == 500
-            assert result.body == b'{"message":"Failed to get run status data"}'
+    assert response.status_code == 500
+    assert response.json() == {"message": "Failed to get run status data"}
+    logger.exception.assert_called_once_with(
+        "An exception occurred while getting run status: %s", error
+    )
 
 
 def test_version(client):
