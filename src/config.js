@@ -128,7 +128,7 @@ export const errorMessages = {
   pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
 };
 
-export const datasetStatLabels = ['rows', 'columns', 'file_size'];
+export const datasetStatLabels = ['partitions', 'rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
 
