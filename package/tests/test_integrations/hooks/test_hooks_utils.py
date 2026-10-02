@@ -148,6 +148,13 @@ class TestRunDefaults:
                 {"runner": "kedro.runner.sequential_runner.SequentialRunner object"},
                 True,
             ),
+            (
+                {
+                    "runner": "<kedro.runner.sequential_runner.SequentialRunner object at 0x103077850>"
+                },
+                True,
+            ),
+            ({"runner": "SequentialRunner"}, True),
             ({"runner": "ParallelRunner"}, False),
             ({"runner": "ThreadRunner"}, False),
             ({"runner": 123}, False),

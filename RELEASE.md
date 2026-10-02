@@ -12,6 +12,8 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Bump minimum `kedro` version to `>=1.6.0`. (#2782)
+ - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+
 
 # Release 12.5.0
 
