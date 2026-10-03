@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+ - Fix the broken banner image in `README.md`, which is also the README shown on PyPI. (#2803)
 
 
 # Release 12.5.0
