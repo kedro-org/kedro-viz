@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 12.6.0
+
+## Bug fixes and other changes
+ - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+
+
 # Release 12.5.0
 
 ## Major features and improvements
