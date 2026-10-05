@@ -8,6 +8,7 @@ Please follow the established format:
 # Release 12.6.0
 
 ## Bug fixes and other changes
+ - Remove the temporary `chardet<7` pin from the test requirements now that `binaryornot` 0.6.0 no longer uses `chardet`. (#2804)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 
 
