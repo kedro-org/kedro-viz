@@ -34,7 +34,6 @@ docs = [
    "mkdocstrings>=0.29.1",
    "mkdocstrings-python>=1.0.2",  # Zensical's mkdocstrings integration needs >= 1.0.2.
    "linkchecker>=10.2.1",
-   "griffe",  # Required by mkdocstrings-python for API documentation generation.
 ]
 aws = ["s3fs>=2021.4"]
 azure = ["adlfs>=2021.4"]
