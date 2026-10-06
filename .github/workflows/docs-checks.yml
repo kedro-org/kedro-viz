@@ -8,7 +8,7 @@ on:
       - '.github/styles/**'
       - '.github/workflows/docs-checks.yml'
       - 'Makefile'
-      - 'mkdocs.yml'
+      - 'zensical.toml'
       - 'package/pyproject.toml'
 
 concurrency:
