@@ -1,8 +1,9 @@
 import json
 from collections import defaultdict
 
+import fsspec
 import pytest
-from kedro.io import MemoryDataset
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import get_filepath_str
 
 
@@ -80,6 +81,208 @@ def test_after_dataset_saved(
         example_data_frame.shape[1]
     )
     assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["file_size"] == 10
+
+
+def test_after_dataset_loaded_with_dataframe_dict(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {"part_1": example_data_frame, "part_2": example_data_frame},
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["companies"]
+    assert stats["partitions"] == 2
+    assert stats["rows"] == int(example_data_frame.shape[0]) * 2
+    assert stats["columns"] == int(example_data_frame.shape[1])
+
+
+def test_after_dataset_loaded_with_lazy_dataframe_dict(
+    example_dataset_stats_hook_obj, example_catalog
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {
+            "part_1": _loader,
+            "part_2": _loader,
+        },
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["companies"]
+    assert stats["partitions"] == 2
+    assert "rows" not in stats
+    assert "columns" not in stats
+
+
+def test_after_dataset_saved_with_dataframe_dict(
+    mocker, example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    mock_get_file_size = mocker.Mock()
+    mock_get_file_size.return_value = 10
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        new=mock_get_file_size,
+    )
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "model_inputs",
+        {"sheet_1": example_data_frame, "sheet_2": example_data_frame},
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["model_inputs"]
+    assert stats["partitions"] == 2
+    assert stats["rows"] == int(example_data_frame.shape[0]) * 2
+    assert stats["columns"] == int(example_data_frame.shape[1])
+    assert stats["file_size"] == 10
+
+
+def test_after_dataset_saved_with_lazy_dataframe_dict_skips_file_size(
+    mocker, example_dataset_stats_hook_obj, example_catalog
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    mock_get_file_size = mocker.Mock(return_value=10)
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        new=mock_get_file_size,
+    )
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "model_inputs",
+        {"part_1": _loader, "part_2": _loader},
+    )
+
+    assert example_dataset_stats_hook_obj._stats["model_inputs"] == {"partitions": 2}
+    mock_get_file_size.assert_not_called()
+
+
+def test_after_dataset_loaded_with_dataframe_dict_mismatched_columns(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {
+            "part_1": example_data_frame,
+            "part_2": example_data_frame[["id"]],
+        },
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["companies"]
+    assert stats["partitions"] == 2
+    assert "columns" not in stats
+
+
+def test_create_dataset_stats_for_partitioned_dataset(
+    example_dataset_stats_hook_obj, example_partitioned_dataset
+):
+    catalog = DataCatalog({"partitioned_data": example_partitioned_dataset})
+    example_dataset_stats_hook_obj.after_catalog_created(catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "partitioned_data", example_partitioned_dataset.load()
+    )
+
+    fs, path = fsspec.core.url_to_fs(example_partitioned_dataset._path)
+    expected_file_size = sum(fs.size(filepath) for filepath in fs.find(path))
+
+    stats = example_dataset_stats_hook_obj._stats["partitioned_data"]
+    assert stats["partitions"] == 2
+    assert "rows" not in stats
+    assert "columns" not in stats
+    assert stats["file_size"] == expected_file_size
+
+
+def test_create_dataset_stats_resets_stale_columns(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {
+            "part_1": example_data_frame[["id"]],
+            "part_2": example_data_frame[["id"]],
+        },
+    )
+    assert example_dataset_stats_hook_obj._stats["companies"]["columns"] == 1
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "companies",
+        {
+            "part_1": example_data_frame[["id"]],
+            "part_2": example_data_frame,
+        },
+    )
+
+    stats = example_dataset_stats_hook_obj._stats["companies"]
+    assert stats["partitions"] == 2
+    assert "columns" not in stats
+
+
+def test_create_dataset_stats_resets_when_lazy(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies",
+        {"part_1": example_data_frame, "part_2": example_data_frame},
+    )
+    assert "rows" in example_dataset_stats_hook_obj._stats["companies"]
+
+    def _loader():
+        raise AssertionError("lazy partition loaders must not be invoked")
+
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "companies",
+        {"part_1": _loader, "part_2": _loader},
+    )
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {"partitions": 2}
+
+
+def test_create_dataset_stats_resets_when_dataframe(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies@pandas1",
+        {"part_1": example_data_frame, "part_2": example_data_frame},
+    )
+    assert "partitions" in example_dataset_stats_hook_obj._stats["companies"]
+
+    example_dataset_stats_hook_obj.after_dataset_saved("companies", example_data_frame)
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": int(example_data_frame.shape[0]),
+        "columns": int(example_data_frame.shape[1]),
+    }
+
+
+@pytest.mark.parametrize("data", [{}, [1, 2, 3], "not_a_dataframe", {"a": 1}])
+def test_create_dataset_stats_unsupported_data(
+    data, example_dataset_stats_hook_obj, example_catalog
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    example_dataset_stats_hook_obj.after_dataset_loaded("companies", data)
+
+    assert "companies" not in example_dataset_stats_hook_obj._stats
 
 
 @pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
@@ -168,6 +371,7 @@ def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
     # Mock fs.exists to return True
     mock_fs = mocker.Mock()
     mock_fs.exists.return_value = True
+    mock_fs.isdir.return_value = False
     mock_fs.size.return_value = 456
 
     mocker.patch(
@@ -178,3 +382,57 @@ def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
     # Call get_file_size and expect it to return the mocked file size
     file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
     assert file_size == 456
+
+
+def test_get_file_size_partitioned_dataset(
+    example_dataset_stats_hook_obj, example_partitioned_dataset
+):
+    fs, path = fsspec.core.url_to_fs(example_partitioned_dataset._path)
+    expected_file_size = sum(fs.size(filepath) for filepath in fs.find(path))
+
+    assert (
+        example_dataset_stats_hook_obj.get_file_size(example_partitioned_dataset)
+        == expected_file_size
+    )
+
+
+def test_get_file_size_directory_with_public_path(
+    example_dataset_stats_hook_obj, tmp_path
+):
+    class MockDataset:
+        def __init__(self, path):
+            self.path = path
+
+    directory = tmp_path / "partitioned"
+    directory.mkdir()
+    (directory / "part_1.csv").write_text("a,b\n1,2\n", encoding="utf8")
+    (directory / "part_2.csv").write_text("a,b\n3,4\n", encoding="utf8")
+
+    mock_dataset = MockDataset(directory.as_posix())
+    expected_file_size = sum(
+        (directory / filename).stat().st_size
+        for filename in ("part_1.csv", "part_2.csv")
+    )
+
+    assert (
+        example_dataset_stats_hook_obj.get_file_size(mock_dataset) == expected_file_size
+    )
+
+
+def test_get_file_size_directory_remote(example_dataset_stats_hook_obj, mocker):
+    class MockDataset:
+        def __init__(self):
+            self._path = "s3://bucket/partitioned"
+
+    mock_fs = mocker.Mock()
+    mock_fs.exists.return_value = True
+    mock_fs.isdir.return_value = True
+    mock_fs.protocol = "s3"
+
+    mocker.patch(
+        "fsspec.core.url_to_fs",
+        return_value=(mock_fs, "bucket/partitioned"),
+    )
+
+    assert example_dataset_stats_hook_obj.get_file_size(MockDataset()) is None
+    mock_fs.du.assert_not_called()

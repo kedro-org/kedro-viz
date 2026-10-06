@@ -15,6 +15,7 @@ Please follow the established format:
 
 ## Major features and improvements
  - Add a help menu to the global toolbar linking to Kedro-Viz support channels. (#2756)
+ - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 ## Bug fixes and other changes
  - Fix version and run-status API requests for embedded and static Kedro-Viz. (#2753)
