@@ -3,12 +3,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.kedro.lite.lite_parser import LiteParser
 
 
 @pytest.fixture
 def mock_spinner():
-    with patch("kedro_viz.integrations.kedro.lite_parser.Spinner") as mock:
+    with patch("kedro_viz.integrations.kedro.lite.lite_parser.Spinner") as mock:
         mock.return_value.__enter__.return_value = mock
         yield mock
 
@@ -136,7 +136,7 @@ class TestLiteParser:
         module_name = "importable_module"
         missing_dependencies = set()
         mocker.patch(
-            "kedro_viz.integrations.kedro.lite_parser.LiteParser._is_module_importable",
+            "kedro_viz.integrations.kedro.lite.lite_parser.LiteParser._is_module_importable",
             return_value=True,
         )
 
@@ -150,7 +150,7 @@ class TestLiteParser:
         module_name = "importable_module.non_importable_part"
         missing_dependencies = set()
         mocker.patch(
-            "kedro_viz.integrations.kedro.lite_parser.LiteParser._is_module_importable",
+            "kedro_viz.integrations.kedro.lite.lite_parser.LiteParser._is_module_importable",
             side_effect=lambda part: part == "importable_module",
         )
 
@@ -164,7 +164,7 @@ class TestLiteParser:
     def test_get_unresolved_imports(self, lite_parser, sample_project_path, mocker):
         file_path = Path(sample_project_path / "mock_spaceflights/data_processing.py")
         mock_populate = mocker.patch(
-            "kedro_viz.integrations.kedro.lite_parser.LiteParser._populate_missing_dependencies"
+            "kedro_viz.integrations.kedro.lite.lite_parser.LiteParser._populate_missing_dependencies"
         )
 
         lite_parser._get_unresolved_imports(file_path)

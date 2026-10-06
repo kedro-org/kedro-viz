@@ -2,7 +2,7 @@
 
 import logging
 from abc import ABC
-from typing import Any, Dict, Optional, Set, Union, cast
+from typing import Any, Dict, Optional, Set, Union
 
 from fastapi.encoders import jsonable_encoder
 from kedro.io.core import AbstractDataset, DatasetError
@@ -319,7 +319,7 @@ class DataNode(GraphNode):
     @field_validator("dataset_type")
     @classmethod
     def set_dataset_type(cls, _, info: ValidationInfo):
-        kedro_obj = cast(Optional[AbstractDataset], info.data.get("kedro_obj"))
+        kedro_obj: Optional[AbstractDataset] = info.data.get("kedro_obj")
         if kedro_obj is not None:
             return get_dataset_type(kedro_obj)
         return None
@@ -327,7 +327,7 @@ class DataNode(GraphNode):
     @field_validator("viz_metadata")
     @classmethod
     def set_viz_metadata(cls, _, info: ValidationInfo):
-        kedro_obj = cast(Optional[AbstractDataset], info.data.get("kedro_obj"))
+        kedro_obj: Optional[AbstractDataset] = info.data.get("kedro_obj")
         if kedro_obj and hasattr(kedro_obj, "metadata") and kedro_obj.metadata:
             return kedro_obj.metadata.get("kedro-viz", None)
 

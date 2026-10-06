@@ -6,7 +6,7 @@ For further information, see also:
 
 - [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
 - [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
-- [Kedro-Viz Architecture Diagram](https://miro.com/app/board/uXjVKhNg1RE=/?moveToWidget=3458764606468376036&cot=10), to see a high level overview of both back-end and front-end and how they are connected.
+- [Kedro-Viz Architecture Diagram](https://miro.com/app/board/uXjVKhNg1RE=/?moveToWidget=3458764685599765471&cot=14), to see a high level overview of both back-end and front-end and how they are connected.
 
 ## High-level Overview
 
@@ -137,4 +137,71 @@ The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a
 
 ![Kedro-Viz backend architecture](/.github/img/backend-architecture.png)
 
-The backend of Kedro-Viz serves as the data provider and API layer that interacts with Kedro projects and manages data access for visualisations in the frontend.  It offers REST API to support data retrieval for the frontend, allowing access to pipeline structures and node-specific details. Key components include the `DataAccessManager`, which interfaces with data `Repositories` to fetch and structure data. The CLI enables users launch with Kedro-Viz from the command line, while deploy and build options enables seamless sharing of pipeline visualisations on any static website hosting platform.
+The backend of Kedro-Viz is the data provider and API layer that interacts with Kedro projects and manages data access for visualisations in the frontend. It offers a REST API to support data retrieval for the frontend, giving access to pipeline structures and details about individual nodes. The CLI enables users to launch Kedro-Viz from the command line. Deploy and build options enable sharing of pipeline visualisations on any static website hosting platform.
+
+The backend answers its REST API from two paths, one for reading a project as data and one for reading a project as a running system. Both paths return the same response shapes, so the frontend and the rest of the API surface do not need to know which path answered a given request.
+
+### Inspection path
+
+The inspection path treats a project as data. Kedro produces a snapshot of a project: a serialisable structure covering its pipelines, nodes, datasets, and parameters. The backend builds its graph, layers, and modular pipeline tree from that snapshot, the resolved configuration, and extras loaded from files such as dataset statistics. It does this without holding a live pipeline or catalog in memory. This is the primary path, and it answers most requests: `/api/main`, `/api/pipelines/{id}`, and `/api/run-status`. Run status is served from this same path, but not from the snapshot: it comes from a run events file that hooks record while a pipeline runs.
+
+Each project served this way owns a context: an object that holds the snapshot together with the graph and run status services built on it. The server creates this context a single time per project at startup. Passing this context explicitly, rather than reading it from shared global state, keeps those services isolated. More than one project can be served from the same process without state from one leaking into another. Node metadata and static export, described in the live path below, do not yet share this isolation. They still read from state the process sets up a single time and shares across every project.
+
+Lite mode is a variant of this same path, for projects with dependencies that cannot be imported in the current environment. Rather than requiring every dependency to be installed before a project can be visualised, lite mode mocks the missing ones and still builds a snapshot.
+
+Statistics, custom styles, and layer overrides are not part of the snapshot itself. They are layered on top of it as a separate enrichment step, keeping the description Kedro produces distinct from the presentation choices Kedro-Viz adds to it.
+
+Node identity is kept stable across both paths, so a node built from the snapshot and a node built from a live project resolve to the same ID. This lets the frontend treat a node consistently even when its metadata is fetched from the other path, described below.
+
+### Live path
+
+Kedro can also be loaded as a running system: a session, a pipeline, and a catalog, held in memory the way they exist when a project runs. The live path uses this route, and is the source of truth for the handful of features that need something the snapshot does not carry. That includes the source code and run commands behind node metadata, dataset previews, and the static output produced for `--save-file`, deploying from the running UI, and `kedro viz build`/`kedro viz deploy`.
+
+Because most requests are answered by the inspection path, loading a live project inside the running server is deferred until a request actually needs one. Node metadata, `--save-file`, and deploying from within the running UI all wait until first use this way. A project that never asks for any of them never pays the cost of loading a live project. If a load fails, later requests are told about that same failure rather than retrying a load expected to fail again.
+
+One exception: when hooks are enabled, the backend loads the live catalog and pipelines at startup anyway, to capture any layers a hook modifies. The later step, building the repositories from that catalog, still waits until something needs them.
+
+`kedro viz build` and `kedro viz deploy`, run from the command line, reach that same live state a different way. Each runs in a process of its own, spun up for that single command, and loads the project directly, rather than waiting on the deferred load of the running server. A notebook integration and the VSCode extension work the same way: each loads a project directly in its own process to render a pipeline without the REST API.
+
+### Backend data flow
+
+```mermaid
+flowchart TB
+    subgraph Kedro["Kedro"]
+        Snapshot["ProjectSnapshot<br/>metadata, pipelines, nodes,<br/>datasets, parameters"]
+        RunEvents["run events file<br/>recorded by hooks"]
+        Session["KedroSession / Pipeline / DataCatalog"]
+    end
+
+    subgraph Inspection["Inspection path"]
+        Context["VizProjectContext"]
+        GraphSvc["GraphService + GraphBuilder"]
+        RunSvc["RunStatusService"]
+        NewAPI["/api/main<br/>/api/pipelines/&#123;id&#125;<br/>/api/run-status"]
+    end
+
+    subgraph Live["Live path"]
+        Deferred["DeferredDataLoader<br/>loads on first use, in this process"]
+        Manager["DataAccessManager<br/>+ Repositories"]
+        DeferredConsumers["/api/nodes/&#123;id&#125;<br/>--save-file / deploy from the UI"]
+        DirectConsumers["kedro viz build / deploy<br/>NotebookVisualizer, VSCode"]
+    end
+
+    UI["React UI / frontend consumers"]
+
+    Snapshot --> Context
+    Context --> GraphSvc
+    Context --> RunSvc
+    RunEvents --> RunSvc
+    GraphSvc --> NewAPI
+    RunSvc --> NewAPI
+    NewAPI --> UI
+
+    Session --> Deferred
+    DeferredConsumers --> Deferred
+    Deferred --> Manager
+    Manager --> DeferredConsumers
+    DeferredConsumers --> UI
+
+    DirectConsumers -- "own process, loads directly" --> Manager
+```
