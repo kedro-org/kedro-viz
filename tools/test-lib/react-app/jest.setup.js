@@ -4,6 +4,12 @@ if (typeof window.URL.createObjectURL === 'undefined') {
   window.URL.createObjectURL = () => {};
 }
 
+// react-router v7 needs TextEncoder, which jsdom in Jest 29 doesn't provide
+if (typeof global.TextEncoder === 'undefined') {
+  const { TextEncoder, TextDecoder } = require('util');
+  Object.assign(global, { TextEncoder, TextDecoder });
+}
+
 global.fetch = require('node-fetch');
 
 jest.mock('mermaid', () => ({
