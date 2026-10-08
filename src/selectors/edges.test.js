@@ -64,6 +64,24 @@ describe('Selectors', () => {
   });
 
   describe('getTransitiveEdges', () => {
+    it('preserves edge order and deduplicates convergent hidden paths', () => {
+      const result = getTransitiveEdges.resultFunc(
+        ['a', 'b', 'c', 'd', 'e'],
+        ['ab', 'ac', 'bd', 'cd', 'de'],
+        { b: true, c: true, d: true },
+        { ab: 'a', ac: 'a', bd: 'b', cd: 'c', de: 'd' },
+        { ab: 'b', ac: 'c', bd: 'd', cd: 'd', de: 'e' },
+        null,
+        {},
+        { a: true, b: true, c: true, d: true, e: true }
+      );
+      expect(result).toEqual({
+        edgeIDs: ['a|e'],
+        sources: { 'a|e': 'a' },
+        targets: { 'a|e': 'e' },
+      });
+    });
+
     describe('if all edges are enabled', () => {
       it('creates no transitive edges', () => {
         expect(getTransitiveEdges(mockState)).toEqual({
