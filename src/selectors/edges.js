@@ -54,6 +54,7 @@ export const getTransitiveEdges = createSelector(
       sources: {},
       targets: {},
     };
+    const edgesBySource = new Map();
 
     /**
      * Recursively walk through the graph, stepping over disabled nodes,
@@ -62,12 +63,8 @@ export const getTransitiveEdges = createSelector(
      * @param {Array} path The route that has been explored so far
      */
     const walkGraphEdges = (path) => {
-      edgeIDs.forEach((edgeID) => {
-        const source = path[path.length - 1];
-        // Filter to only edges where the source node is the previous target
-        if (edgeSources[edgeID] !== source) {
-          return;
-        }
+      const source = path[path.length - 1];
+      (edgesBySource.get(source) || []).forEach((edgeID) => {
         const target = edgeTargets[edgeID];
 
         if (!visibleModularPipelines[target]) {
@@ -92,6 +89,14 @@ export const getTransitiveEdges = createSelector(
 
     // Only run walk if some nodes are disabled
     if (nodeIDs.some((nodeID) => nodeDisabled[nodeID])) {
+      // Preserve edge order while indexing outgoing edges once per recomputation.
+      edgeIDs.forEach((edgeID) => {
+        const source = edgeSources[edgeID];
+        if (!edgesBySource.has(source)) {
+          edgesBySource.set(source, []);
+        }
+        edgesBySource.get(source).push(edgeID);
+      });
       // Examine the children of every enabled node. The walk only needs
       // to be run in a single direction (i.e. top down), because links
       // that end in a terminus can never be transitive.
