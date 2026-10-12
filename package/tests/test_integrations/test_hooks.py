@@ -5,6 +5,8 @@ import pytest
 from kedro.io import MemoryDataset
 from kedro.io.core import get_filepath_str
 
+from kedro_viz.integrations.kedro.data_loader import _get_dataset_stats
+
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
     # Assert for an instance of defaultdict
@@ -123,6 +125,25 @@ def test_after_pipeline_run(
     )
     example_dataset_stats_hook_obj.after_pipeline_run()
     assert "Could not find a Kedro project to create stats file" in caplog.text
+    example_dataset_stats_hook_obj.before_pipeline_run()
+    assert "Could not find a Kedro project to clear stats file" in caplog.text
+
+
+def test_before_pipeline_run_clears_previous_dataset_stats(
+    example_dataset_stats_hook_obj, mocker, setup_kedro_project
+):
+    """A new run must not leave statistics from the previous run visible."""
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks._find_kedro_project",
+        return_value=setup_kedro_project,
+    )
+    stats_file = setup_kedro_project / ".viz/stats.json"
+    stats_file.parent.mkdir(parents=True, exist_ok=True)
+    stats_file.write_text('{"review": {"rows": 12}}', encoding="utf8")
+
+    example_dataset_stats_hook_obj.before_pipeline_run()
+
+    assert _get_dataset_stats(setup_kedro_project) == {}
 
 
 @pytest.mark.parametrize(
