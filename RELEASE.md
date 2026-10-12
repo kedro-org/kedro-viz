@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+ - Clear dataset statistics at the start of a pipeline run to prevent stale values from persisting after a failed run. (#2455)
 
 
 # Release 12.5.0
