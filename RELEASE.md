@@ -7,6 +7,9 @@ Please follow the established format:
 -->
 # Release 12.6.0
 
+## Major features and improvements
+ - Add dataset statistics for Polars `DataFrame` and `LazyFrame` datasets. (#PR)
+
 ## Bug fixes and other changes
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 

@@ -3,6 +3,7 @@ functionalities for a kedro run."""
 
 import json
 import logging
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Union
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 class DatasetStatsHook:
     """Class to collect dataset statistics during a kedro run
     and save it to a JSON file. The class currently supports
-    (pd.DataFrame) dataset instances"""
+    (pd.DataFrame, pl.DataFrame, pl.LazyFrame) dataset instances"""
 
     def __init__(self):
         self._stats = defaultdict(dict)
@@ -39,7 +40,8 @@ class DatasetStatsHook:
     def after_dataset_loaded(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is loaded from the catalog.
         Once the dataset is loaded, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame, pl.DataFrame, pl.LazyFrame)
+        dataset instances
 
         Args:
             dataset_name: name of the dataset that was loaded from the catalog.
@@ -52,7 +54,8 @@ class DatasetStatsHook:
     def after_dataset_saved(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is saved to the catalog.
         Once the dataset is saved, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame, pl.DataFrame, pl.LazyFrame)
+        dataset instances
 
         Args:
             dataset_name: name of the dataset that was saved to the catalog.
@@ -94,7 +97,9 @@ class DatasetStatsHook:
 
     def create_dataset_stats(self, dataset_name: str, data: Any):
         """Helper method to create dataset statistics.
-        Currently supports (pd.DataFrame) dataset instances.
+        Currently supports (pd.DataFrame, pl.DataFrame, pl.LazyFrame) dataset
+        instances. For a pl.LazyFrame only the column count is recorded, because
+        counting its rows would execute the lazy query.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -104,11 +109,20 @@ class DatasetStatsHook:
         try:
             import pandas as pd
 
+            # polars is optional, so only check for its types if it is already loaded
+            pl = sys.modules.get("polars")
             stats_dataset_name = self.get_stats_dataset_name(dataset_name)
 
-            if isinstance(data, pd.DataFrame):
-                self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
-                self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
+            if isinstance(data, pd.DataFrame) or (
+                pl and isinstance(data, (pl.DataFrame, pl.LazyFrame))
+            ):
+                if pl and isinstance(data, pl.LazyFrame):
+                    self._stats[stats_dataset_name]["columns"] = len(
+                        data.collect_schema()
+                    )
+                else:
+                    self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
+                    self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
                 current_dataset = self.datasets.get(dataset_name)
 
