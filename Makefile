@@ -65,11 +65,11 @@ sign-off:
 
 serve-docs:
 	cd package && uv pip install -e ".[docs]"
-	mkdocs serve
+	zensical serve --open
 
 build-docs:
 	cd package && uv pip install -e ".[docs]"
-	mkdocs build
+	zensical build --clean
 
 fix-markdownlint:
 	npm install -g markdownlint-cli2
@@ -78,4 +78,7 @@ fix-markdownlint:
 
 check-docs:
 	cd package && uv pip install --system -e ".[docs]"
-	mkdocs build --strict
+	# Zensical has no --strict mode yet, so broken internal links/anchors
+	# are not caught at build time; the lychee step in docs-checks.yml checks
+	# links (internal + external) in the built site/.
+	zensical build --clean
