@@ -50,8 +50,7 @@ class TestNodeMetadataEndpoint:
 
         assert response.status_code == 503
         assert (
-            "Node metadata is temporarily unavailable because the live "
-            "project failed to load"
+            "Node metadata is unavailable because the live project failed to load"
         ) in response.json()["message"]
 
     def test_task_node_metadata(self, client):

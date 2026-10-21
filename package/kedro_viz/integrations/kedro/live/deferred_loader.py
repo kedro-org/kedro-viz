@@ -13,6 +13,8 @@ import logging
 import threading
 from typing import Callable, Optional
 
+from kedro_viz.launchers.utils import display_cli_message
+
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +83,13 @@ class DeferredDataLoader:
                 logger.exception(
                     "Kedro-Viz: the live project load failed. Node metadata and "
                     "--save-file will be unavailable for the rest of this run."
+                )
+                # The browser only shows empty node panels, and on main this failure
+                # stopped startup, so give the user one line that is hard to miss.
+                display_cli_message(
+                    "Kedro-Viz could not load the project, so node details will be "
+                    "empty. Fix the error above and restart Kedro-Viz.",
+                    "red",
                 )
                 self._raise_load_error()
             else:

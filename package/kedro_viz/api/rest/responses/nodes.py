@@ -164,8 +164,8 @@ def get_node_metadata_response(node_id: str):
             status_code=503,
             content={
                 "message": (
-                    "Node metadata is temporarily unavailable because the live "
-                    "project failed to load. Check the server logs for details."
+                    "Node metadata is unavailable because the live project failed "
+                    "to load. Check the terminal running Kedro-Viz for details."
                 )
             },
         )

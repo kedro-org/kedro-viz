@@ -82,6 +82,24 @@ def test_a_failed_load_is_not_retried() -> None:
     assert attempts == ["attempt"]
 
 
+def test_a_failed_load_tells_the_cli_once(mocker) -> None:
+    """The browser only shows empty panels, so the terminal must say why, once."""
+    message = mocker.patch(
+        "kedro_viz.integrations.kedro.live.deferred_loader.display_cli_message"
+    )
+    loader = DeferredDataLoader()
+    loader.configure(lambda: (_ for _ in ()).throw(RuntimeError("broken")))
+
+    for _ in range(3):
+        with pytest.raises(DeferredDataLoadError):
+            loader.ensure_loaded()
+
+    message.assert_called_once()
+    text, colour = message.call_args.args
+    assert "could not load the project" in text
+    assert colour == "red"
+
+
 def test_a_failed_load_chains_the_original_exception() -> None:
     """The original failure stays discoverable via ``__cause__`` for diagnosis."""
     loader = DeferredDataLoader()
