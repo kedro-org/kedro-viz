@@ -9,6 +9,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field, field_validator
 
 from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
@@ -68,11 +69,25 @@ def build_parameters_from_inputs(
     result: dict[str, Any] = {}
     for ref in inputs:
         if ref == "parameters":
-            result = dict(parameters)
+            result = {
+                key: _to_json_compatible(value) for key, value in parameters.items()
+            }
         elif ref.startswith("params:"):
             name = ref[len("params:") :]
-            result[name] = _resolve_parameters(parameters, name)
+            result[name] = _to_json_compatible(_resolve_parameters(parameters, name))
     return result
+
+
+def _to_json_compatible(value: Any) -> Any:
+    """Encode a parameter value the way the live ``ParametersNode`` does.
+
+    Config resolvers can return objects JSON cannot represent, such as a numpy or polars
+    dtype. Fall back to their string form instead of failing the whole graph response.
+    """
+    try:
+        return jsonable_encoder(value)
+    except (TypeError, ValueError, RecursionError):
+        return str(value)
 
 
 def _resolve_parameters(parameters: dict[str, Any], dotted: str) -> Any:

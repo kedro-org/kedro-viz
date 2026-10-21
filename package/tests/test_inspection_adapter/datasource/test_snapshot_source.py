@@ -12,6 +12,7 @@ from pathlib import Path
 from shutil import copytree, ignore_patterns
 from unittest.mock import PropertyMock
 
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 from kedro.inspection.models import (
@@ -121,6 +122,26 @@ def test_dataset_index_uses_only_supplied_pipelines_and_keeps_order() -> None:
 )
 def test_parameter_preparation_preserves_input_order(references, expected) -> None:
     assert build_parameters_from_inputs(references, {"model": {"count": 3}}) == expected
+
+
+def test_parameter_preparation_encodes_values_json_cannot_represent() -> None:
+    """A resolver can return a dtype; the graph must still serialise, as on main."""
+    import orjson
+
+    dtype = np.dtype("float64")
+    parameters = {"model": {"dtype": dtype, "count": 3}, "scale": dtype, "rate": 0.5}
+
+    result = build_parameters_from_inputs(
+        ["parameters", "params:scale", "params:model.count"], parameters
+    )
+
+    assert result == {
+        "model": str(parameters["model"]),
+        "scale": "float64",
+        "rate": 0.5,
+        "model.count": 3,
+    }
+    orjson.dumps(result)
 
 
 def _snapshot(*pipeline_names: str) -> ProjectSnapshot:
