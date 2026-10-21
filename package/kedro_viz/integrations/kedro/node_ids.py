@@ -116,4 +116,8 @@ def _create_task_node_id_from_node_snapshot(node: NodeSnapshot) -> str:
 
 def _create_task_node_id_from_kedro_node(node: KedroNode) -> str:
     """Return the Viz graph ID for a live Kedro node, matching the snapshot's ID."""
-    return _hash(_stable_func_name(str(node)))
+    # Normalise only the function name, as the snapshot side does: a dataset name may
+    # look like an object repr. Node names cannot contain "<", so the first match of an
+    # address-bearing function name is the function segment of ``str(node)``.
+    func_name = node._func_name  # noqa: SLF001 - the source of NodeSnapshot.func_name
+    return _hash(str(node).replace(func_name, _stable_func_name(func_name), 1))

@@ -161,12 +161,38 @@ def test_function_task_id_is_unchanged_by_object_name_normalisation() -> None:
     assert ids._create_task_node_id_from_kedro_node(task) == _hash(str(task))
 
 
+def _identity(value):
+    return value
+
+
+@pytest.mark.parametrize(
+    ("func", "func_name"), [(_identity, "_identity"), (_Scale(), "_Scale")]
+)
+def test_dataset_named_like_an_object_repr_is_kept_verbatim(func, func_name) -> None:
+    """Only the function name is normalised, on the live side as on the snapshot side."""
+    from kedro.pipeline import node
+
+    from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
+
+    dataset = "<Raw object at 0x123>"
+    task = node(func, dataset, "out", name="n")
+    expected = _hash(f"n: {func_name}([{dataset}]) -> [out]")
+
+    assert ids._create_task_node_id_from_kedro_node(task) == expected
+    assert hash_node(task) == expected
+    assert (
+        ids._create_task_node_id(
+            task.name, task._func_name, task.namespace, task.inputs, task.outputs
+        )
+        == expected
+    )
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
         ("<project.nodes.Scale object at 0x10f2c980>", "Scale"),
         ("<project.create.<locals>.Scale object at 0xABCDEF>", "Scale"),
-        ("s: <m.Scale object at 0x1>([a]) -> [b]", "s: Scale([a]) -> [b]"),
         ("<partial>", "<partial>"),
         ("clean_data", "clean_data"),
     ],
