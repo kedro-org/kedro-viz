@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+import os
 from collections.abc import Generator, Iterable, Mapping
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
@@ -165,7 +166,10 @@ class _InspectionSession:
         runtime_params: dict[str, Any] | None = None,
     ) -> None:
         self.project_path = Path(project_path)
-        self.env = env
+        # Resolve the env as `KedroSession.create` does, so the snapshot and the deferred
+        # live load read the same configuration when only `KEDRO_ENV` is set, as with
+        # `%run_viz` or `kedro jupyter --env`.
+        self.env = env or os.getenv("KEDRO_ENV")
         self.runtime_params = runtime_params
         self._config_loader: Any = None
 

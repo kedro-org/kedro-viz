@@ -301,6 +301,26 @@ def test_session_parameters_applies_runtime_overrides() -> None:
     assert params["split_options"]["test_size"] == 0.99
 
 
+def test_session_reads_kedro_env_like_the_live_session(monkeypatch, mocker) -> None:
+    """``%run_viz`` passes no env; the live load honours ``KEDRO_ENV``, so must we."""
+    monkeypatch.setenv("KEDRO_ENV", "prod")
+    snapshot = mocker.patch("kedro.inspection.get_project_snapshot")
+
+    session = _InspectionSession(DEMO_PROJECT)
+    session.snapshot()
+
+    assert session.parameters()["split_options"]["test_size"] == 0.4
+    assert snapshot.call_args.kwargs["env"] == "prod"
+
+
+def test_session_explicit_env_wins_over_kedro_env(monkeypatch) -> None:
+    monkeypatch.setenv("KEDRO_ENV", "prod")
+
+    params = _InspectionSession(DEMO_PROJECT, env="local").parameters()
+
+    assert params["split_options"]["test_size"] == 0.2
+
+
 def test_session_builds_the_config_loader_once() -> None:
     """Test that the loader is built once and reused across catalog and parameters."""
     session = _InspectionSession(DEMO_PROJECT)
