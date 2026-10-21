@@ -112,3 +112,64 @@ def test_task_node_id_handles_empty_io(
         inputs=inputs,
         outputs=outputs,
     ) == _hash(node_string)
+
+
+class _Scale:
+    """A callable object without ``__name__``; Kedro 1.7 names it by its repr."""
+
+    def __call__(self, value):
+        return value
+
+
+def _object_node():
+    from kedro.pipeline import node
+
+    return node(_Scale(), "raw", "scaled", name="scale")
+
+
+def test_callable_object_task_id_is_stable_across_pipeline_loads() -> None:
+    """The snapshot and the deferred live load build separate node objects."""
+    from kedro.inspection.models import NodeSnapshot
+
+    from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
+
+    snapshot_node, live_node = _object_node(), _object_node()
+    snapshot = NodeSnapshot(
+        name=snapshot_node.name,
+        func_name=snapshot_node._func_name,
+        namespace=snapshot_node.namespace,
+        inputs=snapshot_node.inputs,
+        outputs=snapshot_node.outputs,
+    )
+
+    live_id = ids._create_task_node_id_from_kedro_node(live_node)
+
+    assert ids._create_task_node_id_from_kedro_node(snapshot_node) == live_id
+    assert ids._create_task_node_id_from_node_snapshot(snapshot) == live_id
+    assert hash_node(live_node) == live_id
+    assert live_id == _hash("scale: _Scale([raw]) -> [scaled]")
+
+
+def test_function_task_id_is_unchanged_by_object_name_normalisation() -> None:
+    from kedro.pipeline import node
+
+    def clean(value):
+        return value
+
+    task = node(clean, "raw", "clean", name="clean_node")
+
+    assert ids._create_task_node_id_from_kedro_node(task) == _hash(str(task))
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("<project.nodes.Scale object at 0x10f2c980>", "Scale"),
+        ("<project.create.<locals>.Scale object at 0xABCDEF>", "Scale"),
+        ("s: <m.Scale object at 0x1>([a]) -> [b]", "s: Scale([a]) -> [b]"),
+        ("<partial>", "<partial>"),
+        ("clean_data", "clean_data"),
+    ],
+)
+def test_stable_func_name_replaces_only_address_bearing_reprs(text, expected) -> None:
+    assert ids._stable_func_name(text) == expected

@@ -8,13 +8,14 @@ from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
+from kedro_viz.integrations.kedro.node_ids import _create_task_node_id_from_kedro_node
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.models.flowchart.nodes import (
     GraphNode,
     ModularPipelineChild,
     ModularPipelineNode,
 )
-from kedro_viz.utils import _hash, _hash_input_output, is_dataset_param
+from kedro_viz.utils import _hash_input_output, is_dataset_param
 
 
 class ModularPipelinesRepository:
@@ -202,7 +203,7 @@ class ModularPipelinesRepository:
         """
 
         for node in kedro_nodes:
-            node_id = _hash(str(node))
+            node_id = _create_task_node_id_from_kedro_node(node)
             modular_pipeline.children.add(
                 ModularPipelineChild(id=node_id, type=GraphNodeType.TASK)
             )
@@ -288,7 +289,7 @@ class ModularPipelinesRepository:
     ) -> Tuple[str, Union[Set[str], None]]:
         """Get the modular pipeline(s) to which the given task node/or dataset belongs."""
         node_id = (
-            _hash(str(node))
+            _create_task_node_id_from_kedro_node(node)
             if isinstance(node, KedroNode)
             else _hash_input_output(node)
         )

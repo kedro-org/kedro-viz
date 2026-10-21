@@ -10,8 +10,28 @@ from kedro_viz.utils import _hash, _hash_input_output
 
 if TYPE_CHECKING:
     from kedro.inspection.models import NodeSnapshot
+    from kedro.pipeline.node import Node as KedroNode
 
 _AUTO_NAME_RE = re.compile(r"^(?P<base>.+)__[0-9a-f]{8}$")
+# Kedro 1.7 and earlier name a callable object without ``__name__`` by its default
+# repr, which embeds a memory address that differs every time ``register_pipelines()``
+# runs. Later Kedro uses the class name instead (kedro-org/kedro#5797).
+_OBJECT_REPR_RE = re.compile(r"<(?P<qualname>\S+) object at 0x[0-9a-fA-F]+>")
+
+
+def _stable_func_name(text: str) -> str:
+    """Replace any default object repr with its class name, as later Kedro versions do.
+
+    The snapshot and the deferred live load each build their own node objects, so an
+    address-bearing name would give the same task a different ID on each side.
+
+    Examples:
+        >>> _stable_func_name("<my_project.nodes.Scale object at 0x10f2c980>")
+        'Scale'
+        >>> _stable_func_name("clean_data")
+        'clean_data'
+    """
+    return _OBJECT_REPR_RE.sub(lambda match: match["qualname"].rsplit(".", 1)[-1], text)
 
 
 def _is_auto_node_name(local_name: str, func_name: str) -> bool:
@@ -75,6 +95,7 @@ def _create_task_node_id(
         ``<func_name>__<8 hexadecimal characters>`` name from a generated one, so this
         rare case cannot be reconstructed exactly.
     """
+    func_name = _stable_func_name(func_name)
     local_name = node_name.removeprefix(f"{namespace}.") if namespace else node_name
     prefix = "" if _is_auto_node_name(local_name, func_name) else f"{local_name}: "
     input_names = f"[{';'.join(inputs)}]" if inputs else "None"
@@ -91,3 +112,8 @@ def _create_task_node_id_from_node_snapshot(node: NodeSnapshot) -> str:
         inputs=node.inputs,
         outputs=node.outputs,
     )
+
+
+def _create_task_node_id_from_kedro_node(node: KedroNode) -> str:
+    """Return the Viz graph ID for a live Kedro node, matching the snapshot's ID."""
+    return _hash(_stable_func_name(str(node)))

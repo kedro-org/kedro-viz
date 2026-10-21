@@ -222,8 +222,9 @@ class TestModularPipelinesRepository:
         modular_pipeline_inputs_outputs = {"input1", "output1", "input3", "output3"}
 
         mocker.patch(
-            "kedro_viz.data_access.repositories.modular_pipelines._hash",
-            side_effect=lambda value: value,
+            "kedro_viz.data_access.repositories.modular_pipelines."
+            "_create_task_node_id_from_kedro_node",
+            side_effect=str,
         )
         mocker.patch(
             "kedro_viz.data_access.repositories.modular_pipelines._hash_input_output",

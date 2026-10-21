@@ -586,8 +586,9 @@ def example_api_for_edge_case_pipelines(
     # For readability we are not hashing the node id
     mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
     mocker.patch(
-        "kedro_viz.data_access.repositories.modular_pipelines._hash",
-        side_effect=lambda value: value,
+        "kedro_viz.data_access.repositories.modular_pipelines."
+        "_create_task_node_id_from_kedro_node",
+        side_effect=str,
     )
 
     populate_data(
@@ -620,8 +621,9 @@ def example_api_for_pipelines_with_additional_tags(
     # For readability we are not hashing the node id
     mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
     mocker.patch(
-        "kedro_viz.data_access.repositories.modular_pipelines._hash",
-        side_effect=lambda value: value,
+        "kedro_viz.data_access.repositories.modular_pipelines."
+        "_create_task_node_id_from_kedro_node",
+        side_effect=str,
     )
 
     populate_data(
