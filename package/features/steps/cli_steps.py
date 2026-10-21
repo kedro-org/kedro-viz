@@ -192,9 +192,9 @@ def exec_viz_lite_command(context):
     )
 
 
-def _wait_for_main_response() -> dict:
-    """Poll ``/api/main`` until it responds, returning the parsed JSON body."""
-    max_duration = 45  # 30 seconds
+def _wait_for_main_response() -> dict | None:
+    """Poll ``/api/main`` until it responds; return its JSON body, or ``None``."""
+    max_duration = 45  # seconds
     end_by = time() + max_duration
 
     while time() < end_by:
@@ -203,7 +203,7 @@ def _wait_for_main_response() -> dict:
         except Exception:  # noqa: BLE001
             sleep(2.0)
             continue
-    return {}
+    return None
 
 
 @then("kedro-viz should start successfully")
@@ -233,6 +233,8 @@ def check_kedroviz_up_and_node_metadata(context):
 
     try:
         assert context.result.poll() is None
+        if data_json is None:
+            raise AssertionError("Kedro Viz did not respond within 45 seconds")
         assert (
             "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
