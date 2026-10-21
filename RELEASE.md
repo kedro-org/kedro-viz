@@ -8,10 +8,15 @@ Please follow the established format:
 # Release 13.0.0
 
 ## Major features and improvements
- - Migrate the backend graph, modular pipelines, layers, parameters, and run status to be derived from Kedro's new Inspection API instead of live pipeline/catalog introspection. (#2782)
+ - Build the flowchart graph, modular pipelines, layers and task parameters from Kedro's Inspection API instead of live pipeline/catalog introspection. (#2782)
+ - Load node details on the first node click instead of at startup. (#2782)
+ - Drop support for Kedro versions below 1.6.0. (#2782)
+
+## Breaking changes to the API
+ - Move the `kedro_viz.integrations.kedro` modules into `hooks`, `lite`, `live` and `inspection` subpackages, and add a required `context` argument to `create_api_app_from_project`. (#2782)
 
 ## Bug fixes and other changes
- - Bump minimum `kedro` version to `>=1.6.0`. (#2782)
+ - Read `/api/run-status` events from the project root instead of the current working directory. (#2782)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 
 
