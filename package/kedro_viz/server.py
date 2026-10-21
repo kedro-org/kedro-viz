@@ -80,8 +80,8 @@ def load_and_populate_data(
 ) -> DataAccessManager:
     """Load a project and return the populated repositories.
 
-    VSCode and deployment call this entry point and ignore its return value. The HTTP
-    server uses the returned repositories to build its project-scoped inspection context.
+    Called by VS Code, ``kedro viz build``/``deploy`` and the server's deferred
+    live load, which all ignore the return value.
     """
     catalog, pipelines, node_extras_dict = _load_project_data(
         path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
