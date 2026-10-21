@@ -21,7 +21,7 @@ from kedro.inspection.models import (
     ProjectMetadataSnapshot,
     ProjectSnapshot,
 )
-from pydantic import ValidationError
+from pydantic import BaseModel, SecretStr, ValidationError
 
 from kedro_viz.integrations.kedro.inspection.datasource import snapshot_source
 from kedro_viz.integrations.kedro.inspection.datasource.snapshot_source import (
@@ -319,6 +319,53 @@ def test_session_explicit_env_wins_over_kedro_env(monkeypatch) -> None:
     params = _InspectionSession(DEMO_PROJECT, env="local").parameters()
 
     assert params["split_options"]["test_size"] == 0.2
+
+
+class _DbConfig(BaseModel):
+    user: str
+    password: SecretStr
+
+
+def _connect(db: _DbConfig) -> str:
+    return db.user
+
+
+def _session_with_typed_db_param(mocker, db: dict) -> _InspectionSession:
+    from kedro.pipeline import Pipeline, node
+
+    mocker.patch.object(
+        _InspectionSession,
+        "config_loader",
+        new_callable=PropertyMock,
+        return_value={"parameters": {"db": db}},
+    )
+    mocker.patch(
+        "kedro.framework.project.pipelines",
+        {"__default__": Pipeline([node(_connect, "params:db", "connection")])},
+    )
+    return _InspectionSession(DEMO_PROJECT)
+
+
+def test_session_parameters_mask_typed_secrets_like_the_live_context(mocker) -> None:
+    """``KedroContext.params`` builds the annotated model, so the live path masks secrets."""
+    session = _session_with_typed_db_param(mocker, {"user": "admin", "password": "pw1"})
+
+    result = build_parameters_from_inputs(
+        ["parameters", "params:db", "params:db.password"], session.parameters()
+    )
+
+    masked = {"user": "admin", "password": "**********"}
+    assert result == {"db": masked, "db.password": "**********"}
+
+
+def test_session_parameters_reject_values_that_do_not_fit_their_type(mocker) -> None:
+    """Falling back to the raw values would show the secret, so fail as ``kedro run`` does."""
+    from kedro.validation.exceptions import ParameterValidationError
+
+    session = _session_with_typed_db_param(mocker, {"password": "pw1"})
+
+    with pytest.raises(ParameterValidationError):
+        session.parameters()
 
 
 def test_session_builds_the_config_loader_once() -> None:

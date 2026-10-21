@@ -65,7 +65,7 @@ def build_parameters_from_inputs(
     """Resolve input references with the existing inspection parameter semantics.
 
     Walk inputs in order: ``parameters`` replaces the result with the root mapping,
-    while ``params:name`` adds one nested lookup. No validation or typed-field expansion.
+    while ``params:name`` adds one nested lookup.
     """
     result: dict[str, Any] = {}
     for ref in inputs:
@@ -92,13 +92,19 @@ def _to_json_compatible(value: Any) -> Any:
 
 
 def _resolve_parameters(parameters: dict[str, Any], dotted: str) -> Any:
-    """Look up a dotted dictionary path, returning ``None`` when it is absent."""
+    """Look up a dotted path, returning ``None`` when it is absent.
+
+    The path steps through dictionaries and through the fields of typed parameters,
+    as Kedro does when it registers nested ``params:`` datasets.
+    """
+    from kedro.validation.utils import get_typed_fields
+
     node: Any = parameters
     for key in dotted.split("."):
-        if isinstance(node, dict) and key in node:
-            node = node[key]
-        else:
+        fields = node if isinstance(node, dict) else get_typed_fields(node)
+        if fields is None or key not in fields:
             return None
+        node = fields[key]
     return node
 
 
@@ -212,18 +218,27 @@ class _InspectionSession:
             return {}
 
     def parameters(self) -> dict[str, Any]:
-        """Return the resolved parameter values, with ``--params`` overrides applied.
+        """Return the resolved parameter values, typed as ``KedroContext.params`` types them.
 
         The snapshot carries only parameter names, so values are read from the config loader. We
         pass ``runtime_params`` to that loader, so it already merges the ``--params`` overrides and
-        resolves ``${runtime_params:...}`` for us.
+        resolves ``${runtime_params:...}`` for us. Kedro then builds the Pydantic model or
+        dataclass that a node annotates a parameter with, so a ``SecretStr`` field stays masked
+        in the graph, as it is in the node details.
+
+        Raises:
+            ParameterValidationError: If a value does not fit its annotated type, as with
+                ``kedro run``.
         """
         from kedro.config import MissingConfigException
+        from kedro.framework.project import pipelines
+        from kedro.validation.parameter_validator import ParameterValidator
 
         try:
-            return self.config_loader["parameters"]
+            raw_params = self.config_loader["parameters"]
         except (KeyError, MissingConfigException):
             return {}
+        return ParameterValidator(dict(pipelines)).validate_raw_params(raw_params)
 
 
 def load_inspection_inputs(

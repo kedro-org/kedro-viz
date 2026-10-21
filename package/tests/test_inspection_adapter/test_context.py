@@ -153,14 +153,10 @@ def test_context_reuses_explicit_node_extras(mocker, node_extras) -> None:
     )
 
 
-def test_context_preserves_unvalidated_parameter_values(
-    mocker, _restore_kedro_project_state
+def test_context_keeps_untyped_parameter_values_as_configured(
+    _restore_kedro_project_state,
 ) -> None:
-    """Inspection must not add pipeline-annotation validation during context loading."""
-    validate = mocker.patch(
-        "kedro.validation.parameter_validator.ParameterValidator.validate_raw_params",
-        side_effect=AssertionError("Inspection must not validate parameters"),
-    )
+    """Only parameters a node annotates with a model are typed; the rest stay as given."""
     context = VizProjectContext.from_project(
         DEMO_PROJECT,
         runtime_params={"split_options": {"test_size": "not-a-number"}},
@@ -168,7 +164,6 @@ def test_context_preserves_unvalidated_parameter_values(
 
     response = context.graph.get_pipeline_response()
 
-    validate.assert_not_called()
     split_nodes = [
         node
         for node in response.nodes
