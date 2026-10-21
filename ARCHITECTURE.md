@@ -151,7 +151,7 @@ Lite mode is a variant of this same path, for projects with dependencies that ca
 
 Statistics, custom styles, and layer overrides are not part of the snapshot itself. They are layered on top of it as a separate enrichment step, keeping the description Kedro produces distinct from the presentation choices Kedro-Viz adds to it.
 
-Node identity is kept stable across both paths, so a node built from the snapshot and a node built from a live project resolve to the same ID. This lets the frontend treat a node consistently even when its metadata is fetched from the other path, described below.
+Node identity is kept stable across both paths, so a node built from the snapshot and a node built from a live project resolve to the same ID. This lets the frontend treat a node consistently even when its metadata is fetched from the other path, described below. The one known exception is an explicit node name that looks generated (`<function>__<8 hex characters>`), which the snapshot can't tell apart from a generated one (see `integrations/kedro/node_ids.py`).
 
 ### Live path
 
