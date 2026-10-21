@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from fastapi import APIRouter
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
@@ -27,6 +28,10 @@ from kedro_viz.api.rest.responses.version import (
     get_version_response,
 )
 from kedro_viz.integrations.kedro.inspection import PipelineNotFoundError
+from kedro_viz.integrations.kedro.live.deferred_loader import (
+    DeferredDataLoadError,
+    deferred_data_loader,
+)
 
 if TYPE_CHECKING:
     from kedro_viz.integrations.kedro.inspection import VizProjectContext
@@ -118,10 +123,14 @@ def create_project_router(context: VizProjectContext) -> APIRouter:
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-def get_single_node_metadata(node_id: str):
-    # A plain (non-async) route so FastAPI runs it in its threadpool: the first call may
-    # trigger the deferred live load (see `DeferredDataLoader`), which must not block the event
-    # loop and other in-flight requests while it runs.
+async def get_single_node_metadata(node_id: str):
+    # Only the one-off deferred live load runs in the threadpool, so it doesn't block other
+    # requests. Metadata, previews included, is still built on the event-loop thread: a
+    # `preview_fn` drawing with pyplot aborts the whole server off the main thread on macOS.
+    try:
+        await run_in_threadpool(deferred_data_loader.ensure_loaded)
+    except DeferredDataLoadError:
+        pass  # `get_node_metadata_response` returns the 503 for a failed load.
     return get_node_metadata_response(node_id)
 
 

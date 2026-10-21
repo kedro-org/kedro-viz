@@ -125,3 +125,51 @@ def test_version(client):
     assert isinstance(json_response["installed"], str)
     assert isinstance(json_response["is_outdated"], bool)
     assert isinstance(json_response["latest"], str)
+
+
+def test_node_metadata_is_built_off_the_load_thread(client, mocker):
+    """Only the deferred load leaves the event loop; previews must not (macOS pyplot)."""
+    import threading
+
+    from fastapi.responses import JSONResponse
+
+    from kedro_viz.integrations.kedro.live.deferred_loader import deferred_data_loader
+
+    threads = {}
+
+    def ensure_loaded():
+        threads.setdefault("load", threading.get_ident())
+
+    def build(node_id):
+        threads["build"] = threading.get_ident()
+        return JSONResponse(content={})
+
+    mocker.patch.object(
+        deferred_data_loader, "ensure_loaded", side_effect=ensure_loaded
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes._build_node_metadata_response",
+        side_effect=build,
+    )
+
+    response = client.get("/api/nodes/any-node")
+
+    assert response.status_code == 200
+    assert threads["build"] != threads["load"]
+
+
+def test_node_metadata_returns_503_when_the_deferred_load_failed(client, mocker):
+    from kedro_viz.integrations.kedro.live.deferred_loader import (
+        DeferredDataLoadError,
+        deferred_data_loader,
+    )
+
+    mocker.patch.object(
+        deferred_data_loader,
+        "ensure_loaded",
+        side_effect=DeferredDataLoadError("load failed"),
+    )
+
+    response = client.get("/api/nodes/any-node")
+
+    assert response.status_code == 503
