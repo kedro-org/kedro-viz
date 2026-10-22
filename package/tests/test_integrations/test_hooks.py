@@ -111,6 +111,23 @@ def test_after_dataset_loaded_polars_lazy_frame(
     }
 
 
+def test_after_dataset_loaded_polars_lazy_frame_clears_rows(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    data = pl.from_pandas(example_data_frame)
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_saved("companies", data)
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies", data.head(1).lazy()
+    )
+
+    # the row count saved for the eager frame no longer applies to the lazy frame
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "columns": example_data_frame.shape[1]
+    }
+
+
 def test_after_dataset_saved_polars_csv_dataset(
     tmp_path, example_dataset_stats_hook_obj, example_data_frame
 ):

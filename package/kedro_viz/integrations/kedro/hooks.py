@@ -117,6 +117,8 @@ class DatasetStatsHook:
                 pl and isinstance(data, (pl.DataFrame, pl.LazyFrame))
             ):
                 if pl and isinstance(data, pl.LazyFrame):
+                    # drop a row count recorded for an earlier eager frame, so it shows N/A
+                    self._stats[stats_dataset_name].pop("rows", None)
                     self._stats[stats_dataset_name]["columns"] = len(
                         data.collect_schema()
                     )
