@@ -1,4 +1,4 @@
-"""`kedro_viz.integrations.kedro.run_hooks` defines hooks to add additional functionalities for a kedro run."""
+"""`kedro_viz.integrations.kedro.hooks.run_hooks` defines hooks to add additional functionalities for a kedro run."""
 
 import logging
 import traceback
@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
-from kedro_viz.integrations.kedro.hooks_utils import (
+from kedro_viz.integrations.kedro.hooks.hooks_utils import (
     _hash_input_output,
     compute_size,
     generate_timestamp,

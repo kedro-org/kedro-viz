@@ -21,7 +21,7 @@ Feature: Viz plugin in new project
         Given I have installed kedro version "latest"
         And I have run a non-interactive kedro new with spaceflights-pandas starter
         When I execute the kedro viz run command with lite option
-        Then kedro-viz should start successfully
+        Then kedro-viz should serve the graph and node metadata successfully
 
     Scenario: Compare viz responses in regular and lite mode
         Given I have installed kedro version "latest"

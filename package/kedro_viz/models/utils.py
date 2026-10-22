@@ -4,6 +4,8 @@ import logging
 
 from kedro.io.core import AbstractDataset
 
+from kedro_viz.integrations.utils import UnavailableDataset
+
 logger = logging.getLogger(__name__)
 
 
@@ -33,6 +35,8 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     if dataset is None:
         # return an empty string to avoid breaking the interface
         return ""
+    if isinstance(dataset, UnavailableDataset):
+        return "UnavailableDataset"
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
