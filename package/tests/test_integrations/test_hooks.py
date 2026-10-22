@@ -1,8 +1,9 @@
 import json
+import sys
 from collections import defaultdict
 
 import pytest
-from kedro.io import MemoryDataset
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import get_filepath_str
 
 
@@ -80,6 +81,87 @@ def test_after_dataset_saved(
         example_data_frame.shape[1]
     )
     assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["file_size"] == 10
+
+
+def test_after_dataset_loaded_polars_data_frame(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    data = pl.from_pandas(example_data_frame)
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_loaded("companies", data)
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": data.height,
+        "columns": data.width,
+    }
+
+
+def test_after_dataset_loaded_polars_lazy_frame(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    data = pl.from_pandas(example_data_frame).lazy()
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_loaded("companies", data)
+
+    # rows are not recorded, as counting them would execute the lazy query
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "columns": example_data_frame.shape[1]
+    }
+
+
+def test_after_dataset_loaded_polars_lazy_frame_clears_rows(
+    example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    data = pl.from_pandas(example_data_frame)
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_saved("companies", data)
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        "companies", data.head(1).lazy()
+    )
+
+    # the row count saved for the eager frame no longer applies to the lazy frame
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "columns": example_data_frame.shape[1]
+    }
+
+
+def test_after_dataset_saved_polars_csv_dataset(
+    tmp_path, example_dataset_stats_hook_obj, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    polars_datasets = pytest.importorskip("kedro_datasets.polars")
+    dataset = polars_datasets.CSVDataset(
+        filepath=(tmp_path / "companies.csv").as_posix()
+    )
+    data = pl.from_pandas(example_data_frame)
+    dataset.save(data)
+    example_dataset_stats_hook_obj.after_catalog_created(
+        DataCatalog({"companies": dataset})
+    )
+    example_dataset_stats_hook_obj.after_dataset_saved("companies", data)
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": data.height,
+        "columns": data.width,
+        "file_size": (tmp_path / "companies.csv").stat().st_size,
+    }
+
+
+def test_after_dataset_loaded_without_polars(
+    mocker, example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    # pandas stats are still collected when polars is not installed
+    mocker.patch.dict(sys.modules, {"polars": None})
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_loaded("companies", example_data_frame)
+
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": example_data_frame.shape[0],
+        "columns": example_data_frame.shape[1],
+    }
 
 
 @pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
