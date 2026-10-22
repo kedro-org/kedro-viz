@@ -260,9 +260,8 @@ def load_inspection_inputs(
 ) -> InspectionInputs:
     """Read the snapshot and resolved config for one context build.
 
-    Lite-mode import stubs remain active until all three inputs have been read. A single
-    ``_InspectionSession`` coordinates the reads; Kedro's snapshot API may perform its own
-    internal bootstrap independently of the cached config loader used by the other two reads.
+    Lite-mode import stubs remain active until all three inputs have been read. The snapshot
+    and Viz config reads share one project bootstrap through ``_InspectionSession``.
     """
     import_context = (
         lite_import_stubs(project_path, package_name) if is_lite else nullcontext()
