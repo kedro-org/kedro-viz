@@ -368,6 +368,18 @@ def test_session_parameters_reject_values_that_do_not_fit_their_type(mocker) -> 
         session.parameters()
 
 
+@pytest.mark.parametrize("is_lite", [False, True])
+def test_loading_inputs_registers_the_pipelines_once(mocker, is_lite) -> None:
+    """Every bootstrap resets Kedro's registry, so a second one re-registers for typing."""
+    from kedro.framework.project import _ProjectPipelines
+
+    registry = mocker.spy(_ProjectPipelines, "_get_pipelines_registry_callable")
+
+    load_inspection_inputs(DEMO_PROJECT, is_lite=is_lite, package_name="demo_project")
+
+    assert registry.call_count == 1
+
+
 def test_session_builds_the_config_loader_once() -> None:
     """Test that the loader is built once and reused across catalog and parameters."""
     session = _InspectionSession(DEMO_PROJECT)

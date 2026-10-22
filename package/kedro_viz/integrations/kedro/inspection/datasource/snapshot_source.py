@@ -7,6 +7,7 @@ import logging
 import os
 from collections.abc import Generator, Iterable, Mapping
 from contextlib import contextmanager, nullcontext
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -17,6 +18,7 @@ from kedro_viz.integrations.kedro.inspection.errors import PipelineNotFoundError
 from kedro_viz.utils import _strip_transcoding, stub_modules
 
 if TYPE_CHECKING:
+    from kedro.framework.startup import ProjectMetadata
     from kedro.inspection.models import PipelineSnapshot, ProjectSnapshot
 
 logger = logging.getLogger(__name__)
@@ -159,10 +161,11 @@ def lite_import_stubs(
 
 
 class _InspectionSession:
-    """Read a project's snapshot and config with one cached config loader.
+    """Read a project's snapshot and config with one bootstrap and one cached config loader.
 
     The catalog config and parameters share the loader built lazily here. Kedro's snapshot API
-    performs its own internal project bootstrap and config loading.
+    loads its own config, but reuses this session's bootstrap, because each bootstrap resets
+    Kedro's pipeline registry and parameter typing would then register the pipelines again.
     """
 
     def __init__(
@@ -179,14 +182,20 @@ class _InspectionSession:
         self.runtime_params = runtime_params
         self._config_loader: Any = None
 
+    @cached_property
+    def _metadata(self) -> ProjectMetadata:
+        """Bootstrap the project once for every read in this session."""
+        from kedro.framework.startup import bootstrap_project
+
+        return bootstrap_project(self.project_path)
+
     @property
     def config_loader(self) -> Any:
         """The project's Kedro config loader, bootstrapped and built once, then cached."""
         if self._config_loader is None:
             from kedro.framework.project import settings
-            from kedro.framework.startup import bootstrap_project
 
-            bootstrap_project(self.project_path)
+            _ = self._metadata  # The bootstrap fills `settings` for this project.
             self._config_loader = settings.CONFIG_LOADER_CLASS(
                 conf_source=str(self.project_path / settings.CONF_SOURCE),
                 env=self.env,
@@ -200,7 +209,7 @@ class _InspectionSession:
         from kedro.inspection import get_project_snapshot
 
         return get_project_snapshot(
-            project_path=self.project_path,
+            metadata=self._metadata,
             env=self.env,
             runtime_params=self.runtime_params,
         )
