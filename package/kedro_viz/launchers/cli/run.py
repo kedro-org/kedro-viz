@@ -84,7 +84,7 @@ _VIZ_PROCESSES: Dict[str, int] = {}
     is_flag=True,
     help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
-def run(  # noqa: PLR0915
+def run(  # noqa: PLR0912, PLR0915
     host,
     port,
     browser,
@@ -114,6 +114,7 @@ def run(  # noqa: PLR0915
     )
     from kedro_viz.launchers.utils import (
         _PYPROJECT,
+        ProcessExitedException,
         _check_viz_up,
         _find_available_port,
         _find_kedro_project,
@@ -211,7 +212,7 @@ def run(  # noqa: PLR0915
 
         _VIZ_PROCESSES[port] = viz_process
 
-        _wait_for(func=_check_viz_up, host=host, port=port)
+        _wait_for(func=_check_viz_up, host=host, port=port, process=viz_process)
 
         display_cli_message(
             "Kedro Viz started successfully. \n\n"
@@ -221,6 +222,12 @@ def run(  # noqa: PLR0915
 
         if browser:
             _start_browser(host, port)
+
+    except ProcessExitedException as ex:
+        raise KedroCliError(
+            "Failed to start Kedro-Viz: the server process exited with exit code "
+            f"{viz_process.exitcode}. See the error above for details."
+        ) from ex
 
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
