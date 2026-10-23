@@ -150,7 +150,7 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    _wait_for(func=_check_viz_up, host=host, port=port)
+    _wait_for(func=_check_viz_up, host=host, port=port, process=viz_process)
 
     if _is_databricks():
         _display_databricks_html(port)
