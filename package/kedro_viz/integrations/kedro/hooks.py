@@ -62,6 +62,28 @@ class DatasetStatsHook:
         self.create_dataset_stats(dataset_name, data)
 
     @hook_impl
+    def before_pipeline_run(self):
+        """Clear statistics from the previous run before collecting new ones."""
+        self._stats.clear()
+
+        try:
+            kedro_project_path = _find_kedro_project(Path.cwd())
+
+            if not kedro_project_path:
+                logger.warning("Could not find a Kedro project to clear stats file")
+                return
+
+            stats_file_path = Path(
+                f"{kedro_project_path}/{VIZ_METADATA_ARGS['path']}/stats.json"
+            )
+            stats_file_path.parent.mkdir(parents=True, exist_ok=True)
+            stats_file_path.write_text("{}", encoding="utf8")
+        except Exception as exc:  # pragma: no cover
+            logger.warning(
+                "Unable to clear dataset statistics before the pipeline: %s", exc
+            )
+
+    @hook_impl
     def after_pipeline_run(self):
         """Hook to be invoked after a pipeline runs.
         Once the pipeline run completes, write the dataset
