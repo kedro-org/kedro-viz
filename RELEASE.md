@@ -11,6 +11,7 @@ Please follow the established format:
  - Add dataset statistics for Polars `DataFrame` and `LazyFrame` datasets. (#2811)
 
 ## Bug fixes and other changes
+ - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
 
 
