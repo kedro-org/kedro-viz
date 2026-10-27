@@ -55,7 +55,7 @@ class NodeExtras(BaseModel):
 
     stats: Optional[Dict[str, Any]] = Field(
         None,
-        description="Dataset statistics like rows, columns, file_size (primarily for DataNode)",
+        description="Dataset statistics like partitions, rows, columns, file_size (primarily for DataNode)",
     )
 
     styles: Optional[Dict[str, Any]] = Field(

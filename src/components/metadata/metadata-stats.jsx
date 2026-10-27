@@ -22,12 +22,17 @@ const MetaDataStats = ({ stats }) => {
     setHasOverflow(statsLen > statsRowLen);
   }, [stats]);
 
+  const visibleStatLabels = datasetStatLabels.filter(
+    (statLabel) =>
+      statLabel !== 'partitions' || stats?.hasOwnProperty(statLabel)
+  );
+
   return (
     <ul
       ref={statsContainerRef}
       className={`stats-container__${hasOverflow ? 'overflow' : 'no-overflow'}`}
     >
-      {datasetStatLabels.map((statLabel) => (
+      {visibleStatLabels.map((statLabel) => (
         <React.Fragment key={statLabel}>
           <li
             className="pipeline-metadata__value pipeline-metadata-value__stats"
