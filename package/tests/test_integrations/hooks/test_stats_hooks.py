@@ -59,7 +59,7 @@ def test_after_dataset_saved(
 
     # Replace the original 'get_file_size' function with the mock
     mocker.patch(
-        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        "kedro_viz.integrations.kedro.hooks.stats_hooks.DatasetStatsHook.get_file_size",
         new=mock_get_file_size,
     )
 
@@ -92,7 +92,7 @@ def test_after_pipeline_run(
     caplog,
 ):
     mocker.patch(
-        "kedro_viz.integrations.kedro.hooks._find_kedro_project",
+        "kedro_viz.integrations.kedro.hooks.stats_hooks._find_kedro_project",
         return_value=setup_kedro_project,
     )
     stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
@@ -118,7 +118,7 @@ def test_after_pipeline_run(
 
     # stats file should not get created if it is not a valid kedro project path
     mocker.patch(
-        "kedro_viz.integrations.kedro.hooks._find_kedro_project",
+        "kedro_viz.integrations.kedro.hooks.stats_hooks._find_kedro_project",
         return_value=None,
     )
     example_dataset_stats_hook_obj.after_pipeline_run()

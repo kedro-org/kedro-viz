@@ -6,6 +6,7 @@ import kedro
 from packaging.version import parse
 
 DEFAULT_REGISTERED_PIPELINE_ID = "__default__"
+MEMORY_DATASET_TYPE = "io.memory_dataset.MemoryDataset"
 KEDRO_VERSION = parse(kedro.__version__)
 ROOT_MODULAR_PIPELINE_ID = "__root__"
 

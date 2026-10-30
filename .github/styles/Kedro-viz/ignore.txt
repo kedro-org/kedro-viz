@@ -30,3 +30,5 @@ Pylint
 Astro
 Xebia
 pytest
+VSCode
+serialisable
