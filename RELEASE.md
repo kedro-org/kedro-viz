@@ -19,6 +19,7 @@ Please follow the established format:
  - Read `/api/run-status` events from the project root instead of the current working directory. (#2782)
  - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+ - Fix the broken banner image in `README.md`, which is also the README shown on PyPI. (#2803)
 
 
 # Release 12.5.0
