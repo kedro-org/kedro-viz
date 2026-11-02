@@ -8,7 +8,7 @@ Kedro-Viz follows the same contribution process as Kedro. Before you start, read
 - Which issues are open for community contributions (see the [open source ticket board](https://github.com/orgs/kedro-org/projects/16)), and more [contribution suggestions on the Kedro GitHub Wiki](https://github.com/kedro-org/kedro/wiki/Contribute-to-Kedro)!
 - The [Code of Conduct](CODE_OF_CONDUCT.md)
 
-This page only covers what is specific to Kedro-Viz: how to set up the repo, run the tests and make a release.
+This page covers what is specific to Kedro-Viz: how to set up the repo, run the tests and make a release.
 
 The following sections describe our vision and the contribution process.
 
