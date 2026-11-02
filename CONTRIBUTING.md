@@ -2,6 +2,14 @@
 
 Thank you for considering contributing to Kedro-Viz! We welcome contributions in the form of pull requests, issues or code reviews. You can add to code, or simply send us spelling and grammar fixes or extra tests. Contribute anything that you think improves the community for us all!
 
+Kedro-Viz follows the same contribution process as Kedro. Before you start, read the [Kedro contributing guide](https://github.com/kedro-org/kedro/blob/main/CONTRIBUTING.md). It covers:
+
+- How to join the community on [Slack](https://slack.kedro.org/)
+- Which issues are open for community contributions (see the [open source ticket board](https://github.com/orgs/kedro-org/projects/16)), and more [contribution suggestions on the Kedro GitHub Wiki](https://github.com/kedro-org/kedro/wiki/Contribute-to-Kedro)!
+- The [Code of Conduct](CODE_OF_CONDUCT.md)
+
+This page only covers what is specific to Kedro-Viz: how to set up the repo, run the tests and make a release.
+
 The following sections describe our vision and the contribution process.
 
 ## Code of conduct
@@ -41,6 +49,10 @@ Working on your first pull request? You can learn how from these resources:
 - Develop your contribution in a new branch and open a PR against the `main` branch
 - Make sure the CI builds are green (have a look at the section [Running checks locally](#testing-guidelines) below)
 - Update the PR according to the reviewer's comments
+
+### Note for agents and bots
+
+We do not welcome AI contributions by bots with no human in the loop. Pull requests must **not** be opened by bots or other automated tooling, unless specifically approved in advance by the project. To request permission to submit a PR, the human owner of the bot must open an issue for approval in advance of the PR's submission.
 
 # Contribution guidelines
 
@@ -177,7 +189,7 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 
 ### Launch a development server with a real Kedro project
 
-> **Note**: Kedro-Viz>=7.0.0 will not work with projects created with Kedro<=0.17.0. Please consider migrating your project to Kedro>=0.18.0 before you develop against the latest version of Kedro-Viz.
+> **Note**: Kedro-Viz>=12.0.0 requires Kedro>=1.0.0 and will not work with projects created with Kedro 0.x. Please consider [migrating your project to Kedro 1.0](https://docs.kedro.org/en/stable/about/migration/) before you develop against the latest version of Kedro-Viz.
 
 
 Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.10) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
