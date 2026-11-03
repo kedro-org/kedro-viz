@@ -3,13 +3,12 @@ fastapi==0.100.0
 fsspec==2021.4; python_version < '3.12'
 fsspec==2021.06.01; python_version >= '3.12'
 aiofiles==22.1.0
-uvicorn[standard]==0.22.0
-watchfiles==0.24.0; python_version < '3.14'
-watchfiles==1.1.0; python_version >= '3.14'
+uvicorn[standard]==0.30.0
+watchfiles==1.2.0
 plotly==4.8
 packaging==23.0
 pandas==2.0.3; python_version >= '3.10' and python_version < '3.12'
-pandas==2.1.1; python_version >= '3.12' and python_version < '3.13'
+pandas==2.2.2; python_version >= '3.12' and python_version < '3.13'
 pandas==2.2.3; python_version >= '3.13' and python_version < '3.14'
 pandas==2.3.3; python_version >= '3.14'
 networkx==2.5; python_version < '3.12'
@@ -17,11 +16,13 @@ networkx==2.6; python_version >= '3.12' and python_version < '3.13'
 networkx==2.7; python_version >= '3.13'
 orjson==3.9; python_version < '3.13'
 orjson==3.11.6; python_version >= '3.13'
-secure==0.3.0
+secure==2.0.1
 # numpy 2.0 breaks with old versions of pandas and this
 # could be removed when the lowest version supported is updated
 numpy==1.26.4; python_version >= '3.10' and python_version < '3.12'
 numpy==2.0.2; python_version >= '3.12' and python_version < '3.13'
 numpy==2.1.0; python_version >= '3.13' and python_version < '3.14'
 numpy==2.3.2; python_version >= '3.14'
+# PyArrow 26 requires NumPy 2+, but the Python 3.10/3.11 lower bound uses NumPy 1.x.
+pyarrow<26; python_version < '3.12'
 pathspec==0.12.1
