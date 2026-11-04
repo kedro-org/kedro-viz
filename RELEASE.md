@@ -12,6 +12,7 @@ Please follow the established format:
  - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
  - Fix the broken banner image in `README.md`, which is also the README shown on PyPI. (#2803)
+ - Align `CONTRIBUTING.md` with the Kedro contributing guide and update the Kedro version requirement. (#2816)
 
 
 # Release 12.5.0
