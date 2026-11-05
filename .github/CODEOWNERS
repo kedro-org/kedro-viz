@@ -7,10 +7,10 @@
 *.css                @Huongg @jitu5
 
 # Backend
-*.py                 @Huongg @ravi-kumar-pilla
-package/             @Huongg @ravi-kumar-pilla
+*.py                 @Huongg
+package/             @Huongg
 
 # CI / release
-.github/workflows/   @Huongg @jitu5 @ravi-kumar-pilla
-Makefile             @Huongg @jitu5 @ravi-kumar-pilla
-RELEASE.md           @Huongg @jitu5 @ravi-kumar-pilla
+.github/workflows/   @Huongg @jitu5
+Makefile             @Huongg @jitu5
+RELEASE.md           @Huongg @jitu5
