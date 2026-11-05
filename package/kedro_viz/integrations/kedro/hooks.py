@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 class DatasetStatsHook:
     """Class to collect dataset statistics during a kedro run
     and save it to a JSON file. The class currently supports
-    (pd.DataFrame) dataset instances"""
+    (pd.DataFrame) and (pyspark.sql.DataFrame) dataset instances."""
 
     def __init__(self):
         self._stats = defaultdict(dict)
@@ -39,7 +39,7 @@ class DatasetStatsHook:
     def after_dataset_loaded(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is loaded from the catalog.
         Once the dataset is loaded, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame) and (pyspark.sql.DataFrame) dataset instances
 
         Args:
             dataset_name: name of the dataset that was loaded from the catalog.
@@ -52,7 +52,7 @@ class DatasetStatsHook:
     def after_dataset_saved(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is saved to the catalog.
         Once the dataset is saved, extract the required dataset statistics.
-        The hook currently supports (pd.DataFrame) dataset instances
+        The hook currently supports (pd.DataFrame) and (pyspark.sql.DataFrame) dataset instances
 
         Args:
             dataset_name: name of the dataset that was saved to the catalog.
@@ -94,7 +94,13 @@ class DatasetStatsHook:
 
     def create_dataset_stats(self, dataset_name: str, data: Any):
         """Helper method to create dataset statistics.
-        Currently supports (pd.DataFrame) dataset instances.
+        Currently supports (pd.DataFrame) and (pyspark.sql.DataFrame) dataset instances.
+
+        Note for Spark datasets:
+            Extracting row count calls ``data.count()``, which executes a Spark action/job.
+            File size is collected when an underlying file path can be resolved on the dataset instance;
+            for distributed or table-backed Spark datasets without a single resolved file path,
+            file_size remains omitted.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -102,33 +108,79 @@ class DatasetStatsHook:
 
         """
         try:
-            import pandas as pd
+            try:
+                import pandas as pd
+
+                is_pandas_df = isinstance(data, pd.DataFrame)
+            except ImportError:  # pragma: no cover
+                is_pandas_df = False
+
+            is_spark_df = False
+            try:
+                import pyspark.sql as ps
+
+                is_spark_df = isinstance(data, ps.DataFrame)
+            except (ImportError, AttributeError):  # pragma: no cover
+                is_spark_df = False
+
+            if not is_spark_df:
+                data_type = type(data)
+                module_name = getattr(data_type, "__module__", "") or ""
+                class_name = getattr(data_type, "__name__", "") or ""
+                if module_name.startswith("pyspark.sql") and "DataFrame" in class_name:
+                    is_spark_df = True
 
             stats_dataset_name = self.get_stats_dataset_name(dataset_name)
 
-            if isinstance(data, pd.DataFrame):
-                self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
-                self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
+            if is_pandas_df:
+                self._create_pandas_dataset_stats(dataset_name, stats_dataset_name, data)
+            elif is_spark_df:
+                self._create_spark_dataset_stats(dataset_name, stats_dataset_name, data)
 
-                current_dataset = self.datasets.get(dataset_name)
-
-                if current_dataset:
-                    dataset_file_size = self.get_file_size(current_dataset)
-                    if dataset_file_size:
-                        self._stats[stats_dataset_name]["file_size"] = dataset_file_size
-
-        except ImportError as exc:  # pragma: no cover
-            logger.warning(
-                "Unable to import dependencies to extract dataset statistics for %s : %s",
-                dataset_name,
-                exc,
-            )
         except Exception as exc:  # pragma: no cover
             logger.warning(
                 "[hook: after_dataset_saved] Unable to create statistics for the dataset %s : %s",
                 dataset_name,
                 exc,
             )
+
+
+    def _create_pandas_dataset_stats(
+        self, dataset_name: str, stats_dataset_name: str, data: Any
+    ):
+        self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
+        self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
+        self._record_file_size(dataset_name, stats_dataset_name)
+
+    def _create_spark_dataset_stats(
+        self, dataset_name: str, stats_dataset_name: str, data: Any
+    ):
+        try:
+            self._stats[stats_dataset_name]["columns"] = len(data.columns)
+        except Exception as exc:  # pragma: no cover
+            logger.warning(
+                "Unable to get column count for Spark dataset %s: %s",
+                dataset_name,
+                exc,
+            )
+
+        try:
+            self._stats[stats_dataset_name]["rows"] = int(data.count())
+        except Exception as exc:  # pragma: no cover
+            logger.warning(
+                "Unable to get row count for Spark dataset %s: %s",
+                dataset_name,
+                exc,
+            )
+
+        self._record_file_size(dataset_name, stats_dataset_name)
+
+    def _record_file_size(self, dataset_name: str, stats_dataset_name: str):
+        current_dataset = self.datasets.get(dataset_name)
+        if current_dataset:
+            dataset_file_size = self.get_file_size(current_dataset)
+            if dataset_file_size:
+                self._stats[stats_dataset_name]["file_size"] = dataset_file_size
 
     def get_file_size(self, dataset: Any) -> Union[int, None]:
         """Helper method to return the file size of a dataset
