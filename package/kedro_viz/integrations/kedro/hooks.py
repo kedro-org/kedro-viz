@@ -98,8 +98,9 @@ class DatasetStatsHook:
     def create_dataset_stats(self, dataset_name: str, data: Any):
         """Helper method to create dataset statistics.
         Currently supports (pd.DataFrame, pl.DataFrame, pl.LazyFrame) dataset
-        instances. For a pl.LazyFrame only the column count is recorded, because
-        counting its rows would execute the lazy query.
+        instances. For a pl.LazyFrame the rows are not counted, because that would
+        execute the lazy query; a row count already recorded for the dataset, such
+        as one saved as a transcoded pandas frame, is kept.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -117,11 +118,15 @@ class DatasetStatsHook:
                 pl and isinstance(data, (pl.DataFrame, pl.LazyFrame))
             ):
                 if pl and isinstance(data, pl.LazyFrame):
-                    # drop a row count recorded for an earlier eager frame, so it shows N/A
-                    self._stats[stats_dataset_name].pop("rows", None)
-                    self._stats[stats_dataset_name]["columns"] = len(
+                    # keep a row count recorded for an eager frame of the same
+                    # file (e.g. a transcoded dataset); it still applies.
+                    # collect_schema() was added in polars 1.0
+                    schema = (
                         data.collect_schema()
+                        if hasattr(data, "collect_schema")
+                        else data.columns
                     )
+                    self._stats[stats_dataset_name]["columns"] = len(schema)
                 else:
                     self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                     self._stats[stats_dataset_name]["columns"] = int(data.shape[1])

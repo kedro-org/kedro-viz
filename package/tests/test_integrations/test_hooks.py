@@ -111,18 +111,37 @@ def test_after_dataset_loaded_polars_lazy_frame(
     }
 
 
-def test_after_dataset_loaded_polars_lazy_frame_clears_rows(
+def test_after_dataset_loaded_polars_lazy_frame_keeps_transcoded_rows(
     example_dataset_stats_hook_obj, example_catalog, example_data_frame
 ):
     pl = pytest.importorskip("polars")
-    data = pl.from_pandas(example_data_frame)
     example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
-    example_dataset_stats_hook_obj.after_dataset_saved("companies", data)
+    example_dataset_stats_hook_obj.after_dataset_saved(
+        "companies@pandas", example_data_frame
+    )
     example_dataset_stats_hook_obj.after_dataset_loaded(
-        "companies", data.head(1).lazy()
+        "companies@polars_lazy", pl.from_pandas(example_data_frame).lazy()
     )
 
-    # the row count saved for the eager frame no longer applies to the lazy frame
+    # both frames read the same file, so the row count from the save still applies
+    assert example_dataset_stats_hook_obj._stats["companies"] == {
+        "rows": example_data_frame.shape[0],
+        "columns": example_data_frame.shape[1],
+    }
+
+
+def test_after_dataset_loaded_polars_lazy_frame_without_collect_schema(
+    monkeypatch, example_dataset_stats_hook_obj, example_catalog, example_data_frame
+):
+    pl = pytest.importorskip("polars")
+    data = pl.from_pandas(example_data_frame).lazy()
+    # polars before 1.0 has no LazyFrame.collect_schema(), only the columns property
+    columns = list(example_data_frame.columns)
+    monkeypatch.delattr(pl.LazyFrame, "collect_schema")
+    monkeypatch.setattr(pl.LazyFrame, "columns", property(lambda self: columns))
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    example_dataset_stats_hook_obj.after_dataset_loaded("companies", data)
+
     assert example_dataset_stats_hook_obj._stats["companies"] == {
         "columns": example_data_frame.shape[1]
     }

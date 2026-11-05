@@ -67,7 +67,7 @@ If a visualisation panel opens up and a pipeline is not visible, refresh the vie
 
 To exit the visualisation, close the browser tab. To regain control of the terminal, enter `^+c` on Mac or `Ctrl+c` on Windows or Linux machines.
 
-Kedro-Viz provides stats related to datasets under the metadata panel. Stats are collected for pandas and Polars DataFrames. For a Polars LazyFrame, such as the data loaded by `polars.LazyPolarsDataset`, only the column count and file size are shown, because counting the rows would execute the lazy query.
+Kedro-Viz provides stats related to datasets under the metadata panel. Stats are collected for pandas and Polars DataFrames. For a Polars LazyFrame, such as the data loaded by `polars.LazyPolarsDataset`, the rows are not counted, because that would execute the lazy query. The row count is shown only if it was already recorded for the same dataset, for example when a transcoded pandas or Polars DataFrame of it was saved or loaded earlier in the run.
 
 ![](./images/pipeline_dataset_stats.png)
 
