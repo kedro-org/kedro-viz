@@ -1,6 +1,5 @@
 """Behave step definitions for the cli_scenarios feature."""
 
-import sys
 from pathlib import Path
 from time import sleep, time
 
@@ -11,56 +10,6 @@ from behave import given, then, when
 from features.steps.sh_run import ChildTerminatingPopen, run
 
 OK_EXIT_CODE = 0
-
-
-def _numpy_pandas_pins():
-    """Return lower-bound numpy and pandas pins for the current Python version."""
-    version = sys.version_info
-    if version >= (3, 14):
-        return "2.3.2", "2.3.3"
-    if version >= (3, 13):
-        return "2.1.0", "2.2.3"
-    if version >= (3, 12):
-        return "2.0.2", "2.2.3"
-    if version >= (3, 10):
-        return "1.26.4", "1.5"
-    return None, None
-
-
-def _force_reinstall_numpy_pandas(context):
-    """Ensure numpy and pandas wheels match after lower-bound installs."""
-    numpy_pin, pandas_pin = _numpy_pandas_pins()
-    if not numpy_pin or not pandas_pin:
-        return
-
-    res = run(
-        [
-            context.pip,
-            "install",
-            "--no-cache-dir",
-            "--force-reinstall",
-            f"numpy=={numpy_pin}",
-            f"pandas=={pandas_pin}",
-        ],
-        env=context.env,
-    )
-    if res.returncode != OK_EXIT_CODE:
-        print(res.stdout)
-        print(res.stderr)
-        assert False
-
-    import_res = run(
-        [
-            context.python,
-            "-c",
-            "import numpy as np; import pandas as pd; print(np.__version__, pd.__version__)",
-        ],
-        env=context.env,
-    )
-    if import_res.returncode != OK_EXIT_CODE:
-        print(import_res.stdout)
-        print(import_res.stderr)
-        assert False
 
 
 def _create_config_file(context, include_example):
@@ -143,7 +92,18 @@ def install_project_requirements(context):
 def install_lower_bound_requirements(context):
     cwd = Path(__file__).resolve().parent
     requirements_path = cwd / "lower_requirements.txt"
-    cmd = [context.pip, "install", "-r", str(requirements_path), "--force-reinstall"]
+    # Resolve the lower bounds together with Viz and the starter's dependencies.
+    # Separate installs can leave newer binary wheels paired with older NumPy.
+    cmd = [
+        context.pip,
+        "install",
+        str(cwd.parents[1]),
+        "-r",
+        str(context.root_project_dir / "requirements.txt"),
+        "-r",
+        str(requirements_path),
+        "--force-reinstall",
+    ]
     res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
@@ -151,7 +111,26 @@ def install_lower_bound_requirements(context):
         print(res.stderr)
         assert False
 
-    _force_reinstall_numpy_pandas(context)
+    check_res = run([context.python, "-m", "pip", "check"], env=context.env)
+    if check_res.returncode != OK_EXIT_CODE:
+        print(check_res.stdout)
+        print(check_res.stderr)
+        assert False
+
+    # Binary compatibility is not always expressed in package metadata.
+    import_res = run(
+        [
+            context.python,
+            "-c",
+            "import numpy, pandas, pyarrow, sklearn; "
+            "print(numpy.__version__, pandas.__version__, pyarrow.__version__, sklearn.__version__)",
+        ],
+        env=context.env,
+    )
+    if import_res.returncode != OK_EXIT_CODE:
+        print(import_res.stdout)
+        print(import_res.stderr)
+        assert False
 
 
 @given('I have installed kedro version "{version}"')
