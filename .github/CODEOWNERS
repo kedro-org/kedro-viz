@@ -7,8 +7,8 @@
 *.css                @Huongg @jitu5
 
 # Backend
-*.py                 @Huongg
-package/             @Huongg
+*.py                 @Huongg @merelcht
+package/             @Huongg @merelcht
 
 # CI / release
 .github/workflows/   @Huongg @jitu5
