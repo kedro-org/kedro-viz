@@ -438,6 +438,35 @@ class TestCliRunViz:
         )
         assert run_process_kwargs["kwargs"]["port"] in _VIZ_PROCESSES
 
+    def test_kedro_viz_command_exits_when_server_process_dies(
+        self, mocker, patched_start_browser
+    ):
+        mocker.patch("kedro_viz.launchers.utils._check_viz_up", return_value=False)
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+        # Simulate the server process crashing during startup
+        mock_process.return_value.is_alive.return_value = False
+        mock_process.return_value.exitcode = 1
+        mock_sleep = mocker.patch("kedro_viz.launchers.utils.sleep")
+        mocker.patch("kedro_viz.launchers.utils._is_port_in_use", return_value=False)
+        mocker.patch(
+            "kedro_viz.launchers.utils._find_kedro_project", return_value="testPath"
+        )
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main.viz_cli, ["viz", "run"])
+
+        assert result.exit_code == 1
+        assert (
+            "Failed to start Kedro-Viz: the server process exited with exit code 1"
+            in result.output
+        )
+        assert "Kedro Viz started successfully" not in result.output
+        mock_sleep.assert_not_called()
+
     # Test case to simulate port occupation and check available port selection
     def test_find_available_port_with_occupied_ports(self, mocker):
         mock_is_port_in_use = mocker.patch("kedro_viz.launchers.utils._is_port_in_use")
