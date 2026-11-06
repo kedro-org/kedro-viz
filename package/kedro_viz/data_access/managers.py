@@ -338,8 +338,13 @@ class DataAccessManager:
                     ROOT_MODULAR_PIPELINE_ID
                 )
             )
+            dataset_type = (
+                GraphNodeType.PARAMETERS
+                if is_dataset_param(dataset_name)
+                else GraphNodeType.DATA
+            )
             root_modular_pipeline_node.children.add(
-                ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
+                ModularPipelineChild(id=dataset_id, type=dataset_type)
             )
 
             # update the node_mod_pipeline_map

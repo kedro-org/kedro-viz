@@ -22,9 +22,11 @@ from kedro_viz.data_access.repositories.registered_pipelines import (
 from kedro_viz.data_access.repositories.tags import TagsRepository
 from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.models.flowchart.named_entities import Tag
 from kedro_viz.models.flowchart.nodes import (
     DataNode,
+    ModularPipelineChild,
     ParametersNode,
     TaskNode,
     TranscodedDataNode,
@@ -461,6 +463,21 @@ class TestAddDataset:
         assert isinstance(graph_node, ParametersNode)
         assert graph_node.is_single_parameter()
         assert graph_node.parameter_value == 0.1
+        root_children = example_modular_pipelines_repo_obj.tree[
+            ROOT_MODULAR_PIPELINE_ID
+        ].children
+        assert (
+            ModularPipelineChild(
+                id=graph_node.id, type=GraphNodeType.PARAMETERS
+            )
+            in root_children
+        )
+        assert (
+            ModularPipelineChild(
+                id=graph_node.id, type=GraphNodeType.DATA
+            )
+            not in root_children
+        )
 
     def test_add_dataset_with_params_prefix(
         self,
@@ -567,6 +584,36 @@ class TestAddPipelines:
             )
         )
         assert len(modular_pipeline_tree["__root__"].children) == 3
+
+    def test_add_pipeline_with_parameters_no_duplicate_children(
+        self,
+        data_access_manager: DataAccessManager,
+    ):
+        registered_pipelines = {
+            "__default__": pipeline(
+                [node(func=lambda a: False, inputs="params:split_options", outputs="d")]
+            ),
+        }
+        catalog = DataCatalog()
+        catalog["params:split_options"] = {"test_size": 0.2}
+        data_access_manager.add_catalog(catalog, registered_pipelines)
+        data_access_manager.add_pipelines(registered_pipelines)
+        modular_pipeline_tree = (
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                DEFAULT_REGISTERED_PIPELINE_ID
+            )
+        )
+        root_children = modular_pipeline_tree["__root__"].children
+        child_ids = [c.id for c in root_children]
+        assert len(child_ids) == len(set(child_ids))
+        param_children = [
+            c for c in root_children if c.type == GraphNodeType.PARAMETERS
+        ]
+        assert len(param_children) == 1
+        data_children = [
+            c for c in root_children if c.type == GraphNodeType.DATA
+        ]
+        assert len(data_children) == 1
 
     def test_get_default_selected_pipelines_without_default(
         self,
