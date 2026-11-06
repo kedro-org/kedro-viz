@@ -3,6 +3,7 @@ import { getPipelineTagIDs } from './pipeline';
 import { prettifyName } from '../utils';
 
 const getNodeTags = (state) => state.node.tags;
+const getNodeType = (state) => state.node.type;
 const getTagName = (state) => state.tag.name;
 const getTagActive = (state) => state.tag.active;
 const getTagEnabled = (state) => state.tag.enabled;
@@ -35,14 +36,20 @@ export const getTagCount = createSelector(
 /**
  * Get the total number of nodes for each tag
  */
-export const getTagNodeCounts = createSelector([getNodeTags], (nodeTags) => {
-  const counts = {};
+export const getTagNodeCounts = createSelector(
+  [getNodeTags, getNodeType],
+  (nodeTags, nodeType = {}) => {
+    const counts = {};
 
-  for (const tagIds of Object.values(nodeTags)) {
-    for (const tagId of tagIds) {
-      counts[tagId] = counts[tagId] + 1 || 1;
+    for (const [nodeId, tagIds] of Object.entries(nodeTags)) {
+      if (nodeType[nodeId] === 'modularPipeline') {
+        continue;
+      }
+      for (const tagId of tagIds) {
+        counts[tagId] = counts[tagId] + 1 || 1;
+      }
     }
-  }
 
-  return counts;
-});
+    return counts;
+  }
+);
