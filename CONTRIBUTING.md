@@ -380,6 +380,8 @@ make version VERSION=<version-to-release>
 
 > _Note_: The release tag corresponds to `__version__` from `package/kedro_viz/__init__.py` and the release notes is the content under the heading `# Release <release-number> (e.g. # Release 6.4.0)` in [RELEASE.md](./RELEASE.md).
 
-- Once the release tag is published on GitHub, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
+- Once the release tag is published on GitHub, the [Release to NPM and PyPI](./.github/workflows/release.yml) GitHub Action is triggered. It publishes the Python package to PyPI and **stages** the npm package.
+- A maintainer with publish access to `@quantumblack/kedro-viz` on npm must then approve the staged version before it goes live on npm. Run `npm stage list` to see the staged version, then `npm stage approve` to release it (2FA required). See npm's [staged publishing docs](https://docs.npmjs.com/staged-publishing) for details.
+
 - Once the new version is on PyPI, deployment to https://demo.kedro.org happens automatically. A GitHub Action syncs the released version into the protected demo branch, builds a container using the [demo project](./demo-project) with the newly released version and deploys it.
 
