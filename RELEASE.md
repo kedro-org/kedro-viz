@@ -8,13 +8,13 @@ Please follow the established format:
 # Upcoming Release
 
 ## Bug fixes and other changes
+ - Stop `kedro viz run` waiting up to 10 minutes when the server process crashes on startup, and exit with a clear error instead. This does not apply when `--autoreload` is used. (#2813)
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
 
 
 # Release 12.6.0
 
 ## Bug fixes and other changes
- - Stop `kedro viz run` waiting up to 10 minutes when the server process crashes on startup, and exit with a clear error instead. (#2813)
  - Remove the temporary `chardet<7` pin from the test requirements now that `binaryornot` 0.6.0 no longer uses `chardet`. (#2804)
  - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)

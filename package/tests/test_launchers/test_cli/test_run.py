@@ -461,9 +461,12 @@ class TestCliRunViz:
 
         assert result.exit_code == 1
         assert (
-            "Failed to start Kedro-Viz: the server process exited with exit code 1"
-            in result.output
-        )
+            "ERROR: Failed to start Kedro-Viz: the server process exited with exit "
+            "code 1. See the error above for details."
+        ) in result.output
+        # A plain message, not a Python exception or traceback
+        assert "KedroCliError" not in result.output
+        assert "Traceback" not in result.output
         assert "Kedro Viz started successfully" not in result.output
         mock_sleep.assert_not_called()
 

@@ -223,11 +223,13 @@ def run(  # noqa: PLR0912, PLR0915
         if browser:
             _start_browser(host, port)
 
-    except ProcessExitedException as ex:
-        raise KedroCliError(
-            "Failed to start Kedro-Viz: the server process exited with exit code "
-            f"{viz_process.exitcode}. See the error above for details."
-        ) from ex
+    except ProcessExitedException:
+        display_cli_message(
+            "ERROR: Failed to start Kedro-Viz: the server process exited with exit "
+            f"code {viz_process.exitcode}. See the error above for details.",
+            "red",
+        )
+        raise click.exceptions.Exit(code=1) from None
 
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
