@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+ - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
+
+
 # Release 12.6.0
 
 ## Major features and improvements
