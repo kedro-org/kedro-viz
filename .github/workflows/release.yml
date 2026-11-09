@@ -11,13 +11,15 @@ permissions:
   contents: read
 
 env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   NODE_VERSION: 24.19.0
   REGISTRY_URL: 'https://registry.npmjs.org'
 
 jobs:
   release_to_npm:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for npm trusted publishing (OIDC)
     steps:
     - name: Checkout code
       uses: actions/checkout@v4  
@@ -33,16 +35,17 @@ jobs:
     - name: Build React application
       run: |-
         node -v
+        npm -v
         make build
 
     # Renaming README.npm.md to README.md just for npm
     - name: Use NPM specific README
-      run: mv README.npm.md README.md         
-    
-    - name: Publish to npm
-      run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: mv README.npm.md README.md
+
+    # Authenticates via OIDC trusted publishing. The version is staged and
+    # must be approved by a maintainer on npmjs.com before it goes live.
+    - name: Stage publish to npm
+      run: npm stage publish
 
   release_to_pypi:
     runs-on: ubuntu-latest
