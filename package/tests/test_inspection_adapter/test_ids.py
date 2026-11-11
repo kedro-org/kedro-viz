@@ -1,0 +1,201 @@
+"""Tests for Viz node IDs that stay compatible with the live backend."""
+
+import pytest
+
+from kedro_viz.integrations.kedro import node_ids as ids
+from kedro_viz.utils import _hash
+
+
+def test_explicit_task_name_and_function_name_are_preserved() -> None:
+    expected = _hash("company_agg: aggregate_company_data([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="ingestion.company_agg",
+            func_name="aggregate_company_data",
+            namespace="ingestion",
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
+
+
+def test_task_node_id_changes_with_io() -> None:
+    def task_id(inputs: list[str], outputs: list[str]) -> str:
+        return ids._create_task_node_id(
+            node_name="my_node",
+            func_name="build_data",
+            namespace=None,
+            inputs=inputs,
+            outputs=outputs,
+        )
+
+    base = task_id(["a"], ["b"])
+    assert task_id(["a", "c"], ["b"]) != base
+    assert task_id(["a"], ["b", "c"]) != base
+
+
+def test_auto_name_is_omitted_from_task_string() -> None:
+    expected = _hash("clean_data([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="processing.clean_data__a1b2c3d4",
+            func_name="clean_data",
+            namespace="processing",
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
+
+
+def test_hash_like_explicit_name_is_preserved() -> None:
+    expected = _hash("report__deadbeef: build_report([x]) -> [y]")
+    assert (
+        ids._create_task_node_id(
+            node_name="report__deadbeef",
+            func_name="build_report",
+            namespace=None,
+            inputs=["x"],
+            outputs=["y"],
+        )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    ("func_name", "node_string"),
+    [("<partial>", "<partial>([x]) -> [y]"), ("clean_data", "clean_data([x]) -> [y]")],
+)
+def test_partial_auto_name_is_omitted_from_task_string(
+    func_name: str, node_string: str
+) -> None:
+    assert ids._create_task_node_id(
+        node_name="partial(clean_data)__a1b2c3d4",
+        func_name=func_name,
+        namespace=None,
+        inputs=["x"],
+        outputs=["y"],
+    ) == _hash(node_string)
+
+
+def test_dataset_node_id_matches_backend_hash() -> None:
+    """Test that a dataset ID matches the backend ``_hash`` of its name."""
+    assert ids._create_dataset_node_id("companies") == _hash("companies")
+
+
+def test_dataset_node_id_strips_transcoding() -> None:
+    """Test that transcoded names (``name@suffix``) hash on the base name."""
+    assert ids._create_dataset_node_id(
+        "typed_shuttles@pandas1"
+    ) == ids._create_dataset_node_id("typed_shuttles@pandas2")
+
+
+@pytest.mark.parametrize(
+    ("name", "func_name", "inputs", "outputs", "node_string"),
+    [
+        ("generator__a1b2c3d4", "generator", [], ["out"], "generator(None) -> [out]"),
+        ("saver__a1b2c3d4", "saver", ["in"], [], "saver([in]) -> None"),
+    ],
+)
+def test_task_node_id_handles_empty_io(
+    name: str,
+    func_name: str,
+    inputs: list[str],
+    outputs: list[str],
+    node_string: str,
+) -> None:
+    assert ids._create_task_node_id(
+        node_name=name,
+        func_name=func_name,
+        namespace=None,
+        inputs=inputs,
+        outputs=outputs,
+    ) == _hash(node_string)
+
+
+class _Scale:
+    """A callable object without ``__name__``; Kedro 1.7 names it by its repr."""
+
+    def __call__(self, value):
+        return value
+
+
+def _object_node():
+    from kedro.pipeline import node
+
+    return node(_Scale(), "raw", "scaled", name="scale")
+
+
+def test_callable_object_task_id_is_stable_across_pipeline_loads() -> None:
+    """The snapshot and the deferred live load build separate node objects."""
+    from kedro.inspection.models import NodeSnapshot
+
+    from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
+
+    snapshot_node, live_node = _object_node(), _object_node()
+    snapshot = NodeSnapshot(
+        name=snapshot_node.name,
+        func_name=snapshot_node._func_name,
+        namespace=snapshot_node.namespace,
+        inputs=snapshot_node.inputs,
+        outputs=snapshot_node.outputs,
+    )
+
+    live_id = ids._create_task_node_id_from_kedro_node(live_node)
+
+    assert ids._create_task_node_id_from_kedro_node(snapshot_node) == live_id
+    assert ids._create_task_node_id_from_node_snapshot(snapshot) == live_id
+    assert hash_node(live_node) == live_id
+    assert live_id == _hash("scale: _Scale([raw]) -> [scaled]")
+
+
+def test_function_task_id_is_unchanged_by_object_name_normalisation() -> None:
+    from kedro.pipeline import node
+
+    def clean(value):
+        return value
+
+    task = node(clean, "raw", "clean", name="clean_node")
+
+    assert ids._create_task_node_id_from_kedro_node(task) == _hash(str(task))
+
+
+def _identity(value):
+    return value
+
+
+@pytest.mark.parametrize(
+    ("func", "func_name"), [(_identity, "_identity"), (_Scale(), "_Scale")]
+)
+def test_dataset_named_like_an_object_repr_is_kept_verbatim(func, func_name) -> None:
+    """Only the function name is normalised, on the live side as on the snapshot side."""
+    from kedro.pipeline import node
+
+    from kedro_viz.integrations.kedro.hooks.hooks_utils import hash_node
+
+    dataset = "<Raw object at 0x123>"
+    task = node(func, dataset, "out", name="n")
+    expected = _hash(f"n: {func_name}([{dataset}]) -> [out]")
+
+    assert ids._create_task_node_id_from_kedro_node(task) == expected
+    assert hash_node(task) == expected
+    assert (
+        ids._create_task_node_id(
+            task.name, task._func_name, task.namespace, task.inputs, task.outputs
+        )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("<project.nodes.Scale object at 0x10f2c980>", "Scale"),
+        ("<project.create.<locals>.Scale object at 0xABCDEF>", "Scale"),
+        ("<partial>", "<partial>"),
+        ("clean_data", "clean_data"),
+    ],
+)
+def test_stable_func_name_replaces_only_address_bearing_reprs(text, expected) -> None:
+    assert ids._stable_func_name(text) == expected

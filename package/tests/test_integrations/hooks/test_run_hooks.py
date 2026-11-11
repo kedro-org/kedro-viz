@@ -9,7 +9,7 @@ from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.node import Node as KedroNode
 
-from kedro_viz.integrations.kedro.run_hooks import (
+from kedro_viz.integrations.kedro.hooks.run_hooks import (
     PipelineRunStatusHook,
     create_dataset_event,
 )
@@ -140,7 +140,7 @@ class TestNodeLifecycle:
         # Fake perf_counter so duration == 1.23
         counter_vals = iter([1.0, 2.23])
         monkeypatch.setattr(
-            "kedro_viz.integrations.kedro.run_hooks.perf_counter",
+            "kedro_viz.integrations.kedro.hooks.run_hooks.perf_counter",
             lambda: next(counter_vals),
         )
 

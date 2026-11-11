@@ -22,6 +22,7 @@ exceptions:
     - dialog
     - log
     - maize
+    - NotebookVisualizer
     - prize
     - seize
     - size

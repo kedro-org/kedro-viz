@@ -115,6 +115,13 @@ class TestDataCatalogRepository:
         ):
             repo.get_layer_for_dataset("car@pandas1")
 
+        # A failed build must not leave a partial mapping cached: the property should
+        # still be unset, so a later lookup retries (and fails the same way) instead of
+        # silently returning an incomplete mapping from the aborted first attempt.
+        assert repo._layers_mapping is None
+        with pytest.raises(ValueError, match="Mismatch found for: "):
+            repo.get_layer_for_dataset("car@pandas1")
+
     def test_get_layer_mapping_from_metadata(self):
         repo = CatalogRepository()
         catalog_config = {
