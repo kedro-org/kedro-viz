@@ -7,6 +7,9 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+ - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
+
 ## Bug fixes and other changes
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
 
