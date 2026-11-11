@@ -62,7 +62,7 @@ We do not welcome AI contributions by bots with no human in the loop. Pull reque
 
 - Aim for cross-platform compatibility on Windows, macOS and Linux, and support recent versions of major browsers
 - We use [SemVer](https://semver.org/) for versioning
-- Our code is designed to be compatible with Python 3.10 onwards
+- Our code is designed to be compatible with Python 3.11 onwards
 - We use [Anaconda](https://www.anaconda.com/distribution/) as a preferred virtual environment
 - We use [PEP 8 conventions](https://www.python.org/dev/peps/pep-0008/) for all Python code
 - We use [Google docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for code comments
@@ -192,7 +192,7 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 > **Note**: Kedro-Viz>=12.0.0 requires Kedro>=1.0.0 and will not work with projects created with Kedro 0.x. Please consider [migrating your project to Kedro 1.0](https://docs.kedro.org/en/stable/about/migration/) before you develop against the latest version of Kedro-Viz.
 
 
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.10) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.11) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
 
 The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
 
