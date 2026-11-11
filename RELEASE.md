@@ -5,9 +5,10 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 13.0.0
+# # Release 13.0.0
 
 ## Major features and improvements
+ - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
  - Build the flowchart graph, modular pipelines, layers and task parameters from Kedro's Inspection API instead of live pipeline/catalog introspection. (#2782)
  - Load node details on the first node click instead of at startup. (#2782)
  - Drop support for Kedro versions below 1.6.0. (#2782)
@@ -16,10 +17,19 @@ Please follow the established format:
  - Move the `kedro_viz.integrations.kedro` modules into `hooks`, `lite`, `live` and `inspection` subpackages, and add a required `context` argument to `create_api_app_from_project`. (#2782)
 
 ## Bug fixes and other changes
+ - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
  - Read `/api/run-status` events from the project root instead of the current working directory. (#2782)
+
+
+# Release 12.6.0
+
+## Bug fixes and other changes
+ - Remove the temporary `chardet<7` pin from the test requirements now that `binaryornot` 0.6.0 no longer uses `chardet`. (#2804)
  - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
  - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
  - Fix the broken banner image in `README.md`, which is also the README shown on PyPI. (#2803)
+ - Update the "What's new" panel with node previews. (#2819)
+ - Align `CONTRIBUTING.md` with the Kedro contributing guide and update the Kedro version requirement. (#2816)
 
 
 # Release 12.5.0
