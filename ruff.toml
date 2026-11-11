@@ -1,4 +1,4 @@
-target-version = "py39"
+target-version = "py311"
 
 include = [
     "package/kedro_viz/*.py",
