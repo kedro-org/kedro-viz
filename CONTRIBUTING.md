@@ -62,7 +62,7 @@ We do not welcome AI contributions by bots with no human in the loop. Pull reque
 
 - Aim for cross-platform compatibility on Windows, macOS and Linux, and support recent versions of major browsers
 - We use [SemVer](https://semver.org/) for versioning
-- Our code is designed to be compatible with Python 3.10 onwards
+- Our code is designed to be compatible with Python 3.11 onwards
 - We use [Anaconda](https://www.anaconda.com/distribution/) as a preferred virtual environment
 - We use [PEP 8 conventions](https://www.python.org/dev/peps/pep-0008/) for all Python code
 - We use [Google docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for code comments
@@ -192,7 +192,7 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 > **Note**: Kedro-Viz>=12.0.0 requires Kedro>=1.0.0 and will not work with projects created with Kedro 0.x. Please consider [migrating your project to Kedro 1.0](https://docs.kedro.org/en/stable/about/migration/) before you develop against the latest version of Kedro-Viz.
 
 
-Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.10) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
+Before launching a development server with a real Kedro project, you'd need to have [Python](https://www.python.org/)(>=3.11) installed. We strongly recommend setting up [conda](https://docs.conda.io/en/latest/) to manage your Python versions and virtual environments. You can visit Kedro's [guide to installing conda](https://docs.kedro.org/en/stable/get_started/install.html#create-a-virtual-environment-for-your-kedro-project) for more information.
 
 The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
 
@@ -380,6 +380,8 @@ make version VERSION=<version-to-release>
 
 > _Note_: The release tag corresponds to `__version__` from `package/kedro_viz/__init__.py` and the release notes is the content under the heading `# Release <release-number> (e.g. # Release 6.4.0)` in [RELEASE.md](./RELEASE.md).
 
-- Once the release tag is published on GitHub, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
+- Once the release tag is published on GitHub, the [Release to NPM and PyPI](./.github/workflows/release.yml) GitHub Action is triggered. It publishes the Python package to PyPI and **stages** the npm package.
+- A maintainer with publish access to `@quantumblack/kedro-viz` on npm must then approve the staged version before it goes live on npm. Run `npm stage list` to see the staged version, then `npm stage approve` to release it (2FA required). See npm's [staged publishing docs](https://docs.npmjs.com/staged-publishing) for details.
+
 - Once the new version is on PyPI, deployment to https://demo.kedro.org happens automatically. A GitHub Action syncs the released version into the protected demo branch, builds a container using the [demo project](./demo-project) with the newly released version and deploys it.
 
