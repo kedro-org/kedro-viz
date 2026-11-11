@@ -5,9 +5,10 @@ import logging
 import socket
 import sys
 import webbrowser
+from multiprocessing.process import BaseProcess
 from pathlib import Path
 from time import sleep, time
-from typing import Any, Callable, Union
+from typing import Any, Callable, Optional, Union
 
 import click
 import requests
@@ -20,6 +21,11 @@ class WaitForException(Exception):
     """WaitForException: if func doesn't return expected result within the specified time"""
 
 
+class ProcessExitedException(WaitForException):
+    """ProcessExitedException: if the process being waited on exits before func
+    returns the expected result"""
+
+
 def _wait_for(
     func: Callable,
     expected_result: Any = True,
@@ -27,6 +33,8 @@ def _wait_for(
     timeout: int = 600,
     print_error: bool = True,
     sleep_for: int = 1,
+    *,
+    process: Optional[BaseProcess] = None,
     **kwargs,
 ) -> None:
     """
@@ -40,11 +48,16 @@ def _wait_for(
             Defaults to False.
         sleep_for (int): Execute func every specified number of seconds.
             Defaults to 1.
+        process (BaseProcess): Optional process that func is waiting on. If it
+            exits before func returns the expected result, stop waiting.
+            Defaults to None.
         **kwargs: Arguments to be passed to func
 
     Raises:
          WaitForException: if func doesn't return expected result within the
          specified time
+         ProcessExitedException: if process exits before func returns the
+         expected result
 
     """
     end = time() + timeout
@@ -58,6 +71,10 @@ def _wait_for(
         else:
             if retval == expected_result:
                 return None
+        if process is not None and not process.is_alive():
+            raise ProcessExitedException(
+                f"Process exited with exit code {process.exitcode} before it was ready"
+            )
         sleep(sleep_for)
 
     raise WaitForException(

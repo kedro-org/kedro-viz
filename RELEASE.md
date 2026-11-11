@@ -11,6 +11,7 @@ Please follow the established format:
  - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
 
 ## Bug fixes and other changes
+ - Stop `kedro viz run` waiting up to 10 minutes when the server process crashes on startup, and exit with a clear error instead. This does not apply when `--autoreload` is used. (#2813)
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
 
 
