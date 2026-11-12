@@ -126,11 +126,15 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     }
     process_context = multiprocessing.get_context("spawn")
     if autoreload:
+        from pathlib import Path
+
         run_process_args = [str(project_path)]
         run_process_kwargs = {
             "target": run_server,
             "kwargs": run_server_kwargs,
-            "watch_filter": AutoreloadFileFilter(),
+            "watch_filter": AutoreloadFileFilter(
+                base_path=Path(project_path) if project_path else None,
+            ),
         }
         viz_process = process_context.Process(
             target=run_process,

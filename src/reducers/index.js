@@ -24,6 +24,7 @@ import {
   TOGGLE_ORIENTATION,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
+  INCREMENT_NODE_MEASURE_TOKEN,
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
@@ -60,6 +61,14 @@ const createReducer =
 
     return state;
   };
+
+/**
+ * Monotonic token bumped to re-measure node label widths. Never resets; a
+ * pipeline change already busts getNodeTextWidth via getPipelineNodeIDs.
+ */
+function nodeMeasureToken(state = 0, action) {
+  return action.type === INCREMENT_NODE_MEASURE_TOKEN ? state + 1 : state;
+}
 
 /**
  * Reset/update application-wide data
@@ -110,6 +119,7 @@ const combinedReducer = combineReducers({
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
+  nodeMeasureToken,
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),

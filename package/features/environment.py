@@ -39,11 +39,7 @@ def before_scenario(context, scenario):
                 kedro_version = parse(match.group(0))
                 break
 
-    if (
-        kedro_version
-        and kedro_version < parse("0.18.12")
-        and sys.version_info >= (3, 11)
-    ):
+    if kedro_version and kedro_version < parse("0.18.12"):
         print(
             (
                 f"{scenario} will be skipped as {kedro_version} is not "
@@ -87,6 +83,7 @@ def _setup_context_with_venv(context, venv_dir):
     # Windows thinks the pip version check warning is a failure
     # so disable it here.
     context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+    context.env["MPLBACKEND"] = "Agg"
 
     call(
         [context.python, "-m", "pip", "install", "-U", "pip>=21.2", "setuptools>=38.0"],
@@ -95,12 +92,6 @@ def _setup_context_with_venv(context, venv_dir):
 
     call([context.python, "-m", "pip", "install", "."], env=context.env)
 
-    # Temporary: chardet 7.0.0 + binaryornot 0.4.4 crashes on Python <3.11
-    # See https://github.com/kedro-org/kedro-viz/issues/2588
-    call(
-        [context.python, "-m", "pip", "install", "chardet<7"],
-        env=context.env,
-    )
     return context
 
 

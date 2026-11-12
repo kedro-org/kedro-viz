@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { select } from 'd3-selection';
 import classnames from 'classnames';
+import { positionLayerNames } from './utils/position-layer-names';
 
 import './styles/index.scss';
 
@@ -13,6 +14,7 @@ export function DrawLayerNames({
   orientation = 'vertical',
   layerNameDuration = 400,
   layerNamesRef,
+  viewTransformRef,
 }) {
   useEffect(() => {
     if (!layerNamesRef?.current || !layers.length) {
@@ -67,7 +69,24 @@ export function DrawLayerNames({
     // UPDATE
     const allNames = layerNameElement.merge(enterLayerNames);
     allNames.text((d) => d.name).style('opacity', 0.55);
-  }, [layers, chartSize, orientation, layerNameDuration, layerNamesRef]);
+
+    // The labels were just (re)created; position them for the latest view
+    // transform. The parent's onViewChange can fire before these exist on first
+    // paint, so we self-position here from the shared transform ref.
+    positionLayerNames(
+      layerNamesRef.current,
+      layers,
+      viewTransformRef?.current,
+      orientation
+    );
+  }, [
+    layers,
+    chartSize,
+    orientation,
+    layerNameDuration,
+    layerNamesRef,
+    viewTransformRef,
+  ]);
 
   return null;
 }
@@ -79,6 +98,7 @@ export function DrawLayerNamesGroup({
   displayGlobalNavigation,
   displaySidebar,
   layerNamesRef,
+  viewTransformRef,
 }) {
   if (!layers.length) {
     return null;
@@ -98,6 +118,7 @@ export function DrawLayerNamesGroup({
         chartSize={chartSize}
         orientation={orientation}
         layerNamesRef={layerNamesRef}
+        viewTransformRef={viewTransformRef}
       />
     </ul>
   );

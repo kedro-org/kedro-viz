@@ -1,11 +1,16 @@
 import shlex
 import subprocess
-from typing import Any, Sequence
+from typing import Any, Sequence, Union
 
 import psutil
 
 
-def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any) -> int:
+def run(
+    cmd: Union[str, Sequence[str]],
+    split: bool = True,
+    print_output: bool = False,
+    **kwargs: Any,
+) -> subprocess.CompletedProcess[str]:
     """
     Args:
         cmd: A command string, or a command followed by program
@@ -33,7 +38,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
 
     """
     if isinstance(cmd, str) and split:
-        cmd = shlex.split(cmd)  # type: ignore
+        cmd = shlex.split(cmd)
     result = subprocess.run(
         cmd, input="", stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
     )
@@ -41,7 +46,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
     result.stderr = result.stderr.decode("utf-8")
     if print_output:
         print(result.stdout)
-    return result  # type: ignore
+    return result
 
 
 class ChildTerminatingPopen(subprocess.Popen):

@@ -5,6 +5,39 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Major features and improvements
+ - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
+
+## Bug fixes and other changes
+ - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
+
+
+# Release 12.6.0
+
+## Bug fixes and other changes
+ - Remove the temporary `chardet<7` pin from the test requirements now that `binaryornot` 0.6.0 no longer uses `chardet`. (#2804)
+ - Fix backend CI dependency compatibility and lower-bound test environments. (#2812)
+ - Accept the runner class name in `is_sequential_runner`, so workflow tracking stays on during a sequential run. (#2786)
+ - Fix the broken banner image in `README.md`, which is also the README shown on PyPI. (#2803)
+ - Update the "What's new" panel with node previews. (#2819)
+ - Align `CONTRIBUTING.md` with the Kedro contributing guide and update the Kedro version requirement. (#2816)
+
+
+# Release 12.5.0
+
+## Major features and improvements
+ - Add a help menu to the global toolbar linking to Kedro-Viz support channels. (#2756)
+
+## Bug fixes and other changes
+ - Fix version and run-status API requests for embedded and static Kedro-Viz. (#2753)
+ - Fix for `autoreload` to ignore notebook file changes. (#2712)
+ - Align pandas requirement with Kedro (`pandas>=2.0,<4.0`). (#2694)
+ - Raise `ipython` lower bound to `8.10` to fix Windows Python 3.10 lower-bound e2e failure. (#2787)
+ - Update Node.js version from v18 to v24 and bump `canvas` to v3 and `jest`/`jest-environment-jsdom` for compatibility. (#2754)
+ - Fix toolbar `tooltip` not dismissing on mouse leave. (#2770)
+
 
 # Release 12.4.0
 

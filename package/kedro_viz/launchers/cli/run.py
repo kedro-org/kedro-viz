@@ -191,7 +191,9 @@ def run(  # noqa: PLR0915
             run_process_kwargs = {
                 "target": run_server,
                 "kwargs": run_server_kwargs,
-                "watch_filter": AutoreloadFileFilter(),
+                "watch_filter": AutoreloadFileFilter(
+                    base_path=Path(kedro_project_path),
+                ),
             }
             viz_process = process_context.Process(
                 target=run_process,
