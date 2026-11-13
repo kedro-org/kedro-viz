@@ -7,12 +7,18 @@ on:
     paths:
       - "docs/**"
       - '**.md'
+      - '.github/workflows/docs-only-checks.yml'
   pull_request:
     branches:
       - main
     paths:
       - "docs/**"
       - '**.md'
+      - '.github/workflows/docs-only-checks.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -22,7 +28,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
+        python-version: [ "3.11", "3.12", "3.13", "3.14" ]
     uses: ./.github/workflows/lint.yml
     with:
       os: ${{ matrix.os }}

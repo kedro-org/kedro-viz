@@ -1,4 +1,8 @@
-import getPipelineData, { getSourceID, getDataValue } from './data-source';
+import getPipelineData, {
+  getSourceID,
+  getDataValue,
+  isBackendAvailable,
+} from './data-source';
 import spaceflights from './data/spaceflights.mock.json';
 import demo from './data/demo.mock.json';
 
@@ -85,5 +89,18 @@ describe('getPipelineData', () => {
   it('should return random data if requested', () => {
     process.env.REACT_APP_DATA_SOURCE = 'random';
     expect(getPipelineData()).toEqual(expect.objectContaining({}));
+  });
+});
+
+describe('isBackendAvailable', () => {
+  it("should return true when the data source is 'json'", () => {
+    expect(isBackendAvailable('json')).toBe(true);
+  });
+
+  it('should return false when data is supplied directly', () => {
+    expect(isBackendAvailable(spaceflights)).toBe(false);
+    expect(isBackendAvailable('spaceflights')).toBe(false);
+    expect(isBackendAvailable(null)).toBe(false);
+    expect(isBackendAvailable(undefined)).toBe(false);
   });
 });

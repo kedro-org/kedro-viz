@@ -184,7 +184,12 @@ def is_sequential_runner(run_params: dict) -> bool:
     if runner is None:
         return True
 
+    if not isinstance(runner, str):
+        return False
+
+    # Kedro records the runner class name. Older versions recorded the repr of
+    # the runner object instead, which carries its import path.
     return (
-        isinstance(runner, str)
-        and "kedro.runner.sequential_runner.SequentialRunner object" in runner
+        runner == "SequentialRunner"
+        or "kedro.runner.sequential_runner.SequentialRunner object" in runner
     )

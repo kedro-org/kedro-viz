@@ -1,11 +1,4 @@
-import React from 'react';
-import {
-  arrayToObject,
-  getUrl,
-  unique,
-  replaceAngleBracketMatches,
-  isValidBoolean,
-} from './index';
+import { arrayToObject, getUrl, unique, isValidBoolean } from './index';
 
 describe('utils', () => {
   describe('arrayToObject', () => {
@@ -51,18 +44,6 @@ describe('utils', () => {
   describe('unique', () => {
     it('removes duplicates from an array', () => {
       expect([1, 1, 2, 2, 3, 3, 1].filter(unique)).toEqual([1, 2, 3]);
-    });
-  });
-
-  describe('replaceAngleBracketMatches', () => {
-    it('replaces angle bracket matched characters from a string', () => {
-      expect(replaceAngleBracketMatches('<b><lam</b>bda>')).toEqual(
-        '<b>&lt;lam</b>bda&gt;'
-      );
-      expect(replaceAngleBracketMatches('<b><lambda></b>')).toEqual(
-        '<b>&lt;lambda&gt;</b>'
-      );
-      expect(replaceAngleBracketMatches('<lambda>')).toEqual('&lt;lambda&gt;');
     });
   });
 

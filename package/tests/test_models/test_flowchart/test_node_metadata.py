@@ -225,19 +225,22 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
 
-    def test_task_node_metadata_with_partial_func(self):
+    @pytest.mark.parametrize("name", [None, "named_partial"])
+    def test_task_node_metadata_with_partial_func(self, name):
         kedro_node = node(
             partial_func,
             inputs="x",
             outputs="y",
+            name=name,
             tags={"tag"},
             namespace="namespace",
         )
         task_node = GraphNode.create_task_node(
-            kedro_node, "<partial>", set(["namespace"])
+            kedro_node, "partial_node_id", set(["namespace"])
         )
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
-        assert task_node.name == "<partial>"
+        # Kedro versions differ in how they name an unnamed partial function.
+        assert task_node.name == (name or kedro_node._func_name)
         assert task_node_metadata.code is None
         assert task_node_metadata.filepath is None
         assert not task_node_metadata.parameters
