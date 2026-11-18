@@ -8,6 +8,7 @@ Please follow the established format:
 # Upcoming Release
 
 ## Major features and improvements
+ - Add support for Python 3.15.
  - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
 
 ## Bug fixes and other changes
