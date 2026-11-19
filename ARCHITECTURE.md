@@ -47,7 +47,7 @@ Kedro-Viz loads data asynchronously in production from the API, or when using th
 
 ### Pipeline API endpoints
 
-Each pipeline endpoint corresponds to a different [registered pipeline](https://kedro.readthedocs.io/en/stable/13_resources/02_glossary.html#pipeline) in the Kedro project. Only one registered pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
+Each pipeline endpoint corresponds to a different [registered pipeline](https://docs.kedro.org/en/stable/resources/glossary.html#pipeline) in the Kedro project. Only one registered pipeline should be loaded at a time, so loading data from a pipeline endpoint will reset the pipeline state in the store. Each pipeline dataset contains all the data required to render the graph.
 
 On first page-load, the app always loads the `/api/main` endpoint first. This is the endpoint that corresponds to the 'default' pipeline. The app can load other pipelines from `/api/pipeline/<id>`. If another pipeline is saved as the user's active pipeline in `localStorage`, and if it exists in the current project, then the app will load that pipeline on first page load. However it will always load the `/api/main` endpoint first regardless, in order to check whether the active pipeline is present at that endpoint before requesting it.
 
@@ -119,7 +119,7 @@ The main graph objects are 'nodes' and 'edges'.
 
 A 'node' in Kedro-Viz is different from the concept of a 'node' in Kedro projects. A node on Kedro-Viz refers to a graph element for display on the flowchart, which could be one of three types:
 
-- `task`: a Kedro [node](https://kedro.readthedocs.io/en/stable/13_resources/02_glossary.html#node), i.e. a Python function wrapper
+- `task`: a Kedro [node](https://docs.kedro.org/en/stable/resources/glossary.html#node), i.e. a Python function wrapper
 - `data`: a dataset
 - `parameter`: reusable config variables
 
