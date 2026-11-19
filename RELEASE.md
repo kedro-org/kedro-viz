@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
  - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
+ - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 ## Bug fixes and other changes
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
@@ -29,7 +30,6 @@ Please follow the established format:
 
 ## Major features and improvements
  - Add a help menu to the global toolbar linking to Kedro-Viz support channels. (#2756)
- - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 ## Bug fixes and other changes
  - Fix version and run-status API requests for embedded and static Kedro-Viz. (#2753)
