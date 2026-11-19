@@ -10,6 +10,7 @@ from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node, pipeline
 from kedro_datasets import pandas
 from kedro_datasets.pandas import CSVDataset
+from kedro_datasets.partitions import PartitionedDataset
 from pydantic import BaseModel
 
 from kedro_viz.api import apps
@@ -686,6 +687,19 @@ def example_csv_dataset(tmp_path, example_data_frame):
     )
     new_csv_dataset.save(example_data_frame)
     yield new_csv_dataset
+
+
+@pytest.fixture
+def example_partitioned_dataset(tmp_path, example_data_frame):
+    partitioned_dataset = PartitionedDataset(
+        path=Path(tmp_path / "partitioned_data").as_posix(),
+        dataset="pandas.CSVDataset",
+        filename_suffix=".csv",
+    )
+    partitioned_dataset.save(
+        {"part_1": example_data_frame, "part_2": example_data_frame}
+    )
+    yield partitioned_dataset
 
 
 @pytest.fixture
