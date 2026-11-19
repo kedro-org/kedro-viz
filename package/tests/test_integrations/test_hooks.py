@@ -178,3 +178,86 @@ def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
     # Call get_file_size and expect it to return the mocked file size
     file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
     assert file_size == 456
+
+
+class MockSparkDataFrame:
+    """Mock PySpark DataFrame for testing hooks without a Spark cluster."""
+
+    __module__ = "pyspark.sql.dataframe"
+
+    def __init__(self, columns=None, row_count=100):
+        self.columns = columns or ["col1", "col2", "col3"]
+        self._row_count = row_count
+
+    def count(self):
+        return self._row_count
+
+
+@pytest.mark.parametrize(
+    "dataset_name", ["spark_model_inputs", "spark_model_inputs@spark1"]
+)
+def test_after_dataset_loaded_spark(
+    dataset_name, example_dataset_stats_hook_obj, example_catalog
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+    mock_spark_df = MockSparkDataFrame(columns=["a", "b", "c", "d"], row_count=500)
+    example_dataset_stats_hook_obj.after_dataset_loaded(dataset_name, mock_spark_df)
+
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
+
+    assert stats_dataset_name in example_dataset_stats_hook_obj._stats
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["rows"] == 500
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["columns"] == 4
+
+
+def test_after_dataset_saved_spark(
+    example_dataset_stats_hook_obj, example_catalog, mocker
+):
+    dataset_name = "model_inputs"
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    # Mock get_file_size
+    mock_get_file_size = mocker.Mock(return_value=4096)
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        new=mock_get_file_size,
+    )
+
+    mock_spark_df = MockSparkDataFrame(columns=["x", "y"], row_count=1200)
+    example_dataset_stats_hook_obj.after_dataset_saved(dataset_name, mock_spark_df)
+
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
+
+    assert stats_dataset_name in example_dataset_stats_hook_obj._stats
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["rows"] == 1200
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["columns"] == 2
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["file_size"] == 4096
+
+
+def test_spark_dataset_count_failure(
+    example_dataset_stats_hook_obj, example_catalog, caplog
+):
+    dataset_name = "spark_failing_count"
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    class FailingSparkDataFrame(MockSparkDataFrame):
+        __module__ = "pyspark.sql.dataframe"
+
+        def count(self):
+            raise RuntimeError("Spark cluster unavailable")
+
+    mock_spark_df = FailingSparkDataFrame(columns=["colA", "colB"])
+    example_dataset_stats_hook_obj.after_dataset_loaded(dataset_name, mock_spark_df)
+
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
+
+    assert stats_dataset_name in example_dataset_stats_hook_obj._stats
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["columns"] == 2
+    assert "rows" not in example_dataset_stats_hook_obj._stats[stats_dataset_name]
+
