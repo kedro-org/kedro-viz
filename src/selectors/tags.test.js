@@ -63,5 +63,20 @@ describe('Selectors', () => {
         })
       );
     });
+
+    it('excludes modular pipeline nodes from tag node counts', () => {
+      const stateWithModularPipelineTag = {
+        ...mockState.spaceflights,
+        node: {
+          ...mockState.spaceflights.node,
+          tags: {
+            ...mockState.spaceflights.node.tags,
+            data_processing: ['preprocessing'],
+          },
+        },
+      };
+      // data_processing is a modularPipeline, so its tag should not inflate the count
+      expect(getTagNodeCounts(stateWithModularPipelineTag).preprocessing).toBe(6);
+    });
   });
 });
