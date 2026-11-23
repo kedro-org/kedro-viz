@@ -9,15 +9,15 @@ Please follow the established format:
 
 ## Major features and improvements
  - Dropped support for Python 3.10 (EOL Oct 2026). Minimum supported version is now 3.11.
+ - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
+ - Add dataset statistics for Polars `DataFrame` and `LazyFrame` datasets. (#2811)
 
 ## Bug fixes and other changes
+ - Stop `kedro viz run` waiting up to 10 minutes when the server process crashes on startup, and exit with a clear error instead. This does not apply when `--autoreload` is used. (#2813)
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
 
 
 # Release 12.6.0
-
-## Major features and improvements
- - Add dataset statistics for Polars `DataFrame` and `LazyFrame` datasets. (#2811)
 
 ## Bug fixes and other changes
  - Remove the temporary `chardet<7` pin from the test requirements now that `binaryornot` 0.6.0 no longer uses `chardet`. (#2804)
