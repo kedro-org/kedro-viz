@@ -10,8 +10,9 @@ import fsspec
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.integrations.kedro.node_ids import _create_task_node_id_from_kedro_node
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash, _hash_input_output
+from kedro_viz.utils import _hash_input_output
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,9 @@ EVENTS_FILE = "kedro_pipeline_events.json"
 
 def hash_node(node: Any) -> str:
     """Stable ID for KedroNode or I/O reference."""
-    return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
+    if isinstance(node, KedroNode):
+        return _create_task_node_id_from_kedro_node(node)
+    return _hash_input_output(node)
 
 
 def extract_file_paths(dataset: Any) -> List[str]:

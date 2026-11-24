@@ -4,6 +4,8 @@ import hashlib
 import sys
 import threading
 import time
+from collections.abc import Generator, Mapping
+from contextlib import contextmanager
 from itertools import cycle
 from pathlib import Path
 from typing import Any, Optional, Tuple
@@ -11,6 +13,23 @@ from typing import Any, Optional, Tuple
 from pathspec import GitIgnoreSpec
 
 TRANSCODING_SEPARATOR = "@"
+
+
+@contextmanager
+def stub_modules(mocked_modules: Mapping[str, object]) -> Generator[None]:
+    """Temporarily add ``mocked_modules`` to ``sys.modules``, undoing only what this added."""
+    added_stubs: dict[str, object] = {}
+    for name, mock in mocked_modules.items():
+        if name not in sys.modules:
+            sys.modules[name] = mock  # type: ignore[assignment]
+            added_stubs[name] = mock
+
+    try:
+        yield
+    finally:
+        for name, stub in added_stubs.items():
+            if sys.modules.get(name) is stub:
+                del sys.modules[name]
 
 
 def _hash(value: str):

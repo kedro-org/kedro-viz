@@ -1,5 +1,5 @@
 name: Install Kedro and other Python Dependencies
-description: Installs Kedro from the main branch and other Python dependencies, then prints the Python version and installed packages.
+description: Installs the project requirements, including the supported Kedro requirement, then prints the Python version and installed packages.
 runs:
   using: composite
   steps:
@@ -9,7 +9,6 @@ runs:
       shell: bash
     - name: Install Python dependencies
       run: |-
-        uv pip install --system git+https://github.com/kedro-org/kedro@main
         uv pip install --system -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
       shell: bash
     - name: Echo package versions

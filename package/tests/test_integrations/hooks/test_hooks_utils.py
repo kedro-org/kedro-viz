@@ -7,7 +7,7 @@ import pytest
 from kedro.pipeline import node
 from kedro.pipeline.node import Node as KedroNode
 
-from kedro_viz.integrations.kedro.hooks_utils import (
+from kedro_viz.integrations.kedro.hooks.hooks_utils import (
     compute_size,
     extract_file_paths,
     generate_timestamp,
@@ -96,7 +96,7 @@ class TestWriteEvents:
         events = [{"event": "x"}]
 
         monkeypatch.setattr(
-            "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
+            "kedro_viz.integrations.kedro.hooks.hooks_utils._find_kedro_project",
             lambda _: tmp_path,
         )
 
@@ -107,7 +107,7 @@ class TestWriteEvents:
             captured["json"] = json.loads(events_json)
 
         monkeypatch.setattr(
-            "kedro_viz.integrations.kedro.hooks_utils.write_events_to_file",
+            "kedro_viz.integrations.kedro.hooks.hooks_utils.write_events_to_file",
             mock_write_events_to_file,
         )
 
@@ -118,7 +118,7 @@ class TestWriteEvents:
 
     def test_write_events_skips_if_no_project(self, monkeypatch, caplog):
         monkeypatch.setattr(
-            "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
+            "kedro_viz.integrations.kedro.hooks.hooks_utils._find_kedro_project",
             lambda _: None,
         )
         write_events([{"event": "x"}])
