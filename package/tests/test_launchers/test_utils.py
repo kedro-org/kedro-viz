@@ -6,11 +6,14 @@ import pytest
 import requests
 
 from kedro_viz.launchers.utils import (
+    ProcessExitedException,
+    WaitForException,
     _check_viz_up,
     _find_available_port,
     _find_kedro_project,
     _is_project,
     _start_browser,
+    _wait_for,
     display_cli_message,
 )
 
@@ -54,6 +57,40 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
 
     result = _check_viz_up(host, port)
     assert result == expected_result
+
+
+class TestWaitFor:
+    def test_returns_when_func_returns_expected_result(self, mocker):
+        func = Mock(return_value=True)
+        process = Mock(is_alive=Mock(return_value=True))
+
+        _wait_for(func, timeout=1, sleep_for=0, process=process, host="localhost")
+
+        func.assert_called_once_with(host="localhost")
+
+    def test_raises_when_process_exits_before_ready(self, mocker):
+        mock_sleep = mocker.patch("kedro_viz.launchers.utils.sleep")
+        func = Mock(return_value=False)
+        process = Mock(is_alive=Mock(return_value=False), exitcode=1)
+
+        with pytest.raises(ProcessExitedException, match="exit code 1"):
+            _wait_for(func, timeout=600, process=process)
+
+        # Stops after the first check instead of polling until the timeout
+        func.assert_called_once()
+        mock_sleep.assert_not_called()
+
+    def test_raises_on_timeout_while_process_is_alive(self, mocker):
+        mocker.patch("kedro_viz.launchers.utils.sleep")
+        mocker.patch("kedro_viz.launchers.utils.time", side_effect=[0, 0, 0, 2])
+        func = Mock(return_value=False)
+        process = Mock(is_alive=Mock(return_value=True))
+
+        with pytest.raises(WaitForException) as exc_info:
+            _wait_for(func, timeout=1, process=process)
+
+        assert not isinstance(exc_info.value, ProcessExitedException)
+        assert func.call_count == 2
 
 
 class TestIsProject:

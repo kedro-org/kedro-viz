@@ -12,11 +12,13 @@ Please follow the established format:
  - Build the flowchart graph, modular pipelines, layers and task parameters from Kedro's Inspection API instead of live pipeline/catalog introspection. (#2782)
  - Load node details on the first node click instead of at startup. (#2782)
  - Drop support for Kedro versions below 1.6.0. (#2782)
+ - Extend dataset statistics to dictionaries of DataFrames, such as partitioned and multi-sheet Excel datasets. (#2771)
 
 ## Breaking changes to the API
  - Move the `kedro_viz.integrations.kedro` modules into `hooks`, `lite`, `live` and `inspection` subpackages, and add a required `context` argument to `create_api_app_from_project`. (#2782)
 
 ## Bug fixes and other changes
+ - Stop `kedro viz run` waiting up to 10 minutes when the server process crashes on startup, and exit with a clear error instead. This does not apply when `--autoreload` is used. (#2813)
  - Fix npm publishing by switching the release workflow to npm trusted publishing with staged releases. (#2826)
  - Read `/api/run-status` events from the project root instead of the current working directory. (#2782)
 

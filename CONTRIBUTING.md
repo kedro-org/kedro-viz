@@ -235,13 +235,13 @@ Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, and [Rea
 npm test
 ```
 
-You can also [inspect and debug tests](https://facebook.github.io/create-react-app/docs/debugging-tests):
+You can also [inspect and debug tests](https://create-react-app.dev/docs/debugging-tests):
 
 ```bash
 npm run test:debug
 ```
 
-And [check test coverage](https://facebook.github.io/create-react-app/docs/running-tests#coverage-reporting):
+And [check test coverage](https://create-react-app.dev/docs/running-tests#coverage-reporting):
 
 ```bash
 npm run test:coverage
