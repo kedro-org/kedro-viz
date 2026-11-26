@@ -20,6 +20,7 @@ const GROUPED_NODES_DISPLAY_ORDER = {
   modularPipeline: 0,
   task: 1,
   data: 2,
+  parameters: 3,
   parameter: 3,
 };
 
@@ -168,9 +169,18 @@ const TreeListProvider = ({
       return;
     }
 
-    // render each child of the tree node first
+    // render each child of the tree node first (deduplicated by id)
+    const seen = new Set();
+    const uniqueChildren = (node.children || []).filter((child) => {
+      if (!child || seen.has(child.id)) {
+        return false;
+      }
+      seen.add(child.id);
+      return true;
+    });
+
     const children = sortBy(
-      node.children,
+      uniqueChildren,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
       (child) => child?.data?.name
     ).map((child) =>
